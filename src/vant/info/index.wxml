@@ -1,0 +1,8 @@
+<view
+  wx:if="{{ info !== null }}"
+  class="custom-class van-info"
+  style="{{ customStyle }}"
+>
+  {{ info }}
+  <view class="van-info-arrow"></view>
+</view>

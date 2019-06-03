@@ -1,0 +1,52 @@
+<!--  -->
+<template>
+  <view class='container ready'>
+    <mHeader title="课前热身"></mHeader>
+    <view class="container-scroll">
+      <view class="header">
+        <view class="header-left">
+          <image class="header-avatar teacher"
+                 src="" />
+          <text class="header-title">木木老师</text>
+          <text class="header-subtitle">著名写作老师</text>
+        </view>
+        <view class="header-right">
+          <view class="header-student">
+            <image class="header-avatar teacher"
+                   src="" />
+            <view class="header-status">准备中...</view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import mHeader from '@/components/header'
+export default class Example extends wepy.page {
+  config = {
+    navigationBarTitleText: ''
+  };
+  data = {};
+  components = {
+    mHeader
+  };
+  methods = {};
+  events = {};
+  watch = {};
+  computed = {};
+  onLoad () { };
+  onShow () { };
+}
+</script>
+<style lang='scss'>
+.ready {
+  .header {
+    @include bg('/sk/backgroud1.png');
+    width: 750px;
+    height: 372px;
+    background: rgba(255, 255, 255, 1);
+  }
+}
+</style>

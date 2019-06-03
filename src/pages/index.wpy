@@ -1,0 +1,354 @@
+<!--  -->
+<template>
+  <view class='container home'>
+    <mHeader></mHeader>
+    <view class="container-scroll"
+          style="margin-top:{{height}}px">
+      <view class="header">
+        <image class="avatar"
+               src="" />
+        <view class="header-right">
+          <text class="subtitle">欢迎来到同步作文课，</text>
+          <text class="title">今天有1门学习课程赶快开始今天的学习吧！</text>
+        </view>
+      </view>
+      <view class="swiper">
+        <swiper class="swiper-wrap"
+                @change="bindChangeSwiper"
+                previous-margin="73rpx"
+                next-margin="73rpx"
+                circular>
+          <block wx:for="{{items}}"
+                 wx:key="">
+            <swiper-item class="swiper-item-wrap">
+              <view class="swiper-item {{index == swiperActive ? 'active' : ''}}">
+                <view class="swiper-cover">
+                  <view class="swiper-cover-tag">小班课</view>
+                  <view class="swiper-cover-popup"></view>
+                  <image src=""
+                         class="swiper-cover-image" />
+                </view>
+                <view class="swiper-title">1.回家过大年（写人的脸色）</view>
+                <view class="swiper-subtitle">
+                  <text>1.回家过大年（写人的脸色）</text>
+                  <text class="swiper-subtitle-text">体验课</text>
+                </view>
+                <button class="swiper-btn"
+                        wx:if="{{false}}">开始今日学习</button>
+                <button class="swiper-btn yy disabled">预约上课</button>
+                <button class="swiper-btn line "
+                        wx:if="{{false}}">
+                  课程回看
+                  <text class="swiper-btn-tag">未上完课</text>
+                </button>
+              </view>
+            </swiper-item>
+          </block>
+        </swiper>
+      </view>
+      <view class="message">
+        <view class="message-icon"></view>
+        <text class="message-text">最美的期待 坚持打卡7天获得了小玩具熊，你也快来参加吧～</text>
+      </view>
+
+    </view>
+    <div class="mask"
+         @tap="bindCloseMask"
+         wx:if="{{showMask}}">
+      <image src="https://pub.file.k12.vip/tbzw/yd.png"
+             class="mask-image" />
+    </div>
+    <van-tabbar active="0"
+                active-color="#58422B"
+                @change="bindChangeTabBar">
+      <van-tabbar-item>
+        <image slot="icon"
+               src="../assets/image/icon-jrxx.png"
+               mode="aspectFit" />
+        <image slot="icon-active"
+               src="../assets/image/icon-jrxx1.png"
+               mode="aspectFit" />
+        今日学习
+      </van-tabbar-item>
+      <van-tabbar-item>
+        <image slot="icon"
+               src="../assets/image/icon-zpbz.png"
+               mode="aspectFit" />
+        <image slot="icon-active"
+               src="../assets/image/icon-zpbz1.png"
+               mode="aspectFit" />
+        作品表彰
+      </van-tabbar-item>
+      <van-tabbar-item>
+        <image slot="icon"
+               src="../assets/image/icon-dkjl.png"
+               mode="aspectFit" />
+        <image slot="icon-active"
+               src="../assets/image/icon-dkjl1.png"
+               mode="aspectFit" />
+        打卡记录
+      </van-tabbar-item>
+      <van-tabbar-item>
+        <image slot="icon"
+               src="../assets/image/icon-grzx.png"
+               mode="aspectFit" />
+        <image slot="icon-active"
+               src="../assets/image/icon-grzx1.png"
+               mode="aspectFit" />
+        个人中心
+      </van-tabbar-item>
+    </van-tabbar>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import mHeader from '@/components/header'
+export default class Example extends wepy.page {
+  config = {
+    navigationBarTitleText: '今日学习',
+    usingComponents: {
+      'van-tabbar': '../vant/tabbar/index',
+      'van-tabbar-item': '../vant/tabbar-item/index'
+    }
+  };
+  data = {
+    showMask: true,
+    items: [1, 2, 3],
+    swiperActive: 0
+  };
+  components = {
+    mHeader
+  };
+  methods = {
+    bindChangeTabBar(event) {
+      switch (event.detail) {
+        case 1:
+          wx.navigateTo({ url: '/pages' })
+      }
+    },
+    bindChangeSwiper (event) {
+      this.swiperActive = event.detail.current
+    },
+    bindCloseMask () {
+      this.showMask = !this.showMask
+    }
+  };
+  events = {};
+  watch = {};
+  computed = {
+    height () {
+      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+    }
+  };
+  onLoad () { };
+  onShow () { };
+}
+</script>
+<style lang='scss'>
+@import '../assets/style/mixin.scss';
+.home {
+  position: relative;
+  .container-scroll {
+    @include bg('/jrxx/backgroud.png');
+    min-height: 100vh;
+    background-position-y: -120rpx;
+  }
+  .mask {
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 9;
+    &-image {
+      margin-top: 256px;
+      width: 560px;
+      height: 486px;
+    }
+  }
+  .message {
+    @include flex-center;
+    margin: 24px 32px;
+    &-icon {
+      @include bg('/word-detail/icon-notice.png');
+      margin-right: 24px;
+      width: 70px;
+      height: 50px;
+    }
+    &-text {
+      font-size: 26px;
+      color: #58422b;
+      line-height: 36px;
+    }
+  }
+  .header {
+    @include flex-center;
+    padding: 24px;
+    margin-bottom: 20px;
+    .avatar {
+      margin-right: 20px;
+      width: 72px;
+      height: 72px;
+      box-shadow: 0px 0px 40px 0px rgba(235, 171, 5, 1);
+      border-radius: 36px;
+      border: 4px solid rgba(255, 255, 255, 1);
+    }
+    &-right {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex: 1;
+    }
+    .title {
+      font-size: 28px;
+      color: #58422b;
+    }
+    .subtitle {
+      font-size: 24px;
+      color: rgba($color: #58422b, $alpha: 0.5);
+    }
+  }
+  .swiper {
+    width: 100%;
+    &-btn {
+      @include flex-center;
+      position: relative;
+      box-sizing: border-box;
+      width: 470px;
+      height: 100px;
+      font-size: 32px;
+      color: #58422b;
+      background: linear-gradient(
+        90deg,
+        rgba(249, 230, 11, 1) 0%,
+        rgba(253, 219, 85, 1) 100%
+      );
+      box-shadow: 0px 8px 16px 4px rgba(230, 194, 81, 0.4);
+      border-radius: 50px;
+      border: 3px solid #fcdd47;
+      &.line {
+        margin-top: 32px;
+        color: rgba($color: #58422b, $alpha: 0.5);
+        background: #fff;
+        box-shadow: none;
+        border: 3px solid rgba(61, 53, 45, 0.1);
+      }
+      &.yy {
+        color: #fff;
+        background: linear-gradient(
+          180deg,
+          rgba(61, 208, 255, 1) 0%,
+          rgba(17, 189, 244, 1) 100%
+        );
+        box-shadow: 0px 8px 16px 4px rgba(62, 181, 211, 0.3);
+        border-color: rgba(62, 181, 211, 0.3);
+      }
+      &.disabled {
+        color: rgba($color: #58422b, $alpha: 0.3);
+        background: #f2f2f2;
+        border-color: #f2f2f2;
+        box-shadow: none;
+      }
+      &-tag {
+        @include flex-center;
+        position: absolute;
+        right: 42px;
+        top: 16px;
+        width: 120px;
+        height: 36px;
+        font-size: 20px;
+        color: #fff;
+        background: rgba(255, 124, 118, 1);
+        border-radius: 200px 200px 200px 0px;
+      }
+    }
+    &-title {
+      @include text-overflow;
+      width: 100%;
+      margin-bottom: 8px;
+      font-size: 40px;
+      color: #58422b;
+      line-height: 56px;
+    }
+    &-subtitle {
+      @include flex-center;
+      margin-bottom: 38px;
+      font-size: 28px;
+      color: rgba($color: #58422b, $alpha: 0.5);
+      &-text {
+        @include flex-center;
+        width: 84px;
+        height: 36px;
+        font-size: 20px;
+        color: #39dda9;
+        border-radius: 12px;
+        border: 2px solid rgba(57, 221, 169, 1);
+      }
+    }
+    &-cover {
+      position: relative;
+      margin-bottom: 32px;
+      &-popup {
+        @include bg('/jrxx/btn-login.png');
+        position: absolute;
+        top: -10px;
+        right: -114px;
+        width: 144px;
+        height: 118px;
+      }
+      &-image {
+        width: 284px;
+        height: 376px;
+        border-radius: 16px;
+        border: 4px solid rgba(255, 124, 118, 0.9);
+      }
+      &-tag {
+        @include flex-center;
+        position: absolute;
+        left: 0;
+        top: 0;
+        padding: 0 16px;
+        height: 68px;
+        font-size: 32px;
+        color: #fff;
+        background: rgba(255, 124, 118, 0.9);
+        border-radius: 16px 0px 32px 0px;
+      }
+      &.sc {
+        .swiper-cover-image {
+          background: rgba(61, 203, 255, 0.9);
+        }
+        .swiper-cover-tag {
+          background: rgba(61, 203, 255, 0.9);
+        }
+      }
+    }
+    &-wrap {
+      width: 100%;
+      height: 924px;
+    }
+    &-item {
+      @include flex-column-center;
+      justify-content: flex-start;
+      box-sizing: border-box;
+      margin: 20px 15px;
+      padding: 38px;
+      padding-bottom: 0;
+      width: 584px;
+      height: 884px;
+      background: rgba(255, 255, 255, 1);
+      box-shadow: 0px 0px 24px 0px rgba(236, 194, 96, 0.24);
+      border-radius: 32px;
+      transform: scale(0.93);
+      transition: all 0.5s;
+      transform-origin: center bottom;
+      &.active {
+        transform: scale(1);
+      }
+    }
+  }
+}
+</style>

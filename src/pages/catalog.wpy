@@ -1,0 +1,117 @@
+<template>
+  <view class="container course">
+    <mHeader></mHeader>
+    <view class="container-scroll" style="margin-top:{{height}}px">
+      <view class="course-info">
+        <text class="course-info-title">小学作文同步课【三年级】</text>
+        <view class="course-info-footer">
+          <text class="course-info-subtitle">每天5-8分钟，学技巧积素材</text>
+          <text class="course-info-num">共300节课 | 已学60节</text>
+        </view>
+      </view>
+      <view class="course-content">
+        <CourseItem></CourseItem>
+        <CourseItem></CourseItem>
+      </view>
+      <view class="course-message">
+        <view class="course-message-icon"></view>
+        <view class="course-message-text">5月20日你忘记交作业咯，记得去补交哦～</view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import CourseItem from '../components/courseItem'
+import mHeader from '../components/header'
+export default class Index extends wepy.page {
+  config = {
+    navigationBarTitleText: '课程目录'
+  }
+
+  components = {
+    CourseItem,
+    mHeader
+  }
+
+  data = {
+
+  }
+
+  computed = {
+    height () {
+      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+    }
+  };
+
+  methods = {
+
+  }
+
+  events = {
+    'tap-btn' (num) {
+      wx.navigateTo({ url: '/pages/classroom' })
+    }
+  }
+
+  onLoad () {
+
+  }
+}
+</script>
+<style lang="scss">
+@import '../assets/style/mixin.scss';
+.course {
+  color: #58422b;
+  min-height: 100vh;
+  &-info {
+    padding: 32px;
+    &-title {
+      margin-bottom: 8px;
+      font-size: 40px;
+      line-height: 56px;
+    }
+    &-footer {
+      @include flex-center;
+      justify-content: space-between;
+    }
+    &-subtitle {
+      font-size: 24px;
+      color: rgba($color: #58422b, $alpha: 0.5);
+    }
+    &-num {
+      font-size: 24px;
+      color: #ff7c76;
+    }
+  }
+  &-content {
+    padding: 32px;
+  }
+  &-message {
+    @include flex-center;
+    justify-content: flex-start;
+    position: fixed;
+    bottom: 48px;
+    left: 50%;
+    width: 654px;
+    height: 88px;
+    background: #fff;
+    box-shadow:0px 8px 16px 4px rgba(230,194,81,0.4);
+    border-radius: 44px;
+    opacity: 0.9;
+    transform: translateX(-50%);
+    &-icon {
+      @include bg('/word-detail/icon-notice.png');
+      margin-left: 36px;
+      margin-right: 24px;
+      width: 72px;
+      height: 50px;
+    }
+    &-text {
+      font-size: 26px;
+      color: #D18A3B;
+    }
+  }
+}
+</style>

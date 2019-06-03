@@ -1,0 +1,193 @@
+<style lang="scss">
+@import '../assets/style/mixin.scss';
+.item {
+  margin-bottom: 32px;
+  padding-bottom: 32px;
+  border-radius: 32px;
+  overflow: hidden;
+  border: 3px solid #fcde46;
+  box-shadow: 0px 0px 24px 0px rgba(236, 194, 96, 0.24);
+  &-content {
+    box-sizing: border-box;
+    position: relative;
+    padding: 32px 48px;
+    padding-right: 24px;
+
+    background: linear-gradient(
+      90deg,
+      rgba(249, 230, 11, 1) 0%,
+      rgba(253, 219, 85, 1) 100%
+    );
+    &-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 24px;
+      font-size: 28px;
+      color: #ff7c76;
+    }
+    &-body {
+      @include flex-center;
+      justify-content: space-between;
+    }
+    &-left {
+      display: flex;
+      flex-direction: column;
+    }
+    &-title {
+      @include text-overflow(390px);
+      font-size: 30px;
+      font-weight: 500;
+      color: #58422b;
+    }
+    &-date {
+      margin-top: 4px;
+      font-size: 24px;
+    }
+    &-tag {
+      @include flex-center;
+      margin-right: 16px;
+      width: 128px;
+      height: 64px;
+      font-size: 32px;
+      color: #fff;
+      background: rgba(255, 124, 118, 1);
+      border-radius: 0px 16px 0px 32px;
+    }
+    &-btn {
+      @include flex-center;
+      width: 176px;
+      height: 64px;
+      font-size: 26px;
+      color: #39dda9;
+      font-weight: 500;
+      background: rgba(255, 255, 255, 1);
+      border-radius: 36px;
+    }
+  }
+  &-icon {
+    @include bg('/kcml/icon-hand in.png');
+    background-position: center;
+    margin-right: 8px;
+    width: 32px;
+    height: 32px;
+  }
+  &-sub {
+    @include flex-center;
+    margin-top: 32px;
+    &-tag {
+      @include flex-column-center;
+      margin-right: 16px;
+      width: 68px;
+      height: 82px;
+      background: rgba(255, 255, 255, 1);
+      border-radius: 0px 8px 0px 16px;
+      border: 1px solid rgba(61, 203, 255, 1);
+      &-text,
+      &-text-s {
+        @include flex-center;
+        width: 68px;
+        height: 40px;
+        font-size: 24px;
+        color: #fff;
+        background: rgba(61, 203, 255, 1);
+        border-radius: 0px 8px 0px 16px;
+      }
+      &-text-s {
+        height: 42px;
+        background: #fff;
+        color: #3dcbff;
+      }
+    }
+    &-info {
+      display: flex;
+      flex-direction: column;
+    }
+    &-title {
+      @include text-overflow(364px);
+      margin-bottom: 8px;
+      font-size: 28px;
+      color: #58422b;
+    }
+    &-date {
+      font-size: 24px;
+      line-height: 34px;
+      color: #58422b;
+    }
+    &-btn {
+      @include flex-center;
+      align-self: flex-end;
+      width: 120px;
+      font-size: 26px;
+      font-weight: 500;
+      color: #39dda9;
+    }
+  }
+}
+</style>
+<template>
+  <view class="item">
+    <view class="item-content">
+      <view class="item-content-header">
+        <view class="item-content-tag">小班课</view>
+        <text>第一节</text>
+      </view>
+      <view class="item-content-body">
+        <view class="item-content-left">
+          <text class="item-content-title">回家过大年（写人的脸色）…</text>
+          <text class="item-content-date">5月20日</text>
+        </view>
+        <view class="item-content-right">
+          <view class="item-content-btn">
+            <view class="item-icon"></view>
+            交作业
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="item-sub">
+      <view class="item-sub-tag">
+        <text class="item-sub-tag-text">增课</text>
+        <text class="item-sub-tag-text-s">素材</text>
+      </view>
+      <view class="item-sub-info">
+        <view class="item-sub-title">回家过大年（写人的脸色）…</view>
+        <view class="item-sub-date">5月21日</view>
+      </view>
+      <view class="item-sub-btn">
+        <view class="item-icon"></view>
+        回看
+      </view>
+    </view>
+    <view class="item-sub">
+      <view class="item-sub-tag">
+        <text class="item-sub-tag-text">增课</text>
+        <text class="item-sub-tag-text-s">素材</text>
+      </view>
+      <view class="item-sub-info">
+        <view class="item-sub-title">回家过大年（写人的脸色）…</view>
+        <view class="item-sub-date">5月21日</view>
+      </view>
+      <view class="item-sub-btn">
+        <view class="item-icon"></view>
+        回看
+      </view>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+export default class CourseItem extends wepy.component {
+  props = {
+    num: {
+      type: [Number, String],
+      default: 50
+    }
+  }
+
+  methods = {
+    bindTapBtn (num) {
+      this.$emit('tap-btn', num)
+    }
+  }
+}
+</script>

@@ -1,0 +1,32 @@
+@import '../common/index.wxss';
+.van-info {
+  box-sizing: border-box;
+  position: absolute;
+  right: 0;
+  top: 0;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: PingFang SC, Helvetica Neue, Arial, sans-serif;
+  text-align: center;
+  box-sizing: border-box;
+  padding: 6rpx;
+  width: 120rpx;
+  line-height: 34rpx;
+  border: 1px solid #fff;
+  border-radius:8rpx;
+  background-color: #FF4961;
+  -webkit-transform: translate(100%, -60%);
+  transform: translate(100%, -60%);
+  -webkit-transform-origin: 100%;
+  transform-origin: 100%;
+  z-index: 10;
+}
+.van-info-arrow {
+  position: absolute;
+  border: 8rpx solid transparent;
+  border-right-color: #FF4961;
+  left: 0;
+  top: 50%;
+  transform: translate(-100%, -50%);
+}

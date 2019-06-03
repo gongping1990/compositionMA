@@ -1,0 +1,73 @@
+@mixin text-overflow($width: 100px) {
+  width: $width;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+@mixin line-clamp($line: 2) {
+  text-overflow: -o-ellipsis-lastline;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: $line;
+  line-clamp: $line;
+  -webkit-box-orient: vertical;
+  white-space: normal;
+}
+
+@function rpx($value) {
+  @return $value * 1rpx;
+}
+
+// 垂直水平居中
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+// 水平居中
+@mixin flex-x-center {
+  display: flex;
+  justify-content: center;
+}
+
+// 垂直居中
+@mixin flex-y-center {
+  display: flex;
+  align-items: center;
+}
+
+// 垂直布局
+@mixin flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+// 垂直布局垂直水平居中
+@mixin flex-column-center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+// 垂直布局水平居中
+@mixin flex-column-x-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+// 垂直布局垂直居中
+@mixin flex-column-y-center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+@mixin bg($path) {
+  background: url('https://pub.file.k12.vip/tbzw' + $path) no-repeat;
+  background-size: 100%;
+}

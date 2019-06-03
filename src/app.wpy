@@ -1,0 +1,76 @@
+<style lang="scss">
+@import "./vant/common/index.wxss";
+.container {
+  height: 100%;
+  color: #58422b;
+}
+button::after {
+  border: none;
+}
+.container-scroll {
+  position: relative;
+}
+</style>
+
+<script>
+import wepy from 'wepy'
+import 'wepy-async-function'
+
+import { setStore } from 'wepy-redux'
+import configStore from './store'
+
+const store = configStore()
+setStore(store)
+
+export default class extends wepy.app {
+  config = {
+    pages: [
+      'pages/index',
+      'pages/catalog',
+      'pages/classroom',
+      'pages/ready'
+    ],
+    window: {
+      backgroundTextStyle: 'light',
+      navigationBarBackgroundColor: '#fff',
+      navigationBarTitleText: 'WeChat',
+      navigationBarTextStyle: 'black',
+      navigationStyle: 'custom'
+    }
+  }
+
+  globalData = {
+    userInfo: null,
+    systemInfo: null,
+    headHeight: 46
+  }
+
+  constructor() {
+    super()
+    this.use('requestfix')
+  }
+
+  onLaunch () {
+    const that = this
+    wx.getSystemInfo({
+      success (res) {
+        that.globalData.systemInfo = res
+        that.globalData.headHeight = res.statusBarHeight + 46
+      }
+    })
+  }
+
+  getUserInfo (cb) {
+    const that = this
+    if (this.globalData.userInfo) {
+      return this.globalData.userInfo
+    }
+    wepy.getUserInfo({
+      success (res) {
+        that.globalData.userInfo = res.userInfo
+        cb && cb(res.userInfo)
+      }
+    })
+  }
+}
+</script>

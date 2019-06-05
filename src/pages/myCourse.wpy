@@ -1,0 +1,198 @@
+<template>
+  <view class="container p-myCourse">
+    <mHeader title="我的课程"></mHeader>
+    <view class="container-scroll" style="margin-top:{{height}}px">
+      <scroll-view class="item-scroll"
+                   @scrolltolower="bindLoadItem"
+                   scroll-y
+                   scroll-with-animation>
+        <repeat for="{{dataList}}"
+                key="index"
+                index="index"
+                item="item">
+          <view class="p-myCourse-item">
+            <view class="-item-top">
+              <view class="-item-top-tip">体验课</view>
+              <image class="-item-top-img" src="{{item.imgUrl}}"></image>
+            </view>
+            <view class="-item-down">
+              <view class="-item-down-title">
+                {{item.title}}
+                <text>【{{item.grade}}】</text>
+              </view>
+              <view class="-item-down-content">
+                <view class="-content-left">{{item.des}}</view>
+                <view class="-content-right">
+                  <text>共{{item.total}}节课</text>
+                  |
+                  <text>已学{{item.study}}节</text>
+                </view>
+              </view>
+            </view>
+          </view>
+        </repeat>
+      </scroll-view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import mHeader from '../components/header';
+
+  export default class MyCourse extends wepy.page {
+    config = {
+      navigationBarTitleText: '我的课程'
+    };
+    components = {
+      mHeader
+    };
+    computed = {
+      height() {
+        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
+      }
+    };
+
+    data = {
+      page: {
+        current: 1,
+        size: 10,
+        total: ''
+      },
+      dataList: [
+        {
+          imgUrl: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
+          title: '同步作文课',
+          grade: '三年级',
+          des: '每天5-8分钟，学技巧积素材',
+          total: '200',
+          study: '53'
+        },
+        {
+          imgUrl: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
+          title: '同步作文课同步作文课同步作文课同步作文课同步作文课同步作文课同步作文课',
+          grade: '三年级',
+          des: '每天5-8分钟，学技巧积素材每天5-8分钟，学技巧积素材',
+          total: '200',
+          study: '53'
+        },
+        {
+          imgUrl: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
+          title: '同步作文课同步作文课同步作文课同步作文课同步作文课同步作文课同步作文课',
+          grade: '三年级',
+          des: '每天5-8分钟，学技巧积素材每天5-8分钟，学技巧积素材',
+          total: '200',
+          study: '53'
+        }
+      ]
+    };
+
+    methods = {
+      bindLoadItem(data) {
+        console.log(111111);
+        if (this.page.current < Math.ceil(this.page.total / this.page.size)) {
+          this.page.current++;
+          // this.getAccountInfo();
+        }
+      }
+    };
+
+    events = {};
+
+    onLoad() {
+
+    }
+  }
+</script>
+<style lang="scss">
+  @import '../assets/style/mixin.scss';
+
+  .p-myCourse {
+
+    .item-scroll {
+      height: 100vh;
+    }
+
+    &-item {
+      margin: 32px auto;
+      width: 686px;
+      height: 520px;
+      background: rgba(255, 255, 255, 1);
+      box-shadow: 0px 8px 16px 6px rgba(207, 222, 230, 0.5);
+      border-radius: 32px;
+
+      .-item-top {
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+        height: 386px;
+        border-radius: 32px 32px 0px 0px;
+
+        &-tip {
+          @include flex-center;
+
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 176px;
+          height: 68px;
+          background: rgba(57, 221, 169, 0.9);
+          border-radius: 32px 0px 32px 0px;
+          height: 44px;
+          font-size: 32px;
+          font-weight: 500;
+          color: rgba(255, 255, 255, 1);
+          line-height: 44px;
+        }
+
+        &-img {
+          width: 100%;
+          height: 100%;
+        }
+
+      }
+
+      .-item-down {
+        padding: 0 16px;
+
+        &-title {
+          @include text-overflow(600px);
+
+          margin-top: 12px;
+          height: 48px;
+          font-size: 34px;
+          font-weight: 400;
+          color: rgba(88, 66, 43, 1);
+          line-height: 48px;
+        }
+
+        &-content {
+          margin-top: 12px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+
+          .-content-left {
+            @include text-overflow(400px);
+
+            height: 34px;
+            font-size: 24px;
+            font-weight: 400;
+            color: rgba(88, 66, 43, 0.5);
+            line-height: 34px;
+          }
+
+          .-content-right {
+            height: 34px;
+            font-size: 24px;
+            font-weight: 500;
+            color: rgba(255, 137, 131, 1);
+            line-height: 34px;
+          }
+        }
+      }
+    }
+
+  }
+
+</style>

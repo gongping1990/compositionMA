@@ -1,0 +1,47 @@
+<template>
+  <view class="container p-user">
+    <mHeader title="我的课程"></mHeader>
+    <view class="container-scroll" style="margin-top:{{height}}px">
+
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import mHeader from '../components/header'
+
+  export default class MyCourse extends wepy.page {
+    config = {
+      navigationBarTitleText: '我的课程'
+    };
+    components = {
+      mHeader
+    };
+    computed = {
+      height() {
+        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+      }
+    };
+
+    data = {
+
+    };
+
+    methods = {};
+
+    events = {};
+
+    onLoad() {
+
+    }
+  }
+</script>
+<style lang="scss">
+  @import '../assets/style/mixin.scss';
+
+  .p-myCourse {
+
+  }
+
+</style>

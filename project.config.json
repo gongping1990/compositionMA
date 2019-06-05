@@ -29,12 +29,33 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 0,
+			"current": 3,
 			"list": [
 				{
 					"id": 0,
 					"name": "classroom",
 					"pathName": "pages/ready",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "个人中心",
+					"pathName": "pages/user",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": 2,
+					"name": "我的课程",
+					"pathName": "pages/myCourse",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "我的课程",
+					"pathName": "pages/pointNotice",
 					"query": "",
 					"scene": null
 				}

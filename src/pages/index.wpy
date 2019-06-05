@@ -124,6 +124,9 @@ export default class Example extends wepy.page {
       switch (event.detail) {
         case 1:
           wx.navigateTo({ url: '/pages' })
+          break
+        case 3:
+          wx.navigateTo({ url: '/pages/user'})
       }
     },
     bindChangeSwiper (event) {

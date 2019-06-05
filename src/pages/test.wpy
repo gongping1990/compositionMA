@@ -1,0 +1,555 @@
+<!--  -->
+<template>
+  <view class='container test'>
+    <mHeader title="课前热身"></mHeader>
+    <view class="container-scroll"
+          style="margin-top:{{height}}px">
+      <view class="header">
+        <view class="header-left">
+          <image class="header-avatar"
+                 src="" />
+          <text class="header-title">木木老师</text>
+          <text class="header-subtitle">著名写作老师</text>
+        </view>
+        <view class="header-right">
+          <view class="student {{item.status == 1 && 'success'}}"
+                wx:for="{{answerArr}}"
+                wx:key="{{index}}">
+            <image class="student-avatar"
+                   src="" />
+            <view class="student-status">
+              {{item.status ? '已完成' : '答题中...'}}
+            </view>
+            <view class="student-flower"
+                  wx:if="{{item.flower}}">
+              <view class="student-flower-icon"></view>
+              x{{item.flower}}
+            </view>
+          </view>
+
+        </view>
+      </view>
+      <view class="content"
+            style="height:calc(100vh - 254rpx - {{height * 2}}rpx)">
+        <view class="question"
+              wx:if="{{showQuestion}}">
+          <view class="step">
+            <view class="step-item"></view>
+            <view class="step-item"></view>
+          </view>
+          <view class="chart-item">
+            <image class="chart-avatar"
+                   src="" />
+            <view class="chart-right">
+              <text class="chart-title">木木老师</text>
+              <view class="chart-content-wrap">
+                <view class="chart-content">亲爱的小朋友你们好，我是木木老师！ 现在请大家赶快关注我的公众号。关注后请立即与老师联系哦～</view>
+              </view>
+            </view>
+          </view>
+          <view class="input-list">
+            <view class="input-item {{selectIndex == index && 'select'}} {{(setAnswerStatusEnd && (correctAnswer == index)) && 'success'}} {{setAnswerStatusEnd && ((selectIndex == index) && (correctAnswer != index)) && 'error'}}"
+                  wx:for="{{questionArr}}"
+                  wx:key="{{index}}"
+                  @tap="bindClickInput({{index}})">
+              {{item.content}}
+            </view>
+          </view>
+        </view>
+        <view class="chart-item"
+              wx:if="{{!showQuestion}}">
+          <image class="chart-avatar"
+                 src="" />
+          <view class="chart-right">
+            <text class="chart-title">木木老师</text>
+            <view class="chart-content-wrap">
+
+              <view class="chart-content voice">
+                <view class="icon"></view>
+              </view>
+              <view class="chart-time">12’’20’</view>
+            </view>
+          </view>
+        </view>
+        <view class="question-btn-wrap"
+              wx:if="{{showQuestion}}">
+          <view class="question-btn"
+                @tap="clickStudy">下一题</view>
+        </view>
+      </view>
+    </view>
+    <van-popup show="{{ showAlert }}" overlay="{{false}}">
+      <view class="dialog">
+        <image class="dialog-icon" src="{{isSuccess ? 'https://pub.file.k12.vip/tbzw/lspj/icon-satisfaction-selected.png' : 'https://pub.file.k12.vip/tbzw/lspj/icon-discontent-selected.png'}}" />
+        <text class="dialog-text {{isSuccess ? 'success' : 'error'}}">{{isSuccess ? '回答正确' : '回答错误'}}</text>
+      </view>
+    </van-popup>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import mHeader from '@/components/header'
+export default class Example extends wepy.page {
+  config = {
+    navigationBarTitleText: '',
+    'usingComponents': {
+      'van-popup': '../vant/popup/index'
+    }
+  };
+  data = {
+    aduioContext: null,
+    showAlert: true,
+    isSuccess: false,
+    showQuestion: true,
+    selectIndex: -1,
+    correctAnswer: 1,
+    answerEnd: false,
+    setAnswerStatusEnd: false,
+    questionArr: [
+      {
+        content: 'A. 容光焕发',
+        isRight: false
+      },
+      {
+        content: 'B. 满面蜡黄',
+        isRight: false
+      }
+    ],
+    answerArr: [
+      {
+        status: 0,
+        answer: 0,
+        flower: 0
+      },
+      {
+        status: 0,
+        answer: 0,
+        flower: 0
+      },
+      {
+        status: 0,
+        answer: 0,
+        flower: 0
+      },
+      {
+        status: 0,
+        answer: 0,
+        flower: 0
+      }
+    ]
+  };
+  components = {
+    mHeader
+  };
+  methods = {
+    clickStudy () {
+      this.answerArr[3].status = 1
+      this.answerEnd = true
+    },
+    bindClickVoice () {
+      this.stop()
+      this.play()
+    },
+    bindClickInput (i) {
+      console.log(i)
+      this.selectIndex = i
+    }
+  };
+  events = {};
+  watch = {};
+  computed = {
+    height () {
+      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+    }
+  };
+
+  play () {
+    this.audioContext.play()
+  }
+
+  stop () {
+    this.audioContext.stop()
+  }
+
+  alertError () {
+    this.isSuccess = false
+    this.showAlert = true
+  }
+
+  alertSuccess () {
+    this.isSuccess = true
+    this.showAlert = true
+  }
+
+  imitateReady () {
+    let { answerArr } = this
+    let random = parseInt(Math.random() * 3)
+    this.answerArr[random].status = 1
+    console.log(answerArr)
+    if (!(answerArr[0].status && answerArr[1].status && answerArr[2].status)) {
+      console.log(111)
+      setTimeout(() => {
+        this.imitateReady()
+        this.$apply()
+      }, 600)
+    } else {
+      console.log('ready end')
+      if (this.answerEnd) {
+        this.publishAnswer()
+      }
+    }
+  }
+
+  publishAnswer () {
+    this.setAnswerStatus()
+    if (this.selectIndex === this.correctAnswer) {
+      this.alertError()
+      this.answerArr[3].flower += 1
+    } else {
+      this.alertSuccess()
+    }
+  }
+
+  // 设置答题正确还是错误
+  setAnswerStatus () {
+    let isErr = parseInt(Math.random() * 2)
+    let index = parseInt(Math.random() * 3)
+    for (let i = 0; i < 3; i++) {
+      this.answerArr[i].flower += 1
+    }
+    if (isErr) {
+      this.answerArr[index].flower -= 1
+    }
+
+    this.setAnswerStatusEnd = true
+    this.$apply()
+    console.log(this.answerArr)
+  }
+
+  initAudio () {
+    let { audioContext } = this
+    console.log(this.audioContext)
+    audioContext.src = 'https://pub.file.k12.vip/qswd.mp3'
+    // audioContext.play()
+    audioContext.onEnded(() => {
+      console.log('end')
+      this.showQuestion = true
+      this.$apply()
+    })
+  }
+
+  onReady () {
+    console.log('ready')
+    this.audioContext = this.$parent.globalData.audioContext
+    this.initAudio()
+  };
+  onHide () {
+    this.audioContext.stop()
+  };
+}
+</script>
+<style lang='scss'>
+@import '../assets/style/mixin.scss';
+.test {
+  position: relative;
+  .dialog {
+    @include flex-column-center;
+    box-sizing: border-box;
+    padding: 40px;
+    width: 320px;
+    height: 320px;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0px 0px 24px 0px rgba(165, 124, 31, 0.1);
+    border-radius: 32px;
+    &-icon {
+      margin-bottom: 36px;
+      width: 162px;
+      height: 162px;
+    }
+    &-text {
+      font-size: 36px;
+      &.success {
+        color: #39DDA9;
+      }
+      &.error {
+        color: #ff7c76;
+      }
+    }
+  }
+  .input {
+    &-list {
+      padding: 0 48px;
+    }
+    &-item {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-sizing: border-box;
+      margin-top: 48px;
+      padding: 0 60px;
+      width: 100%;
+      height: 100px;
+      font-size: 32px;
+      color: rgba($color: #58422b, $alpha: 0.5);
+      border-radius: 54px;
+      border: 3px solid rgba(61, 53, 45, 0.1);
+      &.select {
+        color: #ffd129;
+        border-color: #ffd129;
+      }
+      &.success {
+        color: #39dda9;
+        border-color: #39dda9;
+        &::after {
+          @include bg('/sk/icon-true.png');
+          content: '';
+          position: absolute;
+          right: 66px;
+          top: 50%;
+          width: 47px;
+          height: 31px;
+          transform: translateY(-50%);
+        }
+      }
+      &.error {
+        color: #ff7c76;
+        border-color: #ff7c76;
+        &::after {
+          @include bg('/sk/icon-fause.png');
+          content: '';
+          position: absolute;
+          right: 64px;
+          top: 50%;
+          width: 43px;
+          height: 43px;
+          transform: translateY(-50%);
+        }
+      }
+    }
+  }
+  .step {
+    display: flex;
+    margin-top: 48px;
+    padding: 0 48px;
+    &-item {
+      flex: 1;
+      margin-right: 48px;
+      height: 4px;
+      background: #f2f2f2;
+      border-radius: 4px;
+      &.error {
+        background: #ff7c76;
+      }
+      &.success {
+        background: #ffaf29;
+      }
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+  }
+  .question {
+    padding-top: 1px;
+    &-btn-wrap {
+      position: absolute;
+      bottom: 48px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    &-btn {
+      @include flex-center;
+      width: 352px;
+      height: 100px;
+      font-size: 32px;
+      background: linear-gradient(
+        90deg,
+        rgba(249, 230, 11, 1) 0%,
+        rgba(253, 219, 85, 1) 100%
+      );
+      box-shadow: 0px 8px 16px 4px rgba(230, 194, 81, 0.4);
+      border-radius: 54px;
+    }
+  }
+  .chart {
+    &-item {
+      display: flex;
+      align-items: flex-start;
+
+      padding: 0 48px;
+      margin-top: 48px;
+    }
+    &-avatar {
+      margin-right: 16px;
+      width: 64px;
+      height: 64px;
+      border-radius: 8px;
+      border: 4px solid rgba(232, 197, 157, 1);
+    }
+    &-right {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+    &-title {
+      margin-bottom: 8px;
+      font-size: 24px;
+      color: rgba($color: #58422b, $alpha: 0.4);
+    }
+    &-time {
+      margin-left: 24px;
+      font-size: 28px;
+      color: #58422b;
+      font-weight: 500;
+    }
+    &-content-wrap {
+      padding-left: 20px;
+      display: flex;
+      align-items: center;
+    }
+    &-content {
+      position: relative;
+      flex: 1;
+      font-size: 28px;
+      line-height: 40px;
+      padding: 24px 32px;
+      background: rgba(255, 245, 209, 1);
+      border-radius: 16px;
+      border: 3px solid rgba(232, 197, 157, 1);
+      &::before {
+        @include bg('/icon.png');
+        content: '';
+        position: absolute;
+        left: -20px;
+        top: 12px;
+        width: 50px;
+        height: 30px;
+      }
+      &.voice .icon {
+        @include bg('/sk/icon-audio.png');
+        margin-left: 16px;
+        width: 26px;
+        height: 43px;
+      }
+    }
+  }
+  &-btn {
+    @include flex-center;
+    position: absolute;
+    left: 50%;
+    bottom: 48px;
+    margin-left: -235px;
+    width: 470px;
+    height: 100px;
+    color: #58422b;
+    font-size: 32px;
+    font-weight: 500;
+    background: linear-gradient(
+      90deg,
+      rgba(249, 230, 11, 1) 0%,
+      rgba(253, 219, 85, 1) 100%
+    );
+    box-shadow: 0px 8px 16px 4px rgba(230, 194, 81, 0.4);
+    border-radius: 54px;
+  }
+  .student {
+    @include flex-center;
+    position: relative;
+    box-sizing: border-box;
+    width: 92px;
+    height: 92px;
+    border: 3px solid #ffaf29;
+    border-radius: 16px;
+    &-flower {
+      @include flex-center;
+      position: absolute;
+      top: -16px;
+      right: -10px;
+      padding: 0 10px;
+      height: 36px;
+      font-size: 20px;
+      color: #58422b;
+      background: rgba(255, 209, 41, 1);
+      border-radius: 18px;
+      border: 3px solid rgba(255, 255, 255, 1);
+      &-icon {
+        @include bg('/sk/icon-flower.png');
+        margin-right: 4px;
+        width: 21px;
+        height: 23px;
+      }
+    }
+    &-avatar {
+      box-sizing: border-box;
+      width: 80px;
+      height: 80px;
+      border-radius: 16px;
+    }
+    &-status {
+      @include flex-center;
+      position: absolute;
+      box-sizing: border-box;
+      bottom: -12px;
+      left: 50%;
+      width: 108px;
+      height: 40px;
+      font-size: 20px;
+      color: #fff;
+      background: #ffaf29;
+      border-radius: 32px;
+      border: 4px solid rgba(255, 255, 255, 1);
+      transform: translateX(-50%);
+    }
+    &.success {
+      border-color: #39dda9;
+      .student-status {
+        background: #39dda9;
+      }
+    }
+  }
+  .header {
+    @include flex-center;
+    @include bg('/sk/backgroud1.png');
+    justify-content: space-between;
+    padding: 0 32px;
+    height: 254px;
+    &-left {
+      @include flex-column-center;
+    }
+    &-right {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-sizing: border-box;
+      padding: 0 28px;
+      width: 520px;
+      height: 136px;
+      border-radius: 48px;
+      border: 3px dashed rgba(61, 53, 45, 0.1);
+    }
+    &-avatar {
+      margin-bottom: 4px;
+      width: 88px;
+      height: 88px;
+      box-shadow: 0px 0px 24px 0px rgba(175, 126, 0, 0.2);
+      border-radius: 16px;
+      border: 4px solid rgba(232, 197, 157, 1);
+    }
+    &-title {
+      font-size: 28px;
+      line-height: 40px;
+      color: #58422b;
+    }
+    &-subtitle {
+      font-size: 20px;
+      line-height: 28px;
+      color: rgba($color: #58422b, $alpha: 0.5);
+    }
+  }
+  .content {
+    position: relative;
+    overflow-y: auto;
+  }
+}
+</style>

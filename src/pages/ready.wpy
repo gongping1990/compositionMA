@@ -2,23 +2,67 @@
 <template>
   <view class='container ready'>
     <mHeader title="课前热身"></mHeader>
-    <view class="container-scroll">
+    <view class="container-scroll"
+          style="margin-top:{{height}}px">
       <view class="header">
         <view class="header-left">
-          <image class="header-avatar teacher"
+          <image class="header-avatar"
                  src="" />
           <text class="header-title">木木老师</text>
           <text class="header-subtitle">著名写作老师</text>
         </view>
         <view class="header-right">
-          <view class="header-student">
-            <image class="header-avatar teacher"
+          <view class="header-student {{readyArr[0] && 'isReady'}}">
+            <image class="header-student-avatar"
+                   src="" />
+            <view class="header-status">准备中...</view>
+          </view>
+          <view class="header-student {{readyArr[1] && 'isReady'}}">
+            <image class="header-student-avatar"
+                   src="" />
+            <view class="header-status">准备中...</view>
+          </view>
+          <view class="header-student {{readyArr[2] && 'isReady'}}">
+            <image class="header-student-avatar"
+                   src="" />
+            <view class="header-status">准备中...</view>
+          </view>
+          <view class="header-student {{readyArr[3] && 'isReady'}}">
+            <image class="header-student-avatar"
                    src="" />
             <view class="header-status">准备中...</view>
           </view>
         </view>
       </view>
+      <view class="content"
+            style="height:calc(100vh - 254rpx - {{height * 2}}rpx)">
+        <view class="chart-item">
+          <image class="chart-avatar"
+                 src="" />
+          <view class="chart-right">
+            <text class="chart-title">木木老师</text>
+            <view class="chart-content-wrap">
+
+              <view class="chart-content voice">
+                <view class="icon"></view>
+              </view>
+              <view class="chart-time">12’’20’</view>
+            </view>
+          </view>
+        </view>
+        <view class="chart-item">
+          <image class="chart-avatar"
+                 src="" />
+          <view class="chart-right">
+            <text class="chart-title">木木老师</text>
+            <view class="chart-content-wrap">
+              <view class="chart-content">亲爱的小朋友你们好，我是木木老师！ 现在请大家赶快关注我的公众号。关注后请立即与老师联系哦～</view>
+            </view>
+          </view>
+        </view>
+      </view>
     </view>
+    <view class="ready-btn" @tap="clickStudy">开始上课（3s）</view>
   </view>
 </template>
 <script>
@@ -28,25 +72,209 @@ export default class Example extends wepy.page {
   config = {
     navigationBarTitleText: ''
   };
-  data = {};
+  data = {
+    aduioContext: null,
+    readyArr: [0, 0, 0, 0]
+  };
   components = {
     mHeader
   };
-  methods = {};
+  methods = {
+    clickStudy() {
+      wx.navigateTo({ url: '/pages/study' })
+    }
+  };
   events = {};
   watch = {};
-  computed = {};
-  onLoad () { };
+  computed = {
+    height () {
+      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+    }
+  };
+
+  imitateReady () {
+    console.log(this)
+    let { readyArr } = this
+    let random = parseInt(Math.random() * 3)
+    this.readyArr[random] = 1
+    console.log(readyArr)
+    if (!(readyArr[0] && readyArr[1] && readyArr[2])) {
+      console.log(111)
+      setTimeout(() => {
+        this.imitateReady()
+        this.$apply()
+      }, 300)
+    } else {
+
+    }
+  }
+
+  onLoad () {
+    this.aduioContext = this.$parent.globalData.aduioContext
+  };
   onShow () { };
 }
 </script>
 <style lang='scss'>
+@import '../assets/style/mixin.scss';
 .ready {
+  position: relative;
+  .chart {
+    &-item {
+      display: flex;
+      align-items: flex-start;
+
+      padding: 0 48px;
+      margin-top: 48px;
+    }
+    &-avatar {
+      margin-right: 16px;
+      width: 64px;
+      height: 64px;
+      border-radius: 8px;
+      border: 4px solid rgba(232, 197, 157, 1);
+    }
+    &-right {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+    &-title {
+      margin-bottom: 8px;
+      font-size: 24px;
+      color: rgba($color: #58422b, $alpha: 0.4);
+    }
+    &-time {
+      margin-left: 24px;
+      font-size: 28px;
+      color: #58422b;
+      font-weight: 500;
+    }
+    &-content-wrap {
+      padding-left: 20px;
+      display: flex;
+      align-items: center;
+    }
+    &-content {
+      position: relative;
+      flex: 1;
+      font-size: 28px;
+      line-height: 40px;
+      padding: 24px 32px;
+      background: rgba(255, 245, 209, 1);
+      border-radius: 16px;
+      border: 3px solid rgba(232, 197, 157, 1);
+      &::before {
+        @include bg('/icon.png');
+        content: '';
+        position: absolute;
+        left: -20px;
+        top: 12px;
+        width: 50px;
+        height: 30px;
+      }
+      &.voice .icon {
+        @include bg('/sk/icon-audio.png');
+        margin-left: 16px;
+        width: 26px;
+        height: 43px;
+      }
+    }
+  }
+  &-btn {
+    @include flex-center;
+    position: absolute;
+    left: 50%;
+    bottom: 48px;
+    margin-left: -235px;
+    width: 470px;
+    height: 100px;
+    color: #58422b;
+    font-size: 32px;
+    font-weight: 500;
+    background: linear-gradient(
+      90deg,
+      rgba(249, 230, 11, 1) 0%,
+      rgba(253, 219, 85, 1) 100%
+    );
+    box-shadow: 0px 8px 16px 4px rgba(230, 194, 81, 0.4);
+    border-radius: 54px;
+  }
   .header {
+    @include flex-center;
     @include bg('/sk/backgroud1.png');
-    width: 750px;
-    height: 372px;
-    background: rgba(255, 255, 255, 1);
+    justify-content: space-between;
+    padding: 0 32px;
+    height: 254px;
+    &-left {
+      @include flex-column-center;
+    }
+    &-right {
+      @include flex-center;
+      justify-content: space-between;
+      box-sizing: border-box;
+      padding: 0 28px;
+      width: 520px;
+      height: 136px;
+      border-radius: 48px;
+      border: 4px dashed rgba(61, 203, 255, 1);
+    }
+    &-avatar {
+      margin-bottom: 4px;
+      width: 88px;
+      height: 88px;
+      box-shadow: 0px 0px 24px 0px rgba(175, 126, 0, 0.2);
+      border-radius: 16px;
+      border: 4px solid rgba(232, 197, 157, 1);
+    }
+    &-student {
+      position: relative;
+      border: 3px solid #000;
+      border-radius: 16px;
+      opacity: 0.3;
+      &-avatar {
+        width: 80px;
+        height: 80px;
+        box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.1);
+        border-radius: 16px;
+        border: 3px solid rgba(255, 255, 255, 1);
+      }
+      &.isReady {
+        opacity: 1;
+        border-color: #39dda9;
+        .header-status {
+          background: #39dda9;
+        }
+      }
+    }
+    &-status {
+      @include flex-center;
+      position: absolute;
+      left: 50%;
+      bottom: -12px;
+      width: 108px;
+      height: 40px;
+      font-size: 20px;
+      color: #fff;
+      margin-left: -54px;
+      background: #000000;
+      border-radius: 32px;
+      border: 4px solid rgba(255, 255, 255, 1);
+    }
+    &-title {
+      font-size: 28px;
+      line-height: 40px;
+      color: #58422b;
+    }
+    &-subtitle {
+      font-size: 20px;
+      line-height: 28px;
+      color: rgba($color: #58422b, $alpha: 0.5);
+    }
+  }
+  .content {
+    overflow-y: auto;
   }
 }
 </style>

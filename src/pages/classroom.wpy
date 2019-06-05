@@ -36,7 +36,7 @@
           <view class="classroom-item-btn">4号小教室</view>
         </view>
       </view>
-      <view class="classroom-btn">快速进入教室</view>
+      <view class="classroom-btn" @tap="bindClickRoom">快速进入教室</view>
     </view>
   </view>
 </template>
@@ -55,6 +55,11 @@ export default class Classroom extends wepy.page {
       return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
     }
   };
+  methods = {
+    bindClickRoom() {
+      wx.navigateTo({ url: '/pages/ready' })
+    }
+  }
 }
 </script>
 <style lang='scss'>

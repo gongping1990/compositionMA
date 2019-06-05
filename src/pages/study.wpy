@@ -1,0 +1,744 @@
+<!--  -->
+<template>
+  <view class='container study'>
+    <mHeader title=""
+             bgColor="transparent"
+             flag="3"></mHeader>
+    <view @tap="bindClosePopup">
+      <video class="video"
+             id="video"
+             show-center-play-btn="{{false}}"
+             enable-progress-gesture="{{progressEnable}}"
+             autoplay
+             controls="{{controls}}"
+             @timeupdate="bindtimeupdate"
+             src="https://pub.file.k12.vip/1559615081097740.mp4"></video>
+    </view>
+    <view class="avatar-mask">
+      <image class="avatar teacher" />
+      <view class="student">
+        <view class="avatar-student"
+              wx:for="{{answerArr}}"
+              wx:key="{{index}}">
+          <image class="avatar" />
+          <view class="medal"
+                wx:if="{{item.flower}}">
+            <view class="medal-icon"></view>
+            x{{item.flower}}
+          </view>
+        </view>
+      </view>
+    </view>
+    <van-popup show="{{ show }}"
+               position="bottom">
+      <view class="popup">
+        <view class="popup-header">
+          <view class="popup-header-left">
+            <view class="popup-icon-dt"></view>
+            <text>请答题</text>
+          </view>
+          <view class="popup-header-right">
+            <view class="popup-student {{item.status == 1 && 'success'}} {{item.answer == 2 && 'error'}} {{item.status == 2 && 'fq'}}"
+                  wx:for="{{answerArr}}"
+                  wx:key="{{index}}">
+              <image class="popup-student-avatar"
+                     src="" />
+              <view class="popup-student-status">
+                {{item.answer ? (item.answer ==1 ? '正确' : item.answer ==2 ? '错误' : '已放弃') : (item.status == 2 ? '已放弃' : item.status ? '已回答' : '答题中...')}}
+              </view>
+              <view class="popup-student-flower"
+                    wx:if="{{item.flower}}">
+                <view class="popup-student-flower-icon"></view>
+                x{{item.flower}}
+              </view>
+            </view>
+
+          </view>
+        </view>
+        <view wx:if="{{showResult}}">
+          <view class="result-header">
+            <text class="result-title">恭喜以下{{correctNum}}位同学</text>
+            <view class="result-header-icon"></view>
+          </view>
+          <view class="result-list">
+            <view class="result-item"
+                  wx:for="{{answerArr}}"
+                  wx:key="index"
+                  wx:if="{{item.answer==1}}">
+              <image class="result-avatar"
+                     src="" />
+              <view class="result-icon"></view>
+            </view>
+          </view>
+        </view>
+        <view class="popup-content"
+              wx:if="{{!showResult}}">
+          <text class="popup-content-title">他考上了心仪的大学，脸上的表情总是最近______。</text>
+          <view class="input-list">
+            <view class="input-item {{selectIndex == index && 'select'}} {{(setAnswerStatusEnd && (correctAnswer == index)) && 'success'}} {{setAnswerStatusEnd && ((selectIndex == index) && (correctAnswer != index)) && 'error'}}"
+                  wx:for="{{questionArr}}"
+                  wx:key="{{index}}"
+                  @tap="bindClickInput({{index}})">
+              {{item.content}}
+            </view>
+          </view>
+        </view>
+        <button class="popup-btn {{answerEnd && 'disabled'}} {{answerArr[3].answer == 1 ? 'suc' : answerArr[3].answer == 2 ? 'err' : answerArr[3].answer == 3 && 'fq'}}"
+                disabled="{{answerEnd}}"
+                wx:if="{{!showResult}}"
+                @tap="bindSubmit">
+          {{answerArr[3].answer ? (answerArr[3].answer == 1 ? '回答正确' : answerArr[3].status == 2 ? '你已放弃作答' : '回答错误') : (answerEnd ? '等待老师公布答案' : '确定答案（' + time + 's)')}}
+        </button>
+      </view>
+    </van-popup>
+    <van-popup show="{{ showDialog }}">
+      <view class="dialog out">
+        <view class="dialog-title">课程还没有上完，</view>
+        <view class="dialog-title">确定要退出吗？</view>
+        <view class="dialog-btn-wrap">
+          <view class="dialog-btn dialog-cancel" @tap="bindClickCancel">确认退出</view>
+          <view class="dialog-btn dialog-confirm" @tap="bindClickConfirm">继续观看</view>
+        </view>
+      </view>
+    </van-popup>
+    <van-popup show="{{ showContinueDiaolig }}">
+      <view class="dialog out">
+        <view class="dialog-title">你上次已经学习到3分52秒</view>
+        <view class="dialog-title">是否要继续</view>
+        <view class="dialog-btn-wrap">
+          <view class="dialog-btn dialog-cancel" @tap="bindClickReset">从头再看</view>
+          <view class="dialog-btn dialog-confirm" @tap="bindClickConfirm">继续观看</view>
+        </view>
+      </view>
+    </van-popup>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import mHeader from '../components/header'
+export default class Example extends wepy.page {
+  config = {
+    navigationBarTitleText: '',
+    'usingComponents': {
+      'van-popup': '../vant/popup/index'
+    }
+  };
+  data = {
+    videoContext: null,
+    show: false,
+    showDialog: false,
+    showContinueDiaolig: false,
+    showResult: false,
+    controls: false,
+    progressEnable: false,
+    selectIndex: -1,
+    time: 20,
+    baseTime: 20,
+    randomTime: 0,
+    answerEnd: false,
+    imitateEnd: false,
+    setAnswerStatusEnd: false,
+    correctAnswer: 1,
+    questionArr: [
+      {
+        content: 'A. 容光焕发',
+        isRight: false
+      },
+      {
+        content: 'B. 满面蜡黄',
+        isRight: false
+      }
+    ],
+    answerArr: [
+      {
+        status: 0,
+        answer: 0,
+        flower: 0
+      },
+      {
+        status: 0,
+        answer: 0,
+        flower: 0
+      },
+      {
+        status: 0,
+        answer: 0,
+        flower: 0
+      },
+      {
+        status: 0,
+        answer: 0,
+        flower: 0
+      }
+    ],
+    currentTime: 0,
+    isPlay: true
+  };
+  components = {
+    mHeader
+  };
+  watch = {
+    isPlay (n) {
+      console.log(n)
+      if (n) {
+        this.videoContext.play()
+      } else {
+        this.videoContext.pause()
+      }
+    }
+  }
+  methods = {
+    bindClickReset() {
+
+    },
+    bindClickCancel() {
+      this.showDialog = false
+      this.showContinueDiaolig = false
+      wx.navigateBack({})
+    },
+    bindClickConfirm() {
+      this.showDialog = false
+      this.showContinueDiaolig = false
+      this.videoContext.play()
+    },
+    bindClosePopup () {
+      this.show = !this.show
+      this.reset()
+      if (this.show) {
+        setTimeout(() => {
+          this.downTime()
+        }, 500)
+      }
+    },
+    bindClickInput (i) {
+      console.log(i)
+      this.selectIndex = i
+    },
+    bindSubmit () {
+      this.answerArr[3].status = 1
+      this.answerEnd = true
+      this.imitateEnd && (this.time = 1)
+    },
+    bindtimeupdate (event) {
+      let { currentTime } = event.detail
+      if (this.currentTime !== parseInt(currentTime)) {
+        this.currentTime = parseInt(currentTime)
+        console.log(this.currentTime)
+        if (this.currentTime === 20) {
+          this.showDialog = false
+          this.show = true
+          this.isPlay = false
+          this.setRandomTime()
+          setTimeout(() => {
+            this.downTime()
+          }, 1000)
+        }
+        if (this.currentTime === 40) {
+          this.show = true
+          this.isPlay = false
+          this.setRandomTime()
+          setTimeout(() => {
+            this.downTime()
+          }, 1000)
+        }
+      }
+    }
+  };
+  events = {
+    back() {
+      this.videoContext.pause()
+      this.showDialog = true
+    }
+  };
+  computed = {
+    correctNum () {
+      let num = 0
+      this.answerArr.forEach(e => {
+        if (e.answer === 1) {
+          num += 1
+        }
+      })
+      return num
+    }
+  };
+  // 倒计时
+  downTime () {
+    console.log(this.time)
+    if (this.time === this.randomTime) {
+      this.imitateAnswer()
+    }
+    if (this.time > 1) {
+      this.time -= 1
+      setTimeout(() => {
+        this.downTime()
+      }, 1000)
+    } else {
+      console.log('play')
+      this.isPlay = true
+      this.answerEnd = true
+      this.answerArr[3].status = this.selectIndex > -1 ? 1 : 2
+      setTimeout(() => {
+        this.setAnswerStatus()
+      }, 2000)
+    }
+    this.$apply()
+  }
+  // 模拟作答
+  imitateAnswer () {
+    let { answerArr } = this
+    let random = parseInt(Math.random() * 3)
+    this.answerArr[random].status = 1
+    if (!(answerArr[0].status && answerArr[1].status && answerArr[2].status)) {
+      setTimeout(() => {
+        this.imitateAnswer()
+        this.$apply()
+      }, 600)
+    } else {
+      this.imitateEnd = true
+      if (this.answerEnd) {
+        this.time = 1
+      }
+    }
+  }
+  // 设置随机基数
+  setRandomTime () {
+    this.randomTime = parseInt(this.baseTime * (Math.random() * 0.3 + 0.5))
+  }
+  // 设置答题正确还是错误
+  setAnswerStatus () {
+    let isErr = parseInt(Math.random() * 2)
+    let index = parseInt(Math.random() * 3)
+    for (let i = 0; i < 3; i++) {
+      this.answerArr[i].answer = 1
+    }
+    if (isErr) {
+      this.answerArr[index].answer = 2
+    }
+    if (this.selectIndex > -1) {
+      // eslint-disable-next-line eqeqeq
+      this.answerArr[3].answer = this.selectIndex == this.correctAnswer ? 1 : 2
+    } else {
+      this.answerArr[3].answer = 3
+    }
+    this.setAnswerStatusEnd = true
+    setTimeout(() => {
+      this.showResult = true
+      this.answerArr.forEach((e, i) => {
+        if (e.answer === 1) {
+          this.answerArr[i].flower += 1
+        }
+      })
+      this.$apply()
+      setTimeout(() => {
+        this.show = false
+        this.reset()
+        this.$apply()
+      }, 3000)
+    }, 3000)
+    this.$apply()
+    console.log(this.answerArr)
+  }
+  // 重制数据
+  reset () {
+    this.selectIndex = -1
+    this.answerEnd = false
+    this.showResult = false
+    this.imitateEnd = false
+    this.setAnswerStatusEnd = false
+    this.time = this.baseTime
+    this.answerArr = [
+      {
+        status: 0,
+        answer: 0,
+        flower: this.answerArr[0].flower
+      },
+      {
+        status: 0,
+        answer: 0,
+        flower: this.answerArr[1].flower
+      },
+      {
+        status: 0,
+        answer: 0,
+        flower: this.answerArr[2].flower
+      },
+      {
+        status: 0,
+        answer: 0,
+        flower: this.answerArr[3].flower
+      }
+    ]
+    this.setRandomTime()
+  }
+  onLoad () {
+  };
+  onReady () {
+    this.videoContext = wx.createVideoContext('video')
+  }
+  onShow () {
+
+  };
+}
+</script>
+<style lang='scss'>
+@import '../assets/style/mixin.scss';
+.study {
+  height: 100vh;
+  overflow: hidden;
+  .dialog {
+    @include flex-column-center;
+    box-sizing: border-box;
+    padding: 70px 42px;
+    width: 590px;
+    height: 366px;
+    background: rgba(255, 255, 255, 1);
+    border-radius: 32px;
+    &-title {
+      font-size: 36px;
+      color: #58422b;
+      font-weight: 500;
+      line-height: 50px;
+    }
+    &-btn-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 48px;
+      width: 100%;
+    }
+    &-btn {
+      @include flex-center;
+      width: 224px;
+      height: 76px;
+      color: rgba($color: #58422b, $alpha: 0.5);
+      font-size: 32px;
+      border-radius: 40px;
+      border: 2px solid rgba(88, 66, 43, 0.1);
+    }
+    &-confirm {
+      color: #58422b;
+      border-color: #FCDD48;
+      background: linear-gradient(
+        90deg,
+        rgba(249, 230, 11, 1) 0%,
+        rgba(253, 219, 85, 1) 100%
+      );
+      box-shadow: 0px 8px 16px 4px rgba(230, 194, 81, 0.4);
+    }
+  }
+  .result {
+    &-header {
+      @include flex-column-center;
+      @include bg('/sk/image1.png');
+      margin: 32px 0;
+      width: 100%;
+      height: 234px;
+      &-icon {
+        @include bg('/sk/image2.png');
+        width: 262px;
+        height: 64px;
+      }
+    }
+    &-title {
+      margin-bottom: 16px;
+      font-size: 44px;
+      font-weight: 500;
+      color: #58422b;
+      line-height: 60px;
+    }
+    &-list {
+      @include flex-center;
+      flex-wrap: wrap;
+      margin: 0 auto;
+      margin-bottom: 40px;
+      width: 468px;
+    }
+    &-item {
+      @include flex-center;
+      position: relative;
+      box-sizing: border-box;
+      margin: 0 50px;
+      margin-bottom: 46px;
+      width: 134px;
+      height: 134px;
+      box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.1);
+      border-radius: 16px;
+      border: 3px solid #39dda9;
+    }
+    &-avatar {
+      width: 128px;
+      height: 128px;
+      border-radius: 16px;
+    }
+    &-icon {
+      @include bg('/sk/icon-flower.png');
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      width: 75px;
+      height: 81px;
+      transform: translate(-50%, 50%);
+    }
+  }
+  .popup {
+    width: 100vw;
+    padding-bottom: 10px;
+    box-shadow: 0px 8px 24px 0px rgba(236, 194, 96, 0.1);
+    border-radius: 48px 48px 0px 0px;
+    background: #fff;
+    &-btn {
+      @include flex-center;
+      margin: 0 auto;
+      margin-top: 32px;
+      margin-bottom: 48px;
+      width: 654px;
+      height: 100px;
+      font-size: 32px;
+      color: #58422b;
+      background: linear-gradient(
+        90deg,
+        rgba(249, 230, 11, 1) 0%,
+        rgba(253, 219, 85, 1) 100%
+      );
+      box-shadow: 0px 8px 16px 4px rgba(230, 194, 81, 0.4);
+      border-radius: 54px;
+      &.disabled {
+        box-shadow: none;
+        background: #f2f2f2;
+        color: rgba($color: #58422b, $alpha: 0.3);
+      }
+      &.err {
+        color: #ff7c76;
+      }
+      &.suc {
+        color: #39dda9;
+      }
+      &.fq {
+        color: #ffd129;
+      }
+    }
+    .input {
+      &-item {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-sizing: border-box;
+        margin-top: 48px;
+        padding: 0 60px;
+        width: 100%;
+        height: 100px;
+        font-size: 32px;
+        color: rgba($color: #58422b, $alpha: 0.5);
+        border-radius: 54px;
+        border: 3px solid rgba(61, 53, 45, 0.1);
+        &.select {
+          color: #ffd129;
+          border-color: #ffd129;
+        }
+        &.success {
+          color: #39dda9;
+          border-color: #39dda9;
+          &::after {
+            @include bg('/sk/icon-true.png');
+            content: '';
+            position: absolute;
+            right: 66px;
+            top: 50%;
+            width: 47px;
+            height: 31px;
+            transform: translateY(-50%);
+          }
+        }
+        &.error {
+          color: #ff7c76;
+          border-color: #ff7c76;
+          &::after {
+            @include bg('/sk/icon-fause.png');
+            content: '';
+            position: absolute;
+            right: 64px;
+            top: 50%;
+            width: 43px;
+            height: 43px;
+            transform: translateY(-50%);
+          }
+        }
+      }
+    }
+    &-content {
+      padding: 46px;
+      &-title {
+        font-size: 36px;
+        line-height: 50px;
+      }
+    }
+    &-student {
+      @include flex-center;
+      position: relative;
+      box-sizing: border-box;
+      width: 92px;
+      height: 92px;
+      border: 3px solid #ffaf29;
+      border-radius: 16px;
+      &-flower {
+        @include flex-center;
+        position: absolute;
+        top: -16px;
+        right: -10px;
+        padding: 0 10px;
+        height: 36px;
+        font-size: 20px;
+        color: #58422b;
+        background: rgba(255, 209, 41, 1);
+        border-radius: 18px;
+        border: 3px solid rgba(255, 255, 255, 1);
+        &-icon {
+          @include bg('/sk/icon-flower.png');
+          margin-right: 4px;
+          width: 21px;
+          height: 23px;
+        }
+      }
+      &-avatar {
+        box-sizing: border-box;
+        width: 80px;
+        height: 80px;
+        border-radius: 16px;
+      }
+      &-status {
+        @include flex-center;
+        position: absolute;
+        box-sizing: border-box;
+        bottom: -12px;
+        left: 50%;
+        width: 108px;
+        height: 40px;
+        font-size: 20px;
+        color: #fff;
+        background: #ffaf29;
+        border-radius: 32px;
+        border: 4px solid rgba(255, 255, 255, 1);
+        transform: translateX(-50%);
+      }
+      &.success {
+        border-color: #39dda9;
+        .popup-student-status {
+          background: #39dda9;
+        }
+      }
+      &.error {
+        border-color: #ff7c76;
+        .popup-student-status {
+          background: #ff7c76;
+        }
+      }
+      &.fq {
+        border-color: #000000;
+        opacity: 0.2;
+        .popup-student-status {
+          background: #000000;
+        }
+      }
+    }
+    &-icon-dt {
+      @include bg('/sk/icon-question.png');
+      margin-bottom: 16px;
+      width: 55px;
+      height: 66px;
+    }
+    &-header {
+      @include flex-center;
+      padding-top: 32px;
+      padding-bottom: 48px;
+      border-bottom: 2px solid rgba($color: #3d352d, $alpha: 0.1);
+      &-left {
+        @include flex-column-center;
+        margin-right: 50px;
+        font-size: 28px;
+      }
+      &-right {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-sizing: border-box;
+        padding: 0 28px;
+        width: 520px;
+        height: 136px;
+        border-radius: 48px;
+        border: 3px dashed rgba(61, 53, 45, 0.1);
+      }
+    }
+  }
+  .video {
+    width: 100vw;
+    height: 100vh;
+  }
+  .avatar-mask {
+    @include flex-center;
+    @include bg('/bg@3x.png');
+    align-items: flex-start;
+    justify-content: space-between;
+    background-position-y: bottom;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding-left: 46px;
+    padding-right: 30px;
+    height: 122px;
+    z-index: 99;
+  }
+  .student {
+    @include flex-center;
+  }
+  .avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 16px;
+    border: 4px solid #fff;
+    &.teacher {
+      width: 88px;
+      height: 88px;
+      box-shadow: 0px 88px 8px 0px rgba(0, 0, 0, 0.3);
+      border-radius: 16px;
+      border: 4px solid rgba(232, 197, 157, 1);
+    }
+    &-student {
+      @include flex-center;
+      position: relative;
+      margin: 0 16px;
+      width: 88px;
+      height: 88px;
+      border-radius: 16px;
+      border: 4px solid #39dda9;
+      box-shadow: 0px 88px 8px 0px rgba(0, 0, 0, 0.3);
+      .avatar {
+        box-sizing: border-box;
+        width: 100%;
+        height: 100%;
+        border-radius: 14px;
+      }
+      .medal {
+        @include flex-center;
+        position: absolute;
+        right: -22px;
+        top: -21px;
+        padding: 0 10px;
+        height: 36px;
+        font-size: 20px;
+        color: #58422b;
+        background: rgba(255, 209, 41, 1);
+        border-radius: 18px;
+        border: 3px solid rgba(255, 255, 255, 1);
+        &-icon {
+          @include bg('/sk/icon-flower.png');
+          margin-right: 4px;
+          width: 22px;
+          height: 24px;
+        }
+      }
+    }
+  }
+}
+</style>

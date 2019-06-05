@@ -28,7 +28,9 @@ export default class extends wepy.app {
       'pages/index',
       'pages/catalog',
       'pages/classroom',
-      'pages/ready'
+      'pages/ready',
+      'pages/study',
+      'pages/test'
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -42,7 +44,8 @@ export default class extends wepy.app {
   globalData = {
     userInfo: null,
     systemInfo: null,
-    headHeight: 46
+    headHeight: 46,
+    audioContext: wx.createInnerAudioContext()
   }
 
   constructor() {

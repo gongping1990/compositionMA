@@ -37,10 +37,10 @@
 </template>
 
 <script>
-  import wepy from 'wepy';
-  import mHeader from '../components/header';
+  import wepy from 'wepy'
+import mHeader from '../components/header'
 
-  export default class MyCourse extends wepy.page {
+export default class MyCourse extends wepy.page {
     config = {
       navigationBarTitleText: '我的课程'
     };
@@ -49,7 +49,7 @@
     };
     computed = {
       height() {
-        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
+        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
       }
     };
 
@@ -89,9 +89,9 @@
 
     methods = {
       bindLoadItem(data) {
-        console.log(111111);
+        console.log(111111)
         if (this.page.current < Math.ceil(this.page.total / this.page.size)) {
-          this.page.current++;
+          this.page.current++
           // this.getAccountInfo();
         }
       }

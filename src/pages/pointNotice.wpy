@@ -29,10 +29,10 @@
 </template>
 
 <script>
-  import wepy from 'wepy';
-  import mHeader from '../components/header';
+  import wepy from 'wepy'
+  import mHeader from '../components/header'
 
-  export default class Notice extends wepy.page {
+export default class Notice extends wepy.page {
     config = {
       navigationBarTitleText: '点赞通知'
     };
@@ -41,7 +41,7 @@
     };
     computed = {
       height() {
-        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
+        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
       }
     };
 
@@ -89,8 +89,8 @@
       bindLoadItem(data) {
         console.log(111111)
         if (this.page.current < Math.ceil(this.page.total / this.page.size)) {
-          this.page.current++;
-          // this.getAccountInfo();
+          this.page.current++
+        // this.getAccountInfo();
         }
       }
     };

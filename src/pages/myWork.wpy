@@ -37,10 +37,10 @@
 </template>
 
 <script>
-  import wepy from 'wepy';
-  import mHeader from '../components/header';
+  import wepy from 'wepy'
+import mHeader from '../components/header'
 
-  export default class MyWork extends wepy.page {
+export default class MyWork extends wepy.page {
     config = {
       navigationBarTitleText: '我的作业'
     };
@@ -49,7 +49,7 @@
     };
     computed = {
       height() {
-        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
+        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
       }
     };
 
@@ -85,10 +85,10 @@
 
     methods = {
       changeTab(num) {
-        this.tabActive = num;
+        this.tabActive = num
       },
       toDetail(params) {
-        wx.navigateTo({ url: `/pages/myWorkAll?type=${this.tabActive}&name=${params.name}&grade=${params.grade}`});
+        wx.navigateTo({url: `/pages/myWorkAll?type=${this.tabActive}&name=${params.name}&grade=${params.grade}`})
       }
     };
 

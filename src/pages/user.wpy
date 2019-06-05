@@ -97,13 +97,16 @@
       toJump(data) {
         switch (data) {
           case 1:
-            wx.navigateTo({ url: '/pages/myCourse' })
+            wx.navigateTo({ url: '/pages/myCourse' });
+            break;
+          case 2:
+            wx.navigateTo({ url: '/pages/myWork' });
             break;
           case 3:
-            wx.navigateTo({ url: '/pages/pointNotice' })
+            wx.navigateTo({ url: '/pages/pointNotice' });
             break;
           case 4:
-            wx.navigateTo({ url: '/pages/recognitionNotice' })
+            wx.navigateTo({ url: '/pages/recognitionNotice' });
             break;
         }
       }

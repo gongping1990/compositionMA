@@ -1,0 +1,213 @@
+<template>
+  <view class="container p-myWork">
+    <mHeader title="我的作业"></mHeader>
+    <view class="container-scroll" style="margin-top:{{height}}px">
+      <view class="p-myWork-tab">
+        <view class="-tab-text {{tabActive === '1' ? '-active' : ''}}" @tap="changeTab({{'1'}})">未提交</view>
+        <view class="-tab-text {{tabActive === '2' ? '-active' : ''}}" @tap="changeTab({{'2'}})">已提交</view>
+      </view>
+      <repeat for="{{dataList}}" key="index" index="index" item="list">
+        <view class="p-myWork-list">
+          <view class="-list-title">
+            <view class="-list-title-left">{{list.name}}【{{list.grade}}】</view>
+            <view class="-list-title-right" @tap="toDetail({{list}})">
+              查看全部
+              <image class="-icon" src="https://pub.file.k12.vip/tbzw/word/icon-return.png"></image>
+            </view>
+          </view>
+          <repeat for="{{list.workList}}" key="index" index="index" item="item">
+            <view class="-list-item">
+              <view class="-list-item-left">
+                <view class="-num">0{{index+1}}</view>
+                <view class="-name">{{item.name}}</view>
+              </view>
+              <view class="-list-item-right">
+                <image class="-icon" wx:if="{{tabActive==='1'}}"
+                       src="https://pub.file.k12.vip/2019/06/05/1136167662351831042.png"></image>
+                <image class="-icon" wx:if="{{tabActive==='2'}}"
+                       src="https://pub.file.k12.vip/2019/06/05/1136167768069263362.png"></image>
+                {{tabActive==='1' ? '交作业' : '看点评'}}
+              </view>
+            </view>
+          </repeat>
+        </view>
+      </repeat>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import mHeader from '../components/header';
+
+  export default class MyWork extends wepy.page {
+    config = {
+      navigationBarTitleText: '我的作业'
+    };
+    components = {
+      mHeader
+    };
+    computed = {
+      height() {
+        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
+      }
+    };
+
+    data = {
+      tabActive: '1',
+      dataList: [
+        {
+          name: '同步作文课',
+          grade: '三年级',
+          workList: [
+            {
+              name: '回家过大年（写人的脸色）'
+            },
+            {
+              name: '钢铁是怎么样炼成的（写人的坚韧）'
+            }
+          ]
+        },
+        {
+          name: '精度阿萨德拉上了',
+          grade: '五年级',
+          workList: [
+            {
+              name: '回家叫你吃饭跑（写人的脸色）'
+            },
+            {
+              name: '小蝌蚪找妈妈（写人的坚韧）'
+            }
+          ]
+        }
+      ]
+    };
+
+    methods = {
+      changeTab(num) {
+        this.tabActive = num;
+      },
+      toDetail(params) {
+        wx.navigateTo({ url: `/pages/myWorkAll?type=${this.tabActive}&name=${params.name}&grade=${params.grade}`});
+      }
+    };
+
+    events = {};
+
+    onLoad() {
+
+    }
+  }
+</script>
+<style lang="scss">
+  @import '../assets/style/mixin.scss';
+
+  .p-myWork {
+
+    &-tab {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 244px;
+      border-bottom: 1px solid #F5F5F5;
+
+      .-tab-text {
+        padding: 36px 0 32px 0;
+        height: 40px;
+        font-size: 28px;
+        font-weight: 400;
+        color: rgba(88, 66, 43, 0.3);
+        border-bottom: 8px solid transparent;
+      }
+
+      .-active {
+        font-weight: 500;
+        color: rgba(88, 66, 43, 1);
+        border-bottom: 8px solid rgba(249, 230, 11, 1);
+      }
+    }
+
+    &-list {
+      border-bottom: 10px solid #F6F5F4;
+
+      .-list-title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 32px 32px 24px;
+
+        &-left {
+          height: 50px;
+          font-size: 36px;
+          font-weight: 500;
+          color: rgba(88, 66, 43, 1);
+          line-height: 50px;
+        }
+
+        &-right {
+          height: 34px;
+          font-size: 24px;
+          font-weight: 500;
+          color: rgba(88, 66, 43, 0.5);
+          line-height: 34px;
+
+          .-icon {
+            margin-left: 12px;
+            width: 10px;
+            height: 20px;
+          }
+        }
+      }
+
+      .-list-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 26px 32px 30px;
+        border-bottom: 1px solid #F5F5F5;
+
+        &-left {
+          @include flex-center;
+
+          .-num {
+            @include flex-center;
+            @include bg('/word/ title-tag.png');
+            margin-right: 16px;
+            width: 52px;
+            height: 32px;
+            font-size: 28px;
+            font-weight: 400;
+            color: rgba(88, 66, 43, 1);
+          }
+
+          .-name {
+            @include text-overflow(400px);
+            height: 40px;
+            font-size: 28px;
+            font-weight: 400;
+            color: rgba(70, 65, 60, 1);
+            line-height: 40px;
+          }
+        }
+
+        &-right {
+          @include flex-center;
+          width:140px;
+          height:46px;
+          background:rgba(34,234,171,1);
+          border-radius:22px;
+          font-size:24px;
+          font-weight:500;
+          color:rgba(255,255,255,1);
+
+          .-icon {
+            margin-right: 10px;
+            width: 21px;
+            height: 21px;
+          }
+        }
+      }
+    }
+  }
+
+</style>

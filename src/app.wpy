@@ -31,6 +31,8 @@ export default class extends wepy.app {
       'pages/ready',
       'pages/user',
       'pages/myCourse',
+      'pages/myWork',
+      'pages/myWorkAll',
       'pages/pointNotice',
       'pages/recognitionNotice'
     ],

@@ -1,0 +1,269 @@
+<template>
+  <view class="container p-completionOfWork">
+    <mHeader title="课后作业"></mHeader>
+    <view class="container-scroll -height-wrap" style="margin-top:{{height}}px">
+      <view class="p-completionOfWork-top">
+        <view class="-top-left">
+          <image class="-top-left-img" src="https://pub.file.k12.vip/2019/06/05/1136181969340878849.jpg"></image>
+        </view>
+        <view class="-top-right">
+          <view class="-top-right-name">heaven小林哥</view>
+          <view class="-top-right-time">2019-5-22 17:35</view>
+          <image class="-top-right-work" src="https://pub.file.k12.vip/2019/06/05/1136182325860913154.png"></image>
+        </view>
+      </view>
+
+      <view class="p-completionOfWork-down">
+        <view class="-down-left" wx:if="{{!isReply}}">
+          <image class="-down-left-img" src="https://pub.file.k12.vip/tbzw/word-detail/icon-notice.png"></image>
+        </view>
+        <view class="-down-right" wx:if="{{!isReply}}">
+          <view class="-down-right-info">
+            <image class="-info-img" src="https://pub.file.k12.vip/2019/06/05/1136181969340878849.jpg"></image>
+            <text class="-info-name">张老师</text>
+          </view>
+          <view class="-down-right-text">
+            老师随后为你点评，请留意微信通知！
+          </view>
+        </view>
+        <view class="-down-reply" wx:if="{{isReply}}">
+          <view class="-down-reply-info">
+            <image class="-reply-info-img" src="https://pub.file.k12.vip/2019/06/05/1136182325860913154.png"></image>
+            <view class="-reply-info-user">
+              <view class="-user-text">
+                <text class="-name">木木老师</text>
+                <text>2019-5-22 17:35</text>
+              </view>
+              <view></view>
+            </view>
+
+          </view>
+          <image class="-down-reply-img" src="https://pub.file.k12.vip/2019/06/05/1136195761508470786.png"></image>
+        </view>
+      </view>
+
+      <view class="p-completionOfWork-footer">
+        <button class="-footer-btn {{isCompliment ? '-footer-btn-zan' : ''}}">
+          <image class="-footer-btn-icon" wx:if="{{!isCompliment}}"
+                 src="https://pub.file.k12.vip/tbzw/word-detail/icon-give-pre.png"></image>
+          <image class="-footer-btn-icon" wx:if="{{isCompliment}}"
+                 src="https://pub.file.k12.vip/tbzw/word-detail/icon-givea-def.png"></image>
+          999
+        </button>
+        <button class="-footer-btn">
+          <image class="-footer-btn-icon" src="https://pub.file.k12.vip/tbzw/word-detail/icon-share.png"></image>
+          分享
+        </button>
+        <image class="-footer-tip" src="https://pub.file.k12.vip/2019/06/05/1136201296525938689.png"></image>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import mHeader from '../components/header';
+
+  export default class CompletionOfWork extends wepy.page {
+    config = {
+      navigationBarTitleText: '课后作业'
+    };
+    components = {
+      mHeader
+    };
+    computed = {
+      height() {
+        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
+      }
+    };
+
+    data = {
+      isCompliment: true,
+      isReply: true
+    };
+
+    methods = {};
+
+    events = {};
+
+    onLoad() {
+
+    }
+  }
+</script>
+<style lang="scss">
+  @import '../assets/style/mixin.scss';
+
+  .p-completionOfWork {
+
+    .-height-wrap {
+      height: calc(100vh - 150px);
+    }
+
+    &-top {
+      display: flex;
+      padding: 40px 0 0 64px;
+
+      .-top-left {
+        &-img {
+          margin-right: 24px;
+          width: 96px;
+          height: 96px;
+          border-radius: 50%;
+        }
+      }
+
+      .-top-right {
+
+        &-name {
+          height: 40px;
+          font-size: 28px;
+          font-weight: 500;
+          color: rgba(88, 66, 43, 1);
+          line-height: 40px;
+        }
+
+        &-time {
+          margin-top: 8px;
+          height: 34px;
+          font-size: 24px;
+          font-weight: 400;
+          color: rgba(88, 66, 43, 0.5);
+          line-height: 34px;
+        }
+
+        &-work {
+          margin-top: 30px;
+          width: 502px;
+          height: 610px;
+        }
+      }
+    }
+
+    &-down {
+      display: flex;
+      margin: 66px 0 0 64px;
+
+      .-down-left {
+
+        &-img {
+          margin-right: 44px;
+          width: 70px;
+          height: 54px;
+        }
+      }
+
+      .-down-right {
+
+        &-info {
+          @include flex-y-center;
+
+          .-info-img {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 1);
+            margin-right: 18px;
+          }
+
+          .-info-name {
+            height: 50px;
+            font-size: 36px;
+            font-weight: 500;
+            color: rgba(88, 66, 43, 1);
+            line-height: 50px;
+          }
+        }
+
+        &-text {
+          margin-top: 8px;
+          height: 36px;
+          font-size: 26px;
+          font-weight: 400;
+          color: rgba(88, 66, 43, 0.5);
+          line-height: 36px;
+        }
+      }
+
+      .-down-reply {
+        margin-left: 124px;
+
+        .-down-reply-info {
+          display: flex;
+
+          .-reply-info-img {
+            margin-right: 16px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+          }
+
+          .-reply-info-user {
+
+            .-user-text {
+              height:28px;
+              font-size:20px;
+              font-weight:400;
+              color:rgba(70,65,60,0.4);
+              line-height:28px;
+
+              .-name {
+                margin-right: 40px;
+                font-size: 24px;
+              }
+            }
+          }
+        }
+
+        .-down-reply-img {
+          margin-top: 32px;
+          width:500px;
+          height:282px;
+          border:2px solid rgba(151,151,151,1);
+        }
+      }
+    }
+
+    &-footer {
+      position: relative;
+      margin-top: 138px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 64px 24px;
+
+      .-footer-btn {
+        @include flex-center;
+        background-color: #ffffff;
+        margin: 0;
+        width: 276px;
+        height: 82px;
+        border-radius: 44px;
+        border: 2px solid rgba(88, 66, 43, 0.1);
+        font-size: 32px;
+        font-weight: 500;
+        color: rgba(88, 66, 43, 0.5);
+
+        &-icon {
+          margin-right: 24px;
+          width: 40px;
+          height: 40px;
+        }
+      }
+
+      .-footer-btn-zan {
+        color: #58422B;
+        background: linear-gradient(90deg, rgba(249, 230, 11, 1) 0%, rgba(253, 219, 85, 1) 100%);
+      }
+
+      .-footer-tip {
+        position: absolute;
+        width: 456px;
+        height: 96px;
+        top: -100px;
+        right: 90px;
+      }
+    }
+  }
+
+</style>

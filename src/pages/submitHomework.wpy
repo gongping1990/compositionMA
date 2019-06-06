@@ -29,7 +29,7 @@
         </view>
       </view>
 
-      <view class="p-submitHomework-center">
+      <view class="p-submitHomework-center" wx:if="{{tabActive === '1'}}">
         <view class="-center-blackboard">
           <view class="-center-blackboard-title">课后作业</view>
           <view class="-center-blackboard-name">课后作业</view>
@@ -59,13 +59,46 @@
         </view>
       </view>
 
-      <view class="p-submitHomework-footer" wx:if="{{!isSuccessWork}}">
+      <view class="p-submitHomework-footer" wx:if="{{!isSuccessWork && tabActive === '1'}}">
         <button class="-footer-btn" @tap="submitWork">上交作业</button>
       </view>
 
-      <view class="p-submitHomework-card">
+      <view class="p-submitHomework-card" wx:if="{{tabActive === '1'}}">
         <view class="-text" @tap="changePopup({{'2'}})">{{isPunchCard ? '已打卡' : '点我打卡'}}</view>
       </view>
+
+      <view class="p-submitHomework-center " wx:if="{{tabActive === '2'}}">
+        <repeat for="{{dataList}}"
+                wx:if="{{dataList.length}}"
+                key="index"
+                index="index"
+                item="item">
+          <view class="-center-work -center-other">
+            <view class="-center-work-left">
+              <image class="-left-img" src="{{item.imgUrl}}"></image>
+            </view>
+            <view class="-center-work-right">
+              <view class="-right-name">{{item.name}}</view>
+              <view class="-right-time">{{item.time}}</view>
+              <image class="-right-work" src="{{item.workImg}}"></image>
+              <view class="-right-zan">
+                <view class="-zan-left {{item.isZan ? '-zan-ok' : ''}}">
+                  <image class="-img" wx:if="{{!item.isZan}}"
+                         src="https://pub.file.k12.vip/tbzw/word-detail/icon-give-pre.png"></image>
+                  <image class="-img" wx:if="{{item.isZan}}"
+                         src="https://pub.file.k12.vip/2019/06/06/1136572565700235266.png"></image>
+                </view>
+                <view class="-zan-right {{item.isZan ? '-zan-ok' : ''}}">{{item.zan}}</view>
+              </view>
+            </view>
+          </view>
+        </repeat>
+        <view class="-center-other-no" wx:if="{{!dataList.length}}">
+          <image class="-no-icon" src="https://pub.file.k12.vip/tbzw/empty/zy.png"></image>
+          <view class="-no-text">自己写完作业后，才能查看同伴作业哦～</view>
+        </view>
+      </view>
+
     </view>
 
     <van-popup show="{{isOpenPopup}}">
@@ -120,10 +153,44 @@ export default class SubmitHomework extends wepy.page {
     };
 
     data = {
-      tabActive: '1',
+      tabActive: '2',
       isSuccessWork: false,
       isOpenPopup: false,
-      isCard: false
+      isCard: false,
+      dataList: [
+        {
+          imgUrl: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
+          workImg: 'https://pub.file.k12.vip/2019/06/05/1136182325860913154.png',
+          name: 'heaven小林哥',
+          time: '2019-5-22 17:35',
+          zan: 99,
+          isZan: true
+        },
+        {
+          imgUrl: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
+          workImg: 'https://pub.file.k12.vip/2019/06/05/1136182325860913154.png',
+          name: '风锅锅',
+          time: '2019-5-12 17:35',
+          zan: 99,
+          isZan: false
+        },
+        {
+          imgUrl: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
+          workImg: 'https://pub.file.k12.vip/2019/06/05/1136182325860913154.png',
+          name: '大江东旭',
+          time: '2019-4-11 17:35',
+          zan: 199,
+          isZan: false
+        },
+        {
+          imgUrl: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
+          workImg: 'https://pub.file.k12.vip/2019/06/05/1136182325860913154.png',
+          name: 'liangchenas',
+          time: '2019-3-12 17:35',
+          zan: 5,
+          isZan: true
+        }
+      ]
     };
 
     methods = {
@@ -156,6 +223,7 @@ export default class SubmitHomework extends wepy.page {
     }
   }
 </script>
+
 <style lang="scss">
   @import '../assets/style/mixin.scss';
 
@@ -407,6 +475,80 @@ export default class SubmitHomework extends wepy.page {
           }
         }
       }
+
+      .-center-other {
+        margin-top: 0;
+        border: none;
+        padding: 40px 0 24px 64px;
+        border-bottom: 4px solid #EFEDEA;
+
+        .-right-zan {
+          position: relative;
+          display: flex;
+          justify-content: flex-end;
+          align-items: center;
+          margin-top: 16px;
+
+          .-zan-left {
+            @include flex-center;
+            position: relative;
+            left: 55px;
+            width: 56px;
+            height: 56px;
+            background: rgba(255, 255, 255, 1);
+            border: 3px solid rgba(88, 66, 43, 0.1);
+            border-radius: 50%;
+
+            .-img {
+              width: 32px;
+              height: 26px;
+            }
+          }
+
+          .-zan-right {
+            text-align: right;
+            padding-right: 16px;
+            width: 104px;
+            height: 36px;
+            background: rgba(255, 255, 255, 1);
+            border-radius: 17px;
+            border: 2px solid rgba(88, 66, 43, 0.1);
+            font-size: 24px;
+            font-weight: 400;
+            color: rgba(88, 66, 43, 0.5);
+            line-height: 36px;
+          }
+
+          .-zan-ok {
+            background:linear-gradient(90deg,rgba(249,230,11,1) 0%,rgba(253,219,85,1) 100%);
+            border: none;
+          }
+
+        }
+      }
+
+      .-center-other:last-child {
+        border: none;
+      }
+
+      .-center-other-no {
+        margin-top: 100px;
+        text-align: center;
+
+        .-no-icon{
+          margin-bottom: 24px;
+          width:254px;
+          height:252px;
+        }
+
+        .-no-text {
+          height:40px;
+          font-size:28px;
+          font-weight:400;
+          color:rgba(88,66,43,0.5);
+          line-height:40px;
+        }
+      }
     }
 
     &-footer {
@@ -492,7 +634,6 @@ export default class SubmitHomework extends wepy.page {
       border-radius: 32px;
       text-align: center;
 
-
       .-popup-look-title {
         padding-top: 32px;
         margin-bottom: 46px;
@@ -507,7 +648,7 @@ export default class SubmitHomework extends wepy.page {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 0 110px ;
+        padding: 0 110px;
         font-size: 24px;
         font-weight: 500;
         color: rgba(88, 66, 43, 1);

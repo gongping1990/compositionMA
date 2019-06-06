@@ -29,7 +29,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 4,
+			"current": 5,
 			"list": [
 				{
 					"id": 0,
@@ -60,9 +60,16 @@
 					"scene": null
 				},
 				{
+					"id": 4,
+					"name": "课后作业",
+					"pathName": "pages/completionOfWork",
+					"query": "",
+					"scene": null
+				},
+				{
 					"id": -1,
-					"name": "我的作业",
-					"pathName": "pages/myWork",
+					"name": "111",
+					"pathName": "pages/index",
 					"query": "",
 					"scene": null
 				}

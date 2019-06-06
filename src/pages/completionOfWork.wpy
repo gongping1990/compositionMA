@@ -1,6 +1,7 @@
 <template>
   <view class="container p-completionOfWork">
     <mHeader title="课后作业"></mHeader>
+
     <view class="container-scroll -height-wrap" style="margin-top:{{height}}px">
       <view class="p-completionOfWork-top">
         <view class="-top-left">
@@ -34,7 +35,7 @@
                 <text class="-name">木木老师</text>
                 <text>2019-5-22 17:35</text>
               </view>
-              <view></view>
+              <view @tap="changePopup">语音</view>
             </view>
 
           </view>
@@ -56,6 +57,64 @@
         </button>
         <image class="-footer-tip" src="https://pub.file.k12.vip/2019/06/05/1136201296525938689.png"></image>
       </view>
+
+      <van-popup show="{{isOpenPopup}}">
+        <view class="p-completionOfWork-popup-dp" wx:if="{{!isEvaluate}}">
+          <view class="-popup-title">评价老师的点评</view>
+          <view class="-popup-text">评价标签对老师不可见，请放心选择</view>
+          <view class="-popup-list">
+            <view @tap="choiceTab({{'1'}})">
+              <image wx:if="{{isActive !== '1'}}" class="-list-img"
+                     src="https://pub.file.k12.vip/tbzw/lspj/icon-discontent.png"></image>
+              <image wx:if="{{isActive === '1'}}" class="-list-img"
+                     src="https://pub.file.k12.vip/tbzw/lspj/icon-discontent-selected.png"></image>
+              <view class="-list-text {{isActive === '1' ? '-active-text' : ''}}">不满意</view>
+            </view>
+            <view @tap="choiceTab({{'2'}})">
+              <image wx:if="{{isActive !== '2'}}" class="-list-img"
+                     src="https://pub.file.k12.vip/tbzw/lspj/icon-general.png"></image>
+              <image wx:if="{{isActive === '2'}}" class="-list-img"
+                     src="https://pub.file.k12.vip/tbzw/lspj/icon-general-selected.png"></image>
+              <view class="-list-text {{isActive === '2' ? '-active-text' : ''}}">一般有待改进</view>
+            </view>
+            <view @tap="choiceTab({{'3'}})">
+              <image wx:if="{{isActive !== '3'}}" class="-list-img"
+                     src="https://pub.file.k12.vip/tbzw/lspj/icon-satisfaction.png"></image>
+              <image wx:if="{{isActive === '3'}}" class="-list-img"
+                     src="https://pub.file.k12.vip/tbzw/lspj/icon-satisfaction-selected.png"></image>
+              <view class="-list-text {{isActive === '3' ? '-active-text' : ''}}">满意</view>
+            </view>
+          </view>
+          <view class="-popup-input">
+            <textarea class="-input" placeholder="你想对点评老师说…" placeholder-style="font-size: 12px;"/>
+          </view>
+          <button class="-popup-btn" @tap="submitEvaluate">提交</button>
+        </view>
+
+        <view class="p-completionOfWork-popup-jg {{isActive !== '1' ? 'p-completionOfWork-popup-height' : ''}}"
+              wx:if="{{isEvaluate}}">
+          <image wx:if="{{isActive === '1'}}" class="-popup-jg-img"
+                 src="https://pub.file.k12.vip/tbzw/lspj/icon-discontent-selected.png"></image>
+          <image wx:if="{{isActive === '2'}}" class="-popup-jg-img"
+                 src="https://pub.file.k12.vip/tbzw/lspj/icon-general-selected.png"></image>
+          <image wx:if="{{isActive === '3'}}" class="-popup-jg-img"
+                 src="https://pub.file.k12.vip/tbzw/lspj/icon-satisfaction-selected.png"></image>
+          <view class="-popup-jg-text">
+            {{isActive === '1' ? ' 抱歉给你带来了不好的学习体验， 我们将持续改进！' : '感谢你评价和反馈，我们将持续改进'}}
+          </view>
+          <view class="-popup-jd-text-two" wx:if="{{isActive !== '1'}}">
+            如果觉得老师点评的好， 记得分享给好友哦～
+          </view>
+          <button class="-popup-jg-btn -one" wx:if="{{isActive === '1'}}">好的，我知道了</button>
+          <button class="-popup-jg-btn" wx:if="{{isActive !== '1'}}">分享给好友</button>
+        </view>
+
+        <van-icon name="close"
+                  class="p-completionOfWork-popup-close"
+                  color="#fff"
+                  size="36px"
+                  @click="changePopup"/>
+      </van-popup>
     </view>
   </view>
 </template>
@@ -66,7 +125,11 @@
 
   export default class CompletionOfWork extends wepy.page {
     config = {
-      navigationBarTitleText: '课后作业'
+      navigationBarTitleText: '课后作业',
+      'usingComponents': {
+        'van-icon': '../vant/icon/index',
+        'van-popup': '../vant/popup/index'
+      }
     };
     components = {
       mHeader
@@ -78,11 +141,25 @@
     };
 
     data = {
+      isOpenPopup: false,
       isCompliment: true,
-      isReply: true
+      isReply: true,
+      isEvaluate: false,
+      isActive: ''
     };
 
-    methods = {};
+    methods = {
+      submitEvaluate () {
+        this.isEvaluate = true
+      },
+      choiceTab(num) {
+        this.isActive = num;
+      },
+      changePopup() {
+        console.log('点击');
+        this.isOpenPopup = !this.isOpenPopup;
+      }
+    };
 
     events = {};
 
@@ -91,6 +168,7 @@
     }
   }
 </script>
+
 <style lang="scss">
   @import '../assets/style/mixin.scss';
 
@@ -201,11 +279,11 @@
           .-reply-info-user {
 
             .-user-text {
-              height:28px;
-              font-size:20px;
-              font-weight:400;
-              color:rgba(70,65,60,0.4);
-              line-height:28px;
+              height: 28px;
+              font-size: 20px;
+              font-weight: 400;
+              color: rgba(70, 65, 60, 0.4);
+              line-height: 28px;
 
               .-name {
                 margin-right: 40px;
@@ -217,9 +295,9 @@
 
         .-down-reply-img {
           margin-top: 32px;
-          width:500px;
-          height:282px;
-          border:2px solid rgba(151,151,151,1);
+          width: 500px;
+          height: 282px;
+          border: 2px solid rgba(151, 151, 151, 1);
         }
       }
     }
@@ -263,6 +341,157 @@
         top: -100px;
         right: 90px;
       }
+    }
+
+    &-popup-dp {
+      text-align: center;
+      width: 590px;
+      height: 668px;
+      background: rgba(255, 255, 255, 1);
+      border-radius: 32px;
+
+      .-popup-title {
+        padding-top: 32px;
+        height: 50px;
+        font-size: 36px;
+        font-weight: 500;
+        color: rgba(70, 65, 60, 1);
+        line-height: 50px;
+      }
+
+      .-popup-text {
+        margin-top: 12px;
+        height: 34px;
+        font-size: 24px;
+        font-weight: 300;
+        color: rgba(70, 65, 60, 0.5);
+        line-height: 34px;
+      }
+
+      .-popup-list {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 38px 64px 40px;
+
+        .-list-img {
+          width: 100px;
+          height: 100px;
+        }
+
+        .-list-text {
+          margin-top: 14px;
+          height: 34px;
+          font-size: 24px;
+          font-weight: 500;
+          color: rgba(70, 65, 60, 0.5);
+          line-height: 34px;
+        }
+
+        .-active-text {
+          color: rgba(70, 65, 60, 1);
+        }
+      }
+
+      .-popup-input {
+
+        .-input {
+
+          text-align: left;
+          margin: 0 auto;
+          padding: 24px 32px;
+          width: 446px;
+          height: 130px;
+          background: rgba(255, 255, 255, 1);
+          border-radius: 32px;
+          border: 2px solid rgba(88, 66, 43, 0.3);
+        }
+      }
+
+      .-popup-btn {
+        margin: 32px auto 0;
+        text-align: center;
+        width: 354px;
+        height: 76px;
+        background: linear-gradient(90deg, rgba(249, 230, 11, 1) 0%, rgba(253, 219, 85, 1) 100%);
+        border-radius: 40px;
+        font-size: 32px;
+        font-weight: 500;
+        color: rgba(70, 65, 60, 1);
+        line-height: 76px;
+      }
+    }
+
+    &-popup-jg {
+      position: relative;
+      text-align: center;
+      margin: 0 auto;
+      width: 590px;
+      height: 384px;
+      background: rgba(255, 255, 255, 1);
+      border-radius: 32px;
+
+      .-popup-jg-img {
+        margin: 0 auto;
+        position: absolute;
+        top: -92px;
+        width: 184px;
+        height: 184px;
+        left: 210px;
+      }
+
+      .-popup-jg-text {
+        margin: 0 auto;
+        padding-top: 144px;
+        width: 480px;
+        height: 88px;
+        font-size: 32px;
+        font-weight: 500;
+        color: rgba(70, 65, 60, 1);
+        line-height: 44px;
+      }
+
+      .-popup-jd-text-two {
+        margin: 12px auto 48px;
+        width: 308px;
+        height: 80px;
+        font-size: 28px;
+        font-family: PingFangSC-Light;
+        font-weight: 300;
+        color: rgba(70, 65, 60, 0.5);
+        line-height: 40px;
+      }
+
+      .-popup-jg-btn {
+        text-align: center;
+        width: 354px;
+        height: 76px;
+        background: linear-gradient(90deg, rgba(249, 230, 11, 1) 0%, rgba(253, 219, 85, 1) 100%);
+        border-radius: 40px;
+        font-size: 32px;
+        font-weight: 500;
+        color: rgba(70, 65, 60, 1);
+        line-height: 76px;
+      }
+
+      .-one {
+        margin-top: 28px;
+      }
+    }
+
+    &-popup-height {
+      height: 452px;
+
+      .-popup-jg-text {
+        width: 512px;
+        height: 44px;
+      }
+    }
+
+    &-popup-close {
+      position: absolute;
+      top: -200px;
+      right: -40px;
     }
   }
 

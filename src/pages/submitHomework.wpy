@@ -1,0 +1,402 @@
+<template>
+  <view class="container">
+    <mHeader title="课后作业"></mHeader>
+    <view class="container-scroll p-submitHomework" style="margin-top:{{height}}px">
+      <view class="p-submitHomework-header">
+        <view class="p-submitHomework-header-top">
+          <view class="-top-left">
+            <image class="-left-img" src="https://pub.file.k12.vip/2019/06/06/1136482934891761666.jpg"></image>
+          </view>
+          <view class="-top-right">
+            <view>
+              <view class="-title">回家过大年（写人的脸色）</view>
+              <view class="-text">《每日轻作文》</view>
+            </view>
+
+            <view class="-right-down">
+              <view class="-num">25314人已学</view>
+              <view class="-btn">
+                <image class="-icon" src="https://pub.file.k12.vip/2019/06/06/1136518673440460801.png"></image>
+                课程回看
+              </view>
+            </view>
+          </view>
+        </view>
+
+        <view class="p-submitHomework-header-down">
+          <view class="-down-text {{tabActive === '1' ? '-active' : ''}}" @tap="changeTab({{'1'}})">我的作业</view>
+          <view class="-down-text {{tabActive === '2' ? '-active' : ''}}" @tap="changeTab({{'2'}})">同学作业</view>
+        </view>
+      </view>
+
+      <view class="p-submitHomework-center">
+        <view class="-center-blackboard">
+          <view class="-center-blackboard-title">课后作业</view>
+          <view class="-center-blackboard-name">课后作业</view>
+          <view class="-center-blackboard-content">请以我的妈妈为题，写一篇200字的叙事作文，
+            请以我的妈妈为题，写一篇200字的叙事作文
+            请以我的妈妈为题，写一篇200字的叙事作文
+          </view>
+        </view>
+
+        <view class="-center-mask" wx:if="{{isSuccessWork}}">
+          <image class="-mask-img" src="https://pub.file.k12.vip/tbzw/khzy/success.png"></image>
+        </view>
+
+        <view class="-center-work">
+          <view class="-center-work-left">
+            <image class="-left-img" src="https://pub.file.k12.vip/2019/06/05/1136181969340878849.jpg"></image>
+          </view>
+          <view class="-center-work-right">
+            <view class="-right-name">heaven小林哥</view>
+            <view class="-right-time">2019-5-22 17:35</view>
+            <image class="-right-work" src="https://pub.file.k12.vip/2019/06/05/1136182325860913154.png"></image>
+            <view class="-right-tip">
+              <view class="-tip-text">老师已点评， 敬请收听</view>
+            </view>
+            <view class="-right-btn" @tap="lookWorkDetail">查看作业详情</view>
+          </view>
+        </view>
+      </view>
+
+      <view class="p-submitHomework-footer" wx:if="{{!isSuccessWork}}">
+        <button class="-footer-btn">上交作业</button>
+      </view>
+
+      <view class="p-submitHomework-card">
+        <view class="-text">{{isPunchCard ? '已打卡' : '点我打卡'}}</view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import mHeader from '../components/header';
+
+  export default class SubmitHomework extends wepy.page {
+    config = {
+      navigationBarTitleText: '课后作业'
+    };
+    components = {
+      mHeader
+    };
+    computed = {
+      height() {
+        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
+      }
+    };
+
+    data = {
+      tabActive: '1',
+      isSuccessWork: true
+    };
+
+    methods = {
+      lookWorkDetail () {
+        wx.navigateTo({ url: `/pages/completionOfWork`});
+      },
+      changeTab(num) {
+        this.tabActive = num;
+      }
+    };
+
+    events = {};
+
+    onLoad() {
+
+    }
+  }
+</script>
+<style lang="scss">
+  @import '../assets/style/mixin.scss';
+
+  .p-submitHomework {
+
+    &-header {
+      background: url("https://pub.file.k12.vip/2019/06/06/1136480784090419202.png") no-repeat;
+      background-size: 100%;
+      width: 100%;
+      height: 502px;
+
+      &-top {
+        display: flex;
+        padding: 40px 32px 0;
+
+        .-top-left {
+          overflow: hidden;
+          min-width: 180px;
+          height: 240px;
+          box-shadow: 0px 0px 24px 0px rgba(236, 194, 96, 0.24);
+          border-radius: 16px;
+          margin-right: 32px;
+
+          .-left-img {
+            width: 100%;
+            height: 100%;
+          }
+        }
+
+        .-top-right {
+          display: flex;
+          justify-content: space-between;
+          flex-direction: column;
+          width: 100%;
+
+          .-right-down {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          }
+
+          .-title {
+            height: 50px;
+            font-size: 36px;
+            font-weight: 500;
+            color: rgba(88, 66, 43, 1);
+            line-height: 50px;
+          }
+
+          .-text {
+            margin-top: 8px;
+            height: 40px;
+            font-size: 28px;
+            font-weight: 300;
+            color: rgba(88, 66, 43, 0.5);
+            line-height: 40px;
+          }
+
+          .-num {
+            width: 160px;
+            height: 36px;
+            font-size: 26px;
+            font-weight: 500;
+            color: rgba(88, 66, 43, 1);
+            line-height: 36px;
+          }
+
+          .-btn {
+            @include flex-center;
+            width: 160px;
+            height: 46px;
+            background: rgba(34, 234, 171, 1);
+            border-radius: 22px;
+            font-size: 24px;
+            font-family: PingFangSC-Medium;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 1);
+            line-height: 34px;
+          }
+
+          .-icon {
+            margin-right: 4px;
+            width: 24px;
+            height: 24px;
+          }
+        }
+
+      }
+
+      &-down {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 230px;
+        border-bottom: 1px solid #F5F5F5;
+
+        .-down-text {
+          padding: 34px 0 28px 0;
+          height: 40px;
+          font-size: 28px;
+          font-weight: 400;
+          color: rgba(88, 66, 43, 0.3);
+          border-bottom: 8px solid transparent;
+        }
+
+        .-active {
+          font-weight: 500;
+          color: rgba(88, 66, 43, 1);
+          border-bottom: 8px solid rgba(249, 230, 11, 1);
+        }
+      }
+
+    }
+
+    &-center {
+      position: relative;
+      top: -70px;
+
+      .-center-blackboard {
+        @include bg('/khzy/hb.png');
+        margin: 0 auto;
+        width: 622px;
+        height: 368px;
+
+        &-title {
+          @include flex-center;
+          padding-top: 56px;
+          height: 50px;
+          font-size: 36px;
+          font-family: PingFangSC-Semibold;
+          font-weight: 600;
+          color: rgba(255, 255, 255, 0.9);
+          line-height: 50px;
+        }
+
+        &-name {
+          margin-top: 8px;
+          margin-left: 62px;
+          height: 34px;
+          font-size: 24px;
+          font-weight: 500;
+          color: rgba(255, 255, 255, 0.9);
+          line-height: 34px;
+        }
+
+        &-content {
+          width: 500px;
+          margin-top: 12px;
+          margin-left: 62px;
+          font-size: 24px;
+          font-weight: 500;
+          color: rgba(255, 255, 255, 0.9);
+          line-height: 34px;
+        }
+      }
+
+      .-center-mask {
+        position: absolute;
+        top: 40px;
+        left: 100px;
+        margin: 0 auto;
+        width:550px;
+        height:290px;
+        background-color: rgba(0,0,0,0.4);
+        border-radius: 20px;
+        text-align: right;
+
+        .-mask-img {
+          margin-top: 36px;
+          margin-right: 40px;
+          width:218px;
+          height:218px;
+        }
+      }
+
+      .-center-work {
+        position: relative;
+        display: flex;
+        margin-top: 54px;
+        padding: 40px 0 0 64px;
+        border-top: 10px solid #F6F5F4;
+
+        &-left {
+
+          .-left-img {
+            margin-right: 24px;
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+          }
+        }
+
+        &-right {
+
+          .-right-name {
+            height: 40px;
+            font-size: 28px;
+            font-weight: 500;
+            color: rgba(88, 66, 43, 1);
+            line-height: 40px;
+          }
+
+          .-right-time {
+            margin-top: 8px;
+            height: 34px;
+            font-size: 24px;
+            font-weight: 400;
+            color: rgba(88, 66, 43, 0.5);
+            line-height: 34px;
+          }
+
+          .-right-work {
+            margin-top: 30px;
+            width: 502px;
+            height: 610px;
+          }
+
+          .-right-tip {
+            position: absolute;
+            top: 180px;
+            right: 12px;
+            @include bg('/khzy/bubbles.png');
+            width: 166px;
+            height: 128px;
+
+            .-tip-text {
+              text-align: center;
+              margin-top: 40px;
+              margin-left: 40px;
+              width:120px;
+              height:56px;
+              font-size:20px;
+              font-weight:500;
+              color:rgba(88,66,43,1);
+            }
+          }
+
+          .-right-btn {
+            margin-top: 32px;
+            text-align: center;
+            width:284px;
+            height:64px;
+            border-radius:50px;
+            border:2px solid rgba(88,66,43,0.2);
+            font-size:28px;
+            font-weight:500;
+            color:rgba(88,66,43,1);
+            line-height:64px;
+          }
+        }
+      }
+    }
+
+    &-footer {
+      margin-top: 166px;
+      .-footer-btn {
+        margin: 0 auto;
+        text-align: center;
+        width: 470px;
+        height: 100px;
+        background: linear-gradient(90deg, rgba(249, 230, 11, 1) 0%, rgba(253, 219, 85, 1) 100%);
+        box-shadow: 0px 8px 16px 4px rgba(230, 194, 81, 0.4);
+        border-radius: 50px;
+        font-size: 32px;
+        font-weight: 500;
+        color: rgba(88, 66, 43, 1);
+        line-height: 100px;
+      }
+    }
+
+    &-card {
+      @include bg('/khzy/clock-in.png');
+      position: fixed;
+      bottom: 200px;
+      right: 0;
+      width: 140px;
+      height: 140px;
+
+      .-text {
+        text-align: center;
+        padding-top: 90px;
+        height:34px;
+        font-size:24px;
+        font-weight:400;
+        color:rgba(88,66,43,0.5);
+        line-height:34px;
+      }
+    }
+
+  }
+
+</style>

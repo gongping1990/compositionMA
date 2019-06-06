@@ -92,7 +92,7 @@
       },
       workDetail () {
         if (this.tabActive === '1') {
-
+          wx.navigateTo({ url: `/pages/submitHomework`});
         } else {
           wx.navigateTo({ url: `/pages/completionOfWork`});
         }

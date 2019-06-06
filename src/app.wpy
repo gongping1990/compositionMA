@@ -36,6 +36,7 @@ export default class extends wepy.app {
       'pages/myWork',
       'pages/myWorkAll',
       'pages/completionOfWork',
+      'pages/submitHomework',
       'pages/pointNotice',
       'pages/recognitionNotice'
     ],

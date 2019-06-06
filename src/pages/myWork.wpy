@@ -21,7 +21,7 @@
                 <view class="-num">0{{index+1}}</view>
                 <view class="-name">{{item.name}}</view>
               </view>
-              <view class="-list-item-right">
+              <view class="-list-item-right" @tap="workDetail">
                 <image class="-icon" wx:if="{{tabActive==='1'}}"
                        src="https://pub.file.k12.vip/2019/06/05/1136167662351831042.png"></image>
                 <image class="-icon" wx:if="{{tabActive==='2'}}"
@@ -89,6 +89,13 @@ export default class MyWork extends wepy.page {
       },
       toDetail(params) {
         wx.navigateTo({url: `/pages/myWorkAll?type=${this.tabActive}&name=${params.name}&grade=${params.grade}`})
+      },
+      workDetail () {
+        if (this.tabActive === '1') {
+          wx.navigateTo({url: `/pages/submitHomework`})
+        } else {
+          wx.navigateTo({url: `/pages/completionOfWork`})
+        }
       }
     };
 

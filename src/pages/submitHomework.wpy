@@ -15,7 +15,7 @@
 
             <view class="-right-down">
               <view class="-num">25314人已学</view>
-              <view class="-btn">
+              <view class="-btn" @tap="changePopup({{'1'}})">
                 <image class="-icon" src="https://pub.file.k12.vip/2019/06/06/1136518673440460801.png"></image>
                 课程回看
               </view>
@@ -43,7 +43,7 @@
           <image class="-mask-img" src="https://pub.file.k12.vip/tbzw/khzy/success.png"></image>
         </view>
 
-        <view class="-center-work">
+        <view class="-center-work" wx:if="{{isSuccessWork}}">
           <view class="-center-work-left">
             <image class="-left-img" src="https://pub.file.k12.vip/2019/06/05/1136181969340878849.jpg"></image>
           </view>
@@ -60,13 +60,41 @@
       </view>
 
       <view class="p-submitHomework-footer" wx:if="{{!isSuccessWork}}">
-        <button class="-footer-btn">上交作业</button>
+        <button class="-footer-btn" @tap="submitWork">上交作业</button>
       </view>
 
       <view class="p-submitHomework-card">
-        <view class="-text">{{isPunchCard ? '已打卡' : '点我打卡'}}</view>
+        <view class="-text" @tap="changePopup({{'2'}})">{{isPunchCard ? '已打卡' : '点我打卡'}}</view>
       </view>
     </view>
+
+    <van-popup show="{{isOpenPopup}}">
+      <view class="p-submitHomework-popup" wx:if="{{isCard}}">
+        <image class="-popup-icon" src="https://pub.file.k12.vip/tbzw/jrxx/calendar.png"></image>
+        <view class="-popup-title">今日已打卡成功</view>
+        <button class="-popup-btn" @tap="toLookCard">查看打卡记录</button>
+      </view>
+
+      <view class="p-submitHomework-popup-look" wx:if="{{!isCard}}">
+        <view class="-popup-look-title">请选择要学习的内容</view>
+        <view class="-popup-look-content">
+          <view>
+            <image class="-popup-look-img" src="https://pub.file.k12.vip/2019/06/06/1136558111751163906.png"></image>
+            <view>回看课程</view>
+          </view>
+          <view>
+            <image class="-popup-look-img" src="https://pub.file.k12.vip/2019/06/06/1136558295600091137.png"></image>
+            <view>随堂检测</view>
+          </view>
+        </view>
+      </view>
+
+      <van-icon name="close"
+                class="p-submitHomework-close"
+                color="#fff"
+                size="36px"
+                @click="changePopup"/>
+    </van-popup>
   </view>
 </template>
 
@@ -76,7 +104,11 @@
 
   export default class SubmitHomework extends wepy.page {
     config = {
-      navigationBarTitleText: '课后作业'
+      navigationBarTitleText: '课后作业',
+      'usingComponents': {
+        'van-icon': '../vant/icon/index',
+        'van-popup': '../vant/popup/index'
+      }
     };
     components = {
       mHeader
@@ -89,12 +121,28 @@
 
     data = {
       tabActive: '1',
-      isSuccessWork: true
+      isSuccessWork: false,
+      isOpenPopup: false,
+      isCard: false
     };
 
     methods = {
-      lookWorkDetail () {
-        wx.navigateTo({ url: `/pages/completionOfWork`});
+      changePopup(num) {
+        if (num === '1') {
+          this.isCard = false;
+        } else if (num === '2') {
+          this.isCard = true;
+        }
+        this.isOpenPopup = !this.isOpenPopup;
+      },
+      submitWork() {
+        wx.navigateTo({ url: `/pages/uploadHomework` });
+      },
+      toLookCard() {
+        wx.navigateTo({ url: `/pages/uploadHomework` });
+      },
+      lookWorkDetail() {
+        wx.navigateTo({ url: `/pages/completionOfWork` });
       },
       changeTab(num) {
         this.tabActive = num;
@@ -269,17 +317,17 @@
         top: 40px;
         left: 100px;
         margin: 0 auto;
-        width:550px;
-        height:290px;
-        background-color: rgba(0,0,0,0.4);
+        width: 550px;
+        height: 290px;
+        background-color: rgba(0, 0, 0, 0.4);
         border-radius: 20px;
         text-align: right;
 
         .-mask-img {
           margin-top: 36px;
           margin-right: 40px;
-          width:218px;
-          height:218px;
+          width: 218px;
+          height: 218px;
         }
       }
 
@@ -337,25 +385,25 @@
               text-align: center;
               margin-top: 40px;
               margin-left: 40px;
-              width:120px;
-              height:56px;
-              font-size:20px;
-              font-weight:500;
-              color:rgba(88,66,43,1);
+              width: 120px;
+              height: 56px;
+              font-size: 20px;
+              font-weight: 500;
+              color: rgba(88, 66, 43, 1);
             }
           }
 
           .-right-btn {
             margin-top: 32px;
             text-align: center;
-            width:284px;
-            height:64px;
-            border-radius:50px;
-            border:2px solid rgba(88,66,43,0.2);
-            font-size:28px;
-            font-weight:500;
-            color:rgba(88,66,43,1);
-            line-height:64px;
+            width: 284px;
+            height: 64px;
+            border-radius: 50px;
+            border: 2px solid rgba(88, 66, 43, 0.2);
+            font-size: 28px;
+            font-weight: 500;
+            color: rgba(88, 66, 43, 1);
+            line-height: 64px;
           }
         }
       }
@@ -389,14 +437,94 @@
       .-text {
         text-align: center;
         padding-top: 90px;
-        height:34px;
-        font-size:24px;
-        font-weight:400;
-        color:rgba(88,66,43,0.5);
-        line-height:34px;
+        height: 34px;
+        font-size: 24px;
+        font-weight: 400;
+        color: rgba(88, 66, 43, 0.5);
+        line-height: 34px;
       }
     }
 
+    &-popup {
+      text-align: center;
+      margin: 0 auto;
+      width: 590px;
+      height: 404px;
+      background: rgba(255, 255, 255, 1);
+      border-radius: 32px;
+
+      .-popup-icon {
+        position: absolute;
+        top: -82px;
+        left: 210px;
+        width: 184px;
+        height: 184px;
+      }
+
+      .-popup-title {
+        padding-top: 134px;
+        height: 50px;
+        font-size: 36px;
+        font-weight: 500;
+        color: rgba(88, 66, 43, 1);
+        line-height: 50px;
+      }
+
+      .-popup-btn {
+        text-align: center;
+        margin: 48px auto 0;
+        width: 470px;
+        height: 100px;
+        background: linear-gradient(90deg, rgba(249, 230, 11, 1) 0%, rgba(253, 219, 85, 1) 100%);
+        box-shadow: 0px 8px 16px 4px rgba(230, 194, 81, 0.4);
+        border-radius: 50px;
+        font-size: 32px;
+        font-weight: 500;
+        color: rgba(88, 66, 43, 1);
+        line-height: 100px;
+      }
+    }
+
+    &-popup-look {
+      width: 590px;
+      height: 366px;
+      background: rgba(255, 255, 255, 1);
+      border-radius: 32px;
+      text-align: center;
+
+
+      .-popup-look-title {
+        padding-top: 32px;
+        margin-bottom: 46px;
+        height: 50px;
+        font-size: 36px;
+        font-weight: 500;
+        color: rgba(88, 66, 43, 1);
+        line-height: 50px;
+      }
+
+      .-popup-look-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 110px ;
+        font-size: 24px;
+        font-weight: 500;
+        color: rgba(88, 66, 43, 1);
+      }
+
+      .-popup-look-img {
+        margin-bottom: 16px;
+        width: 128px;
+        height: 128px;
+      }
+    }
+
+    &-close {
+      position: absolute;
+      top: -280px;
+      right: -40px;
+    }
   }
 
 </style>

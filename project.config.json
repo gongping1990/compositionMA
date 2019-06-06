@@ -29,7 +29,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 6,
+			"current": 7,
 			"list": [
 				{
 					"id": 0,
@@ -77,6 +77,13 @@
 					"id": -1,
 					"name": "交作业",
 					"pathName": "pages/submitHomework",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "上传作业",
+					"pathName": "pages/uploadHomework",
 					"query": "",
 					"scene": null
 				}

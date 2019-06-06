@@ -98,6 +98,18 @@
         个人中心
       </van-tabbar-item>
     </van-tabbar>
+    <van-popup show="{{ show }}"
+               bind:close="onClose">
+      <view class="dialog">
+        <view class="dialog-icon"></view>
+        <text class="dialog-title">礼包配送</text>
+        <text class="dialog-text">请您完善收货地址</text>
+        <text class="dialog-text">以便为您配送课程配套的“实物大礼包”</text>
+        <view class="dialog-btn"
+              @tap="bindClose">去完善</view>
+        <view class="dialog-close"></view>
+      </view>
+    </van-popup>
   </view>
 </template>
 <script>
@@ -108,11 +120,14 @@ export default class Example extends wepy.page {
     navigationBarTitleText: '今日学习',
     usingComponents: {
       'van-tabbar': '../vant/tabbar/index',
-      'van-tabbar-item': '../vant/tabbar-item/index'
+      'van-tabbar-item': '../vant/tabbar-item/index',
+      'van-popup': '../vant/popup/index',
+      'van-picker': '../vant/picker/index'
     }
   };
   data = {
-    showMask: true,
+    show: false,
+    showMask: false,
     items: [1, 2, 3],
     swiperActive: 0
   };
@@ -120,13 +135,13 @@ export default class Example extends wepy.page {
     mHeader
   };
   methods = {
-    bindChangeTabBar(event) {
+    bindChangeTabBar (event) {
       switch (event.detail) {
         case 1:
           wx.navigateTo({ url: '/pages' })
           break
         case 3:
-          wx.navigateTo({url: '/pages/user'})
+          wx.navigateTo({ url: '/pages/user' })
       }
     },
     bindChangeSwiper (event) {
@@ -143,7 +158,8 @@ export default class Example extends wepy.page {
       return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
     }
   };
-  onLoad () { };
+  onLoad () {
+  };
   onShow () { };
 }
 </script>
@@ -151,6 +167,58 @@ export default class Example extends wepy.page {
 @import '../assets/style/mixin.scss';
 .home {
   position: relative;
+  .dialog {
+    @include flex-column-center;
+    position: relative;
+    box-sizing: border-box;
+    padding-top: 96px;
+    width: 590px;
+    height: 516px;
+    background: rgba(255, 255, 255, 1);
+    border-radius: 32px;
+    &-title {
+      margin-bottom: 16px;
+      font-size: 36px;
+      font-weight: 500;
+      color: #58422b;
+    }
+    &-close {
+      @include bg("/jrxx/icon-close.png");
+      position: absolute;
+      top: -100px;
+      right: -32px;
+      width: 72px;
+      height: 72px;
+    }
+    &-text {
+      font-size: 28px;
+      line-height: 40px;
+    }
+    &-btn {
+      @include flex-center;
+      margin-top: 48px;
+      width: 470px;
+      height: 100px;
+      font-size: 32px;
+      font-weight: 500;
+      background: linear-gradient(
+        90deg,
+        rgba(249, 230, 11, 1) 0%,
+        rgba(253, 219, 85, 1) 100%
+      );
+      box-shadow: 0px 8px 16px 4px rgba(230, 194, 81, 0.4);
+      border-radius: 50px;
+    }
+    &-icon {
+      @include bg('/jrxx/gifts.png');
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 178px;
+      height: 175px;
+      transform: translate(-50%, -50%);
+    }
+  }
   .container-scroll {
     @include bg('/jrxx/backgroud.png');
     min-height: 100vh;

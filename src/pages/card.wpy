@@ -1,0 +1,254 @@
+ <!--  -->
+<template>
+  <view class='container card'>
+    <mHeader></mHeader>
+    <view class="container-scroll"
+          style="margin-top:{{height}}px">
+      <view class="card-header">
+        <view class="card-day">
+          <view class="card-day-left">
+            <view class="card-day-num">
+              2<text>天</text>
+            </view>
+            <text>累计打卡</text>
+          </view>
+          <view class="card-day-right"></view>
+        </view>
+        <view class="card-btn isCard" @tap="bindClose">未打卡，立即打卡</view>
+      </view>
+      <view class="card-content">
+        <view class="card-content-header">
+          <text class="card-content-title">打卡记录</text>
+          <view class="canlendar-control">
+            <view class="canlendar-control-pre"
+                  @tap="bindClickPre"></view>
+            <text class="canlendar-control-title">{{today}}</text>
+            <view class="canlendar-control-next"
+                  @tap="bindClickNext"></view>
+          </view>
+        </view>
+        <calendar></calendar>
+      </view>
+      <van-popup show="{{ show }}"
+                 bind:close="onClose">
+        <view class="dialog">
+          <view class="dialog-icon"></view>
+          <text class="dialog-text">今日已打卡成功</text>
+          <view class="dialog-btn" @tap="bindClose">我知道了</view>
+        </view>
+      </van-popup>
+    </view>
+    <van-tabbar active="2"
+                active-color="#58422B"
+                @change="bindChangeTabBar">
+      <van-tabbar-item>
+        <image slot="icon"
+               src="../assets/image/icon-jrxx.png"
+               mode="aspectFit" />
+        <image slot="icon-active"
+               src="../assets/image/icon-jrxx1.png"
+               mode="aspectFit" />
+        今日学习
+      </van-tabbar-item>
+      <van-tabbar-item>
+        <image slot="icon"
+               src="../assets/image/icon-zpbz.png"
+               mode="aspectFit" />
+        <image slot="icon-active"
+               src="../assets/image/icon-zpbz1.png"
+               mode="aspectFit" />
+        作品表彰
+      </van-tabbar-item>
+      <van-tabbar-item>
+        <image slot="icon"
+               src="../assets/image/icon-dkjl.png"
+               mode="aspectFit" />
+        <image slot="icon-active"
+               src="../assets/image/icon-dkjl1.png"
+               mode="aspectFit" />
+        打卡记录
+      </van-tabbar-item>
+      <van-tabbar-item>
+        <image slot="icon"
+               src="../assets/image/icon-grzx.png"
+               mode="aspectFit" />
+        <image slot="icon-active"
+               src="../assets/image/icon-grzx1.png"
+               mode="aspectFit" />
+        个人中心
+      </van-tabbar-item>
+    </van-tabbar>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import calendar from '../components/calendar'
+import mHeader from '../components/header'
+export default class Example extends wepy.page {
+  config = {
+    navigationBarTitleText: '',
+    usingComponents: {
+      'van-tabbar': '../vant/tabbar/index',
+      'van-tabbar-item': '../vant/tabbar-item/index',
+      'van-popup': '../vant/popup/index'
+    }
+  };
+  data = {
+    today: '',
+    show: true
+  };
+  components = {
+    calendar,
+    mHeader
+  };
+  methods = {
+    bindClose() {
+      this.show = !this.show
+    },
+    bindClickPre () {
+      this.$invoke('calendar', 'preMonth')
+    },
+    bindClickNext () {
+      this.$invoke('calendar', 'nextMonth')
+    }
+  };
+  events = {
+    today (date) {
+      this.today = date
+    }
+  };
+  watch = {};
+  computed = {
+    height () {
+      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+    }
+  };
+  onLoad () { };
+  onShow () { };
+}
+</script>
+<style lang='scss'>
+@import '../assets/style/mixin.scss';
+.card {
+  @include bg('/card/backgroud.png');
+  .dialog {
+    @include flex-column-center;
+    box-sizing: border-box;
+    position: relative;
+    padding-top: 142px;
+    width: 590px;
+    height: 404px;
+    background: rgba(255, 255, 255, 1);
+    border-radius: 32px;
+    &-icon {
+      @include bg('/jrxx/calendar.png');
+      position: absolute;
+      top: -76px;
+      left: 50%;
+      width: 172px;
+      height: 185px;
+      transform: translateX(-50%);
+    }
+    &-text {
+      margin-bottom: 48px;
+      font-size: 36px;
+      font-weight: 500;
+    }
+    &-btn {
+      @include flex-center;
+      width: 470px;
+      height: 100px;
+      font-size: 32px;
+      font-weight: 500;
+      background: linear-gradient(
+        90deg,
+        rgba(249, 230, 11, 1) 0%,
+        rgba(253, 219, 85, 1) 100%
+      );
+      box-shadow: 0px 8px 16px 4px rgba(230, 194, 81, 0.4);
+      border-radius: 50px;
+    }
+  }
+  .canlendar-control {
+    @include flex-center;
+    &-title {
+      margin: 0 24px;
+      font-size: 28px;
+      line-height: 40px;
+    }
+    &-pre,
+    &-next {
+      @include bg('/card/button-select.png');
+      background-position: center;
+      background-size: 18px 34px;
+      width: 32px;
+      height: 34px;
+    }
+    &-pre {
+      @include bg('/card/button-select1.png');
+      background-size: 18px 34px;
+    }
+  }
+  &-content {
+    padding-top: 14px;
+    &-title {
+      font-size: 32px;
+      font-weight: 500;
+    }
+    &-header {
+      @include flex-center;
+      margin-bottom: 48px;
+      justify-content: space-between;
+      padding: 0 48px;
+    }
+  }
+  &-btn {
+    @include flex-center;
+    margin-bottom: 66px;
+    width: 320px;
+    height: 72px;
+    font-size: 28px;
+    background: linear-gradient(
+      90deg,
+      rgba(249, 230, 11, 1) 0%,
+      rgba(253, 219, 85, 1) 100%
+    );
+    box-shadow: 0px 8px 16px 4px rgba(230, 194, 81, 0.4);
+    border-radius: 50px;
+    &.isCard {
+      color: #d18a3b;
+      background: #ffd129;
+      box-shadow: none;
+    }
+  }
+  &-day {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 40px;
+    &-num {
+      font-size: 72px;
+      font-weight: bold;
+      text {
+        font-weight: normal;
+        font-size: 32px;
+      }
+    }
+    &-right {
+      @include bg('/card/icon-lock in.png');
+      width: 108px;
+      height: 116px;
+    }
+    &-left {
+      @include flex-column-center;
+      align-items: flex-start;
+      font-size: 32px;
+      color: #58422b;
+    }
+  }
+  &-header {
+    padding: 0 96px;
+    padding-top: 88px;
+  }
+}
+</style>

@@ -26,6 +26,7 @@ export default class extends wepy.app {
   config = {
     pages: [
       'pages/index',
+      'pages/card',
       'pages/catalog',
       'pages/classroom',
       'pages/ready',
@@ -36,7 +37,8 @@ export default class extends wepy.app {
       'pages/myWork',
       'pages/myWorkAll',
       'pages/pointNotice',
-      'pages/recognitionNotice'
+      'pages/recognitionNotice',
+      'pages/address'
     ],
     window: {
       backgroundTextStyle: 'light',

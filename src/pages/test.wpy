@@ -74,7 +74,7 @@
         <view class="question-btn-wrap"
               wx:if="{{showQuestion}}">
           <view class="question-btn"
-                @tap="clickStudy">下一题</view>
+                @tap="clickStudy">{{publishEnd ? '下一题' : '完成答题'}}</view>
         </view>
       </view>
     </view>
@@ -97,14 +97,17 @@ export default class Example extends wepy.page {
     }
   };
   data = {
+    stepIndex: 0,
     aduioContext: null,
-    showAlert: true,
+    showAlert: false,
     isSuccess: false,
-    showQuestion: true,
+    showQuestion: false,
     selectIndex: -1,
     correctAnswer: 1,
     answerEnd: false,
+    readyEnd: false,
     setAnswerStatusEnd: false,
+    publishEnd: false,
     questionArr: [
       {
         content: 'A. 容光焕发',
@@ -143,8 +146,8 @@ export default class Example extends wepy.page {
   };
   methods = {
     clickStudy () {
-      this.answerArr[3].status = 1
       this.answerEnd = true
+      this.publishAnswer()
     },
     bindClickVoice () {
       this.stop()
@@ -161,6 +164,9 @@ export default class Example extends wepy.page {
     height () {
       return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
     }
+    // isSuccess() {
+    //   return this.selectIndex === this.correctAnswer
+    // }
   };
 
   play () {
@@ -173,19 +179,26 @@ export default class Example extends wepy.page {
 
   alertError () {
     this.isSuccess = false
-    this.showAlert = true
+    this.changeAlertVisible()
   }
 
   alertSuccess () {
     this.isSuccess = true
+    this.changeAlertVisible()
+  }
+
+  changeAlertVisible() {
     this.showAlert = true
+    setTimeout(() => {
+      this.showAlert = false
+      this.$apply()
+    }, 2000)
   }
 
   imitateReady () {
     let { answerArr } = this
     let random = parseInt(Math.random() * 3)
     this.answerArr[random].status = 1
-    console.log(answerArr)
     if (!(answerArr[0].status && answerArr[1].status && answerArr[2].status)) {
       console.log(111)
       setTimeout(() => {
@@ -194,25 +207,24 @@ export default class Example extends wepy.page {
       }, 600)
     } else {
       console.log('ready end')
-      if (this.answerEnd) {
-        this.publishAnswer()
-      }
+      this.readyEnd = true
     }
   }
 
   publishAnswer () {
-    this.setAnswerStatus()
     if (this.selectIndex === this.correctAnswer) {
-      this.alertError()
+      this.alertSuccess()
       this.answerArr[3].flower += 1
     } else {
-      this.alertSuccess()
+      this.alertError()
     }
+    this.publishEnd = true
+    this.$apply()
   }
 
   // 设置答题正确还是错误
   setAnswerStatus () {
-    let isErr = parseInt(Math.random() * 2)
+    let isErr = parseInt(Math.random() * 3)
     let index = parseInt(Math.random() * 3)
     for (let i = 0; i < 3; i++) {
       this.answerArr[i].flower += 1
@@ -226,16 +238,57 @@ export default class Example extends wepy.page {
     console.log(this.answerArr)
   }
 
+  randomImitateReady() {
+    let base = parseInt(Math.random() * 3 + 3)
+    setTimeout(() => {
+      this.imitateReady()
+    }, base * 1000)
+  }
+
   initAudio () {
     let { audioContext } = this
     console.log(this.audioContext)
     audioContext.src = 'https://pub.file.k12.vip/qswd.mp3'
-    // audioContext.play()
+    audioContext.play()
     audioContext.onEnded(() => {
       console.log('end')
       this.showQuestion = true
+      // this.randomImitateReady()
       this.$apply()
     })
+  }
+
+  reset () {
+    this.selectIndex = -1
+    this.readyEnd = false
+    this.isSuccess = false
+    this.answerEnd = false
+    this.publishEnd = false
+    this.setAnswerStatusEnd = false
+    this.time = this.baseTime
+    this.answerArr = [
+      {
+        status: 0,
+        answer: 0,
+        flower: this.answerArr[0].flower
+      },
+      {
+        status: 0,
+        answer: 0,
+        flower: this.answerArr[1].flower
+      },
+      {
+        status: 0,
+        answer: 0,
+        flower: this.answerArr[2].flower
+      },
+      {
+        status: 0,
+        answer: 0,
+        flower: this.answerArr[3].flower
+      }
+    ]
+    this.setRandomTime()
   }
 
   onReady () {

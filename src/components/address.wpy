@@ -1,0 +1,151 @@
+<!--  -->
+<template>
+  <view class='address-componet'>
+    <view class="_input">
+      <input value=""
+             type="text"
+             placeholder-class="placeholder"
+             placeholder="收获人姓名" />
+    </view>
+    <view class="_input">
+      <input value=""
+             type="number"
+             placeholder-class="placeholder"
+             placeholder="收获人手机号" />
+    </view>
+    <view class="_input select"
+          @tap="bindClickRegion">
+      <text class="placeholder"
+            wx:if="{{!form.region}}">请选择省/市/区（县）</text>
+      <text class="_input-text"
+            wx:if="{{form.region}}">{{form.region}}</text>
+      <view class="icon"></view>
+    </view>
+    <view class="_input textarea">
+      <textarea value=""
+                placeholder-class="placeholder"
+                placeholder="详细地址 街道、小区、门牌等信息" />
+      </view>
+      <view class="_btn" @tap="save">{{btnText}}</view>
+    <van-popup position="bottom" show="{{ show }}">
+      <van-area area-list="{{ areaList }}" @confirm="bindClickConfirm" @cancel="bindClickRegion" />
+    </van-popup>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import areaList from '../assets/comJS/area'
+export default class Example extends wepy.component {
+  props = {
+    btnText: {
+      type: String,
+      default: '保存并使用'
+    }
+  };
+  data = {
+    show: false,
+    form: {
+      name: '',
+      phone: '',
+      region: '',
+      address: ''
+    },
+    areaList: Object.assign({}, areaList)
+  };
+  components = {};
+  methods = {
+    bindClickConfirm (event) {
+      let { values } = event.detail
+      let arr = []
+      values.forEach((e, i) => {
+        arr.push(e.name)
+      })
+      this.form.region = arr.join('/')
+      console.log(this.form.region)
+      this.show = false
+    },
+    bindClickRegion () {
+      this.show = !this.show
+    },
+    save() {
+      this.$emit('save', this.form)
+    }
+  };
+  events = {};
+  watch = {};
+  computed = {};
+  onLoad () { };
+}
+</script>
+<style lang='scss'>
+@import '../assets/style/mixin.scss';
+.address-componet {
+  padding-top: 48px;
+  ._btn {
+    @include flex-center;
+    position: fixed;
+    left: 50%;
+    bottom: 48px;
+    width: 654px;
+    height: 100px;
+    font-size: 32px;
+    background: linear-gradient(
+      90deg,
+      rgba(249, 230, 11, 1) 0%,
+      rgba(253, 219, 85, 1) 100%
+    );
+    box-shadow: 0px 8px 16px 4px rgba(230, 194, 81, 0.4);
+    border-radius: 54px;
+    transform: translateX(-50%);
+  }
+  ._input {
+    @include flex-center;
+    box-sizing: border-box;
+    padding-left: 32px;
+    margin: 0 48px;
+    margin-bottom: 24px;
+    width: 654px;
+    height: 96px;
+    background: rgba(246, 246, 246, 1);
+    border-radius: 48px;
+    input,
+    &-text {
+      width: 100%;
+      height: 96px;
+      font-size: 34px;
+      color: #58422b;
+    }
+    &-text {
+      display: flex;
+      align-items: center;
+    }
+    &.textarea {
+      padding-top: 48px;
+      height: 240px;
+      textarea {
+        width: 100%;
+        height: 240px;
+        font-size: 34px;
+        color: #58422b;
+      }
+    }
+    &.select {
+      position: relative;
+      .icon {
+        @include bg('/course/my-icon-arrow.png');
+        position: absolute;
+        top: 50%;
+        right: 40px;
+        width: 17px;
+        height: 32px;
+        transform: translateY(-50%);
+      }
+    }
+  }
+  .placeholder {
+    width: 100%;
+    font-size: 28px;
+    color: rgba($color: #58422b, $alpha: 0.5);
+  }
+}
+</style>

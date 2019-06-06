@@ -1,0 +1,44 @@
+<template>
+  <view class='container address'>
+    <mHeader></mHeader>
+    <view class="container-scroll"
+          style="margin-top:{{height}}px">
+    <address></address>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import mHeader from '../components/header'
+import address from '../components/address'
+export default class Example extends wepy.page {
+  config = {
+    navigationBarTitleText: '',
+    'usingComponents': {
+      'van-area': '../vant/area/index',
+      'van-popup': '../vant/popup/index'
+    }
+  };
+  data = {};
+  components = {
+    mHeader,
+    address
+  };
+  methods = {};
+  events = {
+    save(params) {
+      console.log(params)
+    }
+  };
+  watch = {};
+  computed = {
+    height () {
+      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+    }
+  };
+  onLoad() {};
+  onShow() {};
+}
+</script>
+<style lang='scss'>
+</style>

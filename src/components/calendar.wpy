@@ -1,0 +1,207 @@
+<!--  -->
+<template>
+  <view class="calendar">
+    <view class="calendar-week">
+      <view class="calendar-week-item"
+            wx:for="{{weekArr}}"
+            wx:key="{{item}}">
+        {{item}}
+      </view>
+    </view>
+    <view class="calendar-body">
+      <view class="calendar-day"
+            wx:for="{{monthDate}}"
+            wx:key="{{item.date}}">
+        <view class="calendar-day-content {{item.formatDate == today && 'isToday'}} {{card[item.formatDate] == 2 && 'success'}}">
+          {{ item.showDate }}
+          <view class="calendar-day-icon"></view>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import dayjs from 'dayjs'
+export default class Example extends wepy.component {
+  props = {
+    card: {
+      type: Object,
+      default: () => ({})
+    }
+  };
+  data = {
+    time: '',
+    year: '',
+    month: '',
+    monthDate: [],
+    weekArr: ['一', '二', '三', '四', '五', '六', '日']
+  };
+  components = {};
+  methods = {
+    nextMonth() {
+      this.nextMonth()
+    }
+  };
+  events = {};
+  watch = {};
+  computed = {
+    formatDate () {
+      let { year, month } = this
+      if (!year && !month) {
+        return dayjs(new Date()).format('YYYY年MM月')
+      } else {
+        this.$emit('today', dayjs(new Date(year, month - 1)).format('YYYY年MM月'))
+        console.log(dayjs(new Date(year, month - 1)).format('YYYY年MM月'))
+        return dayjs(new Date(year, month - 1)).format('YYYY年MM月')
+      }
+    },
+    today () {
+      return dayjs(new Date()).format('YYYY-MM-DD')
+    }
+  };
+  init () {
+    let _date = new Date()
+    this.time = _date
+    this.year = _date.getFullYear()
+    this.month = _date.getMonth() + 1
+    this.getMonthDate(this.year, this.month)
+  }
+  nextMonth () {
+    this.month += 1
+    this.getMonthDate(this.year, this.month)
+  }
+  preMonth () {
+    this.month -= 1
+    this.getMonthDate(this.year, this.month)
+  }
+  getMonthDate (year, month) {
+    let ret = []
+    if (!year || !month) {
+      let today = new Date()
+      year = today.getFullYear()
+      month = today.getMonth() + 1
+    }
+    let firstDay = new Date(year, month - 1, 1)
+    let firstDayWeekDay = firstDay.getDay()
+    if (firstDayWeekDay === 0) {
+      firstDayWeekDay = 7
+    }
+
+    let lastDayOfLastMonth = new Date(year, month - 1, 0)
+    // eslint-disable-next-line no-unused-vars
+    let lastDateOfLastMonth = lastDayOfLastMonth.getDate()
+
+    let preMonthDayCount = firstDayWeekDay - 1
+
+    let lastDay = new Date(year, month, 0)
+    let lastDate = lastDay.getDate()
+    console.log(lastDate, preMonthDayCount)
+    for (var i = 0; i < lastDate + preMonthDayCount; i++) {
+      var date = i + 1 - preMonthDayCount
+      var showDate = date
+      var thisMonth = month
+
+      if (date <= 0) {
+        thisMonth = month - 1
+        showDate = ''
+      } else if (date > lastDate) {
+        thisMonth = month + 1
+        showDate = showDate - lastDate
+      }
+
+      if (thisMonth === 0) {
+        thisMonth = 12
+        ret.push({
+          month: thisMonth,
+          date,
+          showDate,
+          _date: new Date(year - 1, thisMonth - 1, showDate),
+          formatDate: dayjs(new Date(year, thisMonth - 1, showDate)).format(
+            'YYYY-MM-DD'
+          )
+        })
+      } else if (thisMonth === 13) {
+        thisMonth = 1
+        ret.push({
+          month: thisMonth,
+          date,
+          showDate,
+          _date: new Date(year + 1, thisMonth - 1, showDate),
+          formatDate: dayjs(new Date(year, thisMonth - 1, showDate)).format(
+            'YYYY-MM-DD'
+          )
+        })
+      } else {
+        ret.push({
+          month: thisMonth,
+          date,
+          showDate,
+          _date: new Date(year, thisMonth - 1, showDate),
+          formatDate: dayjs(new Date(year, thisMonth - 1, showDate)).format(
+            'YYYY-MM-DD'
+          )
+        })
+      }
+    }
+    this.monthDate = ret
+    this.$apply()
+    console.log(ret)
+  }
+  onLoad () {
+    this.init()
+  };
+}
+</script>
+<style lang='scss'>
+@import '../assets/style/mixin.scss';
+.calendar {
+  padding: 0 38px;
+  font-size: 28px;
+  color: rgba($color: #58422b, $alpha: 0.5);
+  &-header {
+    margin-bottom: 50px;
+    color: #58422b;
+  }
+  &-week {
+    @include flex-center;
+    margin-bottom: 32px;
+    &-item {
+      @include flex-center;
+      width: 96px;
+      height: 40px;
+    }
+  }
+  &-body {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  &-day {
+    @include flex-center;
+    position: relative;
+    margin-bottom: 48px;
+    width: 96px;
+    height: 52px;
+    font-weight: 600;
+    &-content {
+      &.isToday {
+        color: #58422b;
+      }
+      &.success {
+        color: #ffd129;
+        .calendar-day-icon {
+          position: absolute;
+          left: 50%;
+          bottom: -24px;
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          background: rgba(255, 209, 41, 1);
+          border: 3px solid rgba(209, 138, 59, 1);
+          transform: translateX(-50%);
+        }
+      }
+    }
+  }
+}
+</style>

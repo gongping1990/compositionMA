@@ -6,9 +6,9 @@
         <view class="-header-top">
           <view class="-header-img">
             <image class="-img" mode="widthFix"
-                   src="https://wx.qlogo.cn/mmopen/vi_32/DYAIOgq83epxBOwIsH1se324kFtXjDgaj6DzpsF162VlbsWrq01HOGSia5Qpe3toQroxwdwTHxv3DXKqxTVSrmA/132"></image>
+                   src="{{userInfo.headimgurl}}"></image>
           </view>
-          <view class="-header-text">最美的期待</view>
+          <view class="-header-text">{{userInfo.nickname}}</view>
         </view>
         <view class="-header-down"></view>
       </view>
@@ -46,10 +46,15 @@
 </template>
 
 <script>
-  import wepy from 'wepy'
-import mHeader from '../components/header'
-
-export default class User extends wepy.page {
+  import wepy from 'wepy';
+  import { connect } from 'wepy-redux'
+  import mHeader from '../components/header';
+  @connect({
+    userInfo(state) {
+      return state.user.userInfo
+    }
+  })
+  export default class User extends wepy.page {
     config = {
       navigationBarTitleText: '个人中心'
     };
@@ -58,7 +63,7 @@ export default class User extends wepy.page {
     };
     computed = {
       height() {
-        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
       }
     };
 
@@ -97,17 +102,17 @@ export default class User extends wepy.page {
       toJump(data) {
         switch (data) {
           case 1:
-            wx.navigateTo({ url: '/pages/myCourse' })
-            break
+            wx.navigateTo({ url: '/pages/myCourse' });
+            break;
           case 2:
-            wx.navigateTo({ url: '/pages/myWork' })
-            break
+            wx.navigateTo({ url: '/pages/myWork' });
+            break;
           case 3:
-            wx.navigateTo({ url: '/pages/pointNotice' })
-            break
+            wx.navigateTo({ url: '/pages/pointNotice' });
+            break;
           case 4:
-            wx.navigateTo({ url: '/pages/recognitionNotice' })
-            break
+            wx.navigateTo({ url: '/pages/recognitionNotice' });
+            break;
         }
       }
     };

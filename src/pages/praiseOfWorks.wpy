@@ -12,17 +12,17 @@
             <view class="p-praiseOfWorks-item-top">
               <view class="-item-top">
                 <view class="-item-top-left">
-                  <image class="-left-img" src="{{item.imgUrl}}"></image>
+                  <image class="-left-img" src="{{item.stuImg}}"></image>
                 </view>
                 <view class="-item-top-right">
-                  <view class="-right-name">{{item.name}}</view>
-                  <view class="-right-time">{{item.time}}</view>
+                  <view class="-right-name">{{item.stuName}}</view>
+                  <view class="-right-time">{{item.worktime}}</view>
                   <image class="-right-work" src="{{item.workImg}}"></image>
                 </view>
               </view>
 
               <view class="-item-icon">
-                <view class="-item-icon-num">100
+                <view class="-item-icon-num">{{item.learnDay}}
                   <text class="-text">天</text>
                 </view>
                 <view class="-item-icon-text">坚持学习</view>
@@ -30,17 +30,17 @@
             </view>
             <view class="p-praiseOfWorks-item-down">
               <view class="-down-left">
-                <image class="-down-left-img" src="https://pub.file.k12.vip/2019/06/10/1137913654138916865.jpg"></image>
-                <view class="-down-left-name">被木木老师表扬</view>
+                <image class="-down-left-img" src="{{item.teacherImg}}"></image>
+                <view class="-down-left-name">被{{item.teacherName}}老师表扬</view>
               </view>
-              <view class="-down-right">
+              <view class="-down-right" @tap="addMyLike">
                 <view class="-zan-left {{item.isZan ? '-zan-ok' : ''}}">
                   <image class="-img" wx:if="{{!item.isZan}}"
                          src="https://pub.file.k12.vip/tbzw/word-detail/icon-give-pre.png"></image>
                   <image class="-img" wx:if="{{item.isZan}}"
                          src="https://pub.file.k12.vip/2019/06/06/1136572565700235266.png"></image>
                 </view>
-                <view class="-zan-right {{item.isZan ? '-zan-ok' : ''}}">{{item.zan}}</view>
+                <view class="-zan-right {{item.isZan ? '-zan-ok' : ''}}">{{item.like}}</view>
               </view>
             </view>
           </view>
@@ -51,8 +51,10 @@
 </template>
 
 <script>
-  import wepy from 'wepy'
-  import mHeader from '../components/header'
+  import wepy from 'wepy';
+  import api from '../request/api';
+  import dayjs from 'dayjs';
+  import mHeader from '../components/header';
 
   export default class PraiseOfWorks extends wepy.page {
     config = {
@@ -63,7 +65,7 @@
     };
     computed = {
       height() {
-        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
       }
     };
 
@@ -109,12 +111,40 @@
       ]
     };
 
+    getList() {
+      api.study.listWorkPraiseByPage({
+        current: this.page.current,
+        size: this.page.size
+      })
+        .then(({ data }) => {
+          if (this.page.current > 1) {
+            this.dataList = this.dataList.concat(data.resultData.records);
+          } else {
+            this.dataList = data.resultData.records;
+          }
+
+          this.dataList.forEach(item => {
+            item.worktime = dayjs(+item.worktime).format('YYYY-MM-DD HH:mm:ss');
+          });
+
+          this.page.total = data.resultData.total;
+          this.$apply();
+        });
+    };
+
     methods = {
+      addMyLike () {
+        api.study.addLike({
+          workId: ''
+        }).then(()=>{
+
+        })
+      },
       bindLoadItem(data) {
-        console.log(111111)
+        console.log(111111);
         if (this.page.current < Math.ceil(this.page.total / this.page.size)) {
-          this.page.current++
-          // this.getAccountInfo();
+          this.page.current++;
+          this.getList();
         }
       }
     };
@@ -122,7 +152,7 @@
     events = {};
 
     onLoad() {
-
+      this.getList();
     }
   }
 </script>

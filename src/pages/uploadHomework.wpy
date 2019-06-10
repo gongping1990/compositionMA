@@ -3,7 +3,7 @@
     <mHeader title="提交作业"></mHeader>
     <view class="container-scroll p-uploadHomework" style="margin-top:{{height}}px">
       <view class="p-uploadHomework-content">
-        <image class="-content-img" src="https://pub.file.k12.vip/2019/06/05/1136182325860913154.png"></image>
+        <image class="-content-img" src="{{workImg}}"></image>
       </view>
       <view class="p-uploadHomework-tip">作业提交到</view>
       <view class="p-uploadHomework-name">回家过大年（写人的脸色）</view>
@@ -23,10 +23,10 @@
 </template>
 
 <script>
-  import wepy from 'wepy'
-import mHeader from '../components/header'
+  import wepy from 'wepy';
+  import mHeader from '../components/header';
 
-export default class UploadHomework extends wepy.page {
+  export default class UploadHomework extends wepy.page {
     config = {
       navigationBarTitleText: '提交作业',
       'usingComponents': {
@@ -38,28 +38,64 @@ export default class UploadHomework extends wepy.page {
     };
     computed = {
       height() {
-        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
       }
     };
 
     data = {
-      isOpenPopup: false
+      isOpenPopup: false,
+      workImg: ''
     };
 
     methods = {
       toWorkDetail() {
-        this.isOpenPopup = false
-        wx.navigateTo({ url: `/pages/completionOfWork` })
+        this.isOpenPopup = false;
+        wx.navigateTo({ url: `/pages/completionOfWork` });
       },
       uploadWork() {
-        this.isOpenPopup = true
+        let _self = this;
+        wx.showToast({
+          icon: 'loading',
+          title: '正在上传'
+        });
+
+        wx.uploadFile({
+          url: 'http://huoke.prod.k12.vip/common/uploadPublicFile',
+          filePath: this.workImg,
+          name: 'file',
+          header: { 'Content-Type': 'multipart/form-data' },
+          success: function(res) {
+            if (res.statusCode != 200) {
+              wx.showModal({
+                title: '提示',
+                content: '上传失败',
+                showCancel: false
+              });
+              return;
+            } else {
+              _self.isOpenPopup = true;
+              _self.$apply()
+            }
+          },
+          fail: function(e) {
+            console.log(e);
+            wx.showModal({
+              title: '提示',
+              content: '上传失败',
+              showCancel: false
+            });
+          },
+          complete: function() {
+            wx.hideToast();  //隐藏Toast
+          }
+        });
       }
     };
 
     events = {};
 
-    onLoad() {
-
+    onLoad(query) {
+      this.workImg = query.url;
     }
   }
 </script>

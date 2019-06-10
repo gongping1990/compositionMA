@@ -9,13 +9,13 @@
       <repeat for="{{dataList}}" key="index" index="index" item="list">
         <view class="p-myWork-list">
           <view class="-list-title">
-            <view class="-list-title-left">{{list.name}}【{{list.grade}}】</view>
+            <view class="-list-title-left">{{list.gradeText}}【{{list.grade}}】</view>
             <view class="-list-title-right" @tap="toDetail({{list}})">
               查看全部
               <image class="-icon" src="https://pub.file.k12.vip/tbzw/word/icon-return.png"></image>
             </view>
           </view>
-          <repeat for="{{list.workList}}" key="index" index="index" item="item">
+          <repeat for="{{list.lessons}}" key="index" index="index" item="item">
             <view class="-list-item">
               <view class="-list-item-left">
                 <view class="-num">0{{index+1}}</view>
@@ -37,10 +37,11 @@
 </template>
 
 <script>
-  import wepy from 'wepy'
-import mHeader from '../components/header'
+  import wepy from 'wepy';
+  import api from '../request/api'
+  import mHeader from '../components/header';
 
-export default class MyWork extends wepy.page {
+  export default class MyWork extends wepy.page {
     config = {
       navigationBarTitleText: '我的作业'
     };
@@ -49,7 +50,7 @@ export default class MyWork extends wepy.page {
     };
     computed = {
       height() {
-        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
       }
     };
 
@@ -57,9 +58,9 @@ export default class MyWork extends wepy.page {
       tabActive: '1',
       dataList: [
         {
-          name: '同步作文课',
+          gradeText: '同步作文课',
           grade: '三年级',
-          workList: [
+          lessons: [
             {
               name: '回家过大年（写人的脸色）'
             },
@@ -69,9 +70,9 @@ export default class MyWork extends wepy.page {
           ]
         },
         {
-          name: '精度阿萨德拉上了',
+          gradeText: '精度阿萨德拉上了',
           grade: '五年级',
-          workList: [
+          lessons: [
             {
               name: '回家叫你吃饭跑（写人的脸色）'
             },
@@ -83,18 +84,29 @@ export default class MyWork extends wepy.page {
       ]
     };
 
+    getList() {
+      api.study.listExistWorkByPage({
+        existwork: this.tabActive !== '1',
+      })
+        .then(({ data }) => {
+          this.dataList = data.resultData.records;
+          this.$apply();
+        });
+    }
+
     methods = {
       changeTab(num) {
-        this.tabActive = num
+        this.tabActive = num;
+        this.getList()
       },
       toDetail(params) {
-        wx.navigateTo({url: `/pages/myWorkAll?type=${this.tabActive}&name=${params.name}&grade=${params.grade}`})
+        wx.navigateTo({ url: `/pages/myWorkAll?type=${this.tabActive}&name=${params.name}&grade=${params.grade}` });
       },
-      workDetail () {
+      workDetail() {
         if (this.tabActive === '1') {
-          wx.navigateTo({url: `/pages/submitHomework`})
+          wx.navigateTo({ url: `/pages/submitHomework` });
         } else {
-          wx.navigateTo({url: `/pages/completionOfWork`})
+          wx.navigateTo({ url: `/pages/completionOfWork` });
         }
       }
     };
@@ -102,7 +114,7 @@ export default class MyWork extends wepy.page {
     events = {};
 
     onLoad() {
-
+      this.getList()
     }
   }
 </script>
@@ -199,13 +211,13 @@ export default class MyWork extends wepy.page {
 
         &-right {
           @include flex-center;
-          width:140px;
-          height:46px;
-          background:rgba(34,234,171,1);
-          border-radius:22px;
-          font-size:24px;
-          font-weight:500;
-          color:rgba(255,255,255,1);
+          width: 140px;
+          height: 46px;
+          background: rgba(34, 234, 171, 1);
+          border-radius: 22px;
+          font-size: 24px;
+          font-weight: 500;
+          color: rgba(255, 255, 255, 1);
 
           .-icon {
             margin-right: 10px;

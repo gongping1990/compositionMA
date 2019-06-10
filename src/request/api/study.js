@@ -8,7 +8,19 @@ const study = {
     return request.post('/study/addCard', params)
   },
   addLike(params) {
-    return request.post('/study/like', params)
+    return request.get('/study/like', params)
+  },
+  listLikeByPage(params) {
+    return request.get('/study/listLikeByPage', params)
+  },
+  listUserLessons(params) {
+    return request.get('/study/listUserLessons', params)
+  },
+  listPraiseByPage(params) {
+    return request.get('/study/listPraiseByPage', params)
+  },
+  listWorkPraiseByPage(params) {
+    return request.get('/study/listWorkPraiseByPage', params)
   }
 }
 

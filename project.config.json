@@ -32,7 +32,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 9,
+			"current": 3,
 			"list": [
 				{
 					"id": 0,
@@ -56,8 +56,8 @@
 					"scene": null
 				},
 				{
-					"id": -1,
-					"name": "我的课程",
+					"id": 3,
+					"name": "点赞",
 					"pathName": "pages/pointNotice",
 					"query": "",
 					"scene": null

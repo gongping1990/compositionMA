@@ -63,7 +63,7 @@
         <button class="-footer-btn" @tap="submitWork">上交作业</button>
       </view>
 
-      <view class="p-submitHomework-card" wx:if="{{tabActive === '1'}}">
+      <view class="p-submitHomework-card" wx:if="{{tabActive === '1'}}" @tap="addMyCard">
         <view class="-text" @tap="changePopup({{'2'}})">{{isPunchCard ? '已打卡' : '点我打卡'}}</view>
       </view>
 
@@ -132,10 +132,11 @@
 </template>
 
 <script>
-  import wepy from 'wepy'
-import mHeader from '../components/header'
+  import wepy from 'wepy';
+  import api from '../request/api';
+  import mHeader from '../components/header';
 
-export default class SubmitHomework extends wepy.page {
+  export default class SubmitHomework extends wepy.page {
     config = {
       navigationBarTitleText: '课后作业',
       'usingComponents': {
@@ -148,12 +149,12 @@ export default class SubmitHomework extends wepy.page {
     };
     computed = {
       height() {
-        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
       }
     };
 
     data = {
-      tabActive: '2',
+      tabActive: '1',
       isSuccessWork: false,
       isOpenPopup: false,
       isCard: false,
@@ -194,25 +195,41 @@ export default class SubmitHomework extends wepy.page {
     };
 
     methods = {
+      addMyCard() {
+        api.study.addCard({
+        }).then(() => {
+
+        });
+      },
       changePopup(num) {
         if (num === '1') {
-          this.isCard = false
+          this.isCard = false;
         } else if (num === '2') {
-          this.isCard = true
+          this.isCard = true;
         }
-        this.isOpenPopup = !this.isOpenPopup
+        this.isOpenPopup = !this.isOpenPopup;
       },
       submitWork() {
-        wx.navigateTo({ url: `/pages/uploadHomework` })
+        let _self = this
+        wx.chooseImage({
+          count: 1, // 默认9
+          sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+          sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+          success: function (res) {
+            // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
+            wx.navigateTo({ url: `/pages/uploadHomework?url=${res.tempFilePaths[0]}`});
+          }
+        })
+
       },
       toLookCard() {
-        wx.navigateTo({ url: `/pages/uploadHomework` })
+        wx.navigateTo({ url: `/pages/uploadHomework` });
       },
       lookWorkDetail() {
-        wx.navigateTo({ url: `/pages/completionOfWork` })
+        wx.navigateTo({ url: `/pages/completionOfWork` });
       },
       changeTab(num) {
-        this.tabActive = num
+        this.tabActive = num;
       }
     };
 
@@ -228,6 +245,7 @@ export default class SubmitHomework extends wepy.page {
   @import '../assets/style/mixin.scss';
 
   .p-submitHomework {
+    height: calc(100vh - 166px);
 
     &-header {
       background: url("https://pub.file.k12.vip/2019/06/06/1136480784090419202.png") no-repeat;
@@ -520,7 +538,7 @@ export default class SubmitHomework extends wepy.page {
           }
 
           .-zan-ok {
-            background:linear-gradient(90deg,rgba(249,230,11,1) 0%,rgba(253,219,85,1) 100%);
+            background: linear-gradient(90deg, rgba(249, 230, 11, 1) 0%, rgba(253, 219, 85, 1) 100%);
             border: none;
           }
 
@@ -535,24 +553,27 @@ export default class SubmitHomework extends wepy.page {
         margin-top: 100px;
         text-align: center;
 
-        .-no-icon{
+        .-no-icon {
           margin-bottom: 24px;
-          width:254px;
-          height:252px;
+          width: 254px;
+          height: 252px;
         }
 
         .-no-text {
-          height:40px;
-          font-size:28px;
-          font-weight:400;
-          color:rgba(88,66,43,0.5);
-          line-height:40px;
+          height: 40px;
+          font-size: 28px;
+          font-weight: 400;
+          color: rgba(88, 66, 43, 0.5);
+          line-height: 40px;
         }
       }
     }
 
     &-footer {
-      margin-top: 166px;
+      position: absolute;
+      bottom: 42px;
+      width: 100%;
+
       .-footer-btn {
         margin: 0 auto;
         text-align: center;

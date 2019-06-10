@@ -32,7 +32,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 0,
+			"current": 9,
 			"list": [
 				{
 					"id": 0,
@@ -87,6 +87,20 @@
 					"id": -1,
 					"name": "上传作业",
 					"pathName": "pages/uploadHomework",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "作业分享",
+					"pathName": "pages/shareHomework",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": 9,
+					"name": "作品表彰",
+					"pathName": "pages/praiseOfWorks",
 					"query": "",
 					"scene": null
 				}

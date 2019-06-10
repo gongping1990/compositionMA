@@ -35,9 +35,9 @@
               </view>
               <view class="-down-right" @tap="addMyLike">
                 <view class="-zan-left {{item.isZan ? '-zan-ok' : ''}}">
-                  <image class="-img" wx:if="{{!item.isZan}}"
+                  <image class="-img" wx:if="{{!item.myLike}}"
                          src="https://pub.file.k12.vip/tbzw/word-detail/icon-give-pre.png"></image>
-                  <image class="-img" wx:if="{{item.isZan}}"
+                  <image class="-img" wx:if="{{item.myLike}}"
                          src="https://pub.file.k12.vip/2019/06/06/1136572565700235266.png"></image>
                 </view>
                 <view class="-zan-right {{item.isZan ? '-zan-ok' : ''}}">{{item.like}}</view>

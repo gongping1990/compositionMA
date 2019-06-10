@@ -29,7 +29,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 8,
+			"current": 9,
 			"list": [
 				{
 					"id": 0,
@@ -91,6 +91,13 @@
 					"id": -1,
 					"name": "作业分享",
 					"pathName": "pages/shareHomework",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "作业分享1111",
+					"pathName": "pages/ready",
 					"query": "",
 					"scene": null
 				}

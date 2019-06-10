@@ -45,7 +45,12 @@
             <image class="-reply-img" src="https://pub.file.k12.vip/2019/06/10/1137913654138916865.jpg"></image>
             <view class="-reply-info">
               <view class="-info-name">木木老师</view>
-              <view></view>
+              <view class="-info-wrap">
+                <view class="-info-content voice">
+                  <view class="icon"></view>
+                </view>
+                <view class="-reply-time">12"20"</view>
+              </view>
             </view>
           </view>
         </view>
@@ -239,14 +244,54 @@
           margin-left: 34px;
 
           .-reply-img {
-
             margin-right: 16px;
-            width:64px;
+            min-width:64px;
             height:64px;
             border-radius:8px;
             border:4px solid rgba(232,197,157,1);
           }
 
+          .-reply-time {
+            margin: 0 36px 0 24px;
+            height:32px;
+            font-size:28px;
+            color:rgba(88,66,43,1);
+            line-height:34px;
+          }
+
+          .-info-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+          }
+
+          .-info-content {
+            margin-left: 16px;
+            position: relative;
+            flex: 1;
+            width:346px;
+            font-size: 28px;
+            line-height: 40px;
+            padding: 24px 32px;
+            background: rgba(255, 245, 209, 1);
+            border-radius: 16px;
+            border: 3px solid rgba(232, 197, 157, 1);
+            &::before {
+              @include bg('/icon.png');
+              content: '';
+              position: absolute;
+              left: -20px;
+              top: 12px;
+              width: 50px;
+              height: 30px;
+            }
+            &.voice .icon {
+              @include bg('/sk/icon-audio.png');
+              margin-left: 16px;
+              width: 26px;
+              height: 43px;
+            }
+          }
 
           .-info-name {
             height:34px;

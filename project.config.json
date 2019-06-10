@@ -95,9 +95,9 @@
 					"scene": null
 				},
 				{
-					"id": -1,
-					"name": "作业分享1111",
-					"pathName": "pages/ready",
+					"id": 9,
+					"name": "作品表彰",
+					"pathName": "pages/praiseOfWorks",
 					"query": "",
 					"scene": null
 				}

@@ -3,42 +3,56 @@
     <mHeader></mHeader>
     <view class="container-scroll"
           style="margin-top:{{height}}px">
-    <address></address>
+      <address :addressInfo="addressInfo"></address>
     </view>
   </view>
 </template>
 <script>
-import wepy from 'wepy'
-import mHeader from '../components/header'
-import address from '../components/address'
-export default class Example extends wepy.page {
-  config = {
-    navigationBarTitleText: '',
-    'usingComponents': {
-      'van-area': '../vant/area/index',
-      'van-popup': '../vant/popup/index'
-    }
-  };
-  data = {};
-  components = {
-    mHeader,
-    address
-  };
-  methods = {};
-  events = {
-    save(params) {
-      console.log(params)
-    }
-  };
-  watch = {};
-  computed = {
-    height () {
-      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
-    }
-  };
-  onLoad() {};
-  onShow() {};
-}
+  import wepy from 'wepy';
+  import api from '../request/api';
+  import mHeader from '../components/header';
+  import address from '../components/address';
+
+  export default class Example extends wepy.page {
+    config = {
+      navigationBarTitleText: '',
+      'usingComponents': {
+        'van-area': '../vant/area/index',
+        'van-popup': '../vant/popup/index'
+      }
+    };
+    data = {};
+    components = {
+      mHeader,
+      address
+    };
+    methods = {};
+    events = {
+      save(params) {
+        wx.showToast({
+          icon: 'loading',
+          title: '正在提交'
+        });
+        api.order.saveRecipient(params)
+          .then(() => {
+            wx.hideToast();
+            this.getList();
+          });
+      }
+    };
+    watch = {};
+    computed = {
+      height() {
+        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
+      }
+    };
+
+    onLoad() {
+    };
+
+    onShow() {
+    };
+  }
 </script>
 <style lang='scss'>
 </style>

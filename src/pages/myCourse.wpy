@@ -12,7 +12,7 @@
                 item="item">
           <view class="p-myCourse-item">
             <view class="-item-top">
-              <view class="-item-top-tip">体验课</view>
+              <view class="-item-top-tip" wx:if="{{item.try}}">体验课</view>
               <image class="-item-top-img" src="{{item.imgUrl}}"></image>
             </view>
             <view class="-item-down">
@@ -21,7 +21,7 @@
                 <text>【{{item.grade}}】</text>
               </view>
               <view class="-item-down-content">
-                <view class="-content-left">{{item.des}}</view>
+                <view class="-content-left">每天5-8分钟，学技巧积素材</view>
                 <view class="-content-right">
                   <text>共{{item.totalNum}}节课</text>
                   |
@@ -60,32 +60,7 @@
         size: 10,
         total: ''
       },
-      dataList: [
-        {
-          imgUrl: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
-          title: '同步作文课',
-          grade: '三年级',
-          des: '每天5-8分钟，学技巧积素材',
-          total: '200',
-          study: '53'
-        },
-        {
-          imgUrl: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
-          title: '同步作文课同步作文课同步作文课同步作文课同步作文课同步作文课同步作文课',
-          grade: '三年级',
-          des: '每天5-8分钟，学技巧积素材每天5-8分钟，学技巧积素材',
-          total: '200',
-          study: '53'
-        },
-        {
-          imgUrl: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
-          title: '同步作文课同步作文课同步作文课同步作文课同步作文课同步作文课同步作文课',
-          grade: '三年级',
-          des: '每天5-8分钟，学技巧积素材每天5-8分钟，学技巧积素材',
-          total: '200',
-          study: '53'
-        }
-      ]
+      dataList: []
     };
 
     getList() {

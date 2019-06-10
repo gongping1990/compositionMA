@@ -32,7 +32,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 3,
+			"current": 11,
 			"list": [
 				{
 					"id": 0,
@@ -101,6 +101,20 @@
 					"id": 9,
 					"name": "作品表彰",
 					"pathName": "pages/praiseOfWorks",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "地址",
+					"pathName": "pages/address",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "个人中心",
+					"pathName": "pages/user",
 					"query": "",
 					"scene": null
 				}

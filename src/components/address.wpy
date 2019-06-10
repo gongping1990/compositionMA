@@ -2,13 +2,15 @@
 <template>
   <view class='address-componet'>
     <view class="_input">
-      <input value=""
+      <input value="{{form.name}}"
+             bindinput="bindClickName"
              type="text"
              placeholder-class="placeholder"
              placeholder="收获人姓名" />
     </view>
     <view class="_input">
-      <input value=""
+      <input value="{{form.telephone}}"
+             bindinput="bindClickPhone"
              type="number"
              placeholder-class="placeholder"
              placeholder="收获人手机号" />
@@ -16,13 +18,14 @@
     <view class="_input select"
           @tap="bindClickRegion">
       <text class="placeholder"
-            wx:if="{{!form.region}}">请选择省/市/区（县）</text>
+            wx:if="{{!form.areas}}">请选择省/市/区（县）</text>
       <text class="_input-text"
-            wx:if="{{form.region}}">{{form.region}}</text>
+            wx:if="{{form.areas}}">{{form.areas}}</text>
       <view class="icon"></view>
     </view>
     <view class="_input textarea">
-      <textarea value=""
+      <textarea value="{{form.address}}"
+                bindinput="bindClickAddress"
                 placeholder-class="placeholder"
                 placeholder="详细地址 街道、小区、门牌等信息" />
       </view>
@@ -34,6 +37,7 @@
 </template>
 <script>
 import wepy from 'wepy'
+import api from '../request/api';
 import areaList from '../assets/comJS/area'
 export default class Example extends wepy.component {
   props = {
@@ -46,22 +50,42 @@ export default class Example extends wepy.component {
     show: false,
     form: {
       name: '',
-      phone: '',
-      region: '',
+      telephone: '',
+      areas: '',
       address: ''
     },
     areaList: Object.assign({}, areaList)
   };
   components = {};
+  onLoad () {
+    this.getList()
+  };
+  getList() {
+    api.order.getRecipient()
+      .then(({ data }) => {
+        this.form = data.resultData;
+        console.log(this.form,1)
+        this.$apply();
+      });
+  };
   methods = {
+    bindClickName (event,name) {
+      this.form.name = event.detail.value
+    },
+    bindClickPhone (event,name) {
+      this.form.telephone = event.detail.value
+    },
+    bindClickAddress (event,name) {
+      this.form.address = event.detail.value
+    },
     bindClickConfirm (event) {
       let { values } = event.detail
       let arr = []
       values.forEach((e, i) => {
         arr.push(e.name)
       })
-      this.form.region = arr.join('/')
-      console.log(this.form.region)
+      this.form.areas = arr.join('/')
+      console.log(this.form.areas)
       this.show = false
     },
     bindClickRegion () {
@@ -74,7 +98,6 @@ export default class Example extends wepy.component {
   events = {};
   watch = {};
   computed = {};
-  onLoad () { };
 }
 </script>
 <style lang='scss'>

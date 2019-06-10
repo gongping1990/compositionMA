@@ -24,9 +24,7 @@
               <view class="-left-text">{{item.name}}</view>
             </view>
             <view class="-content-item-right" @tap="toJump({{item.id}})">
-              <view class="-right-tip">
-                1
-              </view>
+              <view class="-right-tip" wx:if="{{index!==4}}">1</view>
               <image class="-right-img" src="https://pub.file.k12.vip/tbzw/course/my-icon-arrow.png"
                      mode="widthFix"></image>
             </view>
@@ -47,11 +45,12 @@
 
 <script>
   import wepy from 'wepy';
-  import { connect } from 'wepy-redux'
+  import { connect } from 'wepy-redux';
   import mHeader from '../components/header';
+
   @connect({
     userInfo(state) {
-      return state.user.userInfo
+      return state.user.userInfo;
     }
   })
   export default class User extends wepy.page {
@@ -112,6 +111,9 @@
             break;
           case 4:
             wx.navigateTo({ url: '/pages/recognitionNotice' });
+            break;
+          case 5:
+            wx.navigateTo({ url: '/pages/address' });
             break;
         }
       }

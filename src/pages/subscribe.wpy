@@ -1,0 +1,168 @@
+<!--  -->
+<template>
+  <view class='container subscribe'>
+    <mHeader title="课程目录"></mHeader>
+    <view class="container-scroll"
+          style="margin-top:{{height}}px">
+      <view class="subscribe-course">
+        <view class="subscribe-course-title">
+          <text>近期课程</text>
+          <view class="subscribe-course-more">
+            <text>查看全部</text>
+            <view class="subscribe-course-arrow"></view>
+          </view>
+        </view>
+        <view class="subscribe-course-date">
+          <text>开课时间：</text>
+          <view class="subscribe-course-time">
+            5月30日 10:30
+          </view>
+        </view>
+        <view class="subscribe-course-content">
+          <view class="subscribe-course-img">
+            <view class="subscribe-course-img-tag">小班课</view>
+            <image src="" />
+          </view>
+          <view class="subscribe-course-info">
+            <view class="subscribe-course-text">
+              <text class="subscribe-course-tag">01</text>
+              回家过大年（写人的脸色）
+            </view>
+            <view class="subscribe-course-btn">
+              <view class="subscribe-course-btn-icon"></view>
+              <text>待开课</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import mHeader from '../components/header'
+export default class Example extends wepy.page {
+  config = {
+    navigationBarTitleText: ''
+  };
+  data = {};
+  components = {
+    mHeader
+  };
+  methods = {};
+  events = {};
+  watch = {};
+  computed = {
+    height () {
+      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+    }
+  };
+  onLoad () { };
+  onShow () { };
+}
+</script>
+<style lang='scss'>
+@import '../assets/style/mixin.scss';
+.subscribe {
+  &-course {
+    padding: 32px;
+    &-info {
+      flex: 1;
+    }
+
+    &-btn {
+      @include flex-center;
+      width: 186px;
+      height: 60px;
+      color: rgba($color: #58422b, $alpha: 0.3);
+      background: rgba(255, 255, 255, 1);
+      box-shadow: 0px 8px 16px 4px rgba(242, 226, 85, 1);
+      border-radius: 36px;
+      &-icon {
+
+      }
+    }
+    &-tag {
+      padding: 4px 12px;
+      background: rgba(255, 255, 255, 0.51);
+      border-radius: 16px 16px 0 16px;
+    }
+    &-text {
+      @include line-clamp;
+      font-size: 28px;
+    }
+    &-img {
+      position: relative;
+      margin-right: 32px;
+      width: 138px;
+      height: 182px;
+      box-shadow: 0px 0px 24px 0px rgba(236, 194, 96, 0.24);
+      border-radius: 16px;
+      overflow: hidden;
+      image {
+        width: 138px;
+        height: 182px;
+      }
+      &-tag {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 94px;
+        height: 36px;
+        background: rgba(255, 124, 118, 0.9);
+        border-radius: 16px 0px 32px 0px;
+      }
+    }
+    &-title {
+      @include flex-center;
+      justify-content: space-between;
+      & > text {
+        font-size: 40px;
+        color: #58422b;
+        font-weight: 600;
+      }
+    }
+    &-more {
+      @include flex-center;
+      font-size: 24px;
+      color: rgba($color: #58422b, $alpha: 0.5);
+    }
+    &-arrow {
+      @include bg('/course/my-icon-arrow.png');
+      margin-left: 12px;
+      width: 10px;
+      height: 20px;
+    }
+    &-date {
+      @include flex-center;
+      justify-content: flex-start;
+      margin-top: 10px;
+      font-size: 24px;
+      color: rgba($color: #58422b, $alpha: 0.5);
+    }
+    &-time {
+      padding: 0 18px;
+      height: 42px;
+      color: #58422b;
+      font-weight: 500;
+      background: rgba(249, 230, 11, 0.6);
+      border-radius: 22px;
+    }
+    &-content {
+      @include flex-center;
+      box-sizing: border-box;
+      margin-top: 18px;
+      padding: 20px 32px;
+      width: 686px;
+      height: 222px;
+      background: linear-gradient(
+        90deg,
+        rgba(249, 230, 11, 1) 0%,
+        rgba(253, 219, 85, 1) 100%
+      );
+      box-shadow: 0px 8px 16px 4px rgba(230, 194, 81, 0.4);
+      border-radius: 16px;
+    }
+  }
+}
+</style>

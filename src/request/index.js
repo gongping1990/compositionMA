@@ -60,7 +60,7 @@ export default {
           'content-type': contentType
         },
         success(res) {
-          if(res.data.code == 200) {
+          if (res.data.code === 200) {
             resolve(res)
           } else {
             reject(res)
@@ -71,7 +71,7 @@ export default {
           reject(e)
           wx.hideLoading()
           wx.showToast({
-            title: e //提示的内容
+            title: e // 提示的内容
           })
         }
       }

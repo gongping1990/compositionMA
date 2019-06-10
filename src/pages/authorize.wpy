@@ -1,0 +1,96 @@
+<!--  -->
+<template>
+  <view class='container authorize'>
+    <mHeader></mHeader>
+    <view class="container-scroll"
+          style="margin-top:{{height}}px">
+      <view class="authorize-title">
+        请您授权
+        <text>“小语轻作文”</text>
+      </view>
+      <image src=""
+             class="authorize-img" />
+      <text class="authorize-subtitle">为方便正常使用，微信授权后即可学习课程。</text>
+      <button type="defult"
+              class="authorize-btn"
+              open-type="getUserInfo"
+              @getuserinfo="getUserInfo"
+              lang="zh_CN">
+        授权登录
+      </button>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import mHeader from '../components/header'
+import api from '../request/api'
+export default class Example extends wepy.page {
+  config = {
+    navigationBarTitleText: ''
+  };
+  data = {};
+  components = {
+    mHeader
+  };
+  methods = {
+    getUserInfo(res) {
+      let { iv, encryptedData, rawData, signature } = res.detail
+      if (iv) {
+        api.user.updateUserWxMa({
+          iv,
+          encryptedData,
+          rawData,
+          signature
+        }).then(({ data }) => {
+          wx.redirectTo({ url: '/pages/index' })
+        })
+      }
+    }
+  };
+  computed = {
+    height () {
+      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+    }
+  };
+}
+</script>
+<style lang='scss'>
+@import '../assets/style/mixin.scss';
+.authorize {
+  .container-scroll {
+    @include flex-column-center;
+  }
+  &-title {
+    margin-top: 240px;
+    margin-bottom: 48px;
+    font-size: 40px;
+    text {
+      font-weight: 500;
+    }
+  }
+  &-img {
+    width: 128px;
+    height: 128px;
+    margin-bottom: 80px;
+  }
+  &-subtitle {
+    font-size: 28px;
+    color: rgba($color: #58422b, $alpha: 0.5);
+  }
+  &-btn {
+    @include flex-center;
+    margin-top: 32px;
+    width: 470px;
+    height: 100px;
+    font-size: 32px;
+    background: linear-gradient(
+      90deg,
+      rgba(249, 230, 11, 1) 0%,
+      rgba(253, 219, 85, 1) 100%
+    );
+    box-shadow: 0px 8px 16px 4px rgba(230, 194, 81, 0.4);
+    border-radius: 50px;
+  }
+}
+</style>

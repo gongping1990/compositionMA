@@ -48,7 +48,8 @@ module.exports = {
     }
   },
   appConfig: {
-    noPromiseAPI: ['createSelectorQuery']
+    noPromiseAPI: ['createSelectorQuery'],
+    baseUrl: process.env.NODE_ENV === 'production' ? 'https://huoke.prod.k12.vip/composition' : 'https://huoke.test.k12.vip/composition'
   }
 }
 

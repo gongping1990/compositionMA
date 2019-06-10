@@ -1,5 +1,5 @@
 <style lang="scss">
-@import "./vant/common/index.wxss";
+@import './vant/common/index.wxss';
 .container {
   height: 100%;
   color: #58422b;
@@ -15,9 +15,11 @@ button::after {
 <script>
 import wepy from 'wepy'
 import 'wepy-async-function'
-
+import 'weapp-cookie'
 import { setStore } from 'wepy-redux'
 import configStore from './store'
+// eslint-disable-next-line no-unused-vars
+import api from './request/api'
 
 const store = configStore()
 setStore(store)
@@ -41,7 +43,9 @@ export default class extends wepy.app {
       'pages/uploadHomework',
       'pages/pointNotice',
       'pages/recognitionNotice',
-      'pages/address'
+      'pages/address',
+      'pages/subscribe',
+      'pages/authorize'
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -53,6 +57,7 @@ export default class extends wepy.app {
   }
 
   globalData = {
+    api: api,
     userInfo: null,
     systemInfo: null,
     headHeight: 46,
@@ -62,27 +67,30 @@ export default class extends wepy.app {
   constructor() {
     super()
     this.use('requestfix')
+    this.use('promisify')
   }
 
-  onLaunch () {
+  onLaunch (options) {
     const that = this
+    wepy.login().then(res => {
+      let params = {
+        code: res.code
+      }
+
+      api.user.wxUserLogin(params).then(({ data }) => {
+        let { resultData } = data
+        this.globalData.userInfo = resultData
+        store.dispatch({ type: 'UPDATE_USERINFO', payload: resultData })
+        if (resultData.needAuth) {
+          let url = `/pages/authorize`
+          wx.redirectTo({ url })
+        }
+      })
+    })
     wx.getSystemInfo({
       success (res) {
         that.globalData.systemInfo = res
         that.globalData.headHeight = res.statusBarHeight + 46
-      }
-    })
-  }
-
-  getUserInfo (cb) {
-    const that = this
-    if (this.globalData.userInfo) {
-      return this.globalData.userInfo
-    }
-    wepy.getUserInfo({
-      success (res) {
-        that.globalData.userInfo = res.userInfo
-        cb && cb(res.userInfo)
       }
     })
   }

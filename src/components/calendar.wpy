@@ -1,6 +1,11 @@
 <!--  -->
 <template>
   <view class="calendar">
+    <view class="calendar-header" wx:if="{{showHeader}}">
+      <view class="calendar-header-pre" @tap="preMonth"></view>
+      <text class="calendar-header-date">{{formatDate}}</text>
+      <view class="calendar-header-next" @tap="nextMonth"></view>
+    </view>
     <view class="calendar-week">
       <view class="calendar-week-item"
             wx:for="{{weekArr}}"
@@ -11,8 +16,9 @@
     <view class="calendar-body">
       <view class="calendar-day"
             wx:for="{{monthDate}}"
-            wx:key="{{item.date}}">
-        <view class="calendar-day-content {{item.formatDate == today && 'isToday'}} {{card[item.formatDate] == 2 && 'success'}}">
+            wx:key="{{item.date}}"
+            @tap="bindClickDay({{item}})">
+        <view class="calendar-day-content {{item.formatDate == selectDay && 'select'}} {{item.formatDate == today && 'isToday'}} {{card[item.formatDate] == 2 && 'success'}}">
           {{ item.showDate }}
           <view class="calendar-day-icon"></view>
         </view>
@@ -28,12 +34,17 @@ export default class Example extends wepy.component {
     card: {
       type: Object,
       default: () => ({})
+    },
+    showHeader: {
+      type: Boolean,
+      default: false
     }
   };
   data = {
     time: '',
     year: '',
     month: '',
+    selectDay: '',
     monthDate: [],
     weekArr: ['一', '二', '三', '四', '五', '六', '日']
   };
@@ -41,6 +52,13 @@ export default class Example extends wepy.component {
   methods = {
     nextMonth() {
       this.nextMonth()
+    },
+    preMonth() {
+      this.preMonth()
+    },
+    bindClickDay(item) {
+      this.selectDay = item.formatDate
+      this.$emit('select', item)
     }
   };
   events = {};
@@ -160,8 +178,20 @@ export default class Example extends wepy.component {
   font-size: 28px;
   color: rgba($color: #58422b, $alpha: 0.5);
   &-header {
-    margin-bottom: 50px;
+    @include flex-center;
+    margin-bottom: 38px;
     color: #58422b;
+    &-date {
+      margin: 0 54px;
+    }
+    &-pre, &-next {
+      @include bg('/course/my-icon-arrow.png');
+      width: 17px;
+      height: 32px;
+    }
+    &-pre {
+      transform: rotate(180deg);
+    }
   }
   &-week {
     @include flex-center;
@@ -179,11 +209,19 @@ export default class Example extends wepy.component {
   &-day {
     @include flex-center;
     position: relative;
-    margin-bottom: 48px;
+    margin-bottom: 18px;
     width: 96px;
-    height: 52px;
+    height: 80px;
     font-weight: 600;
     &-content {
+      &.select {
+        @include flex-center;
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        color: #58422b;
+        background:rgba(249,230,11,0.8);
+      }
       &.isToday {
         color: #58422b;
       }
@@ -192,7 +230,7 @@ export default class Example extends wepy.component {
         .calendar-day-icon {
           position: absolute;
           left: 50%;
-          bottom: -24px;
+          bottom: -4px;
           width: 16px;
           height: 16px;
           border-radius: 50%;

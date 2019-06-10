@@ -1,16 +1,10 @@
 
-import user from "./user";
-import banner from './banner'
-import material from './material'
-import task from './task'
-import userAccount from './userAccount'
-import order from './order'
+import user from './user'
+import course from './course'
+import broadcast from './broadcast'
 
 export default {
   user,
-  banner,
-  material,
-  task,
-  userAccount,
-  order
-};
+  course,
+  broadcast
+}

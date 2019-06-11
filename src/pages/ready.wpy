@@ -7,30 +7,19 @@
       <view class="header">
         <view class="header-left">
           <image class="header-avatar"
-                 src="" />
-          <text class="header-title">木木老师</text>
+                 src="{{roomData.teacherImg}}" />
+          <text class="header-title">{{roomData.teacherName}}</text>
           <text class="header-subtitle">著名写作老师</text>
         </view>
-        <view class="header-right">
-          <view class="header-student {{readyArr[0] && 'isReady'}}">
-            <image class="header-student-avatar"
-                   src="" />
-            <view class="header-status">准备中...</view>
-          </view>
-          <view class="header-student {{readyArr[1] && 'isReady'}}">
-            <image class="header-student-avatar"
-                   src="" />
-            <view class="header-status">准备中...</view>
-          </view>
-          <view class="header-student {{readyArr[2] && 'isReady'}}">
-            <image class="header-student-avatar"
-                   src="" />
-            <view class="header-status">准备中...</view>
-          </view>
-          <view class="header-student {{readyArr[3] && 'isReady'}}">
-            <image class="header-student-avatar"
-                   src="" />
-            <view class="header-status">准备中...</view>
+        <view class="header-right {{isReady && 'isReady'}}">
+          <view>
+            <view class="header-student {{readyArr[index] && 'isReady'}}"
+                  wx:for="{{mateInfo}}"
+                  wx:key="{{item.mateId}}">
+              <image class="header-student-avatar"
+                     src="{{item.mateImg}}" />
+              <view class="header-status">{{readyArr[index] ? '已准备' : '准备中...'}}</view>
+            </view>
           </view>
         </view>
       </view>
@@ -38,7 +27,7 @@
             style="height:calc(100vh - 254rpx - {{height * 2}}rpx)">
         <view class="chart-item">
           <image class="chart-avatar"
-                 src="" />
+                 src="{{roomData.teacherImg}}" />
           <view class="chart-right">
             <text class="chart-title">木木老师</text>
             <view class="chart-content-wrap">
@@ -46,23 +35,14 @@
               <view class="chart-content voice">
                 <view class="icon"></view>
               </view>
-              <view class="chart-time">12’’20’</view>
-            </view>
-          </view>
-        </view>
-        <view class="chart-item">
-          <image class="chart-avatar"
-                 src="" />
-          <view class="chart-right">
-            <text class="chart-title">木木老师</text>
-            <view class="chart-content-wrap">
-              <view class="chart-content">亲爱的小朋友你们好，我是木木老师！ 现在请大家赶快关注我的公众号。关注后请立即与老师联系哦～</view>
+              <view class="chart-time">{{timeText}}</view>
             </view>
           </view>
         </view>
       </view>
     </view>
-    <view class="ready-btn" @tap="clickStudy">开始上课（3s）</view>
+    <view class="ready-btn {{isReady && 'show'}}"
+          @tap="clickStudy">{{time ? '开始上课（' + time + ')s' : '开始上课'}}）</view>
   </view>
 </template>
 <script>
@@ -73,15 +53,23 @@ export default class Example extends wepy.page {
     navigationBarTitleText: ''
   };
   data = {
+    lessonId: 0,
     aduioContext: null,
-    readyArr: [0, 0, 0, 0]
+    readyArr: [0, 0, 0, 0],
+    roomData: {},
+    courseInfo: {},
+    mateInfo: [],
+    duration: 0,
+    currentTime: 0,
+    time: 3,
+    isReady: false
   };
   components = {
     mHeader
   };
   methods = {
-    clickStudy() {
-      wx.navigateTo({ url: '/pages/study' })
+    clickStudy () {
+      this.time = 0
     }
   };
   events = {};
@@ -89,6 +77,17 @@ export default class Example extends wepy.page {
   computed = {
     height () {
       return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+    },
+    timeText () {
+      let { currentTime, duration } = this
+      let minute = 0
+      let second = 0
+      let time = duration - currentTime
+      minute = parseInt(time / 60)
+      second = time % 60
+      minute = minute < 10 ? '0' + minute : minute
+      second = second < 10 ? '0' + second : second
+      return `${minute}’’${second}’`
     }
   };
 
@@ -109,10 +108,90 @@ export default class Example extends wepy.page {
     }
   }
 
-  onLoad () {
-    this.aduioContext = this.$parent.globalData.aduioContext
-  };
-  onShow () { };
+  downTime () {
+    if (this.time >= 1) {
+      this.time -= 1
+      setTimeout(() => {
+        this.downTime()
+      }, 1000)
+    } else {
+      console.log('endtime')
+      this.readyArr[3] = 1
+      wx.navigateTo({ url: '/pages/study?id=' + this.lessonId })
+    }
+    this.$apply()
+  }
+
+  initAudio (src) {
+    console.log(src)
+    let { audioContext } = this
+    audioContext.src = src
+    setTimeout(() => {
+      audioContext.play()
+    }, 500)
+    audioContext.onEnded(() => {
+      console.log('end')
+      this.isReady = true
+      this.imitateReady()
+      setTimeout(() => {
+        this.downTime()
+      }, 1500)
+      // this.randomImitateReady()
+      this.$apply()
+    })
+    audioContext.onTimeUpdate(() => {
+      if (!this.currentTime) {
+        this.duration = parseInt(audioContext.duration)
+      }
+      if (this.currentTime !== audioContext.currentTime) {
+        this.currentTime = parseInt(audioContext.currentTime)
+      }
+      this.$apply()
+    })
+  }
+
+  initPage () {
+    this.joinRoom()
+    this.getClassInfo()
+  }
+
+  joinRoom () {
+    let { api } = this.$parent.globalData
+    api.study.joinRoom({
+      classno: 1,
+      lessonId: this.lessonId
+    }).then(({ data }) => {
+      this.roomData = data.resultData
+      this.mateInfo = data.resultData.mateInfo
+      this.$apply()
+    })
+  }
+
+  getClassInfo () {
+    let { api } = this.$parent.globalData
+    api.course.getClassInfo({
+      lessonId: this.lessonId
+    }).then(({ data }) => {
+      this.courseInfo = data.resultData
+      this.initAudio(data.resultData.guideAudio)
+      this.$apply()
+    })
+  }
+
+  onReady () {
+    console.log(this.$parent.globalData.audioContext)
+    this.audioContext = this.$parent.globalData.audioContext
+  }
+
+  onLoad (option) {
+    this.lessonId = option.id
+  }
+  onShow () {
+    this.initPage()
+  }
+  onHide () {
+    this.audioContext.stop()
+  }
 }
 </script>
 <style lang='scss'>
@@ -146,6 +225,7 @@ export default class Example extends wepy.page {
       color: rgba($color: #58422b, $alpha: 0.4);
     }
     &-time {
+      width: 110px;
       margin-left: 24px;
       font-size: 28px;
       color: #58422b;
@@ -193,6 +273,7 @@ export default class Example extends wepy.page {
     color: #58422b;
     font-size: 32px;
     font-weight: 500;
+    opacity: 0;
     background: linear-gradient(
       90deg,
       rgba(249, 230, 11, 1) 0%,
@@ -200,6 +281,13 @@ export default class Example extends wepy.page {
     );
     box-shadow: 0px 8px 16px 4px rgba(230, 194, 81, 0.4);
     border-radius: 54px;
+    transform: translateY(200px);
+    transition: all 0.5s;
+    &.show {
+      opacity: 1;
+      bottom: 48px;
+      transform: translateY(0);
+    }
   }
   .header {
     @include flex-center;
@@ -212,13 +300,41 @@ export default class Example extends wepy.page {
     }
     &-right {
       @include flex-center;
-      justify-content: space-between;
       box-sizing: border-box;
-      padding: 0 28px;
+      padding: 4px;
       width: 520px;
       height: 136px;
       border-radius: 48px;
-      border: 4px dashed rgba(61, 203, 255, 1);
+      background-color: #fff;
+      background-image: -webkit-linear-gradient(
+        -45deg,
+        rgba($color: #3DCBFF, $alpha: 1) 25%,
+        white 25%,
+        white 50%,
+        rgba($color: #3DCBFF, $alpha: 1) 50%,
+        rgba($color: #3DCBFF, $alpha: 1) 75%,
+        white 75%,
+        white
+      );
+      // border: 4px dashed rgba(61, 203, 255, 1);
+      background-size: 10px 10px;
+      animation: myAnimation 0.8s linear;
+      animation-iteration-count: infinite;
+      &.isReady {
+        animation: none;
+        background-image: none;
+        border: 4px dashed rgba(61, 203, 255, 1);
+      }
+      & > view {
+        @include flex-center;
+        justify-content: space-between;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 0 24px;
+        height: 128px;
+        border-radius: 48px;
+        background-color: #fff;
+      }
     }
     &-avatar {
       margin-bottom: 4px;
@@ -275,6 +391,17 @@ export default class Example extends wepy.page {
   }
   .content {
     overflow-y: auto;
+  }
+}
+@keyframes myAnimation {
+  0% {
+    background-position: 0px 0px;
+  }
+  50% {
+    background-position: 0px 5px;
+  }
+  100% {
+    background-position: 0px 10px;
   }
 }
 </style>

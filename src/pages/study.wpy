@@ -370,6 +370,21 @@ export default class Example extends wepy.page {
     ]
     this.setRandomTime()
   }
+
+  initPage() {
+    this.getClassInfo()
+  }
+
+  getClassInfo () {
+    let { api } = this.$parent.globalData
+    api.course.getClassInfo({
+      lessonId: this.lessonId
+    }).then(({ data }) => {
+      this.courseInfo = data.resultData
+      this.initAudio(data.resultData.guideAudio)
+      this.$apply()
+    })
+  }
   onLoad () {
   };
   onReady () {

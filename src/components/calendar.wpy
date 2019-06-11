@@ -134,7 +134,7 @@ export default class Example extends wepy.component {
           month: thisMonth,
           date,
           showDate,
-          _date: new Date(year - 1, thisMonth - 1, showDate),
+          time: new Date(year - 1, thisMonth - 1, showDate).getTime(),
           formatDate: dayjs(new Date(year, thisMonth - 1, showDate)).format(
             'YYYY-MM-DD'
           )
@@ -145,7 +145,7 @@ export default class Example extends wepy.component {
           month: thisMonth,
           date,
           showDate,
-          _date: new Date(year + 1, thisMonth - 1, showDate),
+          time: new Date(year + 1, thisMonth - 1, showDate).getTime(),
           formatDate: dayjs(new Date(year, thisMonth - 1, showDate)).format(
             'YYYY-MM-DD'
           )
@@ -155,7 +155,7 @@ export default class Example extends wepy.component {
           month: thisMonth,
           date,
           showDate,
-          _date: new Date(year, thisMonth - 1, showDate),
+          time: new Date(year, thisMonth - 1, showDate).getTime(),
           formatDate: dayjs(new Date(year, thisMonth - 1, showDate)).format(
             'YYYY-MM-DD'
           )

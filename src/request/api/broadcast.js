@@ -2,7 +2,7 @@ import request from '../index'
 
 const broadcast = {
   getBroadcastList(params) {
-    return request.post('/broadcast/getBroadcastList', params)
+    return request.get('/broadcast/getBroadcastList', params)
   }
 
 }

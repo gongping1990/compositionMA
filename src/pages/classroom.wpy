@@ -5,32 +5,32 @@
     <view class="container-scroll" style="margin-top:{{height}}px">
       <view class="classroom-header">
         <image class="classroom-img"
-               src="" />
+               src="{{lessonData.coverphoto}}" />
         <view class="classroom-info">
           <view class="classroom-text">
-            <text class="classroom-title">回家过大年（写人的脸色）</text>
+            <text class="classroom-title">{{lessonData.name}}</text>
             <text class="classroom-subtitle">《每日轻作文》</text>
           </view>
-          <text class="classroom-num">25331 人已学</text>
+          <text class="classroom-num">{{lessonData.uv}} 人已学</text>
         </view>
       </view>
       <view class="classroom-list">
-        <view class="classroom-item">
+        <view class="classroom-item" @tap="bindClickRoom">
           <image class="classroom-item-img"
                  src="https://pub.file.k12.vip/tbzw/romm.png" />
           <view class="classroom-item-btn">1号小教室</view>
         </view>
-        <view class="classroom-item">
+        <view class="classroom-item" @tap="bindClickRoom">
           <image class="classroom-item-img"
                  src="https://pub.file.k12.vip/tbzw/romm.png" />
           <view class="classroom-item-btn">2号小教室</view>
         </view>
-        <view class="classroom-item">
+        <view class="classroom-item" @tap="bindClickRoom">
           <image class="classroom-item-img"
                  src="https://pub.file.k12.vip/tbzw/romm.png" />
           <view class="classroom-item-btn">3号小教室</view>
         </view>
-        <view class="classroom-item">
+        <view class="classroom-item" @tap="bindClickRoom">
           <image class="classroom-item-img"
                  src="https://pub.file.k12.vip/tbzw/romm.png" />
           <view class="classroom-item-btn">4号小教室</view>
@@ -50,6 +50,10 @@ export default class Classroom extends wepy.page {
   components = {
     mHeader
   };
+  data = {
+    lessonId: 0,
+    lessonData: {}
+  }
   computed = {
     height () {
       return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
@@ -57,8 +61,30 @@ export default class Classroom extends wepy.page {
   };
   methods = {
     bindClickRoom() {
-      wx.navigateTo({ url: '/pages/ready' })
+      wx.navigateTo({ url: '/pages/ready?id=' + this.lessonId })
     }
+  }
+
+  initPage() {
+    this.viewLesson()
+  }
+
+  viewLesson() {
+    let {api} = this.$parent.globalData
+    api.study.viewLesson({
+      lessonId: this.lessonId
+    }).then(({data}) => {
+      this.lessonData = data.resultData
+      this.$apply()
+    })
+  }
+
+  onLoad(option) {
+    this.lessonId = option.id
+  }
+
+  onShow() {
+    this.initPage()
   }
 }
 </script>

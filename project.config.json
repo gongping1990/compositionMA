@@ -32,13 +32,13 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 9,
+			"current": 0,
 			"list": [
 				{
 					"id": 0,
 					"name": "classroom",
-					"pathName": "pages/authorize",
-					"query": "",
+					"pathName": "pages/study",
+					"query": "id=1134359706941546498",
 					"scene": null
 				},
 				{

@@ -1,6 +1,6 @@
 <template>
   <view class="container course">
-    <mHeader></mHeader>
+    <mHeader title="课程目录"></mHeader>
     <view class="container-scroll" style="margin-top:{{height}}px">
       <view class="course-info">
         <text class="course-info-title">小学作文同步课【三年级】</text>
@@ -36,7 +36,7 @@ export default class Index extends wepy.page {
   }
 
   data = {
-
+    grade: 0
   }
 
   computed = {
@@ -54,9 +54,21 @@ export default class Index extends wepy.page {
       wx.navigateTo({ url: '/pages/classroom' })
     }
   }
+  // 获取课程目录
+  getCourseCatalog() {
+    let {api} = this.$parent.globalData
+    api.course.getCourseCatalog({
+      grade: this.grade
+    }).then(({data}) => {
+      this.catalogList = data.resultData
+    })
+  }
 
-  onLoad () {
-
+  onLoad (option) {
+    this.grade = option.grade
+  }
+  onShow() {
+    this.getCourseCatalog()
   }
 }
 </script>

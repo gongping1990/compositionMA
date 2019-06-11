@@ -24,6 +24,7 @@
 
 <script>
   import wepy from 'wepy';
+  import api from '../request/api'
   import mHeader from '../components/header';
 
   export default class UploadHomework extends wepy.page {
@@ -73,8 +74,14 @@
               });
               return;
             } else {
-              _self.isOpenPopup = true;
-              _self.$apply()
+              let parmas = JSON.parse(res.data)
+              api.study.addHomework({
+                lessonId: '',
+                workImg: parmas.resultData.url
+              }).then(()=>{
+                _self.isOpenPopup = true;
+                _self.$apply()
+              })
             }
           },
           fail: function(e) {

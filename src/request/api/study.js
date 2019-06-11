@@ -21,6 +21,24 @@ const study = {
   },
   listWorkPraiseByPage(params) {
     return request.get('/study/listWorkPraiseByPage', params)
+  },
+  addHomework(params) {
+    return request.get('/study/submitHomework', params)
+  },
+  getUCRemindVO(params) {
+    return request.get('/study/getUCRemindVO', params)
+  },
+  getLessonDetail(params) {
+    return request.get('/study/viewLesson', params)
+  },
+  viewMyHomework(params) {
+    return request.get('/study/viewMyHomework', params)
+  },
+  viewHomework(params) {
+    return request.get('/study/viewHomework', params)
+  },
+  evaluationToTeacher(params) {
+    return request.post('/study/evaluation', params)
   }
 }
 

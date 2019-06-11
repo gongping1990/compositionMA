@@ -5,12 +5,12 @@
     <view class="container-scroll -height-wrap" style="margin-top:{{height}}px">
       <view class="p-completionOfWork-top">
         <view class="-top-left">
-          <image class="-top-left-img" src="https://pub.file.k12.vip/2019/06/05/1136181969340878849.jpg"></image>
+          <image class="-top-left-img" src="{{userInfo.headimgurl}}"></image>
         </view>
         <view class="-top-right">
-          <view class="-top-right-name">heaven小林哥</view>
-          <view class="-top-right-time">2019-5-22 17:35</view>
-          <image class="-top-right-work" src="https://pub.file.k12.vip/2019/06/05/1136182325860913154.png"></image>
+          <view class="-top-right-name">{{workDetail.nickname}}</view>
+          <view class="-top-right-time">{{workDetail.workTime}}</view>
+          <image class="-top-right-work" src="{{workDetail.workImg}}"></image>
         </view>
       </view>
 
@@ -20,8 +20,8 @@
         </view>
         <view class="-down-right" wx:if="{{!isReply}}">
           <view class="-down-right-info">
-            <image class="-info-img" src="https://pub.file.k12.vip/2019/06/05/1136181969340878849.jpg"></image>
-            <text class="-info-name">张老师</text>
+            <image class="-info-img" src="{{workDetail.replyTeacherImg}}"></image>
+            <text class="-info-name">{{workDetail.replyTeacher}}</text>
           </view>
           <view class="-down-right-text">
             老师随后为你点评，请留意微信通知！
@@ -29,33 +29,38 @@
         </view>
         <view class="-down-reply" wx:if="{{isReply}}">
           <view class="-down-reply-info">
-            <image class="-reply-info-img" src="https://pub.file.k12.vip/2019/06/05/1136182325860913154.png"></image>
+            <image class="-reply-info-img" src="{{workDetail.replyTeacherImg}}"></image>
             <view class="-reply-info-user">
               <view class="-user-text">
-                <text class="-name">木木老师</text>
-                <text>2019-5-22 17:35</text>
+                <text class="-name">{{workDetail.replyTeacher}}</text>
+                <text>{{workDetail.replyTime}}</text>
               </view>
-              <view @tap="changePopup">语音</view>
+              <view class="-reply-info-wrap" @tap="changePopup">
+                <view class="-info-content voice">
+                  <view class="icon"></view>
+                </view>
+                <view class="-reply-time">12"20"</view>
+              </view>
             </view>
 
           </view>
-          <image class="-down-reply-img" src="https://pub.file.k12.vip/2019/06/05/1136195761508470786.png"></image>
+          <image class="-down-reply-img" src="{{workDetail.replyImg}}"></image>
         </view>
       </view>
 
       <view class="p-completionOfWork-footer">
-        <button class="-footer-btn {{isCompliment ? '-footer-btn-zan' : ''}}">
+        <button class="-footer-btn {{isCompliment ? '-footer-btn-zan' : ''}}" @tap="addLike">
           <image class="-footer-btn-icon" wx:if="{{!isCompliment}}"
                  src="https://pub.file.k12.vip/tbzw/word-detail/icon-give-pre.png"></image>
           <image class="-footer-btn-icon" wx:if="{{isCompliment}}"
                  src="https://pub.file.k12.vip/tbzw/word-detail/icon-givea-def.png"></image>
-          999
+          {{workDetail.likenum || 0}}
         </button>
         <button class="-footer-btn">
           <image class="-footer-btn-icon" src="https://pub.file.k12.vip/tbzw/word-detail/icon-share.png"></image>
           分享
         </button>
-        <image class="-footer-tip" src="https://pub.file.k12.vip/2019/06/05/1136201296525938689.png"></image>
+        <image class="-footer-tip" wx:if="{{workDetail.evaluation !== 0}}" src="https://pub.file.k12.vip/2019/06/05/1136201296525938689.png"></image>
       </view>
 
       <van-popup show="{{isOpenPopup}}">
@@ -63,50 +68,54 @@
           <view class="-popup-title">评价老师的点评</view>
           <view class="-popup-text">评价标签对老师不可见，请放心选择</view>
           <view class="-popup-list">
+            <view @tap="choiceTab({{'0'}})">
+              <image wx:if="{{isActive !== '0'}}" class="-list-img"
+                     src="https://pub.file.k12.vip/tbzw/lspj/icon-discontent.png"></image>
+              <image wx:if="{{isActive === '0'}}" class="-list-img"
+                     src="https://pub.file.k12.vip/tbzw/lspj/icon-discontent-selected.png"></image>
+              <view class="-list-text {{isActive === '0' ? '-active-text' : ''}}">不满意</view>
+            </view>
             <view @tap="choiceTab({{'1'}})">
               <image wx:if="{{isActive !== '1'}}" class="-list-img"
-                     src="https://pub.file.k12.vip/tbzw/lspj/icon-discontent.png"></image>
+                     src="https://pub.file.k12.vip/tbzw/lspj/icon-general.png"></image>
               <image wx:if="{{isActive === '1'}}" class="-list-img"
-                     src="https://pub.file.k12.vip/tbzw/lspj/icon-discontent-selected.png"></image>
-              <view class="-list-text {{isActive === '1' ? '-active-text' : ''}}">不满意</view>
+                     src="https://pub.file.k12.vip/tbzw/lspj/icon-general-selected.png"></image>
+              <view class="-list-text {{isActive === '1' ? '-active-text' : ''}}">一般有待改进</view>
             </view>
             <view @tap="choiceTab({{'2'}})">
               <image wx:if="{{isActive !== '2'}}" class="-list-img"
-                     src="https://pub.file.k12.vip/tbzw/lspj/icon-general.png"></image>
-              <image wx:if="{{isActive === '2'}}" class="-list-img"
-                     src="https://pub.file.k12.vip/tbzw/lspj/icon-general-selected.png"></image>
-              <view class="-list-text {{isActive === '2' ? '-active-text' : ''}}">一般有待改进</view>
-            </view>
-            <view @tap="choiceTab({{'3'}})">
-              <image wx:if="{{isActive !== '3'}}" class="-list-img"
                      src="https://pub.file.k12.vip/tbzw/lspj/icon-satisfaction.png"></image>
-              <image wx:if="{{isActive === '3'}}" class="-list-img"
+              <image wx:if="{{isActive === '2'}}" class="-list-img"
                      src="https://pub.file.k12.vip/tbzw/lspj/icon-satisfaction-selected.png"></image>
-              <view class="-list-text {{isActive === '3' ? '-active-text' : ''}}">满意</view>
+              <view class="-list-text {{isActive === '2' ? '-active-text' : ''}}">满意</view>
             </view>
           </view>
           <view class="-popup-input">
-            <textarea class="-input" placeholder="你想对点评老师说…" placeholder-style="font-size: 12px;"/>
+            <textarea class="-input"
+                      value="{{stumsg}}"
+                      bindinput="bindClickMessage"
+                      placeholder="你想对点评老师说…"
+                      placeholder-style="font-size: 12px;"/>
           </view>
           <button class="-popup-btn" @tap="submitEvaluate">提交</button>
         </view>
 
-        <view class="p-completionOfWork-popup-jg {{isActive !== '1' ? 'p-completionOfWork-popup-height' : ''}}"
+        <view class="p-completionOfWork-popup-jg {{isActive !== '0' ? 'p-completionOfWork-popup-height' : ''}}"
               wx:if="{{isEvaluate}}">
-          <image wx:if="{{isActive === '1'}}" class="-popup-jg-img"
+          <image wx:if="{{isActive === '0'}}" class="-popup-jg-img"
                  src="https://pub.file.k12.vip/tbzw/lspj/icon-discontent-selected.png"></image>
-          <image wx:if="{{isActive === '2'}}" class="-popup-jg-img"
+          <image wx:if="{{isActive === '1'}}" class="-popup-jg-img"
                  src="https://pub.file.k12.vip/tbzw/lspj/icon-general-selected.png"></image>
-          <image wx:if="{{isActive === '3'}}" class="-popup-jg-img"
+          <image wx:if="{{isActive === '2'}}" class="-popup-jg-img"
                  src="https://pub.file.k12.vip/tbzw/lspj/icon-satisfaction-selected.png"></image>
           <view class="-popup-jg-text">
-            {{isActive === '1' ? ' 抱歉给你带来了不好的学习体验， 我们将持续改进！' : '感谢你评价和反馈，我们将持续改进'}}
+            {{isActive === '0' ? ' 抱歉给你带来了不好的学习体验， 我们将持续改进！' : '感谢你评价和反馈，我们将持续改进'}}
           </view>
-          <view class="-popup-jd-text-two" wx:if="{{isActive !== '1'}}">
+          <view class="-popup-jd-text-two" wx:if="{{isActive !== '0'}}">
             如果觉得老师点评的好， 记得分享给好友哦～
           </view>
-          <button class="-popup-jg-btn -one" wx:if="{{isActive === '1'}}">好的，我知道了</button>
-          <button class="-popup-jg-btn" wx:if="{{isActive !== '1'}}">分享给好友</button>
+          <button class="-popup-jg-btn -one" wx:if="{{isActive === '0'}}">好的，我知道了</button>
+          <button class="-popup-jg-btn" wx:if="{{isActive !== '0'}}">分享给好友</button>
         </view>
 
         <van-icon name="close"
@@ -120,10 +129,16 @@
 </template>
 
 <script>
-  import wepy from 'wepy'
-import mHeader from '../components/header'
-
-export default class CompletionOfWork extends wepy.page {
+  import wepy from 'wepy';
+  import api from '../request/api'
+  import { connect } from 'wepy-redux';
+  import mHeader from '../components/header';
+  @connect({
+    userInfo(state) {
+      return state.user.userInfo;
+    }
+  })
+  export default class CompletionOfWork extends wepy.page {
     config = {
       navigationBarTitleText: '课后作业',
       'usingComponents': {
@@ -136,35 +151,79 @@ export default class CompletionOfWork extends wepy.page {
     };
     computed = {
       height() {
-        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
       }
     };
 
     data = {
       isOpenPopup: false,
-      isCompliment: true,
+      isCompliment: false,
       isReply: true,
       isEvaluate: false,
-      isActive: ''
+      isActive: '',
+      stumsg: '',
+      workDetail: '',
+      workType: ''
+    };
+
+    getMyHomework() {
+      api.study.viewMyHomework({
+        lessonId: ''
+      }).then(res => {
+        this.workDetail = res.data.resultData;
+        this.workDetail && (this.isReply = true)
+      });
+    };
+
+    getOtherHomework() {
+      api.study.viewHomework({
+        workId: ''
+      }).then(res => {
+        this.workDetail = res.data.resultData;
+        this.isCompliment = this.workDetail.otherLike
+      });
     };
 
     methods = {
-      submitEvaluate () {
-        this.isEvaluate = true
+      addLike () {
+        if (this.workType === '1') {
+          return
+        } else {
+          api.study.addLike()
+            .then(()=>{
+              this.getOtherHomework()
+            })
+        }
+      },
+      bindClickMessage (e) {
+        this.stumsg = e.detail.value
+      },
+      submitEvaluate() {
+        api.study.evaluationToTeacher({
+          id:'',
+          evaluation: this.isActive,
+          stumsg: this.stumsg
+        })
+        this.isEvaluate = true;
       },
       choiceTab(num) {
-        this.isActive = num
+        this.isActive = num;
       },
       changePopup() {
-        console.log('点击')
-        this.isOpenPopup = !this.isOpenPopup
+        console.log('点击');
+        this.isOpenPopup = !this.isOpenPopup;
       }
     };
 
     events = {};
 
-    onLoad() {
-
+    onLoad(query) {
+      this.workType = query.type
+      if (query.type === '1') {
+        this.getMyHomework()
+      } else {
+        this.getOtherHomework()
+      }
     }
   }
 </script>
@@ -289,6 +348,48 @@ export default class CompletionOfWork extends wepy.page {
                 margin-right: 40px;
                 font-size: 24px;
               }
+            }
+          }
+
+          .-reply-info-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            .-info-content {
+              margin-left: 16px;
+              position: relative;
+              flex: 1;
+              width:246px;
+              font-size: 28px;
+              line-height: 40px;
+              padding: 24px 32px;
+              background: rgba(255, 245, 209, 1);
+              border-radius: 16px;
+              border: 3px solid rgba(232, 197, 157, 1);
+              &::before {
+                @include bg('/icon.png');
+                content: '';
+                position: absolute;
+                left: -20px;
+                top: 12px;
+                width: 50px;
+                height: 30px;
+              }
+              &.voice .icon {
+                @include bg('/sk/icon-audio.png');
+                margin-left: 16px;
+                width: 26px;
+                height: 43px;
+              }
+            }
+
+            .-reply-time {
+              margin: 0 36px 0 24px;
+              height:32px;
+              font-size:28px;
+              color:rgba(88,66,43,1);
+              line-height:34px;
             }
           }
         }

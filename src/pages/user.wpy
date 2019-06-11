@@ -24,7 +24,7 @@
               <view class="-left-text">{{item.name}}</view>
             </view>
             <view class="-content-item-right" @tap="toJump({{item.id}})">
-              <view class="-right-tip" wx:if="{{index!==4}}">1</view>
+              <view class="-right-tip" wx:if="{{index!==4 && index!==0}}">{{item.num}}</view>
               <image class="-right-img" src="https://pub.file.k12.vip/tbzw/course/my-icon-arrow.png"
                      mode="widthFix"></image>
             </view>
@@ -45,6 +45,7 @@
 
 <script>
   import wepy from 'wepy';
+  import api from '../request/api';
   import { connect } from 'wepy-redux';
   import mHeader from '../components/header';
 
@@ -67,35 +68,45 @@
     };
 
     data = {
-      itemList: [
-        {
-          id: 1,
-          name: '我的课程',
-          url: 'https://pub.file.k12.vip/tbzw/course/my-icon-course.png'
-        },
-        {
-          id: 2,
-          name: '我的作业',
-          url: 'https://pub.file.k12.vip/tbzw/course/my-icon- homework.png'
-        },
-        {
-          id: 3,
-          name: '点赞通知',
-          url: 'https://pub.file.k12.vip/tbzw/course/my-icon-give a like.png'
-        },
-        {
-          id: 4,
-          name: '表扬通知',
-          url: 'https://pub.file.k12.vip/tbzw/course/my-icon-praise.png'
-        },
-        {
-          id: 5,
-          name: '我的收货地址',
-          url: 'https://pub.file.k12.vip/tbzw/course/my-icon-address.png'
-        }
-
-      ]
+      itemList: []
     };
+
+    getUCRemindVO() {
+      api.study.getUCRemindVO()
+        .then(res => {
+          let notice = res.data.resultData
+          this.itemList = [
+            {
+              id: 1,
+              name: '我的课程',
+              url: 'https://pub.file.k12.vip/tbzw/course/my-icon-course.png'
+            },
+            {
+              id: 2,
+              num: notice.nowork,
+              name: '我的作业',
+              url: 'https://pub.file.k12.vip/tbzw/course/my-icon- homework.png'
+            },
+            {
+              id: 3,
+              num: notice.like,
+              name: '点赞通知',
+              url: 'https://pub.file.k12.vip/tbzw/course/my-icon-give a like.png'
+            },
+            {
+              id: 4,
+              num: notice.praise,
+              name: '表扬通知',
+              url: 'https://pub.file.k12.vip/tbzw/course/my-icon-praise.png'
+            },
+            {
+              id: 5,
+              name: '我的收货地址',
+              url: 'https://pub.file.k12.vip/tbzw/course/my-icon-address.png'
+            }
+          ]
+        });
+    }
 
     methods = {
       toJump(data) {
@@ -122,7 +133,7 @@
     events = {};
 
     onLoad() {
-
+      this.getUCRemindVO();
     }
   }
 </script>

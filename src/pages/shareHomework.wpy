@@ -16,35 +16,35 @@
       <view class="p-shareHomework-content">
         <view class="-content-top">
           <view class="-content-top-left">
-            <image class="-left-img" src="https://pub.file.k12.vip/2019/06/05/1136182325860913154.png"></image>
-            <view class="-left-name">刘鑫</view>
+            <image class="-left-img" src="{{shareInfo.stuImg}}"></image>
+            <view class="-left-name">{{shareInfo.nickname}}</view>
           </view>
 
           <view class="-content-top-right">
             <view class="-right-study">
-              <view class="-right-num">24</view>
+              <view class="-right-num">{{shareInfo.learnDay}}</view>
               <view class="-right-text">学习天数</view>
               <view class="-right-btn">我也要学</view>
             </view>
             <view class="-right-center">|</view>
             <view class="-right-zan">
-              <view class="-right-num">18</view>
+              <view class="-right-num">{{shareInfo.likenum}}</view>
               <view class="-right-text">获得点赞</view>
-              <view class="-right-btn-two">给Ta点赞</view>
+              <view class="-right-btn-two" @tap="addLike">给Ta点赞</view>
             </view>
           </view>
         </view>
 
         <view class="-content-down">
           <view class="-content-down-title">
-            <view>我已完成第一周的作文训练</view>
-            <view class="-title-small">今天的作文题目是“我的妈妈”</view>
+            <view>我已完成第{{shareInfo.week}}周的作文训练</view>
+            <view class="-title-small">今天的作文题目是“{{shareInfo.homeworkTitle}}”</view>
           </view>
-          <image class="-content-down-img" src="https://pub.file.k12.vip/2019/06/05/1136182325860913154.png"></image>
+          <image class="-content-down-img" src="{{shareInfo.replyImg}}"></image>
           <view class="-content-down-reply">
-            <image class="-reply-img" src="https://pub.file.k12.vip/2019/06/10/1137913654138916865.jpg"></image>
+            <image class="-reply-img" src="{{shareInfo.replyTeacherImg}}"></image>
             <view class="-reply-info">
-              <view class="-info-name">木木老师</view>
+              <view class="-info-name">{{shareInfo.replyTeacher}}</view>
               <view class="-info-wrap">
                 <view class="-info-content voice">
                   <view class="icon"></view>
@@ -65,6 +65,7 @@
 
 <script>
   import wepy from 'wepy'
+  import api from '../request/api'
   import mHeader from '../components/header'
 
   export default class ShareHomework extends wepy.page {
@@ -80,14 +81,35 @@
       }
     };
 
-    data = {};
+    data = {
+      shareInfo: ''
+    };
 
-    methods = {};
+    getMyHomework() {
+      api.study.viewMyHomework({
+        lessonId: ''
+      }).then(res => {
+        this.shareInfo = res.data.resultData;
+      });
+    };
+
+    methods = {
+      addLike () {
+        if (this.workType === '1') {
+          return
+        } else {
+          api.study.addLike()
+            .then(()=>{
+              this.getMyHomework()
+            })
+        }
+      },
+    };
 
     events = {};
 
     onLoad() {
-
+      this.getMyHomework()
     }
   }
 </script>

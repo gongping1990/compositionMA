@@ -5,16 +5,16 @@
       <view class="p-submitHomework-header">
         <view class="p-submitHomework-header-top">
           <view class="-top-left">
-            <image class="-left-img" src="https://pub.file.k12.vip/2019/06/06/1136482934891761666.jpg"></image>
+            <image class="-left-img" src="{{lessonDetail.coverphoto}}"></image>
           </view>
           <view class="-top-right">
             <view>
-              <view class="-title">回家过大年（写人的脸色）</view>
+              <view class="-title">{{lessonDetail.name}}</view>
               <view class="-text">《每日轻作文》</view>
             </view>
 
             <view class="-right-down">
-              <view class="-num">25314人已学</view>
+              <view class="-num">{{lessonDetail.uv || 0}}人已学</view>
               <view class="-btn" @tap="changePopup({{'1'}})">
                 <image class="-icon" src="https://pub.file.k12.vip/2019/06/06/1136518673440460801.png"></image>
                 课程回看
@@ -32,11 +32,8 @@
       <view class="p-submitHomework-center" wx:if="{{tabActive === '1'}}">
         <view class="-center-blackboard">
           <view class="-center-blackboard-title">课后作业</view>
-          <view class="-center-blackboard-name">课后作业</view>
-          <view class="-center-blackboard-content">请以我的妈妈为题，写一篇200字的叙事作文，
-            请以我的妈妈为题，写一篇200字的叙事作文
-            请以我的妈妈为题，写一篇200字的叙事作文
-          </view>
+          <view class="-center-blackboard-name">{{lessonDetail.homework}}</view>
+          <view class="-center-blackboard-content">{{lessonDetail.homeworkClaim}}</view>
         </view>
 
         <view class="-center-mask" wx:if="{{isSuccessWork}}">
@@ -45,16 +42,16 @@
 
         <view class="-center-work" wx:if="{{isSuccessWork}}">
           <view class="-center-work-left">
-            <image class="-left-img" src="https://pub.file.k12.vip/2019/06/05/1136181969340878849.jpg"></image>
+            <image class="-left-img" src="{{userInfo.headimgurl}}"></image>
           </view>
           <view class="-center-work-right">
-            <view class="-right-name">heaven小林哥</view>
-            <view class="-right-time">2019-5-22 17:35</view>
-            <image class="-right-work" src="https://pub.file.k12.vip/2019/06/05/1136182325860913154.png"></image>
+            <view class="-right-name">{{workDetail.nickname}}</view>
+            <view class="-right-time">{{workDetail.workTime}}</view>
+            <image class="-right-work" src="{{workDetail.workImg}}"></image>
             <view class="-right-tip">
-              <view class="-tip-text">老师已点评， 敬请收听</view>
+              <view class="-tip-text" wx:if="{{workDetail.replyTime}}">老师已点评， 敬请收听</view>
             </view>
-            <view class="-right-btn" @tap="lookWorkDetail">查看作业详情</view>
+            <view class="-right-btn" @tap="lookWorkDetail({{'1'}})">查看作业详情</view>
           </view>
         </view>
       </view>
@@ -63,7 +60,7 @@
         <button class="-footer-btn" @tap="submitWork">上交作业</button>
       </view>
 
-      <view class="p-submitHomework-card" wx:if="{{tabActive === '1'}}">
+      <view class="p-submitHomework-card" wx:if="{{tabActive === '1'}}" @tap="addMyCard">
         <view class="-text" @tap="changePopup({{'2'}})">{{isPunchCard ? '已打卡' : '点我打卡'}}</view>
       </view>
 
@@ -80,7 +77,7 @@
             <view class="-center-work-right">
               <view class="-right-name">{{item.name}}</view>
               <view class="-right-time">{{item.time}}</view>
-              <image class="-right-work" src="{{item.workImg}}"></image>
+              <image class="-right-work" src="{{item.workImg}}" @tap="lookWorkDetail({{'2'}})"></image>
               <view class="-right-zan">
                 <view class="-zan-left {{item.isZan ? '-zan-ok' : ''}}">
                   <image class="-img" wx:if="{{!item.isZan}}"
@@ -132,10 +129,17 @@
 </template>
 
 <script>
-  import wepy from 'wepy'
-import mHeader from '../components/header'
+  import wepy from 'wepy';
+  import api from '../request/api';
+  import { connect } from 'wepy-redux';
+  import mHeader from '../components/header';
 
-export default class SubmitHomework extends wepy.page {
+  @connect({
+    userInfo(state) {
+      return state.user.userInfo;
+    }
+  })
+  export default class SubmitHomework extends wepy.page {
     config = {
       navigationBarTitleText: '课后作业',
       'usingComponents': {
@@ -148,15 +152,17 @@ export default class SubmitHomework extends wepy.page {
     };
     computed = {
       height() {
-        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
       }
     };
 
     data = {
-      tabActive: '2',
-      isSuccessWork: false,
+      tabActive: '1',
+      isSuccessWork: true,
       isOpenPopup: false,
       isCard: false,
+      workDetail: '',
+      lessonDetail: '',
       dataList: [
         {
           imgUrl: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
@@ -193,33 +199,68 @@ export default class SubmitHomework extends wepy.page {
       ]
     };
 
+    getLessonInfo() {
+      api.study.getLessonDetail({
+        lessonId: ''
+      }).then( res => {
+        this.lessonDetail = res.data.resultData
+      });
+    };
+
+    getMyHomework() {
+      api.study.viewMyHomework({
+        lessonId: ''
+      }).then( res => {
+        this.workDetail = res.data.resultData
+        this.workDetail && (this.isSuccessWork = true)
+      });
+    };
+
     methods = {
+
+      addMyCard() {
+        api.study.addCard({
+        }).then(() => {
+
+        });
+      },
       changePopup(num) {
         if (num === '1') {
-          this.isCard = false
+          this.isCard = false;
         } else if (num === '2') {
-          this.isCard = true
+          this.isCard = true;
         }
-        this.isOpenPopup = !this.isOpenPopup
+        this.isOpenPopup = !this.isOpenPopup;
       },
       submitWork() {
-        wx.navigateTo({ url: `/pages/uploadHomework` })
+        let _self = this
+        wx.chooseImage({
+          count: 1, // 默认9
+          sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+          sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+          success: function (res) {
+            // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
+            wx.navigateTo({ url: `/pages/uploadHomework?url=${res.tempFilePaths[0]}`});
+          }
+        })
+
       },
       toLookCard() {
-        wx.navigateTo({ url: `/pages/uploadHomework` })
+        wx.navigateTo({ url: `/pages/uploadHomework` });
       },
-      lookWorkDetail() {
-        wx.navigateTo({ url: `/pages/completionOfWork` })
+      lookWorkDetail(num) {
+        wx.navigateTo({ url: `/pages/completionOfWork?type=${num}` });
       },
       changeTab(num) {
-        this.tabActive = num
+        this.tabActive = num;
       }
     };
 
     events = {};
 
     onLoad() {
-
+      this.getLessonInfo()
+      this.getMyHomework()
     }
   }
 </script>
@@ -228,6 +269,7 @@ export default class SubmitHomework extends wepy.page {
   @import '../assets/style/mixin.scss';
 
   .p-submitHomework {
+    height: calc(100vh - 166px);
 
     &-header {
       background: url("https://pub.file.k12.vip/2019/06/06/1136480784090419202.png") no-repeat;
@@ -403,7 +445,7 @@ export default class SubmitHomework extends wepy.page {
         position: relative;
         display: flex;
         margin-top: 54px;
-        padding: 40px 0 0 64px;
+        padding: 40px 0 64px 64px;
         border-top: 10px solid #F6F5F4;
 
         &-left {
@@ -520,7 +562,7 @@ export default class SubmitHomework extends wepy.page {
           }
 
           .-zan-ok {
-            background:linear-gradient(90deg,rgba(249,230,11,1) 0%,rgba(253,219,85,1) 100%);
+            background: linear-gradient(90deg, rgba(249, 230, 11, 1) 0%, rgba(253, 219, 85, 1) 100%);
             border: none;
           }
 
@@ -535,24 +577,27 @@ export default class SubmitHomework extends wepy.page {
         margin-top: 100px;
         text-align: center;
 
-        .-no-icon{
+        .-no-icon {
           margin-bottom: 24px;
-          width:254px;
-          height:252px;
+          width: 254px;
+          height: 252px;
         }
 
         .-no-text {
-          height:40px;
-          font-size:28px;
-          font-weight:400;
-          color:rgba(88,66,43,0.5);
-          line-height:40px;
+          height: 40px;
+          font-size: 28px;
+          font-weight: 400;
+          color: rgba(88, 66, 43, 0.5);
+          line-height: 40px;
         }
       }
     }
 
     &-footer {
-      margin-top: 166px;
+      position: absolute;
+      bottom: 42px;
+      width: 100%;
+
       .-footer-btn {
         margin: 0 auto;
         text-align: center;

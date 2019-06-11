@@ -56,8 +56,8 @@
 					"scene": null
 				},
 				{
-					"id": -1,
-					"name": "我的课程",
+					"id": 3,
+					"name": "点赞",
 					"pathName": "pages/pointNotice",
 					"query": "",
 					"scene": null
@@ -101,6 +101,20 @@
 					"id": 9,
 					"name": "作品表彰",
 					"pathName": "pages/praiseOfWorks",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "地址",
+					"pathName": "pages/address",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "个人中心",
+					"pathName": "pages/user",
 					"query": "",
 					"scene": null
 				}

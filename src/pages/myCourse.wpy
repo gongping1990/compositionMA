@@ -12,20 +12,20 @@
                 item="item">
           <view class="p-myCourse-item">
             <view class="-item-top">
-              <view class="-item-top-tip">体验课</view>
+              <view class="-item-top-tip" wx:if="{{item.try}}">体验课</view>
               <image class="-item-top-img" src="{{item.imgUrl}}"></image>
             </view>
             <view class="-item-down">
               <view class="-item-down-title">
-                {{item.title}}
+                {{item.gradeText}}
                 <text>【{{item.grade}}】</text>
               </view>
               <view class="-item-down-content">
-                <view class="-content-left">{{item.des}}</view>
+                <view class="-content-left">每天5-8分钟，学技巧积素材</view>
                 <view class="-content-right">
-                  <text>共{{item.total}}节课</text>
+                  <text>共{{item.totalNum}}节课</text>
                   |
-                  <text>已学{{item.study}}节</text>
+                  <text>已学{{item.learnNum}}节</text>
                 </view>
               </view>
             </view>
@@ -37,10 +37,11 @@
 </template>
 
 <script>
-  import wepy from 'wepy'
-import mHeader from '../components/header'
+  import wepy from 'wepy';
+  import api from '../request/api';
+  import mHeader from '../components/header';
 
-export default class MyCourse extends wepy.page {
+  export default class MyCourse extends wepy.page {
     config = {
       navigationBarTitleText: '我的课程'
     };
@@ -49,7 +50,7 @@ export default class MyCourse extends wepy.page {
     };
     computed = {
       height() {
-        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
       }
     };
 
@@ -59,40 +60,32 @@ export default class MyCourse extends wepy.page {
         size: 10,
         total: ''
       },
-      dataList: [
-        {
-          imgUrl: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
-          title: '同步作文课',
-          grade: '三年级',
-          des: '每天5-8分钟，学技巧积素材',
-          total: '200',
-          study: '53'
-        },
-        {
-          imgUrl: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
-          title: '同步作文课同步作文课同步作文课同步作文课同步作文课同步作文课同步作文课',
-          grade: '三年级',
-          des: '每天5-8分钟，学技巧积素材每天5-8分钟，学技巧积素材',
-          total: '200',
-          study: '53'
-        },
-        {
-          imgUrl: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
-          title: '同步作文课同步作文课同步作文课同步作文课同步作文课同步作文课同步作文课',
-          grade: '三年级',
-          des: '每天5-8分钟，学技巧积素材每天5-8分钟，学技巧积素材',
-          total: '200',
-          study: '53'
-        }
-      ]
+      dataList: []
+    };
+
+    getList() {
+      api.study.listUserLessons({
+        current: this.page.current,
+        size: this.page.size
+      })
+        .then(({ data }) => {
+          if (this.page.current > 1) {
+            this.dataList = this.dataList.concat(data.resultData.records)
+          } else {
+            this.dataList = data.resultData.records;
+          }
+
+          this.page.total = data.resultData.total
+          this.$apply()
+        });
     };
 
     methods = {
       bindLoadItem(data) {
-        console.log(111111)
+        console.log(111111);
         if (this.page.current < Math.ceil(this.page.total / this.page.size)) {
-          this.page.current++
-          // this.getAccountInfo();
+          this.page.current++;
+          this.getList();
         }
       }
     };
@@ -100,7 +93,7 @@ export default class MyCourse extends wepy.page {
     events = {};
 
     onLoad() {
-
+      this.getList()
     }
   }
 </script>

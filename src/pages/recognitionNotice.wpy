@@ -14,11 +14,11 @@
             <view class="-item-right">
               <view class="-item-right-top">
                 <view class="-name">{{item.name}}</view>
-                <view class="-icon" wx:if="{{item.isNotice}}"></view>
+                <view class="-icon" wx:if="{{!item.know}}"></view>
               </view>
               <view class="-item-right-down">
                 <view>表扬了你的作品</view>
-                <view>{{item.time}}</view>
+                <view>{{item.datetime}}</view>
               </view>
             </view>
           </view>
@@ -29,10 +29,12 @@
 </template>
 
 <script>
-  import wepy from 'wepy'
-import mHeader from '../components/header'
+  import wepy from 'wepy';
+  import api from '../request/api'
+  import dayjs from 'dayjs'
+  import mHeader from '../components/header';
 
-export default class RecognitionNotice extends wepy.page {
+  export default class RecognitionNotice extends wepy.page {
     config = {
       navigationBarTitleText: '表扬通知'
     };
@@ -41,7 +43,7 @@ export default class RecognitionNotice extends wepy.page {
     };
     computed = {
       height() {
-        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
       }
     };
 
@@ -55,42 +57,57 @@ export default class RecognitionNotice extends wepy.page {
         {
           imgUrl: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
           name: 'heaven小林哥',
-          time: '2019-5-22 17:35',
-          isNotice: true
+          datetime: '2019-5-22 17:35',
+          know: true
         },
         {
           imgUrl: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
           name: '风锅锅',
-          time: '2019-5-12 17:35',
-          isNotice: false
+          datetime: '2019-5-12 17:35',
+          know: false
         },
         {
           imgUrl: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
           name: '大江东旭',
-          time: '2019-4-11 17:35',
-          isNotice: false
+          datetime: '2019-4-11 17:35',
+          know: false
         },
         {
           imgUrl: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
           name: 'liangchenas',
-          time: '2019-3-12 17:35',
-          isNotice: false
-        },
-        {
-          imgUrl: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
-          name: 'liangchenas',
-          time: '2019-3-12 17:35',
-          isNotice: false
+          datetime: '2019-3-12 17:35',
+          know: false
         }
       ]
     };
 
+    getList() {
+      api.study.listPraiseByPage({
+        current: this.page.current,
+        size: this.page.size
+      })
+        .then(({ data }) => {
+          if (this.page.current > 1) {
+            this.dataList = this.dataList.concat(data.resultData.records)
+          } else {
+            this.dataList = data.resultData.records;
+          }
+
+          this.dataList.forEach(item => {
+            item.datetime = dayjs(+item.datetime).format('YYYY-MM-DD HH:mm:ss')
+          })
+
+          this.page.total = data.resultData.total
+          this.$apply()
+        });
+    };
+
     methods = {
       bindLoadItem(data) {
-        console.log(111111)
+        console.log(111111);
         if (this.page.current < Math.ceil(this.page.total / this.page.size)) {
-          this.page.current++
-          // this.getAccountInfo();
+          this.page.current++;
+          this.getList();
         }
       }
     };
@@ -98,6 +115,7 @@ export default class RecognitionNotice extends wepy.page {
     events = {};
 
     onLoad() {
+      this.getList()
     }
   }
 </script>
@@ -118,8 +136,8 @@ export default class RecognitionNotice extends wepy.page {
       .-item-left {
         margin-right: 24px;
         overflow: hidden;
-        min-width:96px;
-        min-height:96px;
+        min-width: 96px;
+        min-height: 96px;
         border-radius: 50%;
 
         .-img {
@@ -137,17 +155,17 @@ export default class RecognitionNotice extends wepy.page {
           align-items: center;
 
           .-name {
-            height:40px;
-            font-size:28px;
-            font-weight:500;
-            color:rgba(88,66,43,1);
-            line-height:40px;
+            height: 40px;
+            font-size: 28px;
+            font-weight: 500;
+            color: rgba(88, 66, 43, 1);
+            line-height: 40px;
           }
 
           .-icon {
-            width:20px;
-            height:20px;
-            background:rgba(255,137,131,1);
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 137, 131, 1);
             border-radius: 50%;
           }
         }
@@ -157,11 +175,11 @@ export default class RecognitionNotice extends wepy.page {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          height:34px;
-          font-size:24px;
-          font-weight:400;
-          color:rgba(88,66,43,0.5);
-          line-height:34px;
+          height: 34px;
+          font-size: 24px;
+          font-weight: 400;
+          color: rgba(88, 66, 43, 0.5);
+          line-height: 34px;
         }
       }
     }

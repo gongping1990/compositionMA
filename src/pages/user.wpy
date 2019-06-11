@@ -1,14 +1,14 @@
 <template>
-  <view class="container p-user">
+  <view class="container">
     <mHeader title="个人中心"></mHeader>
-    <view class="container-scroll" style="margin-top:{{height}}px">
+    <view class="container-scroll p-user" style="margin-top:{{height}}px">
       <view class="p-user-header">
         <view class="-header-top">
           <view class="-header-img">
             <image class="-img" mode="widthFix"
-                   src="https://wx.qlogo.cn/mmopen/vi_32/DYAIOgq83epxBOwIsH1se324kFtXjDgaj6DzpsF162VlbsWrq01HOGSia5Qpe3toQroxwdwTHxv3DXKqxTVSrmA/132"></image>
+                   src="{{userInfo.headimgurl}}"></image>
           </view>
-          <view class="-header-text">最美的期待</view>
+          <view class="-header-text">{{userInfo.nickname}}</view>
         </view>
         <view class="-header-down"></view>
       </view>
@@ -24,9 +24,7 @@
               <view class="-left-text">{{item.name}}</view>
             </view>
             <view class="-content-item-right" @tap="toJump({{item.id}})">
-              <view class="-right-tip">
-                1
-              </view>
+              <view class="-right-tip" wx:if="{{index!==4 && index!==0}}">{{item.num}}</view>
               <image class="-right-img" src="https://pub.file.k12.vip/tbzw/course/my-icon-arrow.png"
                      mode="widthFix"></image>
             </view>
@@ -42,72 +40,138 @@
         <text class="-footer-text">随时约课随时学，赶紧来体验吧～</text>
       </view>
     </view>
+    <van-tabbar active="3"
+                active-color="#58422B"
+                bind:change="onChangeTabbar">
+      <van-tabbar-item>
+        <image slot="icon"
+               src="../assets/image/icon-jrxx.png"
+               mode="aspectFit" />
+        <image slot="icon-active"
+               src="../assets/image/icon-jrxx1.png"
+               mode="aspectFit" />
+        今日学习
+      </van-tabbar-item>
+      <van-tabbar-item>
+        <image slot="icon"
+               src="../assets/image/icon-zpbz.png"
+               mode="aspectFit" />
+        <image slot="icon-active"
+               src="../assets/image/icon-zpbz1.png"
+               mode="aspectFit" />
+        作品表彰
+      </van-tabbar-item>
+      <van-tabbar-item>
+        <image slot="icon"
+               src="../assets/image/icon-dkjl.png"
+               mode="aspectFit" />
+        <image slot="icon-active"
+               src="../assets/image/icon-dkjl1.png"
+               mode="aspectFit" />
+        打卡记录
+      </van-tabbar-item>
+      <van-tabbar-item>
+        <image slot="icon"
+               src="../assets/image/icon-grzx.png"
+               mode="aspectFit" />
+        <image slot="icon-active"
+               src="../assets/image/icon-grzx1.png"
+               mode="aspectFit" />
+        个人中心
+      </van-tabbar-item>
+    </van-tabbar>
   </view>
 </template>
 
 <script>
-  import wepy from 'wepy'
-import mHeader from '../components/header'
+  import wepy from 'wepy';
+  import api from '../request/api';
+  import { connect } from 'wepy-redux';
+  import testMixin from '../mixins/test'
+  import mHeader from '../components/header';
 
-export default class User extends wepy.page {
+  @connect({
+    userInfo(state) {
+      return state.user.userInfo;
+    }
+  })
+  export default class User extends wepy.page {
     config = {
-      navigationBarTitleText: '个人中心'
+      navigationBarTitleText: '个人中心',
+      usingComponents: {
+        'van-tabbar': '../vant/tabbar/index',
+        'van-tabbar-item': '../vant/tabbar-item/index'
+      }
     };
+    mixins = [testMixin]
     components = {
       mHeader
     };
     computed = {
       height() {
-        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
       }
     };
 
     data = {
-      itemList: [
-        {
-          id: 1,
-          name: '我的课程',
-          url: 'https://pub.file.k12.vip/tbzw/course/my-icon-course.png'
-        },
-        {
-          id: 2,
-          name: '我的作业',
-          url: 'https://pub.file.k12.vip/tbzw/course/my-icon- homework.png'
-        },
-        {
-          id: 3,
-          name: '点赞通知',
-          url: 'https://pub.file.k12.vip/tbzw/course/my-icon-give a like.png'
-        },
-        {
-          id: 4,
-          name: '表扬通知',
-          url: 'https://pub.file.k12.vip/tbzw/course/my-icon-praise.png'
-        },
-        {
-          id: 5,
-          name: '我的收货地址',
-          url: 'https://pub.file.k12.vip/tbzw/course/my-icon-address.png'
-        }
-
-      ]
+      itemList: []
     };
+
+    getUCRemindVO() {
+      api.study.getUCRemindVO()
+        .then(res => {
+          let notice = res.data.resultData
+          this.itemList = [
+            {
+              id: 1,
+              name: '我的课程',
+              url: 'https://pub.file.k12.vip/tbzw/course/my-icon-course.png'
+            },
+            {
+              id: 2,
+              num: notice.nowork,
+              name: '我的作业',
+              url: 'https://pub.file.k12.vip/tbzw/course/my-icon- homework.png'
+            },
+            {
+              id: 3,
+              num: notice.like,
+              name: '点赞通知',
+              url: 'https://pub.file.k12.vip/tbzw/course/my-icon-give a like.png'
+            },
+            {
+              id: 4,
+              num: notice.praise,
+              name: '表扬通知',
+              url: 'https://pub.file.k12.vip/tbzw/course/my-icon-praise.png'
+            },
+            {
+              id: 5,
+              name: '我的收货地址',
+              url: 'https://pub.file.k12.vip/tbzw/course/my-icon-address.png'
+            }
+          ]
+        });
+    }
 
     methods = {
       toJump(data) {
         switch (data) {
           case 1:
-            wx.navigateTo({ url: '/pages/myCourse' })
-            break
+            wx.navigateTo({ url: '/pages/myCourse' });
+            break;
           case 2:
-            wx.navigateTo({ url: '/pages/myWork' })
-            break
+            wx.navigateTo({ url: '/pages/myWork' });
+            break;
           case 3:
-            wx.navigateTo({ url: '/pages/pointNotice' })
-            break
+            wx.navigateTo({ url: '/pages/pointNotice' });
+            break;
           case 4:
-            wx.navigateTo({ url: '/pages/recognitionNotice' })
-            break
+            wx.navigateTo({ url: '/pages/recognitionNotice' });
+            break;
+          case 5:
+            wx.navigateTo({ url: '/pages/address' });
+            break;
         }
       }
     };
@@ -115,7 +179,7 @@ export default class User extends wepy.page {
     events = {};
 
     onLoad() {
-
+      this.getUCRemindVO();
     }
   }
 </script>
@@ -123,6 +187,7 @@ export default class User extends wepy.page {
   @import '../assets/style/mixin.scss';
 
   .p-user {
+    margin-bottom: 120px;
 
     &-header {
       @include bg('/course/background.png');

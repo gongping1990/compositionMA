@@ -37,7 +37,7 @@
 				{
 					"id": 0,
 					"name": "classroom",
-					"pathName": "pages/study",
+					"pathName": "pages/ready",
 					"query": "id=1134359706941546498",
 					"scene": null
 				},

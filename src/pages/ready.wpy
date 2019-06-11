@@ -41,6 +41,7 @@
         </view>
       </view>
     </view>
+
     <view class="ready-btn {{isReady && 'show'}}"
           @tap="clickStudy">{{time ? '开始上课（' + time + ')s' : '开始上课'}}）</view>
   </view>
@@ -50,7 +51,10 @@ import wepy from 'wepy'
 import mHeader from '@/components/header'
 export default class Example extends wepy.page {
   config = {
-    navigationBarTitleText: ''
+    navigationBarTitleText: '',
+    'usingComponents': {
+      'van-popup': '../vant/popup/index'
+    }
   };
   data = {
     lessonId: 0,
@@ -62,7 +66,8 @@ export default class Example extends wepy.page {
     duration: 0,
     currentTime: 0,
     time: 3,
-    isReady: false
+    isReady: false,
+    showContinueDiaolig: true
   };
   components = {
     mHeader
@@ -77,6 +82,20 @@ export default class Example extends wepy.page {
   computed = {
     height () {
       return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+    },
+    progressTimeText () {
+      if (this.roomData.progressTime) {
+        let minute = 0
+        let second = 0
+        let time = this.roomData.progressTime
+        minute = parseInt(time / 60)
+        second = time % 60
+        minute = minute < 10 ? '0' + minute : minute
+        second = second < 10 ? '0' + second : second
+        return `${minute}分${second}秒`
+      } else {
+        return '00分00秒'
+      }
     },
     timeText () {
       let { currentTime, duration } = this
@@ -151,7 +170,7 @@ export default class Example extends wepy.page {
   }
 
   initPage () {
-    this.joinRoom()
+    this.getLessonRoom()
     this.getClassInfo()
   }
 
@@ -164,6 +183,15 @@ export default class Example extends wepy.page {
       this.roomData = data.resultData
       this.mateInfo = data.resultData.mateInfo
       this.$apply()
+    })
+  }
+
+  getLessonRoom() {
+    let { api } = this.$parent.globalData
+    api.study.getLessonRoom({
+      lessonId: this.lessonId
+    }).then(({data}) => {
+      this.roomData = data.resultData
     })
   }
 
@@ -308,11 +336,11 @@ export default class Example extends wepy.page {
       background-color: #fff;
       background-image: -webkit-linear-gradient(
         -45deg,
-        rgba($color: #3DCBFF, $alpha: 1) 25%,
+        rgba($color: #3dcbff, $alpha: 1) 25%,
         white 25%,
         white 50%,
-        rgba($color: #3DCBFF, $alpha: 1) 50%,
-        rgba($color: #3DCBFF, $alpha: 1) 75%,
+        rgba($color: #3dcbff, $alpha: 1) 50%,
+        rgba($color: #3dcbff, $alpha: 1) 75%,
         white 75%,
         white
       );

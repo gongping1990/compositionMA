@@ -7,6 +7,9 @@ const study = {
   joinRoom(params) {
     return request.post('/study/joinRoom', params)
   },
+  getLessonRoom(params) {
+    return request.post('/study/joinRoom', params)
+  },
   listExistWorkByPage(params) {
     return request.get('/study/listExistWorkByPage', params)
   },

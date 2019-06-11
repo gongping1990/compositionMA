@@ -31,6 +31,9 @@ const study = {
   listWorkPraiseByPage(params) {
     return request.get('/study/listWorkPraiseByPage', params)
   },
+  listHomeworkByLesson(params) {
+    return request.get('/study/listHomeworkByLesson', params)
+  },
   addHomework(params) {
     return request.get('/study/submitHomework', params)
   },

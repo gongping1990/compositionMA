@@ -72,20 +72,20 @@
                 item="item">
           <view class="-center-work -center-other">
             <view class="-center-work-left">
-              <image class="-left-img" src="{{item.imgUrl}}"></image>
+              <image class="-left-img" src="{{item.stuImg}}"></image>
             </view>
             <view class="-center-work-right">
-              <view class="-right-name">{{item.name}}</view>
-              <view class="-right-time">{{item.time}}</view>
+              <view class="-right-name">{{item.nickname}}</view>
+              <view class="-right-time">{{item.workTime}}</view>
               <image class="-right-work" src="{{item.workImg}}" @tap="lookWorkDetail({{'2'}})"></image>
               <view class="-right-zan">
                 <view class="-zan-left {{item.isZan ? '-zan-ok' : ''}}">
-                  <image class="-img" wx:if="{{!item.isZan}}"
+                  <image class="-img" wx:if="{{!item.otherLike}}"
                          src="https://pub.file.k12.vip/tbzw/word-detail/icon-give-pre.png"></image>
-                  <image class="-img" wx:if="{{item.isZan}}"
+                  <image class="-img" wx:if="{{item.otherLike}}"
                          src="https://pub.file.k12.vip/2019/06/06/1136572565700235266.png"></image>
                 </view>
-                <view class="-zan-right {{item.isZan ? '-zan-ok' : ''}}">{{item.zan}}</view>
+                <view class="-zan-right {{item.otherLike ? '-zan-ok' : ''}}">{{item.likenum}}</view>
               </view>
             </view>
           </view>
@@ -131,6 +131,7 @@
 <script>
   import wepy from 'wepy';
   import api from '../request/api';
+  import dayjs from 'dayjs'
   import { connect } from 'wepy-redux';
   import mHeader from '../components/header';
 
@@ -157,70 +158,62 @@
     };
 
     data = {
+      page: {
+        current: 1,
+        size: 10,
+        total: ''
+      },
       tabActive: '1',
       isSuccessWork: true,
       isOpenPopup: false,
       isCard: false,
       workDetail: '',
       lessonDetail: '',
-      dataList: [
-        {
-          imgUrl: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
-          workImg: 'https://pub.file.k12.vip/2019/06/05/1136182325860913154.png',
-          name: 'heaven小林哥',
-          time: '2019-5-22 17:35',
-          zan: 99,
-          isZan: true
-        },
-        {
-          imgUrl: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
-          workImg: 'https://pub.file.k12.vip/2019/06/05/1136182325860913154.png',
-          name: '风锅锅',
-          time: '2019-5-12 17:35',
-          zan: 99,
-          isZan: false
-        },
-        {
-          imgUrl: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
-          workImg: 'https://pub.file.k12.vip/2019/06/05/1136182325860913154.png',
-          name: '大江东旭',
-          time: '2019-4-11 17:35',
-          zan: 199,
-          isZan: false
-        },
-        {
-          imgUrl: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
-          workImg: 'https://pub.file.k12.vip/2019/06/05/1136182325860913154.png',
-          name: 'liangchenas',
-          time: '2019-3-12 17:35',
-          zan: 5,
-          isZan: true
-        }
-      ]
+      dataList: []
     };
 
     getLessonInfo() {
       api.study.getLessonDetail({
         lessonId: ''
-      }).then( res => {
-        this.lessonDetail = res.data.resultData
+      }).then(res => {
+        this.lessonDetail = res.data.resultData;
       });
     };
 
     getMyHomework() {
       api.study.viewMyHomework({
         lessonId: ''
-      }).then( res => {
-        this.workDetail = res.data.resultData
-        this.workDetail && (this.isSuccessWork = true)
+      }).then(res => {
+        this.workDetail = res.data.resultData;
+        this.workDetail && (this.isSuccessWork = true);
+      });
+    };
+
+    getOtherHomeWork() {
+      api.study.listHomeworkByLesson({
+        current: this.page.current,
+        size: this.page.size,
+        lessonId: ''
+      }).then(({ data }) => {
+        if (this.page.current > 1) {
+          this.dataList = this.dataList.concat(data.resultData.records);
+        } else {
+          this.dataList = data.resultData.records;
+        }
+
+        this.dataList.forEach(item => {
+          item.workTime = dayjs(+item.workTime).format('YYYY-MM-DD HH:mm:ss');
+        });
+
+        this.page.total = data.resultData.total;
+        this.$apply();
       });
     };
 
     methods = {
 
       addMyCard() {
-        api.study.addCard({
-        }).then(() => {
+        api.study.addCard({}).then(() => {
 
         });
       },
@@ -233,16 +226,16 @@
         this.isOpenPopup = !this.isOpenPopup;
       },
       submitWork() {
-        let _self = this
+        let _self = this;
         wx.chooseImage({
           count: 1, // 默认9
           sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
           sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
-          success: function (res) {
+          success: function(res) {
             // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
-            wx.navigateTo({ url: `/pages/uploadHomework?url=${res.tempFilePaths[0]}`});
+            wx.navigateTo({ url: `/pages/uploadHomework?url=${res.tempFilePaths[0]}` });
           }
-        })
+        });
 
       },
       toLookCard() {
@@ -252,6 +245,7 @@
         wx.navigateTo({ url: `/pages/completionOfWork?type=${num}` });
       },
       changeTab(num) {
+        num === '2' && this.getOtherHomeWork();
         this.tabActive = num;
       }
     };
@@ -259,8 +253,8 @@
     events = {};
 
     onLoad() {
-      this.getLessonInfo()
-      this.getMyHomework()
+      this.getLessonInfo();
+      this.getMyHomework();
     }
   }
 </script>

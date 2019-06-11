@@ -47,6 +47,46 @@
         </repeat>
       </scroll-view>
     </view>
+    <van-tabbar active="1"
+                active-color="#58422B"
+                bind:change="onChangeTabbar">
+      <van-tabbar-item>
+        <image slot="icon"
+               src="../assets/image/icon-jrxx.png"
+               mode="aspectFit" />
+        <image slot="icon-active"
+               src="../assets/image/icon-jrxx1.png"
+               mode="aspectFit" />
+        今日学习
+      </van-tabbar-item>
+      <van-tabbar-item>
+        <image slot="icon"
+               src="../assets/image/icon-zpbz.png"
+               mode="aspectFit" />
+        <image slot="icon-active"
+               src="../assets/image/icon-zpbz1.png"
+               mode="aspectFit" />
+        作品表彰
+      </van-tabbar-item>
+      <van-tabbar-item>
+        <image slot="icon"
+               src="../assets/image/icon-dkjl.png"
+               mode="aspectFit" />
+        <image slot="icon-active"
+               src="../assets/image/icon-dkjl1.png"
+               mode="aspectFit" />
+        打卡记录
+      </van-tabbar-item>
+      <van-tabbar-item>
+        <image slot="icon"
+               src="../assets/image/icon-grzx.png"
+               mode="aspectFit" />
+        <image slot="icon-active"
+               src="../assets/image/icon-grzx1.png"
+               mode="aspectFit" />
+        个人中心
+      </van-tabbar-item>
+    </van-tabbar>
   </view>
 </template>
 
@@ -54,11 +94,16 @@
   import wepy from 'wepy';
   import api from '../request/api';
   import dayjs from 'dayjs';
+  import testMixin from '../mixins/test'
   import mHeader from '../components/header';
 
   export default class PraiseOfWorks extends wepy.page {
     config = {
-      navigationBarTitleText: '作品表彰'
+      navigationBarTitleText: '作品表彰',
+      usingComponents: {
+        'van-tabbar': '../vant/tabbar/index',
+        'van-tabbar-item': '../vant/tabbar-item/index'
+      }
     };
     components = {
       mHeader
@@ -68,6 +113,8 @@
         return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
       }
     };
+
+    mixins=[testMixin]
 
     data = {
       page: {
@@ -99,6 +146,46 @@
           time: '2019-4-11 17:35',
           zan: 199,
           isZan: false
+        },
+        {
+          imgUrl: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
+          workImg: 'https://pub.file.k12.vip/2019/06/05/1136182325860913154.png',
+          name: 'liangchenas',
+          time: '2019-3-12 17:35',
+          zan: 5,
+          isZan: true
+        },
+        {
+          imgUrl: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
+          workImg: 'https://pub.file.k12.vip/2019/06/05/1136182325860913154.png',
+          name: 'liangchenas',
+          time: '2019-3-12 17:35',
+          zan: 5,
+          isZan: true
+        },
+        {
+          imgUrl: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
+          workImg: 'https://pub.file.k12.vip/2019/06/05/1136182325860913154.png',
+          name: 'liangchenas',
+          time: '2019-3-12 17:35',
+          zan: 5,
+          isZan: true
+        },
+        {
+          imgUrl: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
+          workImg: 'https://pub.file.k12.vip/2019/06/05/1136182325860913154.png',
+          name: 'liangchenas',
+          time: '2019-3-12 17:35',
+          zan: 5,
+          isZan: true
+        },
+        {
+          imgUrl: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
+          workImg: 'https://pub.file.k12.vip/2019/06/05/1136182325860913154.png',
+          name: 'liangchenas',
+          time: '2019-3-12 17:35',
+          zan: 5,
+          isZan: true
         },
         {
           imgUrl: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
@@ -161,8 +248,11 @@
 
   .p-praiseOfWorks {
     @include bg('/zpbz/zpbz-background.png');
+    background-color: #FCED42;
+    margin-bottom: 100px;
+
     .item-scroll {
-      height: 100vh;
+      height: calc(100vh - 215px);
     }
 
     &-title {

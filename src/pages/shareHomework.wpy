@@ -46,10 +46,10 @@
             <view class="-reply-info">
               <view class="-info-name">{{shareInfo.replyTeacher}}</view>
               <view class="-info-wrap">
-                <view class="-info-content voice">
+                <view class="-info-content voice" @tap="changeAudioStatus">
                   <view class="icon"></view>
                 </view>
-                <view class="-reply-time">12"20"</view>
+                <view class="-reply-time">{{durationTime}}</view>
               </view>
             </view>
           </view>
@@ -82,8 +82,26 @@
     };
 
     data = {
+      isPlay: false,
+      myAudio: '',
+      durationTime: '',
       shareInfo: ''
     };
+
+    initAudio () {
+      this.myAudio = wx.createInnerAudioContext()
+      this.myAudio.src = 'http://huoke-private-1254282420.cos.ap-chengdu.myqcloud.com/2019/04/22/1120145041622765570.mp3?sign=q-sign-algorithm%3Dsha1%26q-ak%3DAKIDCJG2e67TN6kR3mA5fDve2X0Ndnwz5mV8%26q-sign-time%3D1560235841%3B1560307841%26q-key-time%3D1560235841%3B1560307841%26q-header-list%3D%26q-url-param-list%3D%26q-signature%3D870de55a12cc09bd6f82297a9feb5c61adb94952'
+
+      this.myAudio.onEnded(() => {
+        this.isPlay = false;
+        this.$apply()
+      });
+
+      this.myAudio.onTimeUpdate(() => {
+        this.durationTime = this.timeToFormat(this.myAudio.duration);
+        this.$apply()
+      });
+    }
 
     getMyHomework() {
       api.study.viewMyHomework({
@@ -93,7 +111,35 @@
       });
     };
 
+    timeToFormat (times) {
+      var result = "00:00";
+      var hour, minute, second;
+      if (times > 0) {
+
+        minute = Math.floor(times / 60);
+        if (minute < 10) {
+          minute = "0" + minute;
+        }
+
+        second = Math.floor((times - 60 * minute) % 60);
+        if (second < 10) {
+          second = "0" + second;
+        }
+        result = `${minute}"${second}"`;
+      }
+      return result;
+    };
+
     methods = {
+      changeAudioStatus () {
+        if(this.isPlay) {
+          this.isPlay = false
+          this.myAudio.pause()
+        } else {
+          this.isPlay = true
+          this.myAudio.play()
+        }
+      },
       addLike () {
         if (this.workType === '1') {
           return
@@ -110,6 +156,13 @@
 
     onLoad() {
       this.getMyHomework()
+      this.initAudio()
+    }
+    onHide () {
+      this.myAudio.destroy()
+    }
+    onUnload () {
+      this.myAudio.destroy()
     }
   }
 </script>
@@ -268,6 +321,7 @@
           .-reply-img {
             margin-right: 16px;
             min-width:64px;
+            max-width:64px;
             height:64px;
             border-radius:8px;
             border:4px solid rgba(232,197,157,1);

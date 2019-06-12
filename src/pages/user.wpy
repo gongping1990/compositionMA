@@ -123,11 +123,6 @@
           let notice = res.data.resultData;
           this.itemList = [
             {
-              id: 1,
-              name: '我的课程',
-              url: 'https://pub.file.k12.vip/tbzw/course/my-icon-course.png'
-            },
-            {
               id: 2,
               num: notice.nowork,
               name: '我的作业',
@@ -151,15 +146,13 @@
               url: 'https://pub.file.k12.vip/tbzw/course/my-icon-address.png'
             }
           ];
+          this.$apply()
         });
     }
 
     methods = {
       toJump(data) {
         switch (+data) {
-          case 1:
-            wx.navigateTo({ url: '/pages/myCourse' });
-            break;
           case 2:
             wx.navigateTo({ url: '/pages/myWork' });
             break;

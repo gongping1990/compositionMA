@@ -36,7 +36,6 @@ export default class extends wepy.app {
       'pages/test',
       'pages/user',
       'pages/praiseOfWorks',
-      'pages/myCourse',
       'pages/myWork',
       'pages/myWorkAll',
       'pages/completionOfWork',

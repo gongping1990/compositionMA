@@ -48,6 +48,12 @@ const study = {
   },
   evaluationToTeacher(params) {
     return request.post('/study/evaluation', params)
+  },
+  countCard(params) {
+    return request.get('/study/countCard', params)
+  },
+  listCard(params) {
+    return request.get('/study/listCard', params)
   }
 }
 

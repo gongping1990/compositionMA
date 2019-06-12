@@ -308,7 +308,7 @@
 
     onShareAppMessage () {
       return {
-        title: '同步作文',
+        title: `我刚写了一篇作文《${this.workDetail.homeworkTitle}》，希望你可以给我点个赞`,
         path: '/pages/shareHomework',
         imageUrl: 'https://pub.file.k12.vip/read/ldshared.jpeg'
       };

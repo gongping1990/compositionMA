@@ -16,7 +16,7 @@
           <view class="card-day-right"></view>
         </view>
         <view class="card-btn {{cardDetail.todayCard ? 'isCard' : ''}}" @tap="addMyCard">
-          {{cardDetail.todayCard ? '已打卡，炫耀一下' : '未打卡，立即打卡'}}
+          {{cardDetail.todayCard ? '已打卡' : '未打卡，立即打卡'}}
         </view>
       </view>
       <view class="card-content">
@@ -121,6 +121,7 @@
 
     methods = {
       addMyCard() {
+        if(this.cardDetail.todayCard) return
         api.study.addCard()
           .then(() => {
             this.show = true;

@@ -32,7 +32,7 @@ const study = {
     return request.get('/study/listHomeworkByLesson', params)
   },
   addHomework(params) {
-    return request.get('/study/submitHomework', params)
+    return request.post('/study/submitHomework', params)
   },
   getUCRemindVO(params) {
     return request.get('/study/getUCRemindVO', params)

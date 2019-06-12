@@ -171,11 +171,13 @@
 
     initAudio () {
       this.myAudio = wx.createInnerAudioContext()
-      this.myAudio.src = this.workDetail.replyAudio
+      this.myAudio.src = this.workDetail.replyAudioAuthorUrl
 
       this.myAudio.onEnded(() => {
         this.isPlay = false;
-        this.changePopup()
+        if (this.queryInfo.type === '1' && this.workDetail.evaluation === null) {
+          this.isOpenPopup = true
+        }
         this.$apply()
       });
 
@@ -265,12 +267,19 @@
         this.stumsg = e.detail.value
       },
       submitEvaluate() {
+        if (!this.isActive) {
+          return wx.showToast({
+            icon: 'none',
+            title: '请选择对老师评价的标签哦~'
+          })
+        }
         api.study.evaluationToTeacher({
-          id:'',
+          id: this.workDetail.id,
           evaluation: this.isActive,
           stumsg: this.stumsg
+        }).then(()=>{
+          this.isEvaluate = true;
         })
-        this.isEvaluate = true;
       },
       choiceTab(num) {
         this.isActive = num;
@@ -586,7 +595,7 @@
       .-popup-input {
 
         .-input {
-
+          font-size: 20px;
           text-align: left;
           margin: 0 auto;
           padding: 24px 32px;

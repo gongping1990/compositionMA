@@ -165,7 +165,7 @@
         total: ''
       },
       tabActive: '1',
-      isSuccessWork: true,
+      isSuccessWork: false,
       isOpenPopup: false,
       isCard: false,
       workDetail: '',
@@ -186,8 +186,10 @@
         lessonId: '1134359706941546498'
       }).then(res => {
         this.workDetail = res.data.resultData;
-        this.workDetail && (this.isSuccessWork = true);
-        this.workDetail.workTime = dayjs(+this.workDetail.workTime).format('YYYY-MM-DD HH:mm:ss');
+        if (this.workDetail) {
+          this.isSuccessWork = true;
+          this.workDetail.workTime = dayjs(+this.workDetail.workTime).format('YYYY-MM-DD HH:mm:ss');
+        }
       });
     };
 
@@ -242,7 +244,9 @@
           sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
           success: function(res) {
             // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
-            wx.navigateTo({ url: `/pages/uploadHomework?url=${res.tempFilePaths[0]}` });
+            wx.navigateTo({
+              url: `/pages/uploadHomework?url=${res.tempFilePaths[0]}&name=${_self.lessonDetail.name}&id=${_self.lessonDetail.id}`
+            });
           }
         });
 
@@ -261,7 +265,7 @@
 
     events = {};
 
-    onLoad() {
+    onShow() {
       this.getLessonInfo();
       this.getMyHomework();
     }

@@ -24,7 +24,7 @@
               <view class="-left-text">{{item.name}}</view>
             </view>
             <view class="-content-item-right" @tap="toJump({{item.id}})">
-              <view class="-right-tip" wx:if="{{index!==4 && index!==0}}">{{item.num}}</view>
+              <view class="-right-tip" wx:if="{{index!==3}}">{{item.num}}</view>
               <image class="-right-img" src="https://pub.file.k12.vip/tbzw/course/my-icon-arrow.png"
                      mode="widthFix"></image>
             </view>

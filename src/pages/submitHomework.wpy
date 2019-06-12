@@ -61,7 +61,7 @@
       </view>
 
       <view class="p-submitHomework-card" wx:if="{{tabActive === '1'}}" @tap="addMyCard">
-        <view class="-text">{{isPunchCard ? '已打卡' : '点我打卡'}}</view>
+        <view class="-text">{{workDetail.todayCard ? '已打卡' : '点我打卡'}}</view>
       </view>
 
       <view class="p-submitHomework-center " wx:if="{{tabActive === '2'}}">
@@ -223,9 +223,13 @@
         });
       },
       addMyCard() {
+        if (this.workDetail.todayCard) return
         api.study.addCard()
           .then(() => {
-            this.changePopup('2');
+            this.isCard = true;
+            this.isOpenPopup = true
+            this.getMyHomework()
+            this.$apply()
           });
       },
       changePopup(num) {
@@ -249,10 +253,9 @@
             });
           }
         });
-
       },
       toLookCard() {
-        wx.navigateTo({ url: `/pages/uploadHomework` });
+        wx.navigateTo({ url: `/pages/card` });
       },
       lookWorkDetail(data) {
         wx.navigateTo({ url: `/pages/completionOfWork?type=${data.self ? 1 : 2}&id=${data.self ? data.lessonId : data.id}` });

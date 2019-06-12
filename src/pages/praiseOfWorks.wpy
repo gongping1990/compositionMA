@@ -1,23 +1,29 @@
 <template>
   <view class="container">
     <mHeader title="作品表彰"></mHeader>
-    <view class="container-scroll p-praiseOfWorks" style="margin-top:{{height}}px">
+    <view class="container-scroll p-praiseOfWorks"
+          style="margin-top:{{height}}px">
       <scroll-view class="item-scroll"
                    @scrolltolower="bindLoadItem"
                    scroll-y
                    scroll-with-animation>
         <view class="p-praiseOfWorks-title">作品表彰</view>
-        <repeat for="{{dataList}}" key="index" index="index" item="item">
+        <repeat for="{{dataList}}"
+                key="index"
+                index="index"
+                item="item">
           <view class="p-praiseOfWorks-item">
             <view class="p-praiseOfWorks-item-top">
               <view class="-item-top">
                 <view class="-item-top-left">
-                  <image class="-left-img" src="{{item.stuImg}}"></image>
+                  <image class="-left-img"
+                         src="{{item.stuImg}}"></image>
                 </view>
                 <view class="-item-top-right">
                   <view class="-right-name">{{item.stuName}}</view>
                   <view class="-right-time">{{item.worktime}}</view>
-                  <image class="-right-work" src="{{item.workImg}}"></image>
+                  <image class="-right-work"
+                         src="{{item.workImg}}"></image>
                 </view>
               </view>
 
@@ -30,14 +36,18 @@
             </view>
             <view class="p-praiseOfWorks-item-down">
               <view class="-down-left">
-                <image class="-down-left-img" src="{{item.teacherImg}}"></image>
+                <image class="-down-left-img"
+                       src="{{item.teacherImg}}"></image>
                 <view class="-down-left-name">被{{item.teacherName}}表扬</view>
               </view>
-              <view class="-down-right" @tap="addMyLike({{item}})">
+              <view class="-down-right"
+                    @tap="addMyLike({{item}})">
                 <view class="-zan-left {{item.myLike ? '-zan-ok' : ''}}">
-                  <image class="-img" wx:if="{{!item.myLike}}"
+                  <image class="-img"
+                         wx:if="{{!item.myLike}}"
                          src="https://pub.file.k12.vip/tbzw/word-detail/icon-give-pre.png"></image>
-                  <image class="-img" wx:if="{{item.myLike}}"
+                  <image class="-img"
+                         wx:if="{{item.myLike}}"
                          src="https://pub.file.k12.vip/2019/06/06/1136572565700235266.png"></image>
                 </view>
                 <view class="-zan-right {{item.myLike ? '-zan-ok' : ''}}">{{item.like}}</view>
@@ -91,302 +101,302 @@
 </template>
 
 <script>
-  import wepy from 'wepy';
-  import api from '../request/api';
-  import dayjs from 'dayjs';
-  import testMixin from '../mixins/test'
-  import mHeader from '../components/header';
+import wepy from 'wepy'
+import api from '../request/api'
+import dayjs from 'dayjs'
+import testMixin from '../mixins/test'
+import mHeader from '../components/header'
 
-  export default class PraiseOfWorks extends wepy.page {
-    config = {
-      navigationBarTitleText: '作品表彰',
-      usingComponents: {
-        'van-tabbar': '../vant/tabbar/index',
-        'van-tabbar-item': '../vant/tabbar-item/index'
-      }
-    };
-    components = {
-      mHeader
-    };
-    computed = {
-      height() {
-        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
-      }
-    };
-
-    mixins=[testMixin]
-
-    data = {
-      page: {
-        current: 1,
-        size: 10,
-        total: ''
-      },
-      dataList: []
-    };
-
-    getList() {
-      api.study.listWorkPraiseByPage({
-        current: this.page.current,
-        size: this.page.size
-      })
-        .then(({ data }) => {
-          if (this.page.current > 1) {
-            this.dataList = this.dataList.concat(data.resultData.records);
-          } else {
-            this.dataList = data.resultData.records;
-          }
-
-          this.dataList.forEach(item => {
-            item.worktime = dayjs(+item.worktime).format('YYYY-MM-DD HH:mm:ss');
-          });
-
-          this.page.total = data.resultData.total;
-          this.$apply();
-        });
-    };
-
-    methods = {
-      addMyLike (item) {
-        api.study.addLike({
-          workId: item.id
-        })
-          .then(()=>{
-            this.getList()
-          })
-      },
-      bindLoadItem(data) {
-        console.log(111111);
-        if (this.page.current < Math.ceil(this.page.total / this.page.size)) {
-          this.page.current++;
-          this.getList();
-        }
-      }
-    };
-
-    events = {};
-
-    onLoad() {
-      this.getList();
+export default class PraiseOfWorks extends wepy.page {
+  config = {
+    navigationBarTitleText: '作品表彰',
+    usingComponents: {
+      'van-tabbar': '../vant/tabbar/index',
+      'van-tabbar-item': '../vant/tabbar-item/index'
     }
+  };
+  components = {
+    mHeader
+  };
+  computed = {
+    height () {
+      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+    }
+  };
+
+  mixins = [testMixin]
+
+  data = {
+    page: {
+      current: 1,
+      size: 10,
+      total: ''
+    },
+    dataList: []
+  };
+
+  getList () {
+    api.study.listWorkPraiseByPage({
+      current: this.page.current,
+      size: this.page.size
+    })
+      .then(({ data }) => {
+        if (this.page.current > 1) {
+          this.dataList = this.dataList.concat(data.resultData.records)
+        } else {
+          this.dataList = data.resultData.records
+        }
+
+        this.dataList.forEach(item => {
+          item.worktime = dayjs(+item.worktime).format('YYYY-MM-DD HH:mm:ss')
+        })
+
+        this.page.total = data.resultData.total
+        this.$apply()
+      })
+  };
+
+  methods = {
+    addMyLike (item) {
+      api.study.addLike({
+        workId: item.id
+      })
+        .then(() => {
+          this.getList()
+        })
+    },
+    bindLoadItem (data) {
+      console.log(111111)
+      if (this.page.current < Math.ceil(this.page.total / this.page.size)) {
+        this.page.current++
+        this.getList()
+      }
+    }
+  };
+
+  events = {};
+
+  onLoad () {
+    this.getList()
   }
+}
 </script>
 <style lang="scss">
-  @import '../assets/style/mixin.scss';
+@import '../assets/style/mixin.scss';
 
-  .p-praiseOfWorks {
-    @include bg('/zpbz/zpbz-background.png');
-    background-color: #FCED42;
-    margin-bottom: 100px;
+.p-praiseOfWorks {
+  @include bg('/zpbz/zpbz-background.png');
+  background-color: #fced42;
+  margin-bottom: 100px;
 
-    .item-scroll {
-      height: calc(100vh - 215px);
-    }
-
-    &-title {
-      padding-top: 64px;
-      margin: 0 0 38px 32px;
-      height: 84px;
-      font-size: 60px;
-      font-weight: 600;
-      color: rgba(255, 255, 255, 1);
-      line-height: 84px;
-    }
-
-    &-item {
-      margin: 0 auto 32px;
-      width: 686px;
-      height: 508px;
-      background: rgba(255, 255, 255, 1);
-      box-shadow: 0px 8px 16px 4px rgba(228, 212, 20, 1);
-      border-radius: 32px;
-
-      &-top {
-        display: flex;
-        justify-content: space-between;
-        padding: 28px 48px 24px 48px;
-        border-bottom: 2px solid #efefef;
-
-        .-item-top {
-          display: flex;
-
-          &-left {
-
-            .-left-img {
-              margin-right: 12px;
-              width: 56px;
-              height: 56px;
-              border-radius: 50%;
-            }
-          }
-
-          &-right {
-            .-right-name {
-              height: 28px;
-              font-size: 20px;
-              font-weight: 500;
-              color: rgba(70, 65, 60, 0.6);
-              line-height: 28px;
-            }
-
-            .-right-time {
-              margin-top: 4px;
-              height: 22px;
-              font-size: 16px;
-              font-weight: 400;
-              color: rgba(70, 65, 60, 0.31);
-              line-height: 22px;
-            }
-
-            .-right-work {
-              margin-top: 16px;
-              width: 280px;
-              height: 280px;
-            }
-
-            .-right-tip {
-              position: absolute;
-              top: 180px;
-              right: 12px;
-              @include bg('/khzy/bubbles.png');
-              width: 166px;
-              height: 128px;
-
-              .-tip-text {
-                text-align: center;
-                margin-top: 40px;
-                margin-left: 40px;
-                width: 120px;
-                height: 56px;
-                font-size: 20px;
-                font-weight: 500;
-                color: rgba(88, 66, 43, 1);
-              }
-            }
-
-            .-right-btn {
-              margin-top: 32px;
-              text-align: center;
-              width: 284px;
-              height: 64px;
-              border-radius: 50px;
-              border: 2px solid rgba(88, 66, 43, 0.2);
-              font-size: 28px;
-              font-weight: 500;
-              color: rgba(88, 66, 43, 1);
-              line-height: 64px;
-            }
-          }
-        }
-
-        .-item-icon {
-          @include bg('/zpbz/icon-xunzhang.png');
-          width: 150px;
-          height: 128px;
-          text-align: center;
-
-          &-num {
-            margin-top: 30px;
-            height: 50px;
-            font-size: 36px;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 1);
-            line-height: 50px;
-
-            .-text {
-              font-size: 24px;
-            }
-          }
-
-          &-text {
-            height: 28px;
-            font-size: 20px;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 1);
-            line-height: 28px;
-          }
-        }
-      }
-
-      &-down {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin: 18px 48px 0 44px;
-
-        .-down-left {
-          display: flex;
-          align-items: center;
-
-          &-img {
-            z-index: 2;
-            width: 56px;
-            height: 56px;
-            box-shadow: 0px 4px 20px 0px rgba(235, 171, 5, 0.5);
-            border-radius: 32px;
-            border: 4px solid rgba(255, 255, 255, 1);
-          }
-
-          &-name {
-            transform: translateX(-50px);
-            padding-right: 28px;
-            text-align: right;
-            width: 234px;
-            height: 48px;
-            background: rgba(249, 230, 11, 0.9);
-            border-radius: 24px;
-            font-size: 24px;
-            font-weight: 500;
-            color: rgba(88, 66, 43, 0.9);
-            line-height: 48px;
-          }
-        }
-
-        .-down-right {
-          position: relative;
-          display: flex;
-          justify-content: flex-end;
-          align-items: center;
-
-          .-zan-left {
-            @include flex-center;
-            position: relative;
-            left: 55px;
-            width: 56px;
-            height: 56px;
-            background: rgba(255, 255, 255, 1);
-            border: 3px solid rgba(88, 66, 43, 0.1);
-            border-radius: 50%;
-
-            .-img {
-              width: 32px;
-              height: 26px;
-            }
-          }
-
-          .-zan-right {
-            text-align: right;
-            padding-right: 16px;
-            width: 104px;
-            height: 36px;
-            background: rgba(255, 255, 255, 1);
-            border-radius: 17px;
-            border: 2px solid rgba(88, 66, 43, 0.1);
-            font-size: 24px;
-            font-weight: 400;
-            color: rgba(88, 66, 43, 0.5);
-            line-height: 36px;
-          }
-
-          .-zan-ok {
-            background: linear-gradient(90deg, rgba(249, 230, 11, 1) 0%, rgba(253, 219, 85, 1) 100%);
-            border: none;
-          }
-
-        }
-      }
-    }
-
+  .item-scroll {
+    height: calc(100vh - 215px);
   }
 
+  &-title {
+    padding-top: 64px;
+    margin: 0 0 38px 32px;
+    height: 84px;
+    font-size: 60px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 1);
+    line-height: 84px;
+  }
+
+  &-item {
+    margin: 0 auto 32px;
+    width: 686px;
+    height: 508px;
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0px 8px 16px 4px rgba(228, 212, 20, 1);
+    border-radius: 32px;
+
+    &-top {
+      display: flex;
+      justify-content: space-between;
+      padding: 28px 48px 24px 48px;
+      border-bottom: 2px solid #efefef;
+
+      .-item-top {
+        display: flex;
+
+        &-left {
+          .-left-img {
+            margin-right: 12px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+          }
+        }
+
+        &-right {
+          .-right-name {
+            height: 28px;
+            font-size: 20px;
+            font-weight: 500;
+            color: rgba(70, 65, 60, 0.6);
+            line-height: 28px;
+          }
+
+          .-right-time {
+            margin-top: 4px;
+            height: 22px;
+            font-size: 16px;
+            font-weight: 400;
+            color: rgba(70, 65, 60, 0.31);
+            line-height: 22px;
+          }
+
+          .-right-work {
+            margin-top: 16px;
+            width: 280px;
+            height: 280px;
+          }
+
+          .-right-tip {
+            position: absolute;
+            top: 180px;
+            right: 12px;
+            @include bg('/khzy/bubbles.png');
+            width: 166px;
+            height: 128px;
+
+            .-tip-text {
+              text-align: center;
+              margin-top: 40px;
+              margin-left: 40px;
+              width: 120px;
+              height: 56px;
+              font-size: 20px;
+              font-weight: 500;
+              color: rgba(88, 66, 43, 1);
+            }
+          }
+
+          .-right-btn {
+            margin-top: 32px;
+            text-align: center;
+            width: 284px;
+            height: 64px;
+            border-radius: 50px;
+            border: 2px solid rgba(88, 66, 43, 0.2);
+            font-size: 28px;
+            font-weight: 500;
+            color: rgba(88, 66, 43, 1);
+            line-height: 64px;
+          }
+        }
+      }
+
+      .-item-icon {
+        @include bg('/zpbz/icon-xunzhang.png');
+        width: 150px;
+        height: 128px;
+        text-align: center;
+
+        &-num {
+          margin-top: 30px;
+          height: 50px;
+          font-size: 36px;
+          font-weight: 600;
+          color: rgba(255, 255, 255, 1);
+          line-height: 50px;
+
+          .-text {
+            font-size: 24px;
+          }
+        }
+
+        &-text {
+          height: 28px;
+          font-size: 20px;
+          font-weight: 600;
+          color: rgba(255, 255, 255, 1);
+          line-height: 28px;
+        }
+      }
+    }
+
+    &-down {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 18px 48px 0 44px;
+
+      .-down-left {
+        display: flex;
+        align-items: center;
+
+        &-img {
+          z-index: 2;
+          width: 56px;
+          height: 56px;
+          box-shadow: 0px 4px 20px 0px rgba(235, 171, 5, 0.5);
+          border-radius: 32px;
+          border: 4px solid rgba(255, 255, 255, 1);
+        }
+
+        &-name {
+          transform: translateX(-50px);
+          padding-right: 28px;
+          text-align: right;
+          width: 234px;
+          height: 48px;
+          background: rgba(249, 230, 11, 0.9);
+          border-radius: 24px;
+          font-size: 24px;
+          font-weight: 500;
+          color: rgba(88, 66, 43, 0.9);
+          line-height: 48px;
+        }
+      }
+
+      .-down-right {
+        position: relative;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+
+        .-zan-left {
+          @include flex-center;
+          position: relative;
+          left: 55px;
+          width: 56px;
+          height: 56px;
+          background: rgba(255, 255, 255, 1);
+          border: 3px solid rgba(88, 66, 43, 0.1);
+          border-radius: 50%;
+
+          .-img {
+            width: 32px;
+            height: 26px;
+          }
+        }
+
+        .-zan-right {
+          text-align: right;
+          padding-right: 16px;
+          width: 104px;
+          height: 36px;
+          background: rgba(255, 255, 255, 1);
+          border-radius: 17px;
+          border: 2px solid rgba(88, 66, 43, 0.1);
+          font-size: 24px;
+          font-weight: 400;
+          color: rgba(88, 66, 43, 0.5);
+          line-height: 36px;
+        }
+
+        .-zan-ok {
+          background: linear-gradient(
+            90deg,
+            rgba(249, 230, 11, 1) 0%,
+            rgba(253, 219, 85, 1) 100%
+          );
+          border: none;
+        }
+      }
+    }
+  }
+}
 </style>

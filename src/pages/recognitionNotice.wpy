@@ -1,20 +1,26 @@
 <template>
   <view class="container p-notice">
     <mHeader title="表扬通知"></mHeader>
-    <view class="container-scroll" style="margin-top:{{height}}px">
+    <view class="container-scroll"
+          style="margin-top:{{height}}px">
       <scroll-view class="item-scroll"
                    @scrolltolower="bindLoadItem"
                    scroll-y
                    scroll-with-animation>
-        <repeat for="{{dataList}}" key="index" index="index" item="item">
+        <repeat for="{{dataList}}"
+                key="index"
+                index="index"
+                item="item">
           <view class="p-notice-item">
             <view class="-item-left">
-              <image class="-img" src="{{item.teacherImg}}"></image>
+              <image class="-img"
+                     src="{{item.teacherImg}}"></image>
             </view>
             <view class="-item-right">
               <view class="-item-right-top">
                 <view class="-name">{{item.teacherName}}</view>
-                <view class="-icon" wx:if="{{!item.know}}"></view>
+                <view class="-icon"
+                      wx:if="{{!item.know}}"></view>
               </view>
               <view class="-item-right-down">
                 <view>表扬了你的作品</view>
@@ -29,140 +35,137 @@
 </template>
 
 <script>
-  import wepy from 'wepy';
-  import api from '../request/api'
-  import dayjs from 'dayjs'
-  import mHeader from '../components/header';
+import wepy from 'wepy'
+import api from '../request/api'
+import dayjs from 'dayjs'
+import mHeader from '../components/header'
 
-  export default class RecognitionNotice extends wepy.page {
-    config = {
-      navigationBarTitleText: '表扬通知'
-    };
-    components = {
-      mHeader
-    };
-    computed = {
-      height() {
-        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
-      }
-    };
-
-    data = {
-      page: {
-        current: 1,
-        size: 10,
-        total: ''
-      },
-      dataList: []
-    };
-
-    getList() {
-      api.study.listPraiseByPage({
-        current: this.page.current,
-        size: this.page.size
-      })
-        .then(({ data }) => {
-          if (this.page.current > 1) {
-            this.dataList = this.dataList.concat(data.resultData.records)
-          } else {
-            this.dataList = data.resultData.records;
-          }
-
-          this.dataList.forEach(item => {
-            item.datetime = dayjs(+item.datetime).format('YYYY-MM-DD HH:mm:ss')
-          })
-
-          this.page.total = data.resultData.total
-          this.$apply()
-        });
-    };
-
-    methods = {
-      bindLoadItem(data) {
-        console.log(111111);
-        if (this.page.current < Math.ceil(this.page.total / this.page.size)) {
-          this.page.current++;
-          this.getList();
-        }
-      }
-    };
-
-    events = {};
-
-    onLoad() {
-      this.getList()
+export default class RecognitionNotice extends wepy.page {
+  config = {
+    navigationBarTitleText: '表扬通知'
+  };
+  components = {
+    mHeader
+  };
+  computed = {
+    height () {
+      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
     }
+  };
+
+  data = {
+    page: {
+      current: 1,
+      size: 10,
+      total: ''
+    },
+    dataList: []
+  };
+
+  getList () {
+    api.study.listPraiseByPage({
+      current: this.page.current,
+      size: this.page.size
+    })
+      .then(({ data }) => {
+        if (this.page.current > 1) {
+          this.dataList = this.dataList.concat(data.resultData.records)
+        } else {
+          this.dataList = data.resultData.records
+        }
+
+        this.dataList.forEach(item => {
+          item.datetime = dayjs(+item.datetime).format('YYYY-MM-DD HH:mm:ss')
+        })
+
+        this.page.total = data.resultData.total
+        this.$apply()
+      })
+  };
+
+  methods = {
+    bindLoadItem (data) {
+      console.log(111111)
+      if (this.page.current < Math.ceil(this.page.total / this.page.size)) {
+        this.page.current++
+        this.getList()
+      }
+    }
+  };
+
+  events = {};
+
+  onLoad () {
+    this.getList()
   }
+}
 </script>
 <style lang="scss">
-  @import '../assets/style/mixin.scss';
+@import '../assets/style/mixin.scss';
 
-  .p-notice {
-
-    .item-scroll {
-      height: 100vh;
-    }
-
-    &-item {
-      display: flex;
-      padding: 24px 32px;
-      border-bottom: 2px solid #FAFAF9;
-
-      .-item-left {
-        margin-right: 24px;
-        overflow: hidden;
-        min-width: 96px;
-        min-height: 96px;
-        border-radius: 50%;
-
-        .-img {
-          width: 100%;
-          height: 100%;
-        }
-      }
-
-      .-item-right {
-        width: 100%;
-
-        &-top {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-
-          .-name {
-            height: 40px;
-            font-size: 28px;
-            font-weight: 500;
-            color: rgba(88, 66, 43, 1);
-            line-height: 40px;
-          }
-
-          .-icon {
-            width: 20px;
-            height: 20px;
-            background: rgba(255, 137, 131, 1);
-            border-radius: 50%;
-          }
-        }
-
-        &-down {
-          margin-top: 12px;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          height: 34px;
-          font-size: 24px;
-          font-weight: 400;
-          color: rgba(88, 66, 43, 0.5);
-          line-height: 34px;
-        }
-      }
-    }
-
-    &-item:last-child {
-      border: none;
-    }
-
+.p-notice {
+  .item-scroll {
+    height: 100vh;
   }
 
+  &-item {
+    display: flex;
+    padding: 24px 32px;
+    border-bottom: 2px solid #fafaf9;
+
+    .-item-left {
+      margin-right: 24px;
+      overflow: hidden;
+      min-width: 96px;
+      min-height: 96px;
+      border-radius: 50%;
+
+      .-img {
+        width: 100%;
+        height: 100%;
+      }
+    }
+
+    .-item-right {
+      width: 100%;
+
+      &-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .-name {
+          height: 40px;
+          font-size: 28px;
+          font-weight: 500;
+          color: rgba(88, 66, 43, 1);
+          line-height: 40px;
+        }
+
+        .-icon {
+          width: 20px;
+          height: 20px;
+          background: rgba(255, 137, 131, 1);
+          border-radius: 50%;
+        }
+      }
+
+      &-down {
+        margin-top: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 34px;
+        font-size: 24px;
+        font-weight: 400;
+        color: rgba(88, 66, 43, 0.5);
+        line-height: 34px;
+      }
+    }
+  }
+
+  &-item:last-child {
+    border: none;
+  }
+}
 </style>

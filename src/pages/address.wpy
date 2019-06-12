@@ -8,51 +8,51 @@
   </view>
 </template>
 <script>
-  import wepy from 'wepy';
-  import api from '../request/api';
-  import mHeader from '../components/header';
-  import address from '../components/address';
+import wepy from 'wepy'
+import api from '../request/api'
+import mHeader from '../components/header'
+import address from '../components/address'
 
-  export default class Example extends wepy.page {
-    config = {
-      navigationBarTitleText: '',
-      'usingComponents': {
-        'van-area': '../vant/area/index',
-        'van-popup': '../vant/popup/index'
-      }
-    };
-    data = {};
-    components = {
-      mHeader,
-      address
-    };
-    methods = {};
-    events = {
-      save(params) {
-        wx.showToast({
-          icon: 'loading',
-          title: '正在提交'
-        });
-        api.order.saveRecipient(params)
-          .then(() => {
-            wx.hideToast();
-            this.getList();
-          });
-      }
-    };
-    watch = {};
-    computed = {
-      height() {
-        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
-      }
-    };
+export default class Example extends wepy.page {
+  config = {
+    navigationBarTitleText: '',
+    'usingComponents': {
+      'van-area': '../vant/area/index',
+      'van-popup': '../vant/popup/index'
+    }
+  };
+  data = {};
+  components = {
+    mHeader,
+    address
+  };
+  methods = {};
+  events = {
+    save (params) {
+      wx.showToast({
+        icon: 'loading',
+        title: '正在提交'
+      })
+      api.order.saveRecipient(params)
+        .then(() => {
+          wx.hideToast()
+          this.getList()
+        })
+    }
+  };
+  watch = {};
+  computed = {
+    height () {
+      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+    }
+  };
 
-    onLoad() {
-    };
+  onLoad () {
+  };
 
-    onShow() {
-    };
-  }
+  onShow () {
+  };
+}
 </script>
 <style lang='scss'>
 </style>

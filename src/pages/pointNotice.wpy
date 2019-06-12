@@ -1,20 +1,26 @@
 <template>
   <view class="container p-notice">
     <mHeader title="点赞通知"></mHeader>
-    <view class="container-scroll" style="margin-top:{{height}}px">
+    <view class="container-scroll"
+          style="margin-top:{{height}}px">
       <scroll-view class="item-scroll"
                    @scrolltolower="bindLoadItem"
                    scroll-y
                    scroll-with-animation>
-        <repeat for="{{dataList}}" key="index" index="index" item="item">
+        <repeat for="{{dataList}}"
+                key="index"
+                index="index"
+                item="item">
           <view class="p-notice-item">
             <view class="-item-left">
-              <image class="-img" src="{{item.userImg}}"></image>
+              <image class="-img"
+                     src="{{item.userImg}}"></image>
             </view>
             <view class="-item-right">
               <view class="-item-right-top">
                 <view class="-name">{{item.userName}}</view>
-                <view class="-icon" wx:if="{{!item.know}}"></view>
+                <view class="-icon"
+                      wx:if="{{!item.know}}"></view>
               </view>
               <view class="-item-right-down">
                 <view>点赞了你的作品</view>
@@ -29,171 +35,168 @@
 </template>
 
 <script>
-  import wepy from 'wepy';
-  import api from '../request/api'
-  import dayjs from 'dayjs'
-  import mHeader from '../components/header';
+import wepy from 'wepy'
+import api from '../request/api'
+import dayjs from 'dayjs'
+import mHeader from '../components/header'
 
-  export default class Notice extends wepy.page {
-    config = {
-      navigationBarTitleText: '点赞通知'
-    };
-    components = {
-      mHeader
-    };
-    computed = {
-      height() {
-        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
-      }
-    };
-
-    data = {
-      page: {
-        current: 1,
-        size: 10,
-        total: ''
-      },
-      dataList: [
-        {
-          userImg: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
-          userName: 'heaven小林哥',
-          datetime: '1560152687088',
-          know: true
-        },
-        {
-          userImg: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
-          userName: '风锅锅',
-          datetime: '2019-5-12 17:35',
-          know: false
-        },
-        {
-          userImg: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
-          userName: '大江东旭',
-          datetime: '2019-4-11 17:35',
-          know: false
-        },
-        {
-          userImg: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
-          userName: 'liangchenas',
-          datetime: '1560152687088',
-          know: false
-        },
-        {
-          userImg: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
-          userName: 'liangchenas',
-          datetime: '1560152687088',
-          know: false
-        }
-      ]
-    };
-
-    getList() {
-      api.study.listLikeByPage({
-        current: this.page.current,
-        size: this.page.size
-      })
-        .then(({ data }) => {
-          if (this.page.current > 1) {
-            this.dataList = this.dataList.concat(data.resultData.records)
-          } else {
-            this.dataList = data.resultData.records;
-          }
-
-          this.dataList.forEach(item => {
-            item.datetime = dayjs(+item.datetime).format('YYYY-MM-DD HH:mm:ss')
-          })
-
-          this.page.total = data.resultData.total
-          this.$apply()
-        });
-    };
-
-    methods = {
-      bindLoadItem(data) {
-        console.log(111111);
-        if (this.page.current < Math.ceil(this.page.total / this.page.size)) {
-          this.page.current++;
-          this.getList();
-        }
-      }
-    };
-
-    events = {};
-
-    onLoad() {
-      this.getList()
+export default class Notice extends wepy.page {
+  config = {
+    navigationBarTitleText: '点赞通知'
+  };
+  components = {
+    mHeader
+  };
+  computed = {
+    height () {
+      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
     }
+  };
+
+  data = {
+    page: {
+      current: 1,
+      size: 10,
+      total: ''
+    },
+    dataList: [
+      {
+        userImg: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
+        userName: 'heaven小林哥',
+        datetime: '1560152687088',
+        know: true
+      },
+      {
+        userImg: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
+        userName: '风锅锅',
+        datetime: '2019-5-12 17:35',
+        know: false
+      },
+      {
+        userImg: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
+        userName: '大江东旭',
+        datetime: '2019-4-11 17:35',
+        know: false
+      },
+      {
+        userImg: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
+        userName: 'liangchenas',
+        datetime: '1560152687088',
+        know: false
+      },
+      {
+        userImg: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
+        userName: 'liangchenas',
+        datetime: '1560152687088',
+        know: false
+      }
+    ]
+  };
+
+  getList () {
+    api.study.listLikeByPage({
+      current: this.page.current,
+      size: this.page.size
+    })
+      .then(({ data }) => {
+        if (this.page.current > 1) {
+          this.dataList = this.dataList.concat(data.resultData.records)
+        } else {
+          this.dataList = data.resultData.records
+        }
+
+        this.dataList.forEach(item => {
+          item.datetime = dayjs(+item.datetime).format('YYYY-MM-DD HH:mm:ss')
+        })
+
+        this.page.total = data.resultData.total
+        this.$apply()
+      })
+  };
+
+  methods = {
+    bindLoadItem (data) {
+      console.log(111111)
+      if (this.page.current < Math.ceil(this.page.total / this.page.size)) {
+        this.page.current++
+        this.getList()
+      }
+    }
+  };
+
+  events = {};
+
+  onLoad () {
+    this.getList()
   }
+}
 </script>
 <style lang="scss">
-  @import '../assets/style/mixin.scss';
+@import '../assets/style/mixin.scss';
 
-  .p-notice {
-
-    .item-scroll {
-      height: 100vh;
-    }
-
-    &-item {
-      display: flex;
-      padding: 24px 32px;
-      border-bottom: 2px solid #FAFAF9;
-
-      .-item-left {
-        margin-right: 24px;
-        overflow: hidden;
-        min-width: 96px;
-        min-height: 96px;
-        border-radius: 50%;
-
-        .-img {
-          width: 100%;
-          height: 100%;
-        }
-      }
-
-      .-item-right {
-        width: 100%;
-
-        &-top {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-
-          .-name {
-            height: 40px;
-            font-size: 28px;
-            font-weight: 500;
-            color: rgba(88, 66, 43, 1);
-            line-height: 40px;
-          }
-
-          .-icon {
-            width: 20px;
-            height: 20px;
-            background: rgba(255, 137, 131, 1);
-            border-radius: 50%;
-          }
-        }
-
-        &-down {
-          margin-top: 12px;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          height: 34px;
-          font-size: 24px;
-          font-weight: 400;
-          color: rgba(88, 66, 43, 0.5);
-          line-height: 34px;
-        }
-      }
-    }
-
-    &-item:last-child {
-      border: none;
-    }
-
+.p-notice {
+  .item-scroll {
+    height: 100vh;
   }
 
+  &-item {
+    display: flex;
+    padding: 24px 32px;
+    border-bottom: 2px solid #fafaf9;
+
+    .-item-left {
+      margin-right: 24px;
+      overflow: hidden;
+      min-width: 96px;
+      min-height: 96px;
+      border-radius: 50%;
+
+      .-img {
+        width: 100%;
+        height: 100%;
+      }
+    }
+
+    .-item-right {
+      width: 100%;
+
+      &-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .-name {
+          height: 40px;
+          font-size: 28px;
+          font-weight: 500;
+          color: rgba(88, 66, 43, 1);
+          line-height: 40px;
+        }
+
+        .-icon {
+          width: 20px;
+          height: 20px;
+          background: rgba(255, 137, 131, 1);
+          border-radius: 50%;
+        }
+      }
+
+      &-down {
+        margin-top: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 34px;
+        font-size: 24px;
+        font-weight: 400;
+        color: rgba(88, 66, 43, 0.5);
+        line-height: 34px;
+      }
+    }
+  }
+
+  &-item:last-child {
+    border: none;
+  }
+}
 </style>

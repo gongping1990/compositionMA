@@ -84,15 +84,15 @@
 </template>
 
 <script>
-  import wepy from 'wepy';
-  import api from '../request/api';
-  import { connect } from 'wepy-redux';
-  import testMixin from '../mixins/test';
-  import mHeader from '../components/header';
+  import wepy from 'wepy'
+import api from '../request/api'
+import { connect } from 'wepy-redux'
+import testMixin from '../mixins/test'
+import mHeader from '../components/header'
 
-  @connect({
+@connect({
     userInfo(state) {
-      return state.user.userInfo;
+      return state.user.userInfo
     }
   })
   export default class User extends wepy.page {
@@ -109,7 +109,7 @@
     };
     computed = {
       height() {
-        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
+        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
       }
     };
 
@@ -120,7 +120,7 @@
     getUCRemindVO() {
       api.study.getUCRemindVO()
         .then(res => {
-          let notice = res.data.resultData;
+          let notice = res.data.resultData
           this.itemList = [
             {
               id: 2,
@@ -145,29 +145,29 @@
               name: '我的收货地址',
               url: 'https://pub.file.k12.vip/tbzw/course/my-icon-address.png'
             }
-          ];
+          ]
           this.$apply()
-        });
+        })
     }
 
     methods = {
       toJump(data) {
         switch (+data) {
           case 2:
-            wx.navigateTo({ url: '/pages/myWork' });
-            break;
+            wx.navigateTo({ url: '/pages/myWork' })
+            break
           case 3:
-            wx.navigateTo({ url: '/pages/pointNotice' });
-            break;
+            wx.navigateTo({ url: '/pages/pointNotice' })
+            break
           case 4:
-            wx.navigateTo({ url: '/pages/recognitionNotice' });
-            break;
+            wx.navigateTo({ url: '/pages/recognitionNotice' })
+            break
           case 5:
-            wx.navigateTo({ url: '/pages/address' });
-            break;
+            wx.navigateTo({ url: '/pages/address' })
+            break
           case 6:
-            wx.navigateTo({ url: '/pages/subscribe' });
-            break;
+            wx.navigateTo({ url: '/pages/subscribe' })
+            break
         }
       }
     };
@@ -175,7 +175,7 @@
     events = {};
 
     onShow() {
-      this.getUCRemindVO();
+      this.getUCRemindVO()
     }
   }
 </script>

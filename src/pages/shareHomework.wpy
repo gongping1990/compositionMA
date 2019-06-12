@@ -1,7 +1,8 @@
 <template>
   <view class="container">
     <mHeader title="作业分享"></mHeader>
-    <view class="container-scroll p-shareHomework" style="margin-top:{{height}}px">
+    <view class="container-scroll p-shareHomework"
+          style="margin-top:{{height}}px">
       <view class="p-shareHomework-header">
         <view class="-header-title">同步作文课</view>
         <view class="-header-text">
@@ -16,7 +17,8 @@
       <view class="p-shareHomework-content">
         <view class="-content-top">
           <view class="-content-top-left">
-            <image class="-left-img" src="{{shareInfo.stuImg}}"></image>
+            <image class="-left-img"
+                   src="{{shareInfo.stuImg}}"></image>
             <view class="-left-name">{{shareInfo.nickname}}</view>
           </view>
 
@@ -30,7 +32,8 @@
             <view class="-right-zan">
               <view class="-right-num">{{shareInfo.likenum}}</view>
               <view class="-right-text">获得点赞</view>
-              <view class="-right-btn-two" @tap="addLike">给Ta点赞</view>
+              <view class="-right-btn-two"
+                    @tap="addLike">给Ta点赞</view>
             </view>
           </view>
         </view>
@@ -40,13 +43,16 @@
             <view>我已完成第{{shareInfo.week}}周的作文训练</view>
             <view class="-title-small">今天的作文题目是“{{shareInfo.homeworkTitle}}”</view>
           </view>
-          <image class="-content-down-img" src="{{shareInfo.replyImg}}"></image>
+          <image class="-content-down-img"
+                 src="{{shareInfo.replyImg}}"></image>
           <view class="-content-down-reply">
-            <image class="-reply-img" src="{{shareInfo.replyTeacherImg}}"></image>
+            <image class="-reply-img"
+                   src="{{shareInfo.replyTeacherImg}}"></image>
             <view class="-reply-info">
               <view class="-info-name">{{shareInfo.replyTeacher}}</view>
               <view class="-info-wrap">
-                <view class="-info-content voice" @tap="changeAudioStatus">
+                <view class="-info-content voice"
+                      @tap="changeAudioStatus">
                   <view class="icon"></view>
                 </view>
                 <view class="-reply-time">{{durationTime}}</view>
@@ -64,335 +70,333 @@
 </template>
 
 <script>
-  import wepy from 'wepy'
-  import api from '../request/api'
-  import mHeader from '../components/header'
+import wepy from 'wepy'
+import api from '../request/api'
+import mHeader from '../components/header'
 
-  export default class ShareHomework extends wepy.page {
-    config = {
-      navigationBarTitleText: '作业分享'
-    };
-    components = {
-      mHeader
-    };
-    computed = {
-      height() {
-        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
-      }
-    };
-
-    data = {
-      isPlay: false,
-      myAudio: '',
-      durationTime: '',
-      shareInfo: ''
-    };
-
-    initAudio () {
-      this.myAudio = wx.createInnerAudioContext()
-      this.myAudio.src = 'http://huoke-private-1254282420.cos.ap-chengdu.myqcloud.com/2019/04/22/1120145041622765570.mp3?sign=q-sign-algorithm%3Dsha1%26q-ak%3DAKIDCJG2e67TN6kR3mA5fDve2X0Ndnwz5mV8%26q-sign-time%3D1560235841%3B1560307841%26q-key-time%3D1560235841%3B1560307841%26q-header-list%3D%26q-url-param-list%3D%26q-signature%3D870de55a12cc09bd6f82297a9feb5c61adb94952'
-
-      this.myAudio.onEnded(() => {
-        this.isPlay = false;
-        this.$apply()
-      });
-
-      this.myAudio.onTimeUpdate(() => {
-        this.durationTime = this.timeToFormat(this.myAudio.duration);
-        this.$apply()
-      });
+export default class ShareHomework extends wepy.page {
+  config = {
+    navigationBarTitleText: '作业分享'
+  };
+  components = {
+    mHeader
+  };
+  computed = {
+    height () {
+      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
     }
+  };
 
-    getMyHomework() {
-      api.study.viewMyHomework({
-        lessonId: '1134359706941546498'
-      }).then(res => {
-        this.shareInfo = res.data.resultData;
-        this.$apply()
-      });
-    };
+  data = {
+    isPlay: false,
+    myAudio: '',
+    durationTime: '',
+    shareInfo: ''
+  };
 
-    timeToFormat (times) {
-      var result = "00:00";
-      var hour, minute, second;
-      if (times > 0) {
+  initAudio () {
+    this.myAudio = wx.createInnerAudioContext()
+    this.myAudio.src = 'http://huoke-private-1254282420.cos.ap-chengdu.myqcloud.com/2019/04/22/1120145041622765570.mp3?sign=q-sign-algorithm%3Dsha1%26q-ak%3DAKIDCJG2e67TN6kR3mA5fDve2X0Ndnwz5mV8%26q-sign-time%3D1560235841%3B1560307841%26q-key-time%3D1560235841%3B1560307841%26q-header-list%3D%26q-url-param-list%3D%26q-signature%3D870de55a12cc09bd6f82297a9feb5c61adb94952'
 
-        minute = Math.floor(times / 60);
-        if (minute < 10) {
-          minute = "0" + minute;
-        }
+    this.myAudio.onEnded(() => {
+      this.isPlay = false
+      this.$apply()
+    })
 
-        second = Math.floor((times - 60 * minute) % 60);
-        if (second < 10) {
-          second = "0" + second;
-        }
-        result = `${minute}"${second}"`;
-      }
-      return result;
-    };
-
-    methods = {
-      changeAudioStatus () {
-        if(this.isPlay) {
-          this.isPlay = false
-          this.myAudio.pause()
-        } else {
-          this.isPlay = true
-          this.myAudio.play()
-        }
-      },
-      addLike () {
-        api.study.addLike({
-          workId: this.shareInfo.id
-        })
-          .then(()=>{
-            wx.showToast({
-              title: '点赞成功'
-            })
-            this.getMyHomework()
-          })
-      },
-    };
-
-    events = {};
-
-    onLoad() {
-      this.getMyHomework()
-      this.initAudio()
-    }
-    onUnload () {
-      this.myAudio.destroy()
-    }
+    this.myAudio.onTimeUpdate(() => {
+      this.durationTime = this.timeToFormat(this.myAudio.duration)
+      this.$apply()
+    })
   }
+
+  getMyHomework () {
+    api.study.viewMyHomework({
+      lessonId: '1134359706941546498'
+    }).then(res => {
+      this.shareInfo = res.data.resultData
+      this.$apply()
+    })
+  };
+
+  timeToFormat (times) {
+    var result = '00:00'
+    // eslint-disable-next-line no-unused-vars
+    var hour, minute, second
+    if (times > 0) {
+      minute = Math.floor(times / 60)
+      if (minute < 10) {
+        minute = '0' + minute
+      }
+
+      second = Math.floor((times - 60 * minute) % 60)
+      if (second < 10) {
+        second = '0' + second
+      }
+      result = `${minute}"${second}"`
+    }
+    return result
+  };
+
+  methods = {
+    changeAudioStatus () {
+      if (this.isPlay) {
+        this.isPlay = false
+        this.myAudio.pause()
+      } else {
+        this.isPlay = true
+        this.myAudio.play()
+      }
+    },
+    addLike () {
+      api.study.addLike({
+        workId: this.shareInfo.id
+      })
+        .then(() => {
+          wx.showToast({
+            title: '点赞成功'
+          })
+          this.getMyHomework()
+        })
+    }
+  };
+
+  events = {};
+
+  onLoad () {
+    this.getMyHomework()
+    this.initAudio()
+  }
+  onUnload () {
+    this.myAudio.destroy()
+  }
+}
 </script>
 <style lang="scss">
-  @import '../assets/style/mixin.scss';
+@import '../assets/style/mixin.scss';
 
-  .p-shareHomework {
-    @include bg('/zyfx-background.png');
-    border-top: 1px solid transparent;
+.p-shareHomework {
+  @include bg('/zyfx-background.png');
+  border-top: 1px solid transparent;
 
-    &-header {
-      margin-left: 54px;
-      .-header-title {
-        margin-top: 44px;
-        height: 50px;
-        font-size: 36px;
-        font-weight: 600;
-        color: rgba(88, 66, 43, 1);
-        line-height: 50px;
-      }
-
-      .-header-text {
-        width: 356px;
-        height: 72px;
-        font-size: 22px;
-        font-weight: 400;
-        color: rgba(88, 66, 43, 1);
-        line-height: 32px;
-      }
-
-      .-header-bold {
-        font-size: 26px;
-      }
+  &-header {
+    margin-left: 54px;
+    .-header-title {
+      margin-top: 44px;
+      height: 50px;
+      font-size: 36px;
+      font-weight: 600;
+      color: rgba(88, 66, 43, 1);
+      line-height: 50px;
     }
 
-    &-content {
-      margin: 42px auto 26px;
-      width: 686px;
-      height: 850px;
-      background: rgba(255, 255, 255, 1);
-      box-shadow: 0px 8px 16px 4px rgba(255, 246, 162, 0.5);
-      border-radius: 32px;
+    .-header-text {
+      width: 356px;
+      height: 72px;
+      font-size: 22px;
+      font-weight: 400;
+      color: rgba(88, 66, 43, 1);
+      line-height: 32px;
+    }
 
-      .-content-top {
+    .-header-bold {
+      font-size: 26px;
+    }
+  }
+
+  &-content {
+    margin: 42px auto 26px;
+    width: 686px;
+    height: 850px;
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0px 8px 16px 4px rgba(255, 246, 162, 0.5);
+    border-radius: 32px;
+
+    .-content-top {
+      display: flex;
+      justify-content: space-between;
+      margin: 0 58px 38px 60px;
+      padding-top: 24px;
+      height: 150px;
+
+      &-left {
+        text-align: center;
+        .-left-img {
+          border-radius: 50%;
+          width: 84px;
+          height: 84px;
+        }
+
+        .-left-name {
+          margin-top: 10px;
+          height: 44px;
+          font-size: 32px;
+          font-weight: 400;
+          color: rgba(52, 50, 48, 1);
+          line-height: 44px;
+        }
+      }
+
+      &-right {
+        text-align: center;
+        display: inline-block;
         display: flex;
         justify-content: space-between;
-        margin: 0 58px 38px 60px;
-        padding-top: 24px;
-        height: 150px;
+        width: 55%;
 
-        &-left {
-          text-align: center;
-          .-left-img {
-            border-radius: 50%;
-            width: 84px;
-            height: 84px;
-          }
-
-          .-left-name {
-            margin-top: 10px;
-            height: 44px;
-            font-size: 32px;
-            font-weight: 400;
-            color: rgba(52, 50, 48, 1);
-            line-height: 44px;
-          }
+        .-right-center {
+          position: relative;
+          top: 20px;
+          width: 2px;
+          height: 40px;
+          color: #eeecea;
         }
 
-        &-right {
-          text-align: center;
-          display: inline-block;
-          display: flex;
-          justify-content: space-between;
-          width: 55%;
-
-          .-right-center {
-            position: relative;
-            top: 20px;
-            width: 2px;
-            height: 40px;
-            color: #EEECEA;
-          }
-
-          .-right-num {
-            height: 66px;
-            font-size: 48px;
-            font-weight: 500;
-            color: rgba(70, 65, 60, 1);
-            line-height: 66px;
-          }
-
-          .-right-text {
-            height: 34px;
-            font-size: 24px;
-            font-weight: 400;
-            color: rgba(70, 65, 60, 0.6);
-            line-height: 34px;
-            margin-bottom: 14px;
-          }
-
-          .-right-btn {
-            text-align: center;
-            width: 116px;
-            height: 34px;
-            background: rgba(255, 238, 79, 0.8);
-            border-radius: 12px;
-            font-size: 20px;
-            font-weight: 400;
-            color: rgba(70, 65, 60, 1);
-            line-height: 34px;
-          }
-
-          .-right-btn-two {
-            text-align: center;
-            width: 116px;
-            height: 34px;
-            background: rgba(236, 236, 235, 1);
-            border-radius: 12px;
-            font-size: 20px;
-            font-weight: 400;
-            color: rgba(103, 99, 95, 1);
-            line-height: 34px;
-          }
-        }
-      }
-
-      .-content-down {
-
-        &-title {
-          margin-bottom: 20px;
-          text-align: center;
-          height: 84px;
-          font-size: 36px;
+        .-right-num {
+          height: 66px;
+          font-size: 48px;
           font-weight: 500;
-          color: rgba(52, 50, 48, 1);
-          line-height: 50px;
-
-          .-title-small {
-           font-size: 24px;
-          }
+          color: rgba(70, 65, 60, 1);
+          line-height: 66px;
         }
 
-        &-img {
-          display: block;
-          margin: 0 auto;
-          width:606px;
-          height:342px;
-          border-radius:32px;
+        .-right-text {
+          height: 34px;
+          font-size: 24px;
+          font-weight: 400;
+          color: rgba(70, 65, 60, 0.6);
+          line-height: 34px;
+          margin-bottom: 14px;
         }
 
-        &-reply {
-          display: flex;
-          margin-top: 32px;
-          margin-left: 34px;
+        .-right-btn {
+          text-align: center;
+          width: 116px;
+          height: 34px;
+          background: rgba(255, 238, 79, 0.8);
+          border-radius: 12px;
+          font-size: 20px;
+          font-weight: 400;
+          color: rgba(70, 65, 60, 1);
+          line-height: 34px;
+        }
 
-          .-reply-img {
-            margin-right: 16px;
-            min-width:64px;
-            max-width:64px;
-            height:64px;
-            border-radius:8px;
-            border:4px solid rgba(232,197,157,1);
-          }
-
-          .-reply-time {
-            margin: 0 36px 0 24px;
-            height:32px;
-            font-size:28px;
-            color:rgba(88,66,43,1);
-            line-height:34px;
-          }
-
-          .-info-wrap {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-          }
-
-          .-info-content {
-            margin-left: 16px;
-            position: relative;
-            flex: 1;
-            width:346px;
-            font-size: 28px;
-            line-height: 40px;
-            padding: 24px 32px;
-            background: rgba(255, 245, 209, 1);
-            border-radius: 16px;
-            border: 3px solid rgba(232, 197, 157, 1);
-            &::before {
-              @include bg('/icon.png');
-              content: '';
-              position: absolute;
-              left: -20px;
-              top: 12px;
-              width: 50px;
-              height: 30px;
-            }
-            &.voice .icon {
-              @include bg('/sk/icon-audio.png');
-              margin-left: 16px;
-              width: 26px;
-              height: 43px;
-            }
-          }
-
-          .-info-name {
-            height:34px;
-            font-size:24px;
-            font-weight:500;
-            color:rgba(88,66,43,0.4);
-            line-height:34px;
-            margin-bottom: 8px;
-          }
+        .-right-btn-two {
+          text-align: center;
+          width: 116px;
+          height: 34px;
+          background: rgba(236, 236, 235, 1);
+          border-radius: 12px;
+          font-size: 20px;
+          font-weight: 400;
+          color: rgba(103, 99, 95, 1);
+          line-height: 34px;
         }
       }
     }
 
-    &-btn {
-      position: relative;
-      height: 344px;
+    .-content-down {
+      &-title {
+        margin-bottom: 20px;
+        text-align: center;
+        height: 84px;
+        font-size: 36px;
+        font-weight: 500;
+        color: rgba(52, 50, 48, 1);
+        line-height: 50px;
 
-      .-btn {
-        position: absolute;
-        top: 228px;
-        left: 40px;
-        width: 220px;
-        height: 75px;
-        background-color: transparent;
+        .-title-small {
+          font-size: 24px;
+        }
+      }
+
+      &-img {
+        display: block;
+        margin: 0 auto;
+        width: 606px;
+        height: 342px;
+        border-radius: 32px;
+      }
+
+      &-reply {
+        display: flex;
+        margin-top: 32px;
+        margin-left: 34px;
+
+        .-reply-img {
+          margin-right: 16px;
+          min-width: 64px;
+          max-width: 64px;
+          height: 64px;
+          border-radius: 8px;
+          border: 4px solid rgba(232, 197, 157, 1);
+        }
+
+        .-reply-time {
+          margin: 0 36px 0 24px;
+          height: 32px;
+          font-size: 28px;
+          color: rgba(88, 66, 43, 1);
+          line-height: 34px;
+        }
+
+        .-info-wrap {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+
+        .-info-content {
+          margin-left: 16px;
+          position: relative;
+          flex: 1;
+          width: 346px;
+          font-size: 28px;
+          line-height: 40px;
+          padding: 24px 32px;
+          background: rgba(255, 245, 209, 1);
+          border-radius: 16px;
+          border: 3px solid rgba(232, 197, 157, 1);
+          &::before {
+            @include bg('/icon.png');
+            content: '';
+            position: absolute;
+            left: -20px;
+            top: 12px;
+            width: 50px;
+            height: 30px;
+          }
+          &.voice .icon {
+            @include bg('/sk/icon-audio.png');
+            margin-left: 16px;
+            width: 26px;
+            height: 43px;
+          }
+        }
+
+        .-info-name {
+          height: 34px;
+          font-size: 24px;
+          font-weight: 500;
+          color: rgba(88, 66, 43, 0.4);
+          line-height: 34px;
+          margin-bottom: 8px;
+        }
       }
     }
   }
 
+  &-btn {
+    position: relative;
+    height: 344px;
+
+    .-btn {
+      position: absolute;
+      top: 228px;
+      left: 40px;
+      width: 220px;
+      height: 75px;
+      background-color: transparent;
+    }
+  }
+}
 </style>

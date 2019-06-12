@@ -1,10 +1,13 @@
 <!--  -->
 <template>
   <view class="calendar">
-    <view class="calendar-header" wx:if="{{showHeader}}">
-      <view class="calendar-header-pre" @tap="preMonth"></view>
+    <view class="calendar-header"
+          wx:if="{{showHeader}}">
+      <view class="calendar-header-pre"
+            @tap="preMonth"></view>
       <text class="calendar-header-date">{{formatDate}}</text>
-      <view class="calendar-header-next" @tap="nextMonth"></view>
+      <view class="calendar-header-next"
+            @tap="nextMonth"></view>
     </view>
     <view class="calendar-week">
       <view class="calendar-week-item"
@@ -50,22 +53,22 @@ export default class Example extends wepy.component {
     cardList: {},
     weekArr: ['一', '二', '三', '四', '五', '六', '日']
   };
-  getCardList() {
+  getCardList () {
     api.study.listCard()
       .then(res => {
-        this.cardList = res.data.resultData;
-        this.$apply();
-      });
+        this.cardList = res.data.resultData
+        this.$apply()
+      })
   };
   components = {};
   methods = {
-    nextMonth() {
+    nextMonth () {
       this.nextMonth()
     },
-    preMonth() {
+    preMonth () {
       this.preMonth()
     },
-    bindClickDay(item) {
+    bindClickDay (item) {
       this.selectDay = item.formatDate
       this.$emit('select', item)
     }
@@ -194,7 +197,8 @@ export default class Example extends wepy.component {
     &-date {
       margin: 0 54px;
     }
-    &-pre, &-next {
+    &-pre,
+    &-next {
       @include bg('/course/my-icon-arrow.png');
       width: 17px;
       height: 32px;
@@ -230,7 +234,7 @@ export default class Example extends wepy.component {
         height: 80px;
         border-radius: 50%;
         color: #58422b;
-        background:rgba(249,230,11,0.8);
+        background: rgba(249, 230, 11, 0.8);
       }
       &.isToday {
         color: #58422b;

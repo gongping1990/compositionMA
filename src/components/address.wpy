@@ -37,7 +37,7 @@
 </template>
 <script>
 import wepy from 'wepy'
-import api from '../request/api';
+import api from '../request/api'
 import areaList from '../assets/comJS/area'
 export default class Example extends wepy.component {
   props = {
@@ -60,22 +60,22 @@ export default class Example extends wepy.component {
   onLoad () {
     this.getList()
   };
-  getList() {
+  getList () {
     api.order.getRecipient()
       .then(({ data }) => {
-        this.form = data.resultData;
-        console.log(this.form,1)
-        this.$apply();
-      });
+        this.form = data.resultData
+        console.log(this.form, 1)
+        this.$apply()
+      })
   };
   methods = {
-    bindClickName (event,name) {
+    bindClickName (event, name) {
       this.form.name = event.detail.value
     },
-    bindClickPhone (event,name) {
+    bindClickPhone (event, name) {
       this.form.telephone = event.detail.value
     },
-    bindClickAddress (event,name) {
+    bindClickAddress (event, name) {
       this.form.address = event.detail.value
     },
     bindClickConfirm (event) {
@@ -91,7 +91,7 @@ export default class Example extends wepy.component {
     bindClickRegion () {
       this.show = !this.show
     },
-    save() {
+    save () {
       this.$emit('save', this.form)
     }
   };

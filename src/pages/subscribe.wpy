@@ -21,7 +21,7 @@
         <view class="subscribe-course-content">
           <view class="subscribe-course-img">
             <view class="subscribe-course-img-tag">小班课</view>
-            <image src=""/>
+            <image src="" />
           </view>
           <view class="subscribe-course-info">
             <view class="subscribe-course-text">
@@ -41,13 +41,13 @@
         <swiper-item>
           <view class="subscribe-banner-item">
             <image class="banner-img"
-                   src="https://pub.file.k12.vip/composition/banner/yk-banner1.png"/>
+                   src="https://pub.file.k12.vip/composition/banner/yk-banner1.png" />
           </view>
         </swiper-item>
         <swiper-item>
           <view class="subscribe-banner-item">
             <image class="banner-img"
-                   src="https://pub.file.k12.vip/composition/banner/yk-banner2.png"/>
+                   src="https://pub.file.k12.vip/composition/banner/yk-banner2.png" />
           </view>
         </swiper-item>
       </swiper>
@@ -59,7 +59,7 @@
         <view class="subscribe-course-content subscribe-item">
           <view class="subscribe-course-img">
             <view class="subscribe-course-img-tag">小班课</view>
-            <image src=""/>
+            <image src="" />
           </view>
           <view class="subscribe-course-info">
             <view class="subscribe-course-text">
@@ -75,7 +75,7 @@
         <view class="subscribe-course-content subscribe-item">
           <view class="subscribe-course-img">
             <view class="subscribe-course-img-tag">小班课</view>
-            <image src=""/>
+            <image src="" />
           </view>
           <view class="subscribe-course-info">
             <view class="subscribe-course-text">
@@ -91,7 +91,7 @@
         <view class="subscribe-course-content subscribe-item">
           <view class="subscribe-course-img">
             <view class="subscribe-course-img-tag">小班课</view>
-            <image src=""/>
+            <image src="" />
           </view>
           <view class="subscribe-course-info">
             <view class="subscribe-course-text">
@@ -150,333 +150,333 @@
   </view>
 </template>
 <script>
-  import wepy from 'wepy';
-  import api from '../request/api'
-  import mHeader from '../components/header';
+import wepy from 'wepy'
+import api from '../request/api'
+import mHeader from '../components/header'
 
-  export default class Subscribe extends wepy.page {
-    config = {
-      navigationBarTitleText: '',
-      usingComponents: {
-        'van-popup': '../vant/popup/index'
-      }
-    };
-    data = {
-      show: true,
-      isActiveDate: '1',
-      activeTime: '',
-      timeListAm: ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00'],
-      timeListPm: ['12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30',
-        '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00', '21:30', '22:00']
-    };
-    components = {
-      mHeader
-    };
+export default class Subscribe extends wepy.page {
+  config = {
+    navigationBarTitleText: '',
+    usingComponents: {
+      'van-popup': '../vant/popup/index'
+    }
+  };
+  data = {
+    show: true,
+    isActiveDate: '1',
+    activeTime: '',
+    timeListAm: ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00'],
+    timeListPm: ['12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30',
+      '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00', '21:30', '22:00']
+  };
+  components = {
+    mHeader
+  };
 
-    getLessonInfo() {
-      api.appointment.getAppointmentCatalog()
-        .then(res => {
-        this.lessonDetail = res.data.resultData;
-      });
-    };
+  getLessonInfo () {
+    api.appointment.getAppointmentCatalog()
+      .then(res => {
+        this.lessonDetail = res.data.resultData
+      })
+  };
 
-    methods = {
-      submitTime() {
-        if(!this.activeTime) {
-          return wx.showToast({
-            icon: 'none',
-            title: '请选择时间段~~'
-          })
-        }
-        api.appointment.appointmentLesson({
-          courseId: '',
-          lessonId: '',
-          timePoint : this.activeTime
-        }).then(()=>{
-          this.show = false
+  methods = {
+    submitTime () {
+      if (!this.activeTime) {
+        return wx.showToast({
+          icon: 'none',
+          title: '请选择时间段~~'
         })
-      },
-      changeDate(num) {
-        this.activeTime = ''
-        this.isActiveDate = num;
-      },
-      choiceTime (data) {
-        this.activeTime = data
-      },
-      onClose() {
-        this.show = false;
       }
-    };
-    events = {};
-    watch = {};
-    computed = {
-      height() {
-        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
-      }
-    };
+      api.appointment.appointmentLesson({
+        courseId: '',
+        lessonId: '',
+        timePoint: this.activeTime
+      }).then(() => {
+        this.show = false
+      })
+    },
+    changeDate (num) {
+      this.activeTime = ''
+      this.isActiveDate = num
+    },
+    choiceTime (data) {
+      this.activeTime = data
+    },
+    onClose () {
+      this.show = false
+    }
+  };
+  events = {};
+  watch = {};
+  computed = {
+    height () {
+      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+    }
+  };
 
-    onLoad() {
-    };
+  onLoad () {
+  };
 
-    onShow() {
-    };
-  }
+  onShow () {
+  };
+}
 </script>
 <style lang='scss'>
-  @import '../assets/style/mixin.scss';
+@import '../assets/style/mixin.scss';
 
-  .subscribe {
-    &-popup {
-      width: 750px;
-      padding: 32px 0;
-      background: rgba(255, 255, 255, 1);
-      border-radius: 32px 32px 0px 0px;
-      &-content {
-        padding: 0 32px;
-        &-title {
-          display: inline-block;
-          margin-top: 32px;
-          font-size: 32px;
-        }
-        &-list {
-          display: flex;
-          flex-wrap: wrap;
-        }
-        &-item {
-          @include flex-column-center;
-          box-sizing: border-box;
-          margin: 24px 66px 0 0;
-          width: 120px;
-          padding: 10px 0;
-          font-size: 24px;
-          color: rgba($color: #46413C, $alpha: 0.7);
-          border-radius: 16px;
-          border: 2px solid rgba(88, 66, 43, 0.2);
-        }
-
-        .-time {
-          margin-right: 20px;
-        }
-
-        &-active {
-          border: none;
-          color: rgba($color: #46413C, $alpha: 1);
-          background-color: #F9E60B;
-        }
+.subscribe {
+  &-popup {
+    width: 750px;
+    padding: 32px 0;
+    background: rgba(255, 255, 255, 1);
+    border-radius: 32px 32px 0px 0px;
+    &-content {
+      padding: 0 32px;
+      &-title {
+        display: inline-block;
+        margin-top: 32px;
+        font-size: 32px;
       }
-      &-step {
+      &-list {
+        display: flex;
+        flex-wrap: wrap;
+      }
+      &-item {
         @include flex-column-center;
-        padding: 0 54px;
-        padding-bottom: 24px;
-        &-img {
-          @include bg('/step.png');
-          margin-bottom: 8px;
-          width: 592px;
-          height: 40px;
-        }
-        &-text {
-          @include flex-center;
-          justify-content: space-between;
-          width: 100%;
-          font-size: 24px;
-          color: rgba($color: #58422b, $alpha: 0.8);
-        }
-      }
-    }
-    &-tab {
-      display: flex;
-      align-items: center;
-      padding-left: 46px;
-      &-item {
-        position: relative;
-        margin-right: 64px;
-        padding-bottom: 24px;
-        font-size: 28px;
-        color: rgba($color: #58422b, $alpha: 0.3);
-        font-weight: bold;
-        &.active {
-          color: #58422b;
-        }
-        &.active::after {
-          content: '';
-          position: absolute;
-          bottom: 0;
-          left: 50%;
-          width: 64px;
-          height: 8px;
-          border-radius: 4px;
-          background-color: #f9e60b;
-          transform: translateX(-50%);
-        }
-      }
-    }
-    &-banner {
-      margin: 28px auto;
-      width: 686px;
-      height: 180px;
-      &-item {
-        padding: 12px 42px 10px 24px;
+        box-sizing: border-box;
+        margin: 24px 66px 0 0;
+        width: 120px;
+        padding: 10px 0;
+        font-size: 24px;
+        color: rgba($color: #46413c, $alpha: 0.7);
         border-radius: 16px;
-        border: 3px solid rgba(61, 53, 45, 0.1);
-      }
-    }
-    .banner-img {
-      box-sizing: border-box;
-      width: 100%;
-      height: 120px;
-    }
-    &-course {
-      padding: 32px;
-      border-bottom: 10px solid rgba($color: #58422b, $alpha: 0.05);
-      &-info {
-        @include flex-column-center;
-        justify-content: space-between;
-        padding-top: 8px;
-        flex: 1;
+        border: 2px solid rgba(88, 66, 43, 0.2);
       }
 
-      &-btn {
-        @include flex-center;
-        align-self: flex-end;
-        width: 186px;
-        height: 60px;
-        font-size: 26px;
-        color: rgba($color: #58422b, $alpha: 0.3);
-        background: rgba(255, 255, 255, 1);
-        box-shadow: 0px 8px 16px 4px rgba(242, 226, 85, 1);
-        border-radius: 36px;
-        &-icon {
-          @include bg('/kcml/icon-waiting.png');
-          margin-right: 12px;
-          width: 28px;
-          height: 28px;
-        }
+      .-time {
+        margin-right: 20px;
       }
-      &-tag {
-        padding: 4px 12px;
-        background: rgba(255, 255, 255, 0.51);
-        border-radius: 32px 32px 0 32px;
+
+      &-active {
+        border: none;
+        color: rgba($color: #46413c, $alpha: 1);
+        background-color: #f9e60b;
+      }
+    }
+    &-step {
+      @include flex-column-center;
+      padding: 0 54px;
+      padding-bottom: 24px;
+      &-img {
+        @include bg('/step.png');
+        margin-bottom: 8px;
+        width: 592px;
+        height: 40px;
       }
       &-text {
-        @include line-clamp;
-        font-size: 28px;
-      }
-      &-img {
-        position: relative;
-        margin-right: 32px;
-        width: 138px;
-        height: 182px;
-        box-shadow: 0px 0px 24px 0px rgba(236, 194, 96, 0.24);
-        border-radius: 16px;
-        overflow: hidden;
-        image {
-          width: 138px;
-          height: 182px;
-        }
-        &-tag {
-          @include flex-center;
-          position: absolute;
-          left: 0;
-          top: 0;
-          width: 94px;
-          height: 36px;
-          font-size: 20px;
-          color: #fff;
-          background: rgba(255, 124, 118, 0.9);
-          border-radius: 16px 0px 32px 0px;
-        }
-      }
-      &-title {
         @include flex-center;
         justify-content: space-between;
-        & > text {
-          font-size: 40px;
-          color: #58422b;
-          font-weight: 600;
-        }
-      }
-      &-more {
-        @include flex-center;
+        width: 100%;
         font-size: 24px;
-        color: rgba($color: #58422b, $alpha: 0.5);
-      }
-      &-arrow {
-        @include bg('/course/my-icon-arrow.png');
-        margin-left: 12px;
-        width: 10px;
-        height: 20px;
-      }
-      &-date {
-        @include flex-center;
-        justify-content: flex-start;
-        margin-top: 10px;
-        font-size: 24px;
-        color: rgba($color: #58422b, $alpha: 0.5);
-      }
-      &-time {
-        @include flex-center;
-        padding: 0 18px;
-        height: 42px;
-        color: #58422b;
-        font-weight: 500;
-        background: rgba(249, 230, 11, 0.6);
-        border-radius: 22px;
-      }
-      &-content {
-        display: flex;
-        box-sizing: border-box;
-        margin-top: 18px;
-        padding: 20px 32px;
-        width: 686px;
-        height: 222px;
-        background: linear-gradient(
-            90deg,
-            rgba(249, 230, 11, 1) 0%,
-            rgba(253, 219, 85, 1) 100%
-        );
-        box-shadow: 0px 8px 16px 4px rgba(230, 194, 81, 0.4);
-        border-radius: 16px;
+        color: rgba($color: #58422b, $alpha: 0.8);
       }
     }
-    &-list {
-      padding: 32px;
-    }
+  }
+  &-tab {
+    display: flex;
+    align-items: center;
+    padding-left: 46px;
     &-item {
+      position: relative;
+      margin-right: 64px;
+      padding-bottom: 24px;
+      font-size: 28px;
+      color: rgba($color: #58422b, $alpha: 0.3);
+      font-weight: bold;
+      &.active {
+        color: #58422b;
+      }
+      &.active::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        width: 64px;
+        height: 8px;
+        border-radius: 4px;
+        background-color: #f9e60b;
+        transform: translateX(-50%);
+      }
+    }
+  }
+  &-banner {
+    margin: 28px auto;
+    width: 686px;
+    height: 180px;
+    &-item {
+      padding: 12px 42px 10px 24px;
+      border-radius: 16px;
+      border: 3px solid rgba(61, 53, 45, 0.1);
+    }
+  }
+  .banner-img {
+    box-sizing: border-box;
+    width: 100%;
+    height: 120px;
+  }
+  &-course {
+    padding: 32px;
+    border-bottom: 10px solid rgba($color: #58422b, $alpha: 0.05);
+    &-info {
+      @include flex-column-center;
+      justify-content: space-between;
+      padding-top: 8px;
+      flex: 1;
+    }
+
+    &-btn {
+      @include flex-center;
+      align-self: flex-end;
+      width: 186px;
+      height: 60px;
+      font-size: 26px;
+      color: rgba($color: #58422b, $alpha: 0.3);
+      background: rgba(255, 255, 255, 1);
+      box-shadow: 0px 8px 16px 4px rgba(242, 226, 85, 1);
+      border-radius: 36px;
+      &-icon {
+        @include bg('/kcml/icon-waiting.png');
+        margin-right: 12px;
+        width: 28px;
+        height: 28px;
+      }
+    }
+    &-tag {
+      padding: 4px 12px;
+      background: rgba(255, 255, 255, 0.51);
+      border-radius: 32px 32px 0 32px;
+    }
+    &-text {
+      @include line-clamp;
+      font-size: 28px;
+    }
+    &-img {
+      position: relative;
+      margin-right: 32px;
+      width: 138px;
+      height: 182px;
+      box-shadow: 0px 0px 24px 0px rgba(236, 194, 96, 0.24);
+      border-radius: 16px;
+      overflow: hidden;
+      image {
+        width: 138px;
+        height: 182px;
+      }
+      &-tag {
+        @include flex-center;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 94px;
+        height: 36px;
+        font-size: 20px;
+        color: #fff;
+        background: rgba(255, 124, 118, 0.9);
+        border-radius: 16px 0px 32px 0px;
+      }
+    }
+    &-title {
+      @include flex-center;
+      justify-content: space-between;
+      & > text {
+        font-size: 40px;
+        color: #58422b;
+        font-weight: 600;
+      }
+    }
+    &-more {
+      @include flex-center;
+      font-size: 24px;
+      color: rgba($color: #58422b, $alpha: 0.5);
+    }
+    &-arrow {
+      @include bg('/course/my-icon-arrow.png');
+      margin-left: 12px;
+      width: 10px;
+      height: 20px;
+    }
+    &-date {
+      @include flex-center;
+      justify-content: flex-start;
+      margin-top: 10px;
+      font-size: 24px;
+      color: rgba($color: #58422b, $alpha: 0.5);
+    }
+    &-time {
+      @include flex-center;
+      padding: 0 18px;
+      height: 42px;
+      color: #58422b;
+      font-weight: 500;
+      background: rgba(249, 230, 11, 0.6);
+      border-radius: 22px;
+    }
+    &-content {
+      display: flex;
       box-sizing: border-box;
-      margin-bottom: 32px;
+      margin-top: 18px;
       padding: 20px 32px;
       width: 686px;
       height: 222px;
+      background: linear-gradient(
+        90deg,
+        rgba(249, 230, 11, 1) 0%,
+        rgba(253, 219, 85, 1) 100%
+      );
+      box-shadow: 0px 8px 16px 4px rgba(230, 194, 81, 0.4);
       border-radius: 16px;
-      background: #fff;
-      border: 3px solid rgba(61, 53, 45, 0.1);
+    }
+  }
+  &-list {
+    padding: 32px;
+  }
+  &-item {
+    box-sizing: border-box;
+    margin-bottom: 32px;
+    padding: 20px 32px;
+    width: 686px;
+    height: 222px;
+    border-radius: 16px;
+    background: #fff;
+    border: 3px solid rgba(61, 53, 45, 0.1);
+    box-shadow: none;
+    .subscribe-course-tag {
+      background: rgba(61, 53, 45, 0.1);
+    }
+    .subscribe-course-btn {
       box-shadow: none;
-      .subscribe-course-tag {
-        background: rgba(61, 53, 45, 0.1);
+      color: #39dda9;
+      border: 2px solid rgba(57, 221, 169, 1);
+      &.yy {
+        color: #ff7c76;
+        border-color: #ff7c76;
       }
-      .subscribe-course-btn {
-        box-shadow: none;
-        color: #39dda9;
-        border: 2px solid rgba(57, 221, 169, 1);
-        &.yy {
-          color: #ff7c76;
-          border-color: #ff7c76;
-        }
+    }
+    .subscribe-course-btn-icon {
+      background-position: center;
+      &.yy {
+        @include bg('/yy/icon-yy.png');
       }
-      .subscribe-course-btn-icon {
-        background-position: center;
-        &.yy {
-          @include bg('/yy/icon-yy.png');
-        }
-        &.sk {
-          @include bg('/kcml/icon-go.png');
-          width: 32px;
-          height: 32px;
-        }
-        &.bk {
-          @include bg('/kcml/icon-make up.png');
-        }
+      &.sk {
+        @include bg('/kcml/icon-go.png');
+        width: 32px;
+        height: 32px;
+      }
+      &.bk {
+        @include bg('/kcml/icon-make up.png');
       }
     }
   }
+}
 </style>

@@ -90,7 +90,7 @@
     </div>
     <van-tabbar active="0"
                 active-color="#58422B"
-                @change="bindChangeTabBar">
+                bind:change="onChangeTabbar">
       <van-tabbar-item>
         <image slot="icon"
                src="../assets/image/icon-jrxx.png"
@@ -157,6 +157,7 @@
 import wepy from 'wepy'
 import dayjs from 'dayjs'
 import { connect } from 'wepy-redux'
+import testMixin from '../mixins/test'
 import mHeader from '@/components/header'
 import calender from '@/components/calendar'
 @connect({
@@ -187,6 +188,7 @@ export default class Home extends wepy.page {
     selectItem: {},
     selectTime: 0
   };
+  mixins = [testMixin]
   components = {
     mHeader,
     calender

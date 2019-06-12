@@ -9,11 +9,11 @@
         <repeat for="{{dataList}}" key="index" index="index" item="item">
           <view class="p-notice-item">
             <view class="-item-left">
-              <image class="-img" src="{{item.imgUrl}}"></image>
+              <image class="-img" src="{{item.teacherImg}}"></image>
             </view>
             <view class="-item-right">
               <view class="-item-right-top">
-                <view class="-name">{{item.name}}</view>
+                <view class="-name">{{item.teacherName}}</view>
                 <view class="-icon" wx:if="{{!item.know}}"></view>
               </view>
               <view class="-item-right-down">
@@ -53,32 +53,7 @@
         size: 10,
         total: ''
       },
-      dataList: [
-        {
-          imgUrl: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
-          name: 'heaven小林哥',
-          datetime: '2019-5-22 17:35',
-          know: true
-        },
-        {
-          imgUrl: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
-          name: '风锅锅',
-          datetime: '2019-5-12 17:35',
-          know: false
-        },
-        {
-          imgUrl: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
-          name: '大江东旭',
-          datetime: '2019-4-11 17:35',
-          know: false
-        },
-        {
-          imgUrl: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
-          name: 'liangchenas',
-          datetime: '2019-3-12 17:35',
-          know: false
-        }
-      ]
+      dataList: []
     };
 
     getList() {

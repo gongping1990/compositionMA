@@ -3,10 +3,10 @@
     <mHeader title="提交作业"></mHeader>
     <view class="container-scroll p-uploadHomework" style="margin-top:{{height}}px">
       <view class="p-uploadHomework-content">
-        <image class="-content-img" src="{{workImg}}"></image>
+        <image class="-content-img" src="{{queryInfo.url}}"></image>
       </view>
       <view class="p-uploadHomework-tip">作业提交到</view>
-      <view class="p-uploadHomework-name">回家过大年（写人的脸色）</view>
+      <view class="p-uploadHomework-name">{{queryInfo.name}}</view>
       <button class="p-uploadHomework-btn" @tap="uploadWork">确认提交</button>
     </view>
 
@@ -45,13 +45,13 @@
 
     data = {
       isOpenPopup: false,
-      workImg: ''
+      queryInfo: ''
     };
 
     methods = {
       toWorkDetail() {
         this.isOpenPopup = false;
-        wx.navigateTo({ url: `/pages/completionOfWork` });
+        wx.navigateTo({ url: `/pages/completionOfWork?type=1&id=${this.queryInfo.id}` });
       },
       uploadWork() {
         let _self = this;
@@ -62,7 +62,7 @@
 
         wx.uploadFile({
           url: 'http://huoke.prod.k12.vip/common/uploadPublicFile',
-          filePath: this.workImg,
+          filePath: this.queryInfo.url,
           name: 'file',
           header: { 'Content-Type': 'multipart/form-data' },
           success: function(res) {
@@ -76,7 +76,7 @@
             } else {
               let parmas = JSON.parse(res.data)
               api.study.addHomework({
-                lessonId: '',
+                lessonId: _self.queryInfo.id,
                 workImg: parmas.resultData.url
               }).then(()=>{
                 _self.isOpenPopup = true;
@@ -102,7 +102,7 @@
     events = {};
 
     onLoad(query) {
-      this.workImg = query.url;
+      this.queryInfo = query;
     }
   }
 </script>

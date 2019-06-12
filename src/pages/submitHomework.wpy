@@ -48,10 +48,10 @@
             <view class="-right-name">{{workDetail.nickname}}</view>
             <view class="-right-time">{{workDetail.workTime}}</view>
             <image class="-right-work" src="{{workDetail.workImg}}"></image>
-            <view class="-right-tip">
-              <view class="-tip-text" wx:if="{{workDetail.replyTime}}">老师已点评， 敬请收听</view>
+            <view class="-right-tip" wx:if="{{workDetail.replyTime}}">
+              <view class="-tip-text">老师已点评， 敬请收听</view>
             </view>
-            <view class="-right-btn" @tap="lookWorkDetail({{'1'}})">查看作业详情</view>
+            <view class="-right-btn" @tap="lookWorkDetail({{workDetail}})">查看作业详情</view>
           </view>
         </view>
       </view>
@@ -61,7 +61,7 @@
       </view>
 
       <view class="p-submitHomework-card" wx:if="{{tabActive === '1'}}" @tap="addMyCard">
-        <view class="-text" @tap="changePopup({{'2'}})">{{isPunchCard ? '已打卡' : '点我打卡'}}</view>
+        <view class="-text">{{workDetail.todayCard ? '已打卡' : '点我打卡'}}</view>
       </view>
 
       <view class="p-submitHomework-center " wx:if="{{tabActive === '2'}}">
@@ -77,15 +77,16 @@
             <view class="-center-work-right">
               <view class="-right-name">{{item.nickname}}</view>
               <view class="-right-time">{{item.workTime}}</view>
-              <image class="-right-work" src="{{item.workImg}}" @tap="lookWorkDetail({{'2'}})"></image>
+              <image class="-right-work" src="{{item.workImg}}" @tap="lookWorkDetail({{item}})"></image>
               <view class="-right-zan">
-                <view class="-zan-left {{item.isZan ? '-zan-ok' : ''}}">
+                <view class="-zan-left {{item.isZan ? '-zan-ok' : ''}}" @tap="addLike({{item}})">
                   <image class="-img" wx:if="{{!item.otherLike}}"
                          src="https://pub.file.k12.vip/tbzw/word-detail/icon-give-pre.png"></image>
                   <image class="-img" wx:if="{{item.otherLike}}"
                          src="https://pub.file.k12.vip/2019/06/06/1136572565700235266.png"></image>
                 </view>
-                <view class="-zan-right {{item.otherLike ? '-zan-ok' : ''}}">{{item.likenum}}</view>
+                <view class="-zan-right {{item.otherLike ? '-zan-ok' : ''}}" @tap="addLike({{item}})">{{item.likenum}}
+                </view>
               </view>
             </view>
           </view>
@@ -131,7 +132,7 @@
 <script>
   import wepy from 'wepy';
   import api from '../request/api';
-  import dayjs from 'dayjs'
+  import dayjs from 'dayjs';
   import { connect } from 'wepy-redux';
   import mHeader from '../components/header';
 
@@ -164,7 +165,7 @@
         total: ''
       },
       tabActive: '1',
-      isSuccessWork: true,
+      isSuccessWork: false,
       isOpenPopup: false,
       isCard: false,
       workDetail: '',
@@ -174,7 +175,7 @@
 
     getLessonInfo() {
       api.study.getLessonDetail({
-        lessonId: ''
+        lessonId: '1134359706941546498'
       }).then(res => {
         this.lessonDetail = res.data.resultData;
       });
@@ -182,10 +183,13 @@
 
     getMyHomework() {
       api.study.viewMyHomework({
-        lessonId: ''
+        lessonId: '1134359706941546498'
       }).then(res => {
         this.workDetail = res.data.resultData;
-        this.workDetail && (this.isSuccessWork = true);
+        if (this.workDetail) {
+          this.isSuccessWork = true;
+          this.workDetail.workTime = dayjs(+this.workDetail.workTime).format('YYYY-MM-DD HH:mm:ss');
+        }
       });
     };
 
@@ -193,7 +197,7 @@
       api.study.listHomeworkByLesson({
         current: this.page.current,
         size: this.page.size,
-        lessonId: ''
+        lessonId: '1134359706941546498'
       }).then(({ data }) => {
         if (this.page.current > 1) {
           this.dataList = this.dataList.concat(data.resultData.records);
@@ -211,11 +215,22 @@
     };
 
     methods = {
-
-      addMyCard() {
-        api.study.addCard({}).then(() => {
-
+      addLike(item) {
+        api.study.addLike({
+          workId: item.id
+        }).then(() => {
+          this.getOtherHomeWork();
         });
+      },
+      addMyCard() {
+        if (this.workDetail.todayCard) return
+        api.study.addCard()
+          .then(() => {
+            this.isCard = true;
+            this.isOpenPopup = true
+            this.getMyHomework()
+            this.$apply()
+          });
       },
       changePopup(num) {
         if (num === '1') {
@@ -233,16 +248,17 @@
           sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
           success: function(res) {
             // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
-            wx.navigateTo({ url: `/pages/uploadHomework?url=${res.tempFilePaths[0]}` });
+            wx.navigateTo({
+              url: `/pages/uploadHomework?url=${res.tempFilePaths[0]}&name=${_self.lessonDetail.name}&id=${_self.lessonDetail.id}`
+            });
           }
         });
-
       },
       toLookCard() {
-        wx.navigateTo({ url: `/pages/uploadHomework` });
+        wx.navigateTo({ url: `/pages/card` });
       },
-      lookWorkDetail(num) {
-        wx.navigateTo({ url: `/pages/completionOfWork?type=${num}` });
+      lookWorkDetail(data) {
+        wx.navigateTo({ url: `/pages/completionOfWork?type=${data.self ? 1 : 2}&id=${data.self ? data.lessonId : data.id}` });
       },
       changeTab(num) {
         num === '2' && this.getOtherHomeWork();
@@ -252,7 +268,7 @@
 
     events = {};
 
-    onLoad() {
+    onShow() {
       this.getLessonInfo();
       this.getMyHomework();
     }
@@ -302,7 +318,7 @@
           }
 
           .-title {
-            height: 50px;
+            /*height: 50px;*/
             font-size: 36px;
             font-weight: 500;
             color: rgba(88, 66, 43, 1);

@@ -5,6 +5,7 @@ import broadcast from './broadcast'
 import operate from './operate'
 import study from './study'
 import order from './order'
+import appointment from './appointment'
 
 export default {
   user,
@@ -12,5 +13,6 @@ export default {
   broadcast,
   operate,
   study,
-  order
+  order,
+  appointment
 }

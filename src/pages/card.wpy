@@ -8,14 +8,16 @@
         <view class="card-day">
           <view class="card-day-left">
             <view class="card-day-num">
-              2
+              {{cardDetail.continuousdays}}
               <text>天</text>
             </view>
             <text>累计打卡</text>
           </view>
           <view class="card-day-right"></view>
         </view>
-        <view class="card-btn isCard" @tap="bindClose">未打卡，立即打卡</view>
+        <view class="card-btn {{cardDetail.todayCard ? 'isCard' : ''}}" @tap="addMyCard">
+          {{cardDetail.todayCard ? '已打卡' : '未打卡，立即打卡'}}
+        </view>
       </view>
       <view class="card-content">
         <view class="card-content-header">
@@ -28,7 +30,7 @@
                   @tap="bindClickNext"></view>
           </view>
         </view>
-        <calendar></calendar>
+        <calendar :card.sync="cardList"></calendar>
       </view>
       <van-popup show="{{ show }}"
                  bind:close="onClose">
@@ -83,6 +85,7 @@
 </template>
 <script>
   import wepy from 'wepy';
+  import api from '../request/api';
   import calendar from '../components/calendar';
   import mHeader from '../components/header';
   import testMixin from '../mixins/test';
@@ -98,16 +101,36 @@
     };
     data = {
       today: '',
-      show: true
+      cardDetail: '',
+      show: false
     };
     components = {
       calendar,
       mHeader
     };
     mixins = [testMixin];
+
+    getCardInfo() {
+      api.study.countCard()
+        .then(res => {
+          this.cardDetail = res.data.resultData;
+          this.$apply();
+        });
+    };
+
+
     methods = {
+      addMyCard() {
+        if(this.cardDetail.todayCard) return
+        api.study.addCard()
+          .then(() => {
+            this.show = true;
+            this.$apply();
+          });
+      },
       bindClose() {
         this.show = !this.show;
+        this.getCardInfo()
       },
       bindClickPre() {
         this.$invoke('calendar', 'preMonth');
@@ -132,6 +155,7 @@
     };
 
     onShow() {
+      this.getCardInfo();
     };
   }
 </script>

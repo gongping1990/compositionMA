@@ -32,7 +32,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 0,
+			"current": 14,
 			"list": [
 				{
 					"id": 0,
@@ -115,6 +115,27 @@
 					"id": -1,
 					"name": "个人中心",
 					"pathName": "pages/user",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "约课",
+					"pathName": "pages/subscribe",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "约课quanbu",
+					"pathName": "pages/subscribeAll",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "打卡",
+					"pathName": "pages/card",
 					"query": "",
 					"scene": null
 				}

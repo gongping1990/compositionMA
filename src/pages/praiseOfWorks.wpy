@@ -31,16 +31,16 @@
             <view class="p-praiseOfWorks-item-down">
               <view class="-down-left">
                 <image class="-down-left-img" src="{{item.teacherImg}}"></image>
-                <view class="-down-left-name">被{{item.teacherName}}老师表扬</view>
+                <view class="-down-left-name">被{{item.teacherName}}表扬</view>
               </view>
-              <view class="-down-right" @tap="addMyLike">
-                <view class="-zan-left {{item.isZan ? '-zan-ok' : ''}}">
+              <view class="-down-right" @tap="addMyLike({{item}})">
+                <view class="-zan-left {{item.myLike ? '-zan-ok' : ''}}">
                   <image class="-img" wx:if="{{!item.myLike}}"
                          src="https://pub.file.k12.vip/tbzw/word-detail/icon-give-pre.png"></image>
                   <image class="-img" wx:if="{{item.myLike}}"
                          src="https://pub.file.k12.vip/2019/06/06/1136572565700235266.png"></image>
                 </view>
-                <view class="-zan-right {{item.isZan ? '-zan-ok' : ''}}">{{item.like}}</view>
+                <view class="-zan-right {{item.myLike ? '-zan-ok' : ''}}">{{item.like}}</view>
               </view>
             </view>
           </view>
@@ -122,80 +122,7 @@
         size: 10,
         total: ''
       },
-      dataList: [
-        {
-          imgUrl: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
-          workImg: 'https://pub.file.k12.vip/2019/06/05/1136182325860913154.png',
-          name: 'heaven小林哥',
-          time: '2019-5-22 17:35',
-          zan: 99,
-          isZan: true
-        },
-        {
-          imgUrl: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
-          workImg: 'https://pub.file.k12.vip/2019/06/05/1136182325860913154.png',
-          name: '风锅锅',
-          time: '2019-5-12 17:35',
-          zan: 99,
-          isZan: false
-        },
-        {
-          imgUrl: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
-          workImg: 'https://pub.file.k12.vip/2019/06/05/1136182325860913154.png',
-          name: '大江东旭',
-          time: '2019-4-11 17:35',
-          zan: 199,
-          isZan: false
-        },
-        {
-          imgUrl: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
-          workImg: 'https://pub.file.k12.vip/2019/06/05/1136182325860913154.png',
-          name: 'liangchenas',
-          time: '2019-3-12 17:35',
-          zan: 5,
-          isZan: true
-        },
-        {
-          imgUrl: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
-          workImg: 'https://pub.file.k12.vip/2019/06/05/1136182325860913154.png',
-          name: 'liangchenas',
-          time: '2019-3-12 17:35',
-          zan: 5,
-          isZan: true
-        },
-        {
-          imgUrl: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
-          workImg: 'https://pub.file.k12.vip/2019/06/05/1136182325860913154.png',
-          name: 'liangchenas',
-          time: '2019-3-12 17:35',
-          zan: 5,
-          isZan: true
-        },
-        {
-          imgUrl: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
-          workImg: 'https://pub.file.k12.vip/2019/06/05/1136182325860913154.png',
-          name: 'liangchenas',
-          time: '2019-3-12 17:35',
-          zan: 5,
-          isZan: true
-        },
-        {
-          imgUrl: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
-          workImg: 'https://pub.file.k12.vip/2019/06/05/1136182325860913154.png',
-          name: 'liangchenas',
-          time: '2019-3-12 17:35',
-          zan: 5,
-          isZan: true
-        },
-        {
-          imgUrl: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
-          workImg: 'https://pub.file.k12.vip/2019/06/05/1136182325860913154.png',
-          name: 'liangchenas',
-          time: '2019-3-12 17:35',
-          zan: 5,
-          isZan: true
-        }
-      ]
+      dataList: []
     };
 
     getList() {
@@ -220,12 +147,13 @@
     };
 
     methods = {
-      addMyLike () {
+      addMyLike (item) {
         api.study.addLike({
-          workId: ''
-        }).then(()=>{
-
+          workId: item.id
         })
+          .then(()=>{
+            this.getList()
+          })
       },
       bindLoadItem(data) {
         console.log(111111);

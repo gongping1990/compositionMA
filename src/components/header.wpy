@@ -1,22 +1,25 @@
 <!--  -->
 <template>
-  <view class='flex commonHead component'
-          style='color:{{color}};background-color:{{bgColor}};height:{{titleHeight}}px;'>
-      <view class='commonHead-wrap flex'>
+  <view class="flex commonHead component"
+          style="color:{{color}};background-color:{{bgColor}};height:{{titleHeight}}px;">
+      <view class="commonHead-wrap flex">
         <!-- 0:无返回；1：返回上一级；2：home -->
-        <view class='commonHead_left'>
+        <view class="commonHead_left {{!showBtn && 'hide'}}">
           <view wx:if="{{flag==1}}"
-                class='commonHead_left_back'
-                bindtap='commonHead_left_back'></view>
+                class="commonHead_left_back"
+                bindtap="commonHead_left_back"></view>
           <view wx:if="{{flag==2}}"
-                class='commonHead_left_home'
-                bindtap='commonHead_left_home'></view>
+                class="commonHead_left_home"
+                bindtap="commonHead_left_home"></view>
           <view wx:if="{{flag==3}}"
-                class='commonHead_left_back_s'
-                bindtap='commonHead_left_back_s'></view>
+                class="commonHead_left_back_s"
+                bindtap="commonHead_left_back_s"></view>
+          <view wx:if="{{flag==4}}"
+                class="commonHead_left_back"
+                bindtap="commonHead_left_back_s"></view>
         </view>
-        <view class='commonHead_right flex'>
-          <view class='commonHead_right_text line1'>{{title}}</view>
+        <view class="commonHead_right flex">
+          <view class="commonHead_right_text line1">{{title}}</view>
         </view>
       </view>
     </view>
@@ -50,6 +53,10 @@ export default class Example extends wepy.component {
       default: {
         titleHeight: 46
       }
+    },
+    showBtn: {
+      type: Boolean,
+      default: true
     }
   };
   data = {};
@@ -74,7 +81,11 @@ export default class Example extends wepy.component {
     }
   };
   events = {};
-  watch = {};
+  watch = {
+    showBtn(n) {
+      console.log(n, 211212)
+    }
+  };
   computed = {
     titleHeight() {
       return this.commonHeadHeight.titleHeight + wepy.$instance.globalData.systemInfo.statusBarHeight
@@ -85,8 +96,8 @@ export default class Example extends wepy.component {
   };
 }
 </script>
-<style lang='scss'>
-@import '../assets/style/mixin.scss';
+<style lang="scss">
+@import "../assets/style/mixin.scss";
 /*弹性布局*/
 
 .flex {
@@ -218,7 +229,13 @@ export default class Example extends wepy.component {
   height: 100%;
   position: absolute;
   left: 0;
-  top: 0
+  top: 0;
+  opacity: 1;
+  transition: all .5s;
+}
+
+.commonHead_left.hide {
+  opacity: 0;
 }
 
 .commonHead_left_back {
@@ -230,7 +247,7 @@ export default class Example extends wepy.component {
   background-position: center;
 }
 .commonHead_left_back_s {
-  @include bg('/sk/icon-retrun.png');
+  @include bg("/sk/icon-retrun.png");
   margin-left: 30px;
   width: 100%;
   height: 100%;

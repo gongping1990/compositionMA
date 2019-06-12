@@ -52,7 +52,8 @@ export default class Classroom extends wepy.page {
   };
   data = {
     lessonId: 0,
-    lessonData: {}
+    lessonData: {},
+    roomData: {}
   }
   computed = {
     height () {
@@ -61,12 +62,27 @@ export default class Classroom extends wepy.page {
   };
   methods = {
     bindClickRoom() {
-      wx.navigateTo({ url: '/pages/ready?id=' + this.lessonId })
+      if (this.roomData && this.roomData.stage === 1) {
+        wx.navigateTo({ url: '/pages/study?id=' + this.lessonId })
+      } else {
+        wx.navigateTo({ url: '/pages/ready?id=' + this.lessonId })
+      }
     }
   }
 
   initPage() {
     this.viewLesson()
+    this.getLessonRoom()
+  }
+
+  getLessonRoom() {
+    let { api } = this.$parent.globalData
+    api.study.getLessonRoom({
+      lessonId: this.lessonId
+    }).then(({data}) => {
+      this.roomData = data.resultData
+      this.$apply()
+    })
   }
 
   viewLesson() {

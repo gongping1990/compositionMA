@@ -1,7 +1,7 @@
 <!--  -->
 <template>
   <view class='container ready'>
-    <mHeader title="课前热身"></mHeader>
+    <mHeader title="课前热身" flag="4"></mHeader>
     <view class="container-scroll"
           style="margin-top:{{height}}px">
       <view class="header">
@@ -67,7 +67,8 @@ export default class Example extends wepy.page {
     currentTime: 0,
     time: 3,
     isReady: false,
-    showContinueDiaolig: true
+    showContinueDiaolig: true,
+    timeText: '00’’00’'
   };
   components = {
     mHeader
@@ -77,36 +78,15 @@ export default class Example extends wepy.page {
       this.time = 0
     }
   };
-  events = {};
+  events = {
+    back() {
+      wx.redirectTo({ url: '/pages/catalog' })
+    }
+  };
   watch = {};
   computed = {
     height () {
       return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
-    },
-    progressTimeText () {
-      if (this.roomData.progressTime) {
-        let minute = 0
-        let second = 0
-        let time = this.roomData.progressTime
-        minute = parseInt(time / 60)
-        second = time % 60
-        minute = minute < 10 ? '0' + minute : minute
-        second = second < 10 ? '0' + second : second
-        return `${minute}分${second}秒`
-      } else {
-        return '00分00秒'
-      }
-    },
-    timeText () {
-      let { currentTime, duration } = this
-      let minute = 0
-      let second = 0
-      let time = duration - currentTime
-      minute = parseInt(time / 60)
-      second = time % 60
-      minute = minute < 10 ? '0' + minute : minute
-      second = second < 10 ? '0' + second : second
-      return `${minute}’’${second}’`
     }
   };
 
@@ -165,33 +145,37 @@ export default class Example extends wepy.page {
       if (this.currentTime !== audioContext.currentTime) {
         this.currentTime = parseInt(audioContext.currentTime)
       }
+      this.formatTimeText()
       this.$apply()
     })
   }
 
+  formatTimeText () {
+    let { currentTime, duration } = this
+    let minute = 0
+    let second = 0
+    let time = duration - currentTime
+    minute = parseInt(time / 60)
+    second = time % 60
+    minute = minute < 10 ? '0' + minute : minute
+    second = second < 10 ? '0' + second : second
+    this.timeText = `${minute}’’${second}’`
+    this.$apply()
+  }
+
   initPage () {
-    this.getLessonRoom()
+    this.joinRoom()
     this.getClassInfo()
   }
 
   joinRoom () {
     let { api } = this.$parent.globalData
     api.study.joinRoom({
-      classno: 1,
       lessonId: this.lessonId
     }).then(({ data }) => {
       this.roomData = data.resultData
       this.mateInfo = data.resultData.mateInfo
       this.$apply()
-    })
-  }
-
-  getLessonRoom() {
-    let { api } = this.$parent.globalData
-    api.study.getLessonRoom({
-      lessonId: this.lessonId
-    }).then(({data}) => {
-      this.roomData = data.resultData
     })
   }
 
@@ -218,6 +202,9 @@ export default class Example extends wepy.page {
     this.initPage()
   }
   onHide () {
+    this.audioContext.stop()
+  }
+  onUnload() {
     this.audioContext.stop()
   }
 }

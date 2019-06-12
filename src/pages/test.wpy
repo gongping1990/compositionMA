@@ -1,14 +1,14 @@
 <!--  -->
 <template>
   <view class='container test'>
-    <mHeader title="课前热身"></mHeader>
+    <mHeader title="随堂练习" flag="4"></mHeader>
     <view class="container-scroll"
           style="margin-top:{{height}}px">
       <view class="header">
         <view class="header-left">
           <image class="header-avatar"
-                 src="" />
-          <text class="header-title">木木老师</text>
+                 src="{{courseInfo.teacherHeadImage}}" />
+          <text class="header-title">{{courseInfo.teacherName}}</text>
           <text class="header-subtitle">著名写作老师</text>
         </view>
         <view class="header-right">
@@ -16,7 +16,7 @@
                 wx:for="{{answerArr}}"
                 wx:key="{{index}}">
             <image class="student-avatar"
-                   src="" />
+                   src="{{item.mateImg}}" />
             <view class="student-status">
               {{item.status ? '已完成' : '答题中...'}}
             </view>
@@ -32,55 +32,84 @@
       <view class="content"
             style="height:calc(100vh - 254rpx - {{height * 2}}rpx)">
         <view class="question"
-              wx:if="{{showQuestion}}">
+              wx:if="{{showQuestion}}"
+              animation="{{questionAnimate}}">
           <view class="step">
-            <view class="step-item"></view>
-            <view class="step-item"></view>
+            <view class="step-item {{stepIndex >= index && (item.isRight == 1 ? 'success' : (item.isRight == 2 && 'error')) }}"
+                  wx:for="{{questionArr}}"
+                  wx:key="{{index}}"></view>
           </view>
-          <view class="chart-item">
-            <image class="chart-avatar"
-                   src="" />
-            <view class="chart-right">
-              <text class="chart-title">木木老师</text>
-              <view class="chart-content-wrap">
-                <view class="chart-content">亲爱的小朋友你们好，我是木木老师！ 现在请大家赶快关注我的公众号。关注后请立即与老师联系哦～</view>
+          <view animation="{{itemAnimate}}"
+                wx:for="{{questionArr}}"
+                wx:key="{{index}}"
+                wx:if="{{index == stepIndex && !isSummary}}">
+            <view class="chart-item">
+              <image class="chart-avatar"
+                     src="{{courseInfo.teacherHeadImage}}" />
+              <view class="chart-right">
+                <text class="chart-title">{{courseInfo.teacherName}}</text>
+                <view class="chart-content-wrap">
+                  <view class="chart-content">{{item.name}}</view>
+                </view>
+              </view>
+            </view>
+            <view class="input-list">
+              <view class="input-item {{selectIndex == item.mark && 'select'}} {{(setAnswerStatusEnd && (correctAnswer == item.mark)) && 'success'}} {{setAnswerStatusEnd && ((selectIndex == item.mark) && (correctAnswer != item.mark)) && 'error'}}"
+                    wx:for="{{item.optionList}}"
+                    wx:key="{{index}}"
+                    @tap="bindClickInput({{item.mark}})">
+                {{item.problem}}
               </view>
             </view>
           </view>
-          <view class="input-list">
-            <view class="input-item {{selectIndex == index && 'select'}} {{(setAnswerStatusEnd && (correctAnswer == index)) && 'success'}} {{setAnswerStatusEnd && ((selectIndex == index) && (correctAnswer != index)) && 'error'}}"
-                  wx:for="{{questionArr}}"
-                  wx:key="{{index}}"
-                  @tap="bindClickInput({{index}})">
-              {{item.content}}
+          <view class="summary" wx:if="{{isSummary}}">
+            <view class="summary-list">
+              <view class="chart-item summary-item {{summaryIndex >= index && summaryAnimateIndex >= index && 'show'}}" wx:if="{{summaryIndex >= index }}" wx:for="{{summaryArr}}" wx:key="{{index}}">
+              <image class="chart-avatar"
+                     src="{{courseInfo.teacherHeadImage}}" />
+              <view class="chart-right">
+                <text class="chart-title">{{courseInfo.teacherName}}</text>
+                <view class="chart-content-wrap">
+                  <view class="chart-content">{{item}}</view>
+                </view>
+              </view>
             </view>
+            </view>
+
           </view>
         </view>
         <view class="chart-item"
-              wx:if="{{!showQuestion}}">
+              wx:if="{{!showQuestion}}"
+              animation="{{chartAnimate}}">
           <image class="chart-avatar"
-                 src="" />
+                 src="{{courseInfo.teacherHeadImage}}" />
           <view class="chart-right">
-            <text class="chart-title">木木老师</text>
+            <text class="chart-title">{{courseInfo.teacherName}}</text>
             <view class="chart-content-wrap">
 
-              <view class="chart-content voice">
+              <view class="chart-content voice" @tap="bindClickVoice">
                 <view class="icon"></view>
               </view>
-              <view class="chart-time">12’’20’</view>
+              <view class="chart-time">{{timeText}}</view>
             </view>
           </view>
         </view>
         <view class="question-btn-wrap"
               wx:if="{{showQuestion}}">
           <view class="question-btn"
-                @tap="clickStudy">{{publishEnd ? '下一题' : '完成答题'}}</view>
+                wx:if="{{!isSummary}}"
+                @tap="clickStudy">{{stepIndex != questionArr.length - 1 ? '下一题' : '完成答题'}}</view>
+          <view class="question-btn"
+                wx:else
+                @tap="clickLinkHomeWork">去完成课后作业</view>
         </view>
       </view>
     </view>
-    <van-popup show="{{ showAlert }}" overlay="{{false}}">
+    <van-popup show="{{ showAlert }}"
+               overlay="{{false}}">
       <view class="dialog">
-        <image class="dialog-icon" src="{{isSuccess ? 'https://pub.file.k12.vip/tbzw/lspj/icon-satisfaction-selected.png' : 'https://pub.file.k12.vip/tbzw/lspj/icon-discontent-selected.png'}}" />
+        <image class="dialog-icon"
+               src="{{isSuccess ? 'https://pub.file.k12.vip/tbzw/lspj/icon-satisfaction-selected.png' : 'https://pub.file.k12.vip/tbzw/lspj/icon-discontent-selected.png'}}" />
         <text class="dialog-text {{isSuccess ? 'success' : 'error'}}">{{isSuccess ? '回答正确' : '回答错误'}}</text>
       </view>
     </van-popup>
@@ -97,54 +126,43 @@ export default class Example extends wepy.page {
     }
   };
   data = {
+    lessonId: 0,
+    summaryIndex: 0,
+    summaryAnimateIndex: 0,
     stepIndex: 0,
     aduioContext: null,
     showAlert: false,
     isSuccess: false,
+    isSummary: false,
     showQuestion: false,
     selectIndex: -1,
-    correctAnswer: 1,
+    correctAnswer: 0,
     answerEnd: false,
     readyEnd: false,
     setAnswerStatusEnd: false,
     publishEnd: false,
-    questionArr: [
-      {
-        content: 'A. 容光焕发',
-        isRight: false
-      },
-      {
-        content: 'B. 满面蜡黄',
-        isRight: false
-      }
-    ],
-    answerArr: [
-      {
-        status: 0,
-        answer: 0,
-        flower: 0
-      },
-      {
-        status: 0,
-        answer: 0,
-        flower: 0
-      },
-      {
-        status: 0,
-        answer: 0,
-        flower: 0
-      },
-      {
-        status: 0,
-        answer: 0,
-        flower: 0
-      }
-    ]
+    currentTime: 0,
+    duration: 0,
+    timeText: '00’’00’',
+    summaryArr: [],
+    questionArr: [],
+    answerArr: [],
+    mateInfo: [],
+    roomData: {},
+    courseInfo: {},
+    questionAnimate: null,
+    chartAnimate: null,
+    itemAnimate: null,
+    timer: null,
+    answerTime: 0
   };
   components = {
     mHeader
   };
   methods = {
+    clickLinkHomeWork() {
+      wx.redirectTo({ url: '/pages/submitHomework?id=' + this.lessonId })
+    },
     clickStudy () {
       this.answerEnd = true
       this.publishAnswer()
@@ -158,15 +176,36 @@ export default class Example extends wepy.page {
       this.selectIndex = i
     }
   };
-  events = {};
-  watch = {};
+  events = {
+    back() {
+      wx.redirectTo({ url: '/pages/catalog' })
+    }
+  };
+  watch = {
+    stepIndex(n) {
+      if (n === this.questionArr.length - 1) {
+        this.imitateReady()
+      }
+    }
+  };
   computed = {
     height () {
       return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+    },
+    anwserTimeText () {
+      if (this.answerTime) {
+        let minute = 0
+        let second = 0
+        let time = this.roomData.progressTime
+        minute = parseInt(time / 60)
+        second = time % 60
+        minute = minute < 10 ? '0' + minute : minute
+        second = second < 10 ? '0' + second : second
+        return `${minute}分${second}秒`
+      } else {
+        return '00分00秒'
+      }
     }
-    // isSuccess() {
-    //   return this.selectIndex === this.correctAnswer
-    // }
   };
 
   play () {
@@ -186,11 +225,56 @@ export default class Example extends wepy.page {
     this.isSuccess = true
     this.changeAlertVisible()
   }
+  // 设置答题完成后的总结
+  setSummary() {
+    let numText = ['一', '二', '三', '四', '五']
+    let {answerArr, questionArr} = this
+    let arr = []
+    let errorNum = questionArr.length - answerArr[3].flower
+    if (errorNum) {
+      arr.push(`${answerArr[3].mateName}，恭喜你完成了随堂测验。用时${this.anwserTimeText}。你做错了${errorNum}道，不要灰心，来听听下面老师的错题分析，下次会更棒哦！`)
+    } else {
+      arr.push(`${answerArr[3].mateName}，真棒，随堂测验你全部答对了。用时${this.anwserTimeText}。继续加油，保持优秀！`)
+    }
+    questionArr.forEach((e, i) => {
+      console.log(e)
+      if (e.isRight === 2) {
+        arr.push(`第${numText[i]}题答案：${e.answer} ${e.answerStr}`)
+      }
+    })
+    arr.push('现在，赶快点击下方按键去完成课后作业吧')
+    this.summaryArr = arr
+  }
 
-  changeAlertVisible() {
+  setSummaryIndex() {
+    console.log(this.summaryArr)
+    let {summaryIndex, summaryArr} = this
+    if (summaryIndex !== summaryArr.length) {
+      setTimeout(() => {
+        this.summaryIndex += 1
+        setTimeout(() => {
+          this.summaryAnimateIndex += 1
+          this.$apply()
+        }, 100)
+        this.setSummaryIndex()
+        this.$apply()
+      }, 1000)
+    }
+  }
+
+  changeAlertVisible () {
     this.showAlert = true
     setTimeout(() => {
       this.showAlert = false
+      if (this.stepIndex === this.questionArr.length - 1) {
+        this.setSummary()
+        this.answerArr[3].status = 1
+        this.publishEnd = true
+        this.isSummary = true
+        this.setSummaryIndex()
+      } else {
+        this.changeQuestion()
+      }
       this.$apply()
     }, 2000)
   }
@@ -214,11 +298,12 @@ export default class Example extends wepy.page {
   publishAnswer () {
     if (this.selectIndex === this.correctAnswer) {
       this.alertSuccess()
+      this.questionArr[this.stepIndex].isRight = 1
       this.answerArr[3].flower += 1
     } else {
+      this.questionArr[this.stepIndex].isRight = 2
       this.alertError()
     }
-    this.publishEnd = true
     this.$apply()
   }
 
@@ -238,22 +323,63 @@ export default class Example extends wepy.page {
     console.log(this.answerArr)
   }
 
-  randomImitateReady() {
+  randomImitateReady () {
     let base = parseInt(Math.random() * 3 + 3)
     setTimeout(() => {
       this.imitateReady()
     }, base * 1000)
   }
 
-  initAudio () {
-    let { audioContext } = this
-    console.log(this.audioContext)
-    audioContext.src = 'https://pub.file.k12.vip/qswd.mp3'
-    audioContext.play()
+  changeQuestion () {
+    this.app.show(this, 'itemAnimate', 0)
+    setTimeout(() => {
+      this.stepIndex += 1
+
+      this.selectIndex = -1
+      this.correctAnswer = this.questionArr[this.stepIndex].answer
+      this.app.show(this, 'itemAnimate', 1)
+      this.$apply()
+    }, 500)
+  }
+
+  initAudio (src) {
+    let { audioContext } = this.$parent.globalData
+    console.log(audioContext)
+    audioContext.src = src
+    setTimeout(() => {
+      audioContext.play()
+    }, 500)
+    audioContext.onPlay(() => {
+      console.log('play')
+    })
     audioContext.onEnded(() => {
       console.log('end')
-      this.showQuestion = true
-      // this.randomImitateReady()
+      this.app.show(this, 'chartAnimate', 0)
+      setTimeout(() => {
+        this.showQuestion = true
+        this.correctAnswer = this.questionArr[0].answer
+        this.app.show(this, 'questionAnimate', 1)
+        this.timer = setInterval(() => {
+          if (this.publishEnd) {
+            clearInterval(this.timer)
+          } else {
+            this.answerTime += 1
+          }
+        }, 1000)
+        this.$apply()
+      }, 500)
+      // this.showQuestion = true
+      this.$apply()
+    })
+    audioContext.onTimeUpdate(() => {
+      console.log(111)
+      if (!this.currentTime) {
+        this.duration = parseInt(audioContext.duration)
+      }
+      if (this.currentTime !== audioContext.currentTime) {
+        this.formatTimeText()
+        this.currentTime = parseInt(audioContext.currentTime)
+      }
       this.$apply()
     })
   }
@@ -266,39 +392,82 @@ export default class Example extends wepy.page {
     this.publishEnd = false
     this.setAnswerStatusEnd = false
     this.time = this.baseTime
-    this.answerArr = [
-      {
-        status: 0,
-        answer: 0,
-        flower: this.answerArr[0].flower
-      },
-      {
-        status: 0,
-        answer: 0,
-        flower: this.answerArr[1].flower
-      },
-      {
-        status: 0,
-        answer: 0,
-        flower: this.answerArr[2].flower
-      },
-      {
-        status: 0,
-        answer: 0,
-        flower: this.answerArr[3].flower
-      }
-    ]
+    this.answerArr = this.answerArr.map(e => {
+      e.status = 0
+      e.answer = 0
+      return e
+    })
     this.setRandomTime()
+  }
+
+  formatTimeText () {
+    let { currentTime, duration } = this
+    let minute = 0
+    let second = 0
+    let time = duration - currentTime
+    minute = parseInt(time / 60)
+    second = time % 60
+    minute = minute < 10 ? '0' + minute : minute
+    second = second < 10 ? '0' + second : second
+    this.timeText = `${minute}’’${second}’`
+    this.$apply()
+  }
+
+  // 获取教室信息
+  getLessonRoom (type) {
+    let { api } = this.$parent.globalData
+    api.study.resetLearn({
+      lessonId: this.lessonId
+    }).then(({ data }) => {
+      this.roomData = data.resultData
+      this.mateInfo = data.resultData.mateInfo
+      this.answerArr = this.mateInfo.map(e => {
+        e.status = 0
+        e.answer = 0
+        e.flower = e.correctNum
+        return e
+      })
+
+      this.$apply()
+    })
+  }
+
+  // 获取教室试题等信息
+  getClassInfo () {
+    let { api } = this.$parent.globalData
+    api.course.getClassInfo({
+      lessonId: this.lessonId
+    }).then(({ data }) => {
+      this.courseInfo = data.resultData
+      this.questionArr = data.resultData.quizList.map(e => {
+        e.isRight = 3
+        return e
+      })
+      this.initAudio(this.courseInfo.guideAudio)
+      this.$apply()
+    })
+  }
+
+  onLoad (option) {
+    this.lessonId = option.id
+    // eslint-disable-next-line no-undef
+    this.app = this.$parent.globalData
   }
 
   onReady () {
     console.log('ready')
     this.audioContext = this.$parent.globalData.audioContext
-    this.initAudio()
   };
+  onShow () {
+    this.getClassInfo()
+    this.getLessonRoom()
+  }
   onHide () {
     this.audioContext.stop()
-  };
+  }
+  onUnload() {
+    this.audioContext.stop()
+  }
 }
 </script>
 <style lang='scss'>
@@ -322,7 +491,7 @@ export default class Example extends wepy.page {
     &-text {
       font-size: 36px;
       &.success {
-        color: #39DDA9;
+        color: #39dda9;
       }
       &.error {
         color: #ff7c76;
@@ -403,6 +572,8 @@ export default class Example extends wepy.page {
     }
   }
   .question {
+    display: block;
+    opacity: 0;
     padding-top: 1px;
     &-btn-wrap {
       position: absolute;
@@ -431,6 +602,12 @@ export default class Example extends wepy.page {
 
       padding: 0 48px;
       margin-top: 48px;
+      opacity: 1;
+      transition: all 0.5s;
+      &.hide {
+        display: none;
+        opacity: 0;
+      }
     }
     &-avatar {
       margin-right: 16px;
@@ -451,6 +628,7 @@ export default class Example extends wepy.page {
       color: rgba($color: #58422b, $alpha: 0.4);
     }
     &-time {
+      width: 110px;
       margin-left: 24px;
       font-size: 28px;
       color: #58422b;
@@ -579,7 +757,17 @@ export default class Example extends wepy.page {
       width: 520px;
       height: 136px;
       border-radius: 48px;
-      border: 3px dashed rgba(61, 53, 45, 0.1);
+      background: linear-gradient(white, white) padding-box,
+        repeating-linear-gradient(
+          45deg,
+          transparent 0,
+          transparent 25%,
+          rgba(61,53,45,0.1) 0,
+          rgba(61,53,45,0.1) 50%
+        );
+      background-size: 20px 20px;
+      border: 3px dashed transparent;
+      animation: antsAnime 10000s linear infinite;
     }
     &-avatar {
       margin-bottom: 4px;
@@ -603,6 +791,26 @@ export default class Example extends wepy.page {
   .content {
     position: relative;
     overflow-y: auto;
+  }
+  .summary {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    margin-top: 28px;
+    max-height: 52vh;
+    overflow-y: auto;
+    &-item {
+      opacity: 0;
+      transition: all .5s;
+      &.show {
+        opacity: 1;
+      }
+    }
+  }
+}
+@keyframes antsAnime {
+  to {
+    background-position: 100000%;
   }
 }
 </style>

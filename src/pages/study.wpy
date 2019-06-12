@@ -3,24 +3,27 @@
   <view class='container study'>
     <mHeader title=""
              bgColor="transparent"
+             :showBtn.sync="showBtn"
              flag="3"></mHeader>
-    <view @tap="bindClosePopup">
+    <view @tap="bindClickVideo">
       <video class="video"
              id="video"
              show-center-play-btn="{{false}}"
              enable-progress-gesture="{{progressEnable}}"
-             autoplay
+             initial-time="{{roomData.progressTime}}"
+             loop="{{false}}"
              controls="{{controls}}"
+             @ended="bindended"
              @timeupdate="bindtimeupdate"
-             src="https://pub.file.k12.vip/1559615081097740.mp4"></video>
+             src="{{courseInfo.videoUrl}}"></video>
     </view>
     <view class="avatar-mask">
-      <image class="avatar teacher" />
+      <image src="{{roomData.teacherImg}}" class="avatar teacher" />
       <view class="student">
         <view class="avatar-student"
               wx:for="{{answerArr}}"
               wx:key="{{index}}">
-          <image class="avatar" />
+          <image src="{{item.mateImg}}" class="avatar" />
           <view class="medal"
                 wx:if="{{item.flower}}">
             <view class="medal-icon"></view>
@@ -42,7 +45,7 @@
                   wx:for="{{answerArr}}"
                   wx:key="{{index}}">
               <image class="popup-student-avatar"
-                     src="" />
+                     src="{{item.mateImg}}" />
               <view class="popup-student-status">
                 {{item.answer ? (item.answer ==1 ? '正确' : item.answer ==2 ? '错误' : '已放弃') : (item.status == 2 ? '已放弃' : item.status ? '已回答' : '答题中...')}}
               </view>
@@ -66,20 +69,20 @@
                   wx:key="index"
                   wx:if="{{item.answer==1}}">
               <image class="result-avatar"
-                     src="" />
+                     src="{{item.mateImg}}" />
               <view class="result-icon"></view>
             </view>
           </view>
         </view>
         <view class="popup-content"
               wx:if="{{!showResult}}">
-          <text class="popup-content-title">他考上了心仪的大学，脸上的表情总是最近______。</text>
+          <text class="popup-content-title">{{questionData.name}}</text>
           <view class="input-list">
-            <view class="input-item {{selectIndex == index && 'select'}} {{(setAnswerStatusEnd && (correctAnswer == index)) && 'success'}} {{setAnswerStatusEnd && ((selectIndex == index) && (correctAnswer != index)) && 'error'}}"
+            <view class="input-item {{selectIndex == item.mark && 'select'}} {{(setAnswerStatusEnd && (correctAnswer == item.mark)) && 'success'}} {{setAnswerStatusEnd && ((selectIndex == item.mark) && (correctAnswer != item.mark)) && 'error'}}"
                   wx:for="{{questionArr}}"
-                  wx:key="{{index}}"
-                  @tap="bindClickInput({{index}})">
-              {{item.content}}
+                  wx:key="{{item.mark}}"
+                  @tap="bindClickInput({{item.mark}})">
+              {{item.mark}}. {{item.problem}}
             </view>
           </view>
         </view>
@@ -103,11 +106,11 @@
     </van-popup>
     <van-popup show="{{ showContinueDiaolig }}">
       <view class="dialog out">
-        <view class="dialog-title">你上次已经学习到3分52秒</view>
+        <view class="dialog-title">你上次已经学习到{{progressTimeText}}</view>
         <view class="dialog-title">是否要继续</view>
         <view class="dialog-btn-wrap">
           <view class="dialog-btn dialog-cancel" @tap="bindClickReset">从头再看</view>
-          <view class="dialog-btn dialog-confirm" @tap="bindClickConfirm">继续观看</view>
+          <view class="dialog-btn dialog-confirm" @tap="bindClickConfirmTwo">继续观看</view>
         </view>
       </view>
     </van-popup>
@@ -124,21 +127,24 @@ export default class Example extends wepy.page {
     }
   };
   data = {
+    lessonId: 0,
     videoContext: null,
     show: false,
+    showBtn: false,
     showDialog: false,
     showContinueDiaolig: false,
     showResult: false,
     controls: false,
     progressEnable: false,
     selectIndex: -1,
-    time: 20,
-    baseTime: 20,
+    time: 0,
+    baseTime: 0,
     randomTime: 0,
     answerEnd: false,
     imitateEnd: false,
     setAnswerStatusEnd: false,
-    correctAnswer: 1,
+    correctAnswer: '',
+    questionData: {},
     questionArr: [
       {
         content: 'A. 容光焕发',
@@ -149,30 +155,13 @@ export default class Example extends wepy.page {
         isRight: false
       }
     ],
-    answerArr: [
-      {
-        status: 0,
-        answer: 0,
-        flower: 0
-      },
-      {
-        status: 0,
-        answer: 0,
-        flower: 0
-      },
-      {
-        status: 0,
-        answer: 0,
-        flower: 0
-      },
-      {
-        status: 0,
-        answer: 0,
-        flower: 0
-      }
-    ],
+    answerArr: [],
     currentTime: 0,
-    isPlay: true
+    isPlay: true,
+    courseInfo: {},
+    roomData: {},
+    mateInfo: [],
+    setTimeOut: null
   };
   components = {
     mHeader
@@ -185,30 +174,40 @@ export default class Example extends wepy.page {
       } else {
         this.videoContext.pause()
       }
+    },
+    baseTime(n) {
+      if (n) {
+        this.setRandomTime()
+      }
     }
   }
   methods = {
     bindClickReset() {
-
+      this.showContinueDiaolig = false
+      this.getLessonRoom(1)
     },
     bindClickCancel() {
       this.showDialog = false
       this.showContinueDiaolig = false
-      wx.navigateBack({})
+      this.changeLearnStage(this.roomData.id, 1)
+      wx.redirectTo({ url: '/pages/catalog' })
     },
     bindClickConfirm() {
       this.showDialog = false
-      this.showContinueDiaolig = false
       this.videoContext.play()
     },
-    bindClosePopup () {
-      this.show = !this.show
-      this.reset()
-      if (this.show) {
-        setTimeout(() => {
-          this.downTime()
-        }, 500)
-      }
+    bindClickConfirmTwo() {
+      this.showContinueDiaolig = false
+      this.videoContext.seek(this.roomData.progressTime)
+      this.videoContext.play()
+    },
+    bindClickVideo () {
+      console.log('showBtn')
+      this.showBtn = true
+      clearTimeout(this.setTimeOut)
+      this.setTimeOut = setTimeout(() => {
+        this.showBtn = false
+      }, 3000)
     },
     bindClickInput (i) {
       console.log(i)
@@ -219,27 +218,33 @@ export default class Example extends wepy.page {
       this.answerEnd = true
       this.imitateEnd && (this.time = 1)
     },
+    bindended() {
+      this.changeLearnStage(this.roomData.id, 2)
+      wx.redirectTo({ url: '/pages/test?id=' + this.lessonId })
+    },
     bindtimeupdate (event) {
       let { currentTime } = event.detail
       if (this.currentTime !== parseInt(currentTime)) {
+        let data = this.courseInfo.qaMap[this.currentTime]
         this.currentTime = parseInt(currentTime)
         console.log(this.currentTime)
-        if (this.currentTime === 20) {
+        if (data && data.anEnum === 1) {
+          this.questionData = data
+          this.questionArr = data.optionList
           this.showDialog = false
           this.show = true
           this.isPlay = false
+          this.time = data.answerTime
+          this.baseTime = data.answerTime
           this.setRandomTime()
           setTimeout(() => {
             this.downTime()
           }, 1000)
         }
-        if (this.currentTime === 40) {
-          this.show = true
-          this.isPlay = false
-          this.setRandomTime()
-          setTimeout(() => {
-            this.downTime()
-          }, 1000)
+        if (data && data.anEnum === 2) {
+          this.correctAnswer = data.answer
+          console.log(this.correctAnswer)
+          this.setAnswerStatus()
         }
       }
     }
@@ -259,6 +264,20 @@ export default class Example extends wepy.page {
         }
       })
       return num
+    },
+    progressTimeText () {
+      if (this.roomData.progressTime) {
+        let minute = 0
+        let second = 0
+        let time = this.roomData.progressTime
+        minute = parseInt(time / 60)
+        second = time % 60
+        minute = minute < 10 ? '0' + minute : minute
+        second = second < 10 ? '0' + second : second
+        return `${minute}分${second}秒`
+      } else {
+        return '00分00秒'
+      }
     }
   };
   // 倒计时
@@ -276,10 +295,7 @@ export default class Example extends wepy.page {
       console.log('play')
       this.isPlay = true
       this.answerEnd = true
-      this.answerArr[3].status = this.selectIndex > -1 ? 1 : 2
-      setTimeout(() => {
-        this.setAnswerStatus()
-      }, 2000)
+      this.answerArr[3].status = this.selectIndex !== -1 ? 1 : 2
     }
     this.$apply()
   }
@@ -302,7 +318,8 @@ export default class Example extends wepy.page {
   }
   // 设置随机基数
   setRandomTime () {
-    this.randomTime = parseInt(this.baseTime * (Math.random() * 0.3 + 0.5))
+    this.randomTime = parseInt(this.baseTime * (Math.random() * 0.2 + 0.6))
+    console.log(this.randomTime)
   }
   // 设置答题正确还是错误
   setAnswerStatus () {
@@ -314,13 +331,15 @@ export default class Example extends wepy.page {
     if (isErr) {
       this.answerArr[index].answer = 2
     }
-    if (this.selectIndex > -1) {
+    if (this.selectIndex !== -1) {
       // eslint-disable-next-line eqeqeq
-      this.answerArr[3].answer = this.selectIndex == this.correctAnswer ? 1 : 2
+      console.log(this.correctAnswer)
+      this.answerArr[3].answer = this.selectIndex === this.correctAnswer ? 1 : 2
     } else {
       this.answerArr[3].answer = 3
     }
     this.setAnswerStatusEnd = true
+
     setTimeout(() => {
       this.showResult = true
       this.answerArr.forEach((e, i) => {
@@ -328,6 +347,8 @@ export default class Example extends wepy.page {
           this.answerArr[i].flower += 1
         }
       })
+
+      this.changeLearnInfo(1)
       this.$apply()
       setTimeout(() => {
         this.show = false
@@ -341,58 +362,108 @@ export default class Example extends wepy.page {
   // 重制数据
   reset () {
     this.selectIndex = -1
+    this.baseTime = 0
+    this.time = 0
+    this.randomTime = 0
     this.answerEnd = false
     this.showResult = false
     this.imitateEnd = false
     this.setAnswerStatusEnd = false
     this.time = this.baseTime
-    this.answerArr = [
-      {
-        status: 0,
-        answer: 0,
-        flower: this.answerArr[0].flower
-      },
-      {
-        status: 0,
-        answer: 0,
-        flower: this.answerArr[1].flower
-      },
-      {
-        status: 0,
-        answer: 0,
-        flower: this.answerArr[2].flower
-      },
-      {
-        status: 0,
-        answer: 0,
-        flower: this.answerArr[3].flower
-      }
-    ]
+    this.answerArr = this.answerArr.map(e => {
+      e.status = 0
+      e.answer = 0
+      return e
+    })
     this.setRandomTime()
   }
 
+  // 初始化请求
   initPage() {
     this.getClassInfo()
   }
 
+  // 更新课程状态
+  changeLearnStage(id, type) {
+    let { api } = this.$parent.globalData
+    api.study.changeLearnStage({
+      id,
+      stage: type
+    })
+  }
+  // 更新课程 试题等信息
+  changeLearnInfo(stage) {
+    let { api } = this.$parent.globalData
+    let mate = this.answerArr.map(e => {
+      let obj = {}
+      obj.correctNum = e.flower
+      obj.mateId = e.mateId
+      return obj
+    })
+    api.study.changeLearnInfo({
+      id: this.roomData.id,
+      mate,
+      progressTime: this.currentTime,
+      stage
+    })
+  }
+  // 获取教室信息
+  getLessonRoom(type) {
+    let { api } = this.$parent.globalData
+    let apiUrl = type ? api.study.resetLearn : api.study.getLessonRoom
+    apiUrl({
+      lessonId: this.lessonId
+    }).then(({data}) => {
+      this.roomData = data.resultData
+      this.mateInfo = data.resultData.mateInfo
+      this.answerArr = this.mateInfo.map(e => {
+        e.status = 0
+        e.answer = 0
+        e.flower = e.correctNum
+        return e
+      })
+      if (type) {
+        this.videoContext.seek(0)
+        this.videoContext.play()
+      } else {
+        this.changeLearnStage(data.resultData.id, 1)
+        if (!data.resultData.newstart) {
+          this.showContinueDiaolig = true
+        } else {
+          this.isPlay = true
+        }
+      }
+
+      this.$apply()
+    })
+  }
+
+  // 获取教室试题等信息
   getClassInfo () {
     let { api } = this.$parent.globalData
     api.course.getClassInfo({
       lessonId: this.lessonId
     }).then(({ data }) => {
       this.courseInfo = data.resultData
-      this.initAudio(data.resultData.guideAudio)
+      this.getLessonRoom()
       this.$apply()
     })
   }
-  onLoad () {
+  onLoad (option) {
+    this.lessonId = option.id
   };
   onReady () {
     this.videoContext = wx.createVideoContext('video')
   }
   onShow () {
-
+    this.initPage()
   };
+  onHide() {
+    this.changeLearnInfo(1)
+  }
+  onUnload() {
+    this.changeLearnInfo(1)
+  }
 }
 </script>
 <style lang='scss'>

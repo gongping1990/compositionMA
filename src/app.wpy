@@ -63,7 +63,18 @@ export default class extends wepy.app {
     userInfo: null,
     systemInfo: null,
     headHeight: 46,
-    audioContext: wx.createInnerAudioContext()
+    audioContext: wx.createInnerAudioContext(),
+    show(that, param, opacity) {
+      var animation = wx.createAnimation({
+      // 持续时间800ms
+        duration: 500,
+        timingFunction: 'ease'
+      })
+    // var animation = this.animation
+      animation.opacity(opacity).step()
+    // 设置动画
+      that[param] = animation.export()
+    }
   }
 
   constructor() {

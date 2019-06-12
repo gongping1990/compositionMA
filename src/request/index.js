@@ -78,12 +78,13 @@ export default {
       wx.request(option)
     })
   },
-  get(url, data = '') {
-    let option = { url, data }
+  get(url, data = '', contentType) {
+    let option = { url, data, contentType }
     return this.baseOptions(option)
   },
   post: function(url, data, contentType) {
     let params = { url, data, contentType }
+    console.log(contentType)
     return this.baseOptions(params, 'POST')
   }
 }

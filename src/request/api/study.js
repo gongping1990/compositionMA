@@ -8,7 +8,16 @@ const study = {
     return request.post('/study/joinRoom', params)
   },
   getLessonRoom(params) {
-    return request.post('/study/joinRoom', params)
+    return request.get('/study/getLessonRoom', params)
+  },
+  resetLearn(params) {
+    return request.get('/study/resetLearn', params)
+  },
+  changeLearnStage(params) {
+    return request.post('/study/changeLearnStage', params)
+  },
+  changeLearnInfo(params) {
+    return request.post('/study/changeLearnInfo', params, 'application/json')
   },
   listExistWorkByPage(params) {
     return request.get('/study/listExistWorkByPage', params)

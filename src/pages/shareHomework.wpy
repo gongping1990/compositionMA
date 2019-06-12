@@ -105,9 +105,10 @@
 
     getMyHomework() {
       api.study.viewMyHomework({
-        lessonId: ''
+        lessonId: '1134359706941546498'
       }).then(res => {
         this.shareInfo = res.data.resultData;
+        this.$apply()
       });
     };
 
@@ -141,14 +142,15 @@
         }
       },
       addLike () {
-        if (this.workType === '1') {
-          return
-        } else {
-          api.study.addLike()
-            .then(()=>{
-              this.getMyHomework()
+        api.study.addLike({
+          workId: this.shareInfo.id
+        })
+          .then(()=>{
+            wx.showToast({
+              title: '点赞成功'
             })
-        }
+            this.getMyHomework()
+          })
       },
     };
 
@@ -157,9 +159,6 @@
     onLoad() {
       this.getMyHomework()
       this.initAudio()
-    }
-    onHide () {
-      this.myAudio.destroy()
     }
     onUnload () {
       this.myAudio.destroy()

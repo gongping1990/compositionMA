@@ -33,7 +33,7 @@
       </view>
 
       <view class="p-user-footer">
-        <view class="-footer-btn">
+        <view class="-footer-btn" @tap="toJump({{'6'}})">
           <image class="-btn-img" src="https://pub.file.k12.vip/2019/06/05/1136090714887966722.png"></image>
           <text class="-btn-text">约课</text>
         </view>
@@ -46,37 +46,37 @@
       <van-tabbar-item>
         <image slot="icon"
                src="../assets/image/icon-jrxx.png"
-               mode="aspectFit" />
+               mode="aspectFit"/>
         <image slot="icon-active"
                src="../assets/image/icon-jrxx1.png"
-               mode="aspectFit" />
+               mode="aspectFit"/>
         今日学习
       </van-tabbar-item>
       <van-tabbar-item>
         <image slot="icon"
                src="../assets/image/icon-zpbz.png"
-               mode="aspectFit" />
+               mode="aspectFit"/>
         <image slot="icon-active"
                src="../assets/image/icon-zpbz1.png"
-               mode="aspectFit" />
+               mode="aspectFit"/>
         作品表彰
       </van-tabbar-item>
       <van-tabbar-item>
         <image slot="icon"
                src="../assets/image/icon-dkjl.png"
-               mode="aspectFit" />
+               mode="aspectFit"/>
         <image slot="icon-active"
                src="../assets/image/icon-dkjl1.png"
-               mode="aspectFit" />
+               mode="aspectFit"/>
         打卡记录
       </van-tabbar-item>
       <van-tabbar-item>
         <image slot="icon"
                src="../assets/image/icon-grzx.png"
-               mode="aspectFit" />
+               mode="aspectFit"/>
         <image slot="icon-active"
                src="../assets/image/icon-grzx1.png"
-               mode="aspectFit" />
+               mode="aspectFit"/>
         个人中心
       </van-tabbar-item>
     </van-tabbar>
@@ -87,7 +87,7 @@
   import wepy from 'wepy';
   import api from '../request/api';
   import { connect } from 'wepy-redux';
-  import testMixin from '../mixins/test'
+  import testMixin from '../mixins/test';
   import mHeader from '../components/header';
 
   @connect({
@@ -103,7 +103,7 @@
         'van-tabbar-item': '../vant/tabbar-item/index'
       }
     };
-    mixins = [testMixin]
+    mixins = [testMixin];
     components = {
       mHeader
     };
@@ -120,7 +120,7 @@
     getUCRemindVO() {
       api.study.getUCRemindVO()
         .then(res => {
-          let notice = res.data.resultData
+          let notice = res.data.resultData;
           this.itemList = [
             {
               id: 1,
@@ -150,13 +150,13 @@
               name: '我的收货地址',
               url: 'https://pub.file.k12.vip/tbzw/course/my-icon-address.png'
             }
-          ]
+          ];
         });
     }
 
     methods = {
       toJump(data) {
-        switch (data) {
+        switch (+data) {
           case 1:
             wx.navigateTo({ url: '/pages/myCourse' });
             break;
@@ -172,13 +172,16 @@
           case 5:
             wx.navigateTo({ url: '/pages/address' });
             break;
+          case 6:
+            wx.navigateTo({ url: '/pages/subscribe' });
+            break;
         }
       }
     };
 
     events = {};
 
-    onLoad() {
+    onShow() {
       this.getUCRemindVO();
     }
   }

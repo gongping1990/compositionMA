@@ -5,7 +5,7 @@
     <view class="container-scroll -height-wrap" style="margin-top:{{height}}px">
       <view class="p-completionOfWork-top">
         <view class="-top-left">
-          <image class="-top-left-img" src="{{userInfo.headimgurl}}"></image>
+          <image class="-top-left-img" src="{{workDetail.stuImg}}"></image>
         </view>
         <view class="-top-right">
           <view class="-top-right-name">{{workDetail.nickname}}</view>
@@ -15,10 +15,10 @@
       </view>
 
       <view class="p-completionOfWork-down">
-        <view class="-down-left" wx:if="{{!isReply}}">
+        <view class="-down-left" wx:if="{{!isReply && queryInfo.type === '1'}}">
           <image class="-down-left-img" src="https://pub.file.k12.vip/tbzw/word-detail/icon-notice.png"></image>
         </view>
-        <view class="-down-right" wx:if="{{!isReply}}">
+        <view class="-down-right" wx:if="{{!isReply && queryInfo.type === '1'}}">
           <view class="-down-right-info">
             <image class="-info-img" src="{{workDetail.replyTeacherImg}}"></image>
             <text class="-info-name">{{workDetail.replyTeacher}}</text>
@@ -42,25 +42,29 @@
                 <view class="-reply-time">{{durationTime}}</view>
               </view>
             </view>
-
           </view>
           <image class="-down-reply-img" src="{{workDetail.replyImg}}"></image>
         </view>
       </view>
 
-      <view class="p-completionOfWork-footer">
-        <button class="-footer-btn {{isCompliment ? '-footer-btn-zan' : ''}}" @tap="addLike">
-          <image class="-footer-btn-icon" wx:if="{{!isCompliment}}"
-                 src="https://pub.file.k12.vip/tbzw/word-detail/icon-give-pre.png"></image>
-          <image class="-footer-btn-icon" wx:if="{{isCompliment}}"
-                 src="https://pub.file.k12.vip/tbzw/word-detail/icon-givea-def.png"></image>
-          {{workDetail.likenum || 0}}
-        </button>
-        <button class="-footer-btn">
-          <image class="-footer-btn-icon" src="https://pub.file.k12.vip/tbzw/word-detail/icon-share.png"></image>
-          分享
-        </button>
-        <image class="-footer-tip" wx:if="{{workDetail.evaluation !== 0}}" src="https://pub.file.k12.vip/2019/06/05/1136201296525938689.png"></image>
+      <view class="p-completionOfWork-footer {{isReply ? 'p-completionOfWork-footer-reply' : ''}}">
+        <view class="-footer-wrap">
+          <button class="-footer-btn {{isCompliment ? '-footer-btn-zan' : ''}}" @tap="addLike">
+            <image class="-footer-btn-icon" wx:if="{{!isCompliment}}"
+                   src="https://pub.file.k12.vip/tbzw/word-detail/icon-give-pre.png"></image>
+            <image class="-footer-btn-icon" wx:if="{{isCompliment}}"
+                   src="https://pub.file.k12.vip/tbzw/word-detail/icon-givea-def.png"></image>
+            {{workDetail.likenum || 0}}
+          </button>
+          <button class="-footer-btn" open-type="share">
+            <image class="-footer-btn-icon" src="https://pub.file.k12.vip/tbzw/word-detail/icon-share.png"></image>
+            分享
+          </button>
+          <image class="-footer-tip"
+                 wx:if="{{workDetail.evaluation === 1 || workDetail.evaluation === 2}}"
+                 src="https://pub.file.k12.vip/2019/06/05/1136201296525938689.png"></image>
+        </view>
+
       </view>
 
       <van-popup show="{{isOpenPopup}}">
@@ -131,13 +135,9 @@
 <script>
   import wepy from 'wepy';
   import api from '../request/api'
-  import { connect } from 'wepy-redux';
+  import dayjs from 'dayjs'
   import mHeader from '../components/header';
-  @connect({
-    userInfo(state) {
-      return state.user.userInfo;
-    }
-  })
+
   export default class CompletionOfWork extends wepy.page {
     config = {
       navigationBarTitleText: '课后作业',
@@ -164,14 +164,14 @@
       isActive: '',
       stumsg: '',
       workDetail: '',
-      workType: '',
+      queryInfo: '',
       myAudio: '',
       durationTime: '',
     };
 
     initAudio () {
       this.myAudio = wx.createInnerAudioContext()
-      this.myAudio.src = 'http://huoke-private-1254282420.cos.ap-chengdu.myqcloud.com/2019/04/22/1120145041622765570.mp3?sign=q-sign-algorithm%3Dsha1%26q-ak%3DAKIDCJG2e67TN6kR3mA5fDve2X0Ndnwz5mV8%26q-sign-time%3D1560235841%3B1560307841%26q-key-time%3D1560235841%3B1560307841%26q-header-list%3D%26q-url-param-list%3D%26q-signature%3D870de55a12cc09bd6f82297a9feb5c61adb94952'
+      this.myAudio.src = this.workDetail.replyAudio
 
       this.myAudio.onEnded(() => {
         this.isPlay = false;
@@ -206,21 +206,36 @@
 
     getMyHomework() {
       api.study.viewMyHomework({
-        lessonId: ''
+        lessonId: this.queryInfo.id
       }).then(res => {
         this.workDetail = res.data.resultData;
-        this.workDetail && (this.isReply = true)
+        this.workDetail.workTime = dayjs(+this.workDetail.workTime).format('YYYY-MM-DD HH:mm:ss');
+        if(this.workDetail.replyTime) {
+          this.workDetail.replyTime = dayjs(+this.workDetail.replyTime).format('YYYY-MM-DD HH:mm:ss');
+          this.isReply = true
+        } else  {
+          this.isReply = false
+        }
         this.initAudio()
+        this.$apply()
       });
     };
 
     getOtherHomework() {
       api.study.viewHomework({
-        workId: ''
+        workId: this.queryInfo.id
       }).then(res => {
         this.workDetail = res.data.resultData;
+        this.workDetail.workTime = dayjs(+this.workDetail.workTime).format('YYYY-MM-DD HH:mm:ss');
+        if(this.workDetail.replyTime) {
+          this.workDetail.replyTime = dayjs(+this.workDetail.replyTime).format('YYYY-MM-DD HH:mm:ss');
+          this.isReply = true
+        } else {
+          this.isReply = false
+        }
         this.isCompliment = this.workDetail.otherLike
         this.initAudio()
+        this.$apply()
       });
     };
 
@@ -235,10 +250,12 @@
         }
       },
       addLike () {
-        if (this.workType === '1') {
+        if (this.queryInfo.type === '1') {
           return
         } else {
-          api.study.addLike()
+          api.study.addLike({
+            workId: this.queryInfo.id
+          })
             .then(()=>{
               this.getOtherHomework()
             })
@@ -266,20 +283,26 @@
     events = {};
 
     onLoad(query) {
-      this.workType = query.type
+      this.queryInfo = query
       if (query.type === '1') {
         this.getMyHomework()
       } else {
         this.getOtherHomework()
       }
-
+      this.$apply()
     }
 
-    onHide () {
-      this.myAudio.destroy()
-    }
     onUnload () {
+      console.log(2)
       this.myAudio.destroy()
+    }
+
+    onShareAppMessage () {
+      return {
+        title: '同步作文',
+        path: '/pages/shareHomework',
+        imageUrl: 'https://pub.file.k12.vip/read/ldshared.jpeg'
+      };
     }
   }
 </script>
@@ -335,7 +358,7 @@
 
     &-down {
       display: flex;
-      margin: 66px 0 0 64px;
+      margin: 66px 0 138px 64px;
 
       .-down-left {
 
@@ -408,6 +431,7 @@
           }
 
           .-reply-info-wrap {
+            margin-top: 14px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -460,12 +484,16 @@
     }
 
     &-footer {
-      position: relative;
-      margin-top: 138px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 64px 24px;
+      position: absolute;
+      bottom: 0px;
+      width: 100%;
+
+      .-footer-wrap {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 64px 24px;
+      }
 
       .-footer-btn {
         @include flex-center;
@@ -498,6 +526,11 @@
         top: -100px;
         right: 90px;
       }
+    }
+
+    &-footer-reply {
+      position: relative;
+      margin-top: 120px;
     }
 
     &-popup-dp {

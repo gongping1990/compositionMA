@@ -4,14 +4,9 @@
     <view class="container-scroll p-shareHomework"
           style="margin-top:{{height}}px">
       <view class="p-shareHomework-header">
-        <view class="-header-title">同步作文课</view>
+        <view class="-header-title">小语轻作文</view>
         <view class="-header-text">
-          <view>北京大学特级名师
-            <text class="-header-bold">1对4小班教学,</text>
-          </view>
-          <view>专业作文老师
-            <text class="-header-bold">1对1点评</text>
-          </view>
+          北京师范大学特级名师1对4小班教学， 专业作文老师1对1点评
         </view>
       </view>
       <view class="p-shareHomework-content">
@@ -175,31 +170,29 @@ export default class ShareHomework extends wepy.page {
 @import '../assets/style/mixin.scss';
 
 .p-shareHomework {
-  @include bg('/zyfx-background.png');
+  @include bg('/v2/zyfx-background.png');
   border-top: 1px solid transparent;
 
   &-header {
-    margin-left: 54px;
+    margin-left: 72px;
+
     .-header-title {
-      margin-top: 44px;
-      height: 50px;
-      font-size: 36px;
-      font-weight: 600;
-      color: rgba(88, 66, 43, 1);
-      line-height: 50px;
+      margin-top: 34px;
+      margin-bottom: 4px;
+      height:44px;
+      font-size:32px;
+      font-weight:600;
+      color:rgba(160,84,12,0.6);
+      line-height:44px;
     }
 
     .-header-text {
-      width: 356px;
-      height: 72px;
-      font-size: 22px;
-      font-weight: 400;
-      color: rgba(88, 66, 43, 1);
-      line-height: 32px;
-    }
-
-    .-header-bold {
-      font-size: 26px;
+      width:410px;
+      height:68px;
+      font-size:24px;
+      font-weight:500;
+      color:rgba(160,84,12,0.6);
+      line-height:34px;
     }
   }
 
@@ -387,12 +380,12 @@ export default class ShareHomework extends wepy.page {
 
   &-btn {
     position: relative;
-    height: 344px;
+    height: 280px;
 
     .-btn {
       position: absolute;
-      top: 228px;
-      left: 40px;
+      top: 138px;
+      left: 70px;
       width: 220px;
       height: 75px;
       background-color: transparent;

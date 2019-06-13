@@ -28,8 +28,8 @@
               </view>
 
               <view class="-item-icon">
-                <view class="-item-icon-num">{{item.learnDay}}
-                  <text class="-text">天</text>
+                <view class="-item-icon-num">
+                  {{item.learnDay}}天
                 </view>
                 <view class="-item-icon-text">坚持学习</view>
               </view>
@@ -185,7 +185,7 @@ export default class PraiseOfWorks extends wepy.page {
 @import '../assets/style/mixin.scss';
 
 .p-praiseOfWorks {
-  @include bg('/zpbz/zpbz-background.png');
+  @include bg('/v2/zpbz/zpbz-background.png');
   background-color: #fced42;
   margin-bottom: 100px;
 
@@ -194,13 +194,14 @@ export default class PraiseOfWorks extends wepy.page {
   }
 
   &-title {
-    padding-top: 64px;
-    margin: 0 0 38px 32px;
-    height: 84px;
-    font-size: 60px;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 1);
-    line-height: 84px;
+    padding-top: 56px;
+    margin: 0 0 104px 168px;
+    width:192px;
+    height:66px;
+    font-size:48px;
+    font-weight:600;
+    color:rgba(255,255,255,1);
+    line-height:66px;
   }
 
   &-item {
@@ -231,20 +232,19 @@ export default class PraiseOfWorks extends wepy.page {
 
         &-right {
           .-right-name {
-            height: 28px;
-            font-size: 20px;
-            font-weight: 500;
-            color: rgba(70, 65, 60, 0.6);
-            line-height: 28px;
+            height:40px;
+            font-size:28px;
+            font-weight:500;
+            color:rgba(88,66,43,1);
+            line-height:40px;
           }
 
           .-right-time {
-            margin-top: 4px;
-            height: 22px;
-            font-size: 16px;
-            font-weight: 400;
-            color: rgba(70, 65, 60, 0.31);
-            line-height: 22px;
+            height:28px;
+            font-size:20px;
+            font-weight:400;
+            color:rgba(88,66,43,0.5);
+            line-height:28px;
           }
 
           .-right-work {
@@ -289,30 +289,28 @@ export default class PraiseOfWorks extends wepy.page {
       }
 
       .-item-icon {
-        @include bg('/zpbz/icon-xunzhang.png');
-        width: 150px;
-        height: 128px;
+        @include bg('/v2/zpbz/icon-xunzhang.png');
+        width: 168px;
+        height: 162px;
         text-align: center;
 
         &-num {
-          margin-top: 30px;
-          height: 50px;
-          font-size: 36px;
-          font-weight: 600;
-          color: rgba(255, 255, 255, 1);
-          line-height: 50px;
-
-          .-text {
-            font-size: 24px;
-          }
+          margin-top: 70px;
+          height:40px;
+          font-size:28px;
+          font-weight:600;
+          color:rgba(213,147,15,1);
+          line-height:40px;
+          text-shadow:0px 2px 2px rgba(155,79,15,1);
         }
 
         &-text {
-          height: 28px;
-          font-size: 20px;
-          font-weight: 600;
-          color: rgba(255, 255, 255, 1);
-          line-height: 28px;
+          margin-top: 6px;
+          height:26px;
+          font-size:18px;
+          font-weight:600;
+          color:rgba(255,255,255,1);
+          line-height:26px;
         }
       }
     }
@@ -341,13 +339,14 @@ export default class PraiseOfWorks extends wepy.page {
           padding-right: 28px;
           text-align: right;
           width: 234px;
-          height: 48px;
-          background: rgba(249, 230, 11, 0.9);
+          background: #FFD263;
           border-radius: 24px;
-          font-size: 24px;
-          font-weight: 500;
-          color: rgba(88, 66, 43, 0.9);
-          line-height: 48px;
+          height:48px;
+          font-size:24px;
+          font-family:PingFangSC-Medium;
+          font-weight:500;
+          color:rgba(88,66,43,0.9);
+          line-height:48px;
         }
       }
 

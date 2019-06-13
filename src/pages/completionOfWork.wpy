@@ -2,50 +2,40 @@
   <view class="container p-completionOfWork">
     <mHeader title="课后作业"></mHeader>
 
-    <view class="container-scroll -height-wrap"
-          style="margin-top:{{height}}px">
+    <view class="container-scroll -height-wrap" style="margin-top:{{height}}px">
       <view class="p-completionOfWork-top">
         <view class="-top-left">
-          <image class="-top-left-img"
-                 src="{{workDetail.stuImg}}"></image>
+          <image class="-top-left-img" src="{{workDetail.stuImg}}"></image>
         </view>
         <view class="-top-right">
           <view class="-top-right-name">{{workDetail.nickname}}</view>
           <view class="-top-right-time">{{workDetail.workTime}}</view>
-          <image class="-top-right-work"
-                 src="{{workDetail.workImg}}"></image>
+          <image class="-top-right-work" src="{{workDetail.workImg}}"></image>
         </view>
       </view>
 
       <view class="p-completionOfWork-down">
-        <view class="-down-left"
-              wx:if="{{!isReply && queryInfo.type === '1'}}">
-          <image class="-down-left-img"
-                 src="https://pub.file.k12.vip/tbzw/word-detail/icon-notice.png"></image>
+        <view class="-down-left" wx:if="{{!isReply && queryInfo.type === '1'}}">
+          <image class="-down-left-img" src="https://pub.file.k12.vip/tbzw/word-detail/icon-notice.png"></image>
         </view>
-        <view class="-down-right"
-              wx:if="{{!isReply && queryInfo.type === '1'}}">
+        <view class="-down-right" wx:if="{{!isReply && queryInfo.type === '1'}}">
           <view class="-down-right-info">
-            <image class="-info-img"
-                   src="{{workDetail.replyTeacherImg}}"></image>
+            <image class="-info-img" src="{{workDetail.replyTeacherImg}}"></image>
             <text class="-info-name">{{workDetail.replyTeacher}}</text>
           </view>
           <view class="-down-right-text">
             老师随后为你点评，请留意微信通知！
           </view>
         </view>
-        <view class="-down-reply"
-              wx:if="{{isReply}}">
+        <view class="-down-reply" wx:if="{{isReply}}">
           <view class="-down-reply-info">
-            <image class="-reply-info-img"
-                   src="{{workDetail.replyTeacherImg}}"></image>
+            <image class="-reply-info-img" src="{{workDetail.replyTeacherImg}}"></image>
             <view class="-reply-info-user">
               <view class="-user-text">
                 <text class="-name">{{workDetail.replyTeacher}}</text>
                 <text>{{workDetail.replyTime}}</text>
               </view>
-              <view class="-reply-info-wrap"
-                    @tap="changeAudioStatus">
+              <view class="-reply-info-wrap" @tap="changeAudioStatus">
                 <view class="-info-content voice">
                   <view class="icon"></view>
                 </view>
@@ -53,27 +43,21 @@
               </view>
             </view>
           </view>
-          <image class="-down-reply-img"
-                 src="{{workDetail.replyImg}}"></image>
+          <image class="-down-reply-img" src="{{workDetail.replyImg}}"></image>
         </view>
       </view>
 
       <view class="p-completionOfWork-footer {{isReply ? 'p-completionOfWork-footer-reply' : ''}}">
         <view class="-footer-wrap">
-          <button class="-footer-btn {{isCompliment ? '-footer-btn-zan' : ''}}"
-                  @tap="addLike">
-            <image class="-footer-btn-icon"
-                   wx:if="{{!isCompliment}}"
+          <button class="-footer-btn {{isCompliment ? '-footer-btn-zan' : ''}}" @tap="addLike">
+            <image class="-footer-btn-icon" wx:if="{{!isCompliment}}"
                    src="https://pub.file.k12.vip/tbzw/word-detail/icon-give-pre.png"></image>
-            <image class="-footer-btn-icon"
-                   wx:if="{{isCompliment}}"
+            <image class="-footer-btn-icon" wx:if="{{isCompliment}}"
                    src="https://pub.file.k12.vip/tbzw/word-detail/icon-givea-def.png"></image>
             {{workDetail.likenum || 0}}
           </button>
-          <button class="-footer-btn"
-                  open-type="share">
-            <image class="-footer-btn-icon"
-                   src="https://pub.file.k12.vip/tbzw/word-detail/icon-share.png"></image>
+          <button class="-footer-btn" open-type="share">
+            <image class="-footer-btn-icon" src="https://pub.file.k12.vip/tbzw/word-detail/icon-share.png"></image>
             分享
           </button>
           <image class="-footer-tip"
@@ -84,35 +68,28 @@
       </view>
 
       <van-popup show="{{isOpenPopup}}">
-        <view class="p-completionOfWork-popup-dp"
-              wx:if="{{!isEvaluate}}">
+        <view class="p-completionOfWork-popup-dp" wx:if="{{!isEvaluate}}">
           <view class="-popup-title">评价老师的点评</view>
           <view class="-popup-text">评价标签对老师不可见，请放心选择</view>
           <view class="-popup-list">
             <view @tap="choiceTab({{'0'}})">
-              <image wx:if="{{isActive !== '0'}}"
-                     class="-list-img"
+              <image wx:if="{{isActive !== '0'}}" class="-list-img"
                      src="https://pub.file.k12.vip/tbzw/lspj/icon-discontent.png"></image>
-              <image wx:if="{{isActive === '0'}}"
-                     class="-list-img"
+              <image wx:if="{{isActive === '0'}}" class="-list-img"
                      src="https://pub.file.k12.vip/tbzw/lspj/icon-discontent-selected.png"></image>
               <view class="-list-text {{isActive === '0' ? '-active-text' : ''}}">不满意</view>
             </view>
             <view @tap="choiceTab({{'1'}})">
-              <image wx:if="{{isActive !== '1'}}"
-                     class="-list-img"
+              <image wx:if="{{isActive !== '1'}}" class="-list-img"
                      src="https://pub.file.k12.vip/tbzw/lspj/icon-general.png"></image>
-              <image wx:if="{{isActive === '1'}}"
-                     class="-list-img"
+              <image wx:if="{{isActive === '1'}}" class="-list-img"
                      src="https://pub.file.k12.vip/tbzw/lspj/icon-general-selected.png"></image>
               <view class="-list-text {{isActive === '1' ? '-active-text' : ''}}">一般有待改进</view>
             </view>
             <view @tap="choiceTab({{'2'}})">
-              <image wx:if="{{isActive !== '2'}}"
-                     class="-list-img"
+              <image wx:if="{{isActive !== '2'}}" class="-list-img"
                      src="https://pub.file.k12.vip/tbzw/lspj/icon-satisfaction.png"></image>
-              <image wx:if="{{isActive === '2'}}"
-                     class="-list-img"
+              <image wx:if="{{isActive === '2'}}" class="-list-img"
                      src="https://pub.file.k12.vip/tbzw/lspj/icon-satisfaction-selected.png"></image>
               <view class="-list-text {{isActive === '2' ? '-active-text' : ''}}">满意</view>
             </view>
@@ -122,8 +99,8 @@
                       value="{{stumsg}}"
                       bindinput="bindClickMessage"
                       placeholder="你想对点评老师说…"
-                      placeholder-style="font-size: 12px;" />
-            </view>
+                      placeholder-style="font-size: 12px;"/>
+          </view>
           <button class="-popup-btn" @tap="submitEvaluate">提交</button>
         </view>
 
@@ -156,570 +133,564 @@
 </template>
 
 <script>
-import wepy from 'wepy'
-import api from '../request/api'
-import dayjs from 'dayjs'
-import mHeader from '../components/header'
+  import wepy from 'wepy';
+  import api from '../request/api'
+  import dayjs from 'dayjs'
+  import mHeader from '../components/header';
 
-export default class CompletionOfWork extends wepy.page {
-  config = {
-    navigationBarTitleText: '课后作业',
-    'usingComponents': {
-      'van-icon': '../vant/icon/index',
-      'van-popup': '../vant/popup/index'
-    }
-  };
-  components = {
-    mHeader
-  };
-  computed = {
-    height () {
-      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
-    }
-  };
-
-  data = {
-    isOpenPopup: false,
-    isCompliment: false,
-    isReply: true,
-    isEvaluate: false,
-    isPlay: false,
-    isActive: '',
-    stumsg: '',
-    workDetail: '',
-    queryInfo: '',
-    myAudio: '',
-    durationTime: ''
-  };
-
-  initAudio () {
-    this.myAudio = wx.createInnerAudioContext()
-    this.myAudio.src = this.workDetail.replyAudioAuthorUrl
-
-    this.myAudio.onEnded(() => {
-      this.isPlay = false
-      if (this.queryInfo.type === '1' && this.workDetail.evaluation === null) {
-        this.isOpenPopup = true
+  export default class CompletionOfWork extends wepy.page {
+    config = {
+      navigationBarTitleText: '课后作业',
+      'usingComponents': {
+        'van-icon': '../vant/icon/index',
+        'van-popup': '../vant/popup/index'
       }
-      this.$apply()
-    })
-
-    this.myAudio.onTimeUpdate(() => {
-      this.durationTime = this.timeToFormat(this.myAudio.duration)
-      this.$apply()
-    })
-  };
-
-  timeToFormat (times) {
-    var result = '00:00'
-    // eslint-disable-next-line no-unused-vars
-    var hour, minute, second
-    if (times > 0) {
-      minute = Math.floor(times / 60)
-      if (minute < 10) {
-        minute = '0' + minute
+    };
+    components = {
+      mHeader
+    };
+    computed = {
+      height() {
+        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
       }
+    };
 
-      second = Math.floor((times - 60 * minute) % 60)
-      if (second < 10) {
-        second = '0' + second
+    data = {
+      isOpenPopup: false,
+      isCompliment: false,
+      isReply: true,
+      isEvaluate: false,
+      isPlay: false,
+      isActive: '',
+      stumsg: '',
+      workDetail: '',
+      queryInfo: '',
+      myAudio: '',
+      durationTime: '',
+    };
+
+    initAudio () {
+      this.myAudio = wx.createInnerAudioContext()
+      this.myAudio.src = this.workDetail.replyAudioAuthorUrl
+
+      this.myAudio.onEnded(() => {
+        this.isPlay = false;
+        if (this.queryInfo.type === '1' && this.workDetail.evaluation === null) {
+          this.isOpenPopup = true
+        }
+        this.$apply()
+      });
+
+      this.myAudio.onTimeUpdate(() => {
+        this.durationTime = this.timeToFormat(this.myAudio.duration);
+        this.$apply()
+      });
+    };
+
+    timeToFormat (times) {
+      var result = "00:00";
+      var hour, minute, second;
+      if (times > 0) {
+
+        minute = Math.floor(times / 60);
+        if (minute < 10) {
+          minute = "0" + minute;
+        }
+
+        second = Math.floor((times - 60 * minute) % 60);
+        if (second < 10) {
+          second = "0" + second;
+        }
+        result = `${minute}"${second}"`;
       }
-      result = `${minute}"${second}"`
-    }
-    return result
-  };
+      return result;
+    };
 
-  getMyHomework () {
-    api.study.viewMyHomework({
-      lessonId: this.queryInfo.id
-    }).then(res => {
-      this.workDetail = res.data.resultData
-      this.workDetail.workTime = dayjs(+this.workDetail.workTime).format('YYYY-MM-DD HH:mm:ss')
-      if (this.workDetail.replyTime) {
-        this.workDetail.replyTime = dayjs(+this.workDetail.replyTime).format('YYYY-MM-DD HH:mm:ss')
-        this.isReply = true
-      } else {
-        this.isReply = false
-      }
-      this.initAudio()
-      this.$apply()
-    })
-  };
+    getMyHomework() {
+      api.study.viewMyHomework({
+        lessonId: this.queryInfo.id
+      }).then(res => {
+        this.workDetail = res.data.resultData;
+        this.workDetail.workTime = dayjs(+this.workDetail.workTime).format('YYYY-MM-DD HH:mm:ss');
+        if(this.workDetail.replyTime) {
+          this.workDetail.replyTime = dayjs(+this.workDetail.replyTime).format('YYYY-MM-DD HH:mm:ss');
+          this.isReply = true
+        } else  {
+          this.isReply = false
+        }
+        this.initAudio()
+        this.$apply()
+      });
+    };
 
-  getOtherHomework () {
-    api.study.viewHomework({
-      workId: this.queryInfo.id
-    }).then(res => {
-      this.workDetail = res.data.resultData
-      this.workDetail.workTime = dayjs(+this.workDetail.workTime).format('YYYY-MM-DD HH:mm:ss')
-      if (this.workDetail.replyTime) {
-        this.workDetail.replyTime = dayjs(+this.workDetail.replyTime).format('YYYY-MM-DD HH:mm:ss')
-        this.isReply = true
-      } else {
-        this.isReply = false
-      }
-      this.isCompliment = this.workDetail.otherLike
-      this.initAudio()
-      this.$apply()
-    })
-  };
+    getOtherHomework() {
+      api.study.viewHomework({
+        workId: this.queryInfo.id
+      }).then(res => {
+        this.workDetail = res.data.resultData;
+        this.workDetail.workTime = dayjs(+this.workDetail.workTime).format('YYYY-MM-DD HH:mm:ss');
+        if(this.workDetail.replyTime) {
+          this.workDetail.replyTime = dayjs(+this.workDetail.replyTime).format('YYYY-MM-DD HH:mm:ss');
+          this.isReply = true
+        } else {
+          this.isReply = false
+        }
+        this.isCompliment = this.workDetail.otherLike
+        this.initAudio()
+        this.$apply()
+      });
+    };
 
-  methods = {
-    changeAudioStatus () {
-      if (this.isPlay) {
-        this.isPlay = false
-        this.myAudio.pause()
-      } else {
-        this.isPlay = true
-        this.myAudio.play()
-      }
-    },
-    addLike () {
-      if (this.queryInfo.type === '1') {
-
-      } else {
-        api.study.addLike({
-          workId: this.queryInfo.id
-        })
-          .then(() => {
-            this.getOtherHomework()
+    methods = {
+      changeAudioStatus () {
+        if(this.isPlay) {
+          this.isPlay = false
+          this.myAudio.pause()
+        } else {
+          this.isPlay = true
+          this.myAudio.play()
+        }
+      },
+      addLike () {
+        if (this.queryInfo.type === '1') {
+          return
+        } else {
+          api.study.addLike({
+            workId: this.queryInfo.id
           })
-      }
-    },
-    bindClickMessage (e) {
-      this.stumsg = e.detail.value
-    },
-    submitEvaluate () {
-      if (!this.isActive) {
-        return wx.showToast({
-          icon: 'none',
-          title: '请选择对老师评价的标签哦~'
+            .then(()=>{
+              this.getOtherHomework()
+            })
+        }
+      },
+      bindClickMessage (e) {
+        this.stumsg = e.detail.value
+      },
+      submitEvaluate() {
+        if (!this.isActive) {
+          return wx.showToast({
+            icon: 'none',
+            title: '请选择对老师评价的标签哦~'
+          })
+        }
+        api.study.evaluationToTeacher({
+          id: this.workDetail.id,
+          evaluation: this.isActive,
+          stumsg: this.stumsg
+        }).then(()=>{
+          this.isEvaluate = true;
         })
+      },
+      choiceTab(num) {
+        this.isActive = num;
+      },
+      changePopup() {
+        this.isOpenPopup = !this.isOpenPopup;
       }
-      api.study.evaluationToTeacher({
-        id: this.workDetail.id,
-        evaluation: this.isActive,
-        stumsg: this.stumsg
-      }).then(() => {
-        this.isEvaluate = true
-      })
-    },
-    choiceTab (num) {
-      this.isActive = num
-    },
-    changePopup () {
-      this.isOpenPopup = !this.isOpenPopup
+    };
+
+    events = {};
+
+    onLoad(query) {
+      this.queryInfo = query
+      if (query.type === '1') {
+        this.getMyHomework()
+      } else {
+        this.getOtherHomework()
+      }
+      this.$apply()
     }
-  };
 
-  events = {};
-
-  onLoad (query) {
-    this.queryInfo = query
-    if (query.type === '1') {
-      this.getMyHomework()
-    } else {
-      this.getOtherHomework()
+    onUnload () {
+      this.myAudio.destroy()
     }
-    this.$apply()
-  }
 
-  onUnload () {
-    console.log(2)
-    this.myAudio.destroy()
-  }
-
-  onShareAppMessage () {
-    return {
-      title: `我刚写了一篇作文《${this.workDetail.homeworkTitle}》，希望你可以给我点个赞`,
-      path: '/pages/shareHomework',
-      imageUrl: 'https://pub.file.k12.vip/read/ldshared.jpeg'
+    onShareAppMessage () {
+      return {
+        title: `我刚写了一篇作文《${this.workDetail.homeworkTitle}》，希望你可以给我点个赞`,
+        path: '/pages/shareHomework',
+        imageUrl: 'https://pub.file.k12.vip/read/ldshared.jpeg'
+      };
     }
   }
-}
 </script>
 
 <style lang="scss">
-@import '../assets/style/mixin.scss';
+  @import '../assets/style/mixin.scss';
 
-.p-completionOfWork {
-  .-height-wrap {
-    height: calc(100vh - 150px);
-  }
+  .p-completionOfWork {
 
-  &-top {
-    display: flex;
-    padding: 40px 0 0 64px;
-
-    .-top-left {
-      &-img {
-        margin-right: 24px;
-        width: 96px;
-        height: 96px;
-        border-radius: 50%;
-      }
+    .-height-wrap {
+      height: calc(100vh - 150px);
     }
 
-    .-top-right {
-      &-name {
-        height: 40px;
-        font-size: 28px;
-        font-weight: 500;
-        color: rgba(88, 66, 43, 1);
-        line-height: 40px;
-      }
+    &-top {
+      display: flex;
+      padding: 40px 0 0 64px;
 
-      &-time {
-        margin-top: 8px;
-        height: 34px;
-        font-size: 24px;
-        font-weight: 400;
-        color: rgba(88, 66, 43, 0.5);
-        line-height: 34px;
-      }
-
-      &-work {
-        margin-top: 30px;
-        width: 502px;
-        height: 610px;
-      }
-    }
-  }
-
-  &-down {
-    display: flex;
-    margin: 66px 0 138px 64px;
-
-    .-down-left {
-      &-img {
-        margin-right: 44px;
-        width: 70px;
-        height: 54px;
-      }
-    }
-
-    .-down-right {
-      &-info {
-        @include flex-y-center;
-
-        .-info-img {
-          width: 56px;
-          height: 56px;
+      .-top-left {
+        &-img {
+          margin-right: 24px;
+          width: 96px;
+          height: 96px;
           border-radius: 50%;
-          border: 2px solid rgba(255, 255, 255, 1);
-          margin-right: 18px;
         }
+      }
 
-        .-info-name {
-          height: 50px;
-          font-size: 36px;
+      .-top-right {
+
+        &-name {
+          height: 40px;
+          font-size: 28px;
           font-weight: 500;
           color: rgba(88, 66, 43, 1);
-          line-height: 50px;
+          line-height: 40px;
         }
-      }
 
-      &-text {
-        margin-top: 8px;
-        height: 36px;
-        font-size: 26px;
-        font-weight: 400;
-        color: rgba(88, 66, 43, 0.5);
-        line-height: 36px;
+        &-time {
+          margin-top: 8px;
+          height: 34px;
+          font-size: 24px;
+          font-weight: 400;
+          color: rgba(88, 66, 43, 0.5);
+          line-height: 34px;
+        }
+
+        &-work {
+          margin-top: 30px;
+          width: 502px;
+          height: 610px;
+        }
       }
     }
 
-    .-down-reply {
-      margin-left: 124px;
+    &-down {
+      display: flex;
+      margin: 66px 0 138px 64px;
 
-      .-down-reply-info {
-        display: flex;
+      .-down-left {
 
-        .-reply-info-img {
-          margin-right: 16px;
-          width: 56px;
-          height: 56px;
-          border-radius: 50%;
+        &-img {
+          margin-right: 44px;
+          width: 70px;
+          height: 54px;
         }
+      }
 
-        .-reply-info-user {
-          .-user-text {
-            height: 28px;
-            font-size: 20px;
-            font-weight: 400;
-            color: rgba(70, 65, 60, 0.4);
-            line-height: 28px;
+      .-down-right {
 
-            .-name {
-              margin-right: 40px;
-              font-size: 24px;
-            }
-          }
-        }
+        &-info {
+          @include flex-y-center;
 
-        .-reply-info-wrap {
-          margin-top: 14px;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-
-          .-info-content {
-            margin-left: 16px;
-            position: relative;
-            flex: 1;
-            width: 246px;
-            font-size: 28px;
-            line-height: 40px;
-            padding: 24px 32px;
-            background: rgba(255, 245, 209, 1);
-            border-radius: 16px;
-            border: 3px solid rgba(232, 197, 157, 1);
-            &::before {
-              @include bg('/icon.png');
-              content: '';
-              position: absolute;
-              left: -20px;
-              top: 12px;
-              width: 50px;
-              height: 30px;
-            }
-            &.voice .icon {
-              @include bg('/sk/icon-audio.png');
-              margin-left: 16px;
-              width: 26px;
-              height: 43px;
-            }
+          .-info-img {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 1);
+            margin-right: 18px;
           }
 
-          .-reply-time {
-            margin: 0 36px 0 24px;
-            height: 32px;
-            font-size: 28px;
+          .-info-name {
+            height: 50px;
+            font-size: 36px;
+            font-weight: 500;
             color: rgba(88, 66, 43, 1);
-            line-height: 34px;
+            line-height: 50px;
           }
+        }
+
+        &-text {
+          margin-top: 8px;
+          height: 36px;
+          font-size: 26px;
+          font-weight: 400;
+          color: rgba(88, 66, 43, 0.5);
+          line-height: 36px;
         }
       }
 
-      .-down-reply-img {
-        margin-top: 32px;
-        width: 500px;
-        height: 282px;
-        border: 2px solid rgba(151, 151, 151, 1);
+      .-down-reply {
+        margin-left: 124px;
+
+        .-down-reply-info {
+          display: flex;
+
+          .-reply-info-img {
+            margin-right: 16px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+          }
+
+          .-reply-info-user {
+
+            .-user-text {
+              height: 28px;
+              font-size: 20px;
+              font-weight: 400;
+              color: rgba(70, 65, 60, 0.4);
+              line-height: 28px;
+
+              .-name {
+                margin-right: 40px;
+                font-size: 24px;
+              }
+            }
+          }
+
+          .-reply-info-wrap {
+            margin-top: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            .-info-content {
+              margin-left: 16px;
+              position: relative;
+              flex: 1;
+              width:246px;
+              font-size: 28px;
+              line-height: 40px;
+              padding: 24px 32px;
+              background: rgba(255, 245, 209, 1);
+              border-radius: 16px;
+              border: 3px solid rgba(232, 197, 157, 1);
+              &::before {
+                @include bg('/icon.png');
+                content: '';
+                position: absolute;
+                left: -20px;
+                top: 12px;
+                width: 50px;
+                height: 30px;
+              }
+              &.voice .icon {
+                @include bg('/sk/icon-audio.png');
+                margin-left: 16px;
+                width: 26px;
+                height: 43px;
+              }
+            }
+
+            .-reply-time {
+              margin: 0 36px 0 24px;
+              height:32px;
+              font-size:28px;
+              color:rgba(88,66,43,1);
+              line-height:34px;
+            }
+          }
+        }
+
+        .-down-reply-img {
+          margin-top: 32px;
+          width: 500px;
+          height: 282px;
+          border: 2px solid rgba(151, 151, 151, 1);
+        }
       }
     }
-  }
 
-  &-footer {
-    position: absolute;
-    bottom: 0px;
-    width: 100%;
-
-    .-footer-wrap {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 64px 24px;
-    }
-
-    .-footer-btn {
-      @include flex-center;
-      background-color: #ffffff;
-      margin: 0;
-      width: 276px;
-      height: 82px;
-      border-radius: 44px;
-      border: 2px solid rgba(88, 66, 43, 0.1);
-      font-size: 32px;
-      font-weight: 500;
-      color: rgba(88, 66, 43, 0.5);
-
-      &-icon {
-        margin-right: 24px;
-        width: 40px;
-        height: 40px;
-      }
-    }
-
-    .-footer-btn-zan {
-      color: #58422b;
-      background: linear-gradient(
-        90deg,
-        rgba(249, 230, 11, 1) 0%,
-        rgba(253, 219, 85, 1) 100%
-      );
-    }
-
-    .-footer-tip {
+    &-footer {
       position: absolute;
-      width: 456px;
-      height: 96px;
-      top: -100px;
-      right: 90px;
-    }
-  }
+      bottom: 0px;
+      width: 100%;
 
-  &-footer-reply {
-    position: relative;
-    margin-top: 120px;
-  }
-
-  &-popup-dp {
-    text-align: center;
-    width: 590px;
-    height: 668px;
-    background: rgba(255, 255, 255, 1);
-    border-radius: 32px;
-
-    .-popup-title {
-      padding-top: 32px;
-      height: 50px;
-      font-size: 36px;
-      font-weight: 500;
-      color: rgba(70, 65, 60, 1);
-      line-height: 50px;
-    }
-
-    .-popup-text {
-      margin-top: 12px;
-      height: 34px;
-      font-size: 24px;
-      font-weight: 300;
-      color: rgba(70, 65, 60, 0.5);
-      line-height: 34px;
-    }
-
-    .-popup-list {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 38px 64px 40px;
-
-      .-list-img {
-        width: 100px;
-        height: 100px;
+      .-footer-wrap {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 64px 24px;
       }
 
-      .-list-text {
-        margin-top: 14px;
+      .-footer-btn {
+        @include flex-center;
+        background-color: #ffffff;
+        margin: 0;
+        width: 276px;
+        height: 82px;
+        border-radius: 44px;
+        border: 2px solid rgba(88, 66, 43, 0.1);
+        font-size: 32px;
+        font-weight: 500;
+        color: rgba(88, 66, 43, 0.5);
+
+        &-icon {
+          margin-right: 24px;
+          width: 40px;
+          height: 40px;
+        }
+      }
+
+      .-footer-btn-zan {
+        color: #58422B;
+        background: linear-gradient(90deg, rgba(249, 230, 11, 1) 0%, rgba(253, 219, 85, 1) 100%);
+      }
+
+      .-footer-tip {
+        position: absolute;
+        width: 456px;
+        height: 96px;
+        top: -100px;
+        right: 90px;
+      }
+    }
+
+    &-footer-reply {
+      position: relative;
+      margin-top: 120px;
+    }
+
+    &-popup-dp {
+      text-align: center;
+      width: 590px;
+      height: 668px;
+      background: rgba(255, 255, 255, 1);
+      border-radius: 32px;
+
+      .-popup-title {
+        padding-top: 32px;
+        height: 50px;
+        font-size: 36px;
+        font-weight: 500;
+        color: rgba(70, 65, 60, 1);
+        line-height: 50px;
+      }
+
+      .-popup-text {
+        margin-top: 12px;
         height: 34px;
         font-size: 24px;
-        font-weight: 500;
+        font-weight: 300;
         color: rgba(70, 65, 60, 0.5);
         line-height: 34px;
       }
 
-      .-active-text {
+      .-popup-list {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 38px 64px 40px;
+
+        .-list-img {
+          width: 100px;
+          height: 100px;
+        }
+
+        .-list-text {
+          margin-top: 14px;
+          height: 34px;
+          font-size: 24px;
+          font-weight: 500;
+          color: rgba(70, 65, 60, 0.5);
+          line-height: 34px;
+        }
+
+        .-active-text {
+          color: rgba(70, 65, 60, 1);
+        }
+      }
+
+      .-popup-input {
+
+        .-input {
+          font-size: 20px;
+          text-align: left;
+          margin: 0 auto;
+          padding: 24px 32px;
+          width: 446px;
+          height: 130px;
+          background: rgba(255, 255, 255, 1);
+          border-radius: 32px;
+          border: 2px solid rgba(88, 66, 43, 0.3);
+        }
+      }
+
+      .-popup-btn {
+        margin: 32px auto 0;
+        text-align: center;
+        width: 354px;
+        height: 76px;
+        background: linear-gradient(90deg, rgba(249, 230, 11, 1) 0%, rgba(253, 219, 85, 1) 100%);
+        border-radius: 40px;
+        font-size: 32px;
+        font-weight: 500;
         color: rgba(70, 65, 60, 1);
+        line-height: 76px;
       }
     }
 
-    .-popup-input {
-      .-input {
-        font-size: 20px;
-        text-align: left;
+    &-popup-jg {
+      position: relative;
+      text-align: center;
+      margin: 0 auto;
+      width: 590px;
+      height: 384px;
+      background: rgba(255, 255, 255, 1);
+      border-radius: 32px;
+
+      .-popup-jg-img {
         margin: 0 auto;
-        padding: 24px 32px;
-        width: 446px;
-        height: 130px;
-        background: rgba(255, 255, 255, 1);
-        border-radius: 32px;
-        border: 2px solid rgba(88, 66, 43, 0.3);
+        position: absolute;
+        top: -92px;
+        width: 184px;
+        height: 184px;
+        left: 210px;
+      }
+
+      .-popup-jg-text {
+        margin: 0 auto;
+        padding-top: 144px;
+        width: 480px;
+        height: 88px;
+        font-size: 32px;
+        font-weight: 500;
+        color: rgba(70, 65, 60, 1);
+        line-height: 44px;
+      }
+
+      .-popup-jd-text-two {
+        margin: 12px auto 48px;
+        width: 308px;
+        height: 80px;
+        font-size: 28px;
+        font-family: PingFangSC-Light;
+        font-weight: 300;
+        color: rgba(70, 65, 60, 0.5);
+        line-height: 40px;
+      }
+
+      .-popup-jg-btn {
+        text-align: center;
+        width: 354px;
+        height: 76px;
+        background: linear-gradient(90deg, rgba(249, 230, 11, 1) 0%, rgba(253, 219, 85, 1) 100%);
+        border-radius: 40px;
+        font-size: 32px;
+        font-weight: 500;
+        color: rgba(70, 65, 60, 1);
+        line-height: 76px;
+      }
+
+      .-one {
+        margin-top: 28px;
       }
     }
 
-    .-popup-btn {
-      margin: 32px auto 0;
-      text-align: center;
-      width: 354px;
-      height: 76px;
-      background: linear-gradient(
-        90deg,
-        rgba(249, 230, 11, 1) 0%,
-        rgba(253, 219, 85, 1) 100%
-      );
-      border-radius: 40px;
-      font-size: 32px;
-      font-weight: 500;
-      color: rgba(70, 65, 60, 1);
-      line-height: 76px;
+    &-popup-height {
+      height: 452px;
+
+      .-popup-jg-text {
+        width: 512px;
+        height: 44px;
+      }
     }
-  }
 
-  &-popup-jg {
-    position: relative;
-    text-align: center;
-    margin: 0 auto;
-    width: 590px;
-    height: 384px;
-    background: rgba(255, 255, 255, 1);
-    border-radius: 32px;
-
-    .-popup-jg-img {
-      margin: 0 auto;
+    &-popup-close {
       position: absolute;
-      top: -92px;
-      width: 184px;
-      height: 184px;
-      left: 210px;
-    }
-
-    .-popup-jg-text {
-      margin: 0 auto;
-      padding-top: 144px;
-      width: 480px;
-      height: 88px;
-      font-size: 32px;
-      font-weight: 500;
-      color: rgba(70, 65, 60, 1);
-      line-height: 44px;
-    }
-
-    .-popup-jd-text-two {
-      margin: 12px auto 48px;
-      width: 308px;
-      height: 80px;
-      font-size: 28px;
-      font-family: PingFangSC-Light;
-      font-weight: 300;
-      color: rgba(70, 65, 60, 0.5);
-      line-height: 40px;
-    }
-
-    .-popup-jg-btn {
-      text-align: center;
-      width: 354px;
-      height: 76px;
-      background: linear-gradient(
-        90deg,
-        rgba(249, 230, 11, 1) 0%,
-        rgba(253, 219, 85, 1) 100%
-      );
-      border-radius: 40px;
-      font-size: 32px;
-      font-weight: 500;
-      color: rgba(70, 65, 60, 1);
-      line-height: 76px;
-    }
-
-    .-one {
-      margin-top: 28px;
+      top: -200px;
+      right: -40px;
     }
   }
 
-  &-popup-height {
-    height: 452px;
-
-    .-popup-jg-text {
-      width: 512px;
-      height: 44px;
-    }
-  }
-
-  &-popup-close {
-    position: absolute;
-    top: -200px;
-    right: -40px;
-  }
-}
 </style>

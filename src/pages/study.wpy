@@ -10,7 +10,6 @@
              id="video"
              show-center-play-btn="{{false}}"
              enable-progress-gesture="{{progressEnable}}"
-             initial-time="{{roomData.progressTime}}"
              loop="{{false}}"
              controls="{{controls}}"
              @ended="bindended"
@@ -129,6 +128,7 @@ export default class Example extends wepy.page {
   data = {
     lessonId: 0,
     videoContext: null,
+    isLookBack: 0,
     show: false,
     showBtn: false,
     showDialog: false,
@@ -161,7 +161,8 @@ export default class Example extends wepy.page {
     courseInfo: {},
     roomData: {},
     mateInfo: [],
-    setTimeOut: null
+    setTimeOut: null,
+    isEnd: false
   };
   components = {
     mHeader
@@ -219,8 +220,12 @@ export default class Example extends wepy.page {
       this.imitateEnd && (this.time = 1)
     },
     bindended() {
-      this.changeLearnStage(this.roomData.id, 2)
-      wx.redirectTo({ url: '/pages/test?id=' + this.lessonId })
+      this.isEnd = true
+      if (!this.isLookBack) {
+        wx.redirectTo({ url: '/pages/test?id=' + this.lessonId })
+      } else {
+        wx.redirectTo({ url: '/pages/submitHomework?id=' + this.lessonId })
+      }
     },
     bindtimeupdate (event) {
       let { currentTime } = event.detail
@@ -228,6 +233,9 @@ export default class Example extends wepy.page {
         let data = this.courseInfo.qaMap[this.currentTime]
         this.currentTime = parseInt(currentTime)
         console.log(this.currentTime)
+        if (!(this.currentTime % 10)) {
+          this.changeLearnStage(this.roomData.id, 1)
+        }
         if (data && data.anEnum === 1) {
           this.questionData = data
           this.questionArr = data.optionList
@@ -388,7 +396,8 @@ export default class Example extends wepy.page {
     let { api } = this.$parent.globalData
     api.study.changeLearnStage({
       id,
-      stage: type
+      stage: type,
+      progressTime: this.currentTime
     })
   }
   // 更新课程 试题等信息
@@ -419,19 +428,14 @@ export default class Example extends wepy.page {
       this.answerArr = this.mateInfo.map(e => {
         e.status = 0
         e.answer = 0
-        e.flower = e.correctNum
+        e.flower = !this.isLookBack ? e.correctNum : 0
         return e
       })
-      if (type) {
-        this.videoContext.seek(0)
+      if (data.resultData.newstart) {
+        this.changeLearnStage(data.resultData.id, 1)
         this.videoContext.play()
       } else {
-        this.changeLearnStage(data.resultData.id, 1)
-        if (!data.resultData.newstart) {
-          this.showContinueDiaolig = true
-        } else {
-          this.isPlay = true
-        }
+        this.showContinueDiaolig = true
       }
 
       this.$apply()
@@ -451,6 +455,7 @@ export default class Example extends wepy.page {
   }
   onLoad (option) {
     this.lessonId = option.id
+    this.isLookBack = option.lookback
   };
   onReady () {
     this.videoContext = wx.createVideoContext('video')
@@ -459,10 +464,18 @@ export default class Example extends wepy.page {
     this.initPage()
   };
   onHide() {
-    this.changeLearnInfo(1)
+    if (this.isEnd) {
+      this.changeLearnStage(this.roomData.id, 2)
+    } else {
+      this.changeLearnStage(this.roomData.id, 1)
+    }
   }
   onUnload() {
-    this.changeLearnInfo(1)
+    if (this.isEnd) {
+      this.changeLearnStage(this.roomData.id, 2)
+    } else {
+      this.changeLearnStage(this.roomData.id, 1)
+    }
   }
 }
 </script>

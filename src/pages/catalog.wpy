@@ -1,21 +1,46 @@
 <template>
   <view class="container course">
     <mHeader title="课程目录"></mHeader>
-    <view class="container-scroll" style="margin-top:{{height}}px">
-      <view class="course-info">
-        <text class="course-info-title">小学作文同步课【三年级】</text>
+    <view class="container-scroll"
+          style="margin-top:{{height}}px;height: calc(100vh - {{height}}px)">
+      <view class="course-info" id="info">
+        <view class="course-info-title">
+          <text class="course-info-tag">小班课</text>小语轻作文
+        </view>
         <view class="course-info-footer">
           <text class="course-info-subtitle">每天5-8分钟，学技巧积素材</text>
-          <text class="course-info-num">共300节课 | 已学60节</text>
+          <text class="course-info-num">共{{catalogData.lessonNum}} 节课 | 已学{{catalogData.studyNum}}节</text>
         </view>
+        <view class="course-fixed-title van-hairline--top">Level {{level}}</view>
       </view>
-      <view class="course-content">
-        <CourseItem></CourseItem>
-        <CourseItem></CourseItem>
-      </view>
-      <view class="course-message">
+      <scroll-view class="course-scroll"
+                   style="height: calc(100vh - {{height * 2 + 162}}rpx)"
+                   scroll-y
+                   scroll-with-animation
+                   scroll-top="{{todayScrollTop}}"
+                   @scroll="bindScroll">
+        <view class="course-scroll-wrap">
+
+          <view class="course-content" wx:for="{{catalogData.lessonInfos}}" wx:key="{{index}}">
+            <text class="course-title" id="{{'title' + (index + 1)}}">Level {{index + 1}}</text>
+            <view id="{{lesson.studyStatus == 2 && 'sk'}}" class="course-item {{lesson.studyStatus == 1 && 'bk'}} {{lesson.studyStatus == 2 && 'sk'}} {{lesson.studyStatus == 3 && 'jzy'}} {{lesson.studyStatus == 4 && 'dkk'}}" wx:for="{{item.lessonInfoList}}" wx:for-item="lesson" wx:for-index="idx" wx:key="{{lesson.id}}">
+              <text class="course-item-title">{{lesson.lessonName}}</text>
+              <view class="course-item-footer">
+                <text class="course-item-date">{{lesson.schedulingTime}}</text>
+                <view class="course-item-btn" @tap="bindClickBtn({{lesson}})">
+                  <view class="course-item-icon"></view>
+                  <text>{{lesson.statusText}}</text>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+
+      <view class="course-message"
+            wx:if="{{catalogData.uncompletedJobs}}">
         <view class="course-message-icon"></view>
-        <view class="course-message-text">5月20日你忘记交作业咯，记得去补交哦～</view>
+        <view class="course-message-text">{{catalogData.uncompletedJobs}}</view>
       </view>
     </view>
   </view>
@@ -23,11 +48,17 @@
 
 <script>
 import wepy from 'wepy'
+import dayjs from 'dayjs'
 import CourseItem from '../components/courseItem'
 import mHeader from '../components/header'
+
 export default class Index extends wepy.page {
   config = {
-    navigationBarTitleText: '课程目录'
+    navigationBarTitleText: '课程目录',
+    usingComponents: {
+      'i-sticky': '../iview/sticky/index',
+      'i-sticky-item': '../iview/sticky-item/index'
+    }
   }
 
   components = {
@@ -36,7 +67,12 @@ export default class Index extends wepy.page {
   }
 
   data = {
-    grade: 0
+    query: null,
+    level: 1,
+    scrollTop: 0,
+    todayScrollTop: 0,
+    catalogData: {},
+    titleScrollTopArr: []
   }
 
   computed = {
@@ -45,8 +81,52 @@ export default class Index extends wepy.page {
     }
   };
 
-  methods = {
+  watch = {
+    todayScrollTop(n) {
 
+    },
+    scrollTop(n) {
+      let {titleScrollTopArr} = this
+      if (n === titleScrollTopArr[0] || n < titleScrollTopArr[1]) {
+        this.level = 1
+      }
+      if (n >= titleScrollTopArr[1] && n < titleScrollTopArr[2]) {
+        this.level = 2
+      }
+      if (n >= titleScrollTopArr[2] && n < titleScrollTopArr[3]) {
+        this.level = 3
+      }
+      if (n >= titleScrollTopArr[3]) {
+        this.level = 4
+      }
+
+      console.log(this.level)
+    }
+  }
+
+  methods = {
+    bindClickBtn(lesson) {
+      console.log(lesson.studyStatus)
+      switch (lesson.studyStatus) {
+        case 1:
+        case 2:
+          wx.navigateTo({ url: '/pages/classroom?id=' + lesson.lessonId })
+          break
+        case 3:
+          if (lesson.stage === 2) {
+            wx.navigateTo({ url: '/pages/submitHomework?id=' + lesson.lessonId })
+          } else {
+            wx.navigateTo({ url: '/pages/text?id=' + lesson.lessonId })
+          }
+          break
+        case 5:
+          wx.navigateTo({url: `/pages/study?id=${lesson.lessonId}&lookback=1`})
+      }
+    },
+    bindScroll (event) {
+      let { scrollTop } = event.detail
+      this.scrollTop = scrollTop
+    }
   }
 
   events = {
@@ -55,19 +135,66 @@ export default class Index extends wepy.page {
     }
   }
   // 获取课程目录
-  getCourseCatalog() {
-    let {api} = this.$parent.globalData
-    api.course.getCourseCatalog({
-      grade: this.grade
-    }).then(({data}) => {
-      this.catalogList = data.resultData
+  getCourseCatalog () {
+    let { api } = this.$parent.globalData
+    api.course.getCourseCatalog().then(({ data }) => {
+      let __data = data.resultData
+      __data.lessonInfos.forEach((e, i) => {
+        e.lessonInfoList = e.lessonInfoList.map(el => {
+          el.statusText = el.studyStatus === 1 ? '去补课' : el.studyStatus === 2 ? '去上课' : el.studyStatus === 3 ? '交作业' : el.studyStatus === 4 ? '待开课' : '回看'
+          el.schedulingTime = dayjs(new Date(el.schedulingTime)).format('MM月DD日')
+          return el
+        })
+      })
+      console.log(__data)
+      this.catalogData = __data
+      setTimeout(() => {
+        this.getInfoHeight()
+        this.catalogData.lessonInfos.forEach((e, i) => {
+          let id = `#title${i + 1}`
+          console.log(id)
+          this.getTitleScrollTop(id)
+        })
+        this.getTodayScrollTop()
+      }, 500)
+      this.$apply()
     })
   }
 
-  onLoad (option) {
-    this.grade = option.grade
+  getTodayScrollTop() {
+    let query = wx.createSelectorQuery()
+    query.select('#sk').boundingClientRect()
+    query.selectViewport().scrollOffset()
+    query.exec((res) => {
+      this.todayScrollTop = res[0].top - this.height - this.infoHeight
+      this.$apply()
+    })
   }
-  onShow() {
+
+  getTitleScrollTop(str) {
+    let query = wx.createSelectorQuery()
+    query.select(str).boundingClientRect()
+    query.selectViewport().scrollOffset()
+    query.exec((res) => {
+      console.log(this.infoHeight)
+      this.titleScrollTopArr = [...this.titleScrollTopArr, res[0].top - this.height - this.infoHeight]
+      this.$apply()
+      console.log(this.titleScrollTopArr)
+    })
+  }
+
+  getInfoHeight() {
+    let query = wx.createSelectorQuery()
+    query.select('#info').boundingClientRect()
+    query.selectViewport().scrollOffset()
+    query.exec((res) => {
+      this.infoHeight = res[0].height
+      console.log(this.infoHeight)
+      this.$apply()
+    })
+  }
+
+  onShow () {
     this.getCourseCatalog()
   }
 }
@@ -76,13 +203,128 @@ export default class Index extends wepy.page {
 @import '../assets/style/mixin.scss';
 .course {
   color: #58422b;
-  min-height: 100vh;
-  &-info {
+  &-item {
+    box-sizing: border-box;
+    margin: 0 32px;
+    margin-bottom: 32px;
     padding: 32px;
+    width: 686px;
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0px 0px 24px 0px rgba(236, 194, 96, 0.4);
+    border-radius: 32px;
+
     &-title {
-      margin-bottom: 8px;
-      font-size: 40px;
-      line-height: 56px;
+      @include text-overflow;
+      font-size: 32px;
+      font-weight: 500;
+    }
+    &-date {
+      font-size: 24px;
+    }
+    &-icon {
+      @include bg('/kcml/icon-back.png');
+      background-position: center;
+      margin-right: 8px;
+      width: 30px;
+      height: 30px;
+    }
+    &-btn {
+      @include flex-center;
+      width: 176px;
+      height: 64px;
+      font-size: 26px;
+      font-weight: 500;
+      color: #39DDA9;
+      background-color: #fff;
+      border-radius: 36px;
+      border: 2px solid rgba(88, 66, 43, 0.1);
+    }
+    &-footer {
+      @include flex-center;
+      justify-content: space-between;
+      margin-top: 16px;
+    }
+    &.bk &-btn{
+      color: #FF7C76;
+    }
+    &.bk &-icon {
+      @include bg('/v2/icon-write.png');
+      width: 26px;
+      background-position: center;
+    }
+    &.sk {
+      background:linear-gradient(90deg,rgba(249,230,11,1) 0%,rgba(253,219,85,1) 100%);
+    }
+    &.sk &-btn {
+      box-shadow:0px 8px 16px 4px rgba(230,194,81,0.4);
+      border-color: #fff;
+      background: #fff;
+      color: #FFD129;
+    }
+    &.sk &-icon {
+      @include bg('/v2/icon-go.png');
+      background-position: center;
+    }
+    &.dkk {
+      background:rgba(88,66,43,0.05);
+      box-shadow: none;
+    }
+    &.dkk &-title, &.dkk &-date {
+      color: rgba($color: #58422b, $alpha: 0.6);
+    }
+    &.dkk &-btn {
+      background: #F2F2F2;
+      border-color: #F2F2F2;
+      color: rgba($color: #58422b, $alpha: 0.2);
+    }
+    &.dkk &-icon {
+      @include bg('/kcml/icon-waiting.png');
+    }
+
+  }
+  &-fixed-title {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: #fff;
+    z-index: 100;
+  }
+  &-title {
+    margin-bottom: 8px;
+  }
+  &-title,
+  &-fixed-title {
+    display: flex;
+    align-items: center;
+    padding-left: 32px;
+    height: 100px;
+    font-size: 44px;
+    font-weight: bold;
+  }
+
+  &-scroll {
+    position: relative;
+  }
+  &-info {
+    position: relative;
+    padding: 36px 32px;
+    &-title {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+      font-size: 32px;
+      font-weight: bold;
+    }
+    &-tag {
+      @include flex-center;
+      margin-right: 16px;
+      width: 92px;
+      height: 36px;
+      font-size: 20px;
+      color: #fff;
+      background: rgba(255, 124, 118, 1);
+      border-radius: 0px 16px 0px 32px;
     }
     &-footer {
       @include flex-center;
@@ -94,11 +336,9 @@ export default class Index extends wepy.page {
     }
     &-num {
       font-size: 24px;
-      color: #ff7c76;
+      font-weight: 500;
+      color: rgba($color: #58422b, $alpha: 0.6);
     }
-  }
-  &-content {
-    padding: 32px;
   }
   &-message {
     @include flex-center;
@@ -109,7 +349,7 @@ export default class Index extends wepy.page {
     width: 654px;
     height: 88px;
     background: #fff;
-    box-shadow:0px 8px 16px 4px rgba(230,194,81,0.4);
+    box-shadow: 0px 8px 16px 4px rgba(230, 194, 81, 0.4);
     border-radius: 44px;
     opacity: 0.9;
     transform: translateX(-50%);
@@ -122,7 +362,7 @@ export default class Index extends wepy.page {
     }
     &-text {
       font-size: 26px;
-      color: #D18A3B;
+      color: #d18a3b;
     }
   }
 }

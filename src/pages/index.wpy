@@ -1,7 +1,7 @@
 <!--  -->
 <template>
   <view class='container home'>
-    <mHeader></mHeader>
+    <mHeader flag="0"></mHeader>
     <view class="container-scroll"
           style="margin-top:{{height}}px">
       <view class="header">
@@ -9,7 +9,7 @@
                src="{{userInfo.headimgurl}}" />
         <view class="header-right">
           <text class="subtitle">欢迎来到同步作文课，</text>
-          <text class="title">{{title}}</text>
+          <text class="title">欢迎来到同步作文课，赶快开始今天的学习吧</text>
         </view>
       </view>
       <view class="no-swiper"
@@ -17,55 +17,41 @@
         <view class="swiper-item active">
           <view class="no-swiper-img"></view>
           <text class="no-swiper-text">真棒，你购买的课程已经全部学完咯~</text>
-          <button class="swiper-btn">报名更多的课程</button>
-          <button class="swiper-btn line ">
-            查看已购课程
-          </button>
+          <button class="swiper-btn" @tap="bindClickMoreLesson">查看已购课程</button>
         </view>
       </view>
       <view class="swiper"
             wx:if="{{!empty}}">
-        <swiper class="swiper-wrap"
-                @change="bindChangeSwiper"
-                previous-margin="73rpx"
-                next-margin="73rpx">
-          <block wx:for="{{infoList}}"
-                 wx:key="">
-            <swiper-item class="swiper-item-wrap">
-              <view class="swiper-item {{index == swiperActive ? 'active' : ''}}">
-                <view class="swiper-cover {{item.type == 2 && 'sc'}}">
-                  <view class="swiper-cover-tag">{{ item.type == 1 ? '小班课' : '赠品:素材'}}</view>
-                  <view class="swiper-cover-popup"
-                        wx:if="{{item.expLesson}}"></view>
-                  <image src="{{item.coverphoto}}"
-                         class="swiper-cover-image" />
-                </view>
-                <view class="swiper-title">{{item.lessonSort + '.' + item.name}}</view>
-                <view class="swiper-subtitle">
-                  <text>{{gradeText[item.grade - 3]}}</text>
-                  <text class="swiper-subtitle-text"
-                        wx:if="{{item.expLesson}}">体验课</text>
-                </view>
-
-                <button class="swiper-btn yy"
-                        wx:if="{{item.status == 0}}" @tap="bindClickBtn({{1}}, {{item}})">预约上课</button>
-                <button class="swiper-btn yy disabled"
-                        wx:if="{{item.status == 1 && !item.startStudy}}" disabled>{{item.reserveTime}}开课</button>
-                <button class="swiper-btn"
-                        @tap="bindClickStudyStart({{item}})"
-                        wx:if="{{item.status != 0 && item.startStudy }}">开始今日学习</button>
-                <button class="swiper-btn line "
-                        @tap="bindClickBtn({{3}}, {{item}})"
-                        wx:if="{{item.status == 2 }}">
-                  课程回看
-                  <text class="swiper-btn-tag" wx:if="{{item.studyStatus != 5}}">未上完课</text>
-                </button>
-              </view>
-            </swiper-item>
-          </block>
-        </swiper>
+        <view class="swiper-item active"
+              wx:if="{{infoListData.id}}">
+          <view class="swiper-cover {{infoListData.type == 2 && 'sc'}}"
+                @tap="bindClickCover">
+            <view class="swiper-cover-tag">小班课</view>
+            <view class="swiper-cover-popup"
+                  wx:if="{{infoListData.expLesson}}"></view>
+            <image src="{{infoListData.coverphoto}}"
+                   class="swiper-cover-image" />
+          </view>
+          <view class="swiper-title">{{infoListData.lessonSort + '.' + infoListData.name}}</view>
+          <view class="swiper-subtitle">
+            <text>{{gradeText[infoListData.grade - 3]}}</text>
+            <text class="swiper-subtitle-text"
+                  wx:if="{{infoListData.expLesson}}">体验课</text>
+          </view>
+          <button class="swiper-btn"
+                  @tap="bindClickStudyStart()"
+                  wx:if="{{infoListData.startStudy != 5}}">{{infoListData.studyStatus == 2 ? '开始今日学习' : "交作业"}}</button>
+          <button class="swiper-btn line "
+                  @tap="bindClickBtn({{3}})"
+                  wx:if="{{infoListData.status == 2 }}">
+            课程回看
+            <text class="swiper-btn-tag"
+                  wx:if="{{item.studyStatus != 2}}">未上完课</text>
+          </button>
+        </view>
       </view>
-      <view class="message" wx:if="{{broadcastList.length}}">
+      <view class="message"
+            wx:if="{{broadcastList.length}}">
         <view class="message-icon"></view>
         <swiper class="message-swiper"
                 autoplay
@@ -82,12 +68,6 @@
       </view>
 
     </view>
-    <div class="mask"
-         @tap="bindCloseMask"
-         wx:if="{{showMask}}">
-      <image src="https://pub.file.k12.vip/tbzw/yd.png"
-             class="mask-image" />
-    </div>
     <van-tabbar active="0"
                 active-color="#58422B"
                 bind:change="onChangeTabbar">
@@ -140,26 +120,28 @@
         <view class="dialog-close"></view>
       </view>
     </van-popup>
-    <van-popup show="{{ showSubscribe }}"
+    <van-popup show="{{ showKF }}"
                position="bottom"
                @close="onClose">
-      <view class="subscribe">
-        <text class="subscribe-title">预约上课</text>
-        <view class="subscribe-calender">
-          <calender :showHeader="showHeader"></calender>
-        </view>
-        <button class="subscribe-btn" disabled="{{!selectTime}}" @tap="bindClickSubscribe">确认预约</button>
+      <view class="kf-pop">
+        <text class="kf-pop-title">报名课程</text>
+        <image src=""
+               class="kf-pop-img" />
+        <text class="kf-pop-text">点击下方按钮</text>
+        <text class="kf-pop-text red">回复“1”即可报名学习</text>
+        <button class="kf-pop-btn"
+                open-type="contact">
+          回复“1”立即报名
+        </button>
       </view>
     </van-popup>
   </view>
 </template>
 <script>
 import wepy from 'wepy'
-import dayjs from 'dayjs'
 import { connect } from 'wepy-redux'
 import testMixin from '../mixins/test'
 import mHeader from '@/components/header'
-import calender from '@/components/calendar'
 @connect({
   userInfo (state) {
     return state.user.userInfo
@@ -177,11 +159,10 @@ export default class Home extends wepy.page {
   data = {
     empty: false,
     show: false,
-    showMask: false,
-    showSubscribe: false,
+    showKF: false,
     showHeader: true,
     infoData: {},
-    infoList: [],
+    infoListData: {},
     broadcastList: [],
     gradeText: ['三年级', '四年级', '五年级', '六年级'],
     swiperActive: 0,
@@ -190,31 +171,34 @@ export default class Home extends wepy.page {
   };
   mixins = [testMixin]
   components = {
-    mHeader,
-    calender
+    mHeader
   };
   methods = {
-    bindClickStudyStart(item) {
-      if (item.status !== 2) {
-        this.startLessonStudy(item)
-      }
-      wx.navigateTo({ url: '/pages/classroom?id=' + item.id })
+    bindClickMoreLesson() {
+      wx.navigateTo({ url: '/pages/catalog' })
     },
-    bindClickSubscribe() {
-      this.reserveCourse()
-    },
-    bindClickBtn(type, item) {
-      console.log(item)
-      switch (type) {
-        case 1:
-          this.selectItem = item
-          this.showSubscribe = true
-          break
-        case 2:
-          break
-        case 3:
-          wx.navigateTo({ url: '/pages/catalog?grade=' + item.grade })
+    bindClickCover () {
+      if (this.infoListData.expLesson) {
+        this.showKF = true
       }
+    },
+    bindClickStudyStart () {
+      let {infoListData} = this
+      if (!infoListData.stage) {
+        if (infoListData.status !== 2) {
+          this.startLessonStudy()
+        }
+        wx.navigateTo({ url: '/pages/classroom?id=' + infoListData.id })
+      } else if (infoListData.stage === 1) {
+        wx.navigateTo({ url: '/pages/study?id=' + infoListData.id })
+      } else if (infoListData.stage === 2) {
+        wx.navigateTo({ url: '/pages/test?id=' + infoListData.id })
+      } else {
+        wx.navigateTo({ url: '/pages/submitHomework?id=' + infoListData.id })
+      }
+    },
+    bindClickBtn (type) {
+      wx.navigateTo({ url: '/pages/catalog' })
     },
     bindChangeTabBar (event) {
       switch (event.detail) {
@@ -228,18 +212,13 @@ export default class Home extends wepy.page {
     bindChangeSwiper (event) {
       this.swiperActive = event.detail.current
     },
-    bindCloseMask () {
-      wx.setStorageSync('first', '1')
-      this.showMask = !this.showMask
-    },
     onClose () {
       this.show = false
-      this.showMask = false
-      this.showSubscribe = false
+      this.showKF = false
     }
   };
   events = {
-    select(date) {
+    select (date) {
       this.selectTime = date.formatDate
     }
   };
@@ -254,10 +233,6 @@ export default class Home extends wepy.page {
   computed = {
     height () {
       return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
-    },
-    title () {
-      if (!this.infoData.courseId) return ''
-      return this.infoData.courseNum <= 2 ? '今天有1门学习课程赶快开始今天的学习吧' : '今天有2门学习课程左右滑动页面可以切换学习课程哦'
     }
   };
 
@@ -266,11 +241,10 @@ export default class Home extends wepy.page {
     this.getBroadcastList()
   }
   // 开始今日学习
-  startLessonStudy(item) {
+  startLessonStudy () {
     let { api } = this.$parent.globalData
-    let {grade, id} = item
+    let { id } = this.infoListData
     api.operate.startLessonStudy({
-      grade,
       lessonId: id
     })
   }
@@ -280,12 +254,7 @@ export default class Home extends wepy.page {
     let { api } = this.$parent.globalData
     api.course.getHomePageInfo().then(({ data }) => {
       this.infoData = data.resultData
-      this.infoList = data.resultData.infoList.map(e => {
-        if (e.reserveTime) {
-          e.reserveTime = dayjs(new Date(e.reserveTime)).format('MM月DD日')
-        }
-        return e
-      })
+      this.infoListData = data.resultData.infoList[0]
       this.empty = !data.resultData.infoList.length
       this.$apply()
     })
@@ -300,32 +269,6 @@ export default class Home extends wepy.page {
       this.$apply()
     })
   }
-  reserveCourse() {
-    let {selectTime} = this
-    let { api } = this.$parent.globalData
-    let {grade} = this.selectItem
-    api.operate.reserveCourse({
-      grade,
-      reserveTime: selectTime
-    }).then(({data}) => {
-      this.showSubscribe = false
-      wx.showToast({
-        title: '预约成功', // 提示的内容,
-        icon: 'none', // 图标,
-        duration: 2000
-      })
-
-      this.getHomePageInfo()
-      this.$apply()
-    })
-  }
-
-  onLoad () {
-    let first = wx.getStorageSync('first')
-    if (!first) {
-      this.showMask = true
-    }
-  }
 
   onShow () {
     console.log(this.userInfo, 200)
@@ -339,15 +282,51 @@ export default class Home extends wepy.page {
 @import '../assets/style/mixin.scss';
 .home {
   position: relative;
+  .kf-pop {
+    @include flex-column-center;
+    padding: 16px 24px;
+    background: rgba(255, 255, 255, 1);
+    border-radius: 16px 16px 0px 0px;
+    &-title {
+      font-size: 36px;
+    }
+    &-img {
+      margin: 48px 0;
+    }
+    &-text {
+      font-size: 36px;
+      line-height: 50px;
+      color: rgba($color: #58422b, $alpha: 0.5);
+      &.red {
+        color: #ff7c76;
+        font-weight: bold;
+      }
+    }
+    &-btn {
+      @include flex-center;
+      margin: 32px 0;
+      width: 654px;
+      height: 100px;
+      font-size: 32px;
+      color: #58422b;
+      background: linear-gradient(
+        90deg,
+        rgba(249, 230, 11, 1) 0%,
+        rgba(253, 219, 85, 1) 100%
+      );
+      box-shadow: 0px 8px 16px 4px rgba(230, 194, 81, 0.4);
+      border-radius: 54px;
+    }
+  }
   .no-swiper {
     @include flex-center;
     align-items: flex-start;
     &-img {
-      @include bg('/empty/jrxx.png');
+      @include bg('/v2/empty.png');
       margin-top: 126px;
       margin-bottom: 24px;
-      width: 254px;
-      height: 252px;
+      width: 332px;
+      height: 208px;
     }
     &-text {
       margin-bottom: 82px;
@@ -432,24 +411,8 @@ export default class Home extends wepy.page {
   }
   .container-scroll {
     @include bg('/jrxx/backgroud.png');
-    min-height: 100vh;
+    min-height: calc(100vh - 66px);
     background-position-y: -120rpx;
-  }
-  .mask {
-    display: flex;
-    justify-content: center;
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.9);
-    z-index: 9;
-    &-image {
-      margin-top: 256px;
-      width: 560px;
-      height: 486px;
-    }
   }
   .message {
     @include flex-center;
@@ -499,6 +462,8 @@ export default class Home extends wepy.page {
     }
   }
   .swiper {
+    @include flex-center;
+    align-items: flex-start;
     width: 100%;
     &-btn {
       @include flex-center;

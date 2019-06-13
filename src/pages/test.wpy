@@ -766,7 +766,7 @@ export default class Example extends wepy.page {
           rgba(61,53,45,0.1) 50%
         );
       background-size: 20px 20px;
-      border: 3px dashed transparent;
+      border: 4px dashed transparent;
       animation: antsAnime 10000s linear infinite;
     }
     &-avatar {

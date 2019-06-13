@@ -1,7 +1,8 @@
 <!--  -->
 <template>
   <view class='container ready'>
-    <mHeader title="课前热身" flag="4"></mHeader>
+    <mHeader title="课前热身"
+             flag="4"></mHeader>
     <view class="container-scroll"
           style="margin-top:{{height}}px">
       <view class="header">
@@ -12,14 +13,12 @@
           <text class="header-subtitle">著名写作老师</text>
         </view>
         <view class="header-right {{isReady && 'isReady'}}">
-          <view>
-            <view class="header-student {{readyArr[index] && 'isReady'}}"
-                  wx:for="{{mateInfo}}"
-                  wx:key="{{item.mateId}}">
-              <image class="header-student-avatar"
-                     src="{{item.mateImg}}" />
-              <view class="header-status">{{readyArr[index] ? '已准备' : '准备中...'}}</view>
-            </view>
+          <view class="header-student {{readyArr[index] && 'isReady'}}"
+                wx:for="{{mateInfo}}"
+                wx:key="{{item.mateId}}">
+            <image class="header-student-avatar"
+                   src="{{item.mateImg}}" />
+            <view class="header-status">{{readyArr[index] ? '已准备' : '准备中...'}}</view>
           </view>
         </view>
       </view>
@@ -29,10 +28,10 @@
           <image class="chart-avatar"
                  src="{{roomData.teacherImg}}" />
           <view class="chart-right">
-            <text class="chart-title">木木老师</text>
+            <text class="chart-title">{{roomData.teacherName}}</text>
             <view class="chart-content-wrap">
 
-              <view class="chart-content voice">
+              <view class="chart-content voice" @tap="bindClickVoice">
                 <view class="icon"></view>
               </view>
               <view class="chart-time">{{timeText}}</view>
@@ -43,7 +42,7 @@
     </view>
 
     <view class="ready-btn {{isReady && 'show'}}"
-          @tap="clickStudy">{{time ? '开始上课（' + time + ')s' : '开始上课'}}）</view>
+          @tap="clickStudy">{{time ? '开始上课（' + time + ')s' : '开始上课'}}</view>
   </view>
 </template>
 <script>
@@ -76,10 +75,14 @@ export default class Example extends wepy.page {
   methods = {
     clickStudy () {
       this.time = 0
+    },
+    bindClickVoice () {
+      this.stop()
+      this.play()
     }
   };
   events = {
-    back() {
+    back () {
       wx.redirectTo({ url: '/pages/catalog' })
     }
   };
@@ -185,7 +188,9 @@ export default class Example extends wepy.page {
       lessonId: this.lessonId
     }).then(({ data }) => {
       this.courseInfo = data.resultData
-      this.initAudio(data.resultData.guideAudio)
+      setTimeout(() => {
+        this.initAudio(data.resultData.guideAudio)
+      }, 1000)
       this.$apply()
     })
   }
@@ -204,7 +209,7 @@ export default class Example extends wepy.page {
   onHide () {
     this.audioContext.stop()
   }
-  onUnload() {
+  onUnload () {
     this.audioContext.stop()
   }
 }
@@ -314,41 +319,29 @@ export default class Example extends wepy.page {
       @include flex-column-center;
     }
     &-right {
-      @include flex-center;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       box-sizing: border-box;
-      padding: 4px;
+      padding: 0 28px;
       width: 520px;
       height: 136px;
       border-radius: 48px;
-      background-color: #fff;
-      background-image: -webkit-linear-gradient(
-        -45deg,
-        rgba($color: #3dcbff, $alpha: 1) 25%,
-        white 25%,
-        white 50%,
-        rgba($color: #3dcbff, $alpha: 1) 50%,
-        rgba($color: #3dcbff, $alpha: 1) 75%,
-        white 75%,
-        white
-      );
-      // border: 4px dashed rgba(61, 203, 255, 1);
-      background-size: 10px 10px;
-      animation: myAnimation 0.8s linear;
-      animation-iteration-count: infinite;
+      background: linear-gradient(white, white) padding-box,
+        repeating-linear-gradient(
+          45deg,
+          transparent 0,
+          transparent 25%,
+          rgba(61,53,45,0.1) 0,
+          rgba(61,53,45,0.1) 50%
+        );
+      background-size: 20px 20px;
+      border: 4px dashed transparent;
+      animation: antsAnime 10000s linear infinite;
       &.isReady {
         animation: none;
         background-image: none;
         border: 4px dashed rgba(61, 203, 255, 1);
-      }
-      & > view {
-        @include flex-center;
-        justify-content: space-between;
-        width: 100%;
-        box-sizing: border-box;
-        padding: 0 24px;
-        height: 128px;
-        border-radius: 48px;
-        background-color: #fff;
       }
     }
     &-avatar {
@@ -408,15 +401,9 @@ export default class Example extends wepy.page {
     overflow-y: auto;
   }
 }
-@keyframes myAnimation {
-  0% {
-    background-position: 0px 0px;
-  }
-  50% {
-    background-position: 0px 5px;
-  }
-  100% {
-    background-position: 0px 10px;
+@keyframes antsAnime {
+  to {
+    background-position: 100000%;
   }
 }
 </style>

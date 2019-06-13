@@ -4,6 +4,7 @@
     <view class="container-scroll"
           style="margin-top:{{height}}px">
       <scroll-view class="item-scroll"
+                   wx:if="{{dataList.length}}"
                    @scrolltolower="bindLoadItem"
                    scroll-y
                    scroll-with-animation>
@@ -30,6 +31,9 @@
           </view>
         </repeat>
       </scroll-view>
+      <view wx:if="{{!dataList.length}}">
+        <emptyState :emptyInfo="emptyOption"></emptyState>
+      </view>
     </view>
   </view>
 </template>
@@ -39,13 +43,15 @@ import wepy from 'wepy'
 import api from '../request/api'
 import dayjs from 'dayjs'
 import mHeader from '../components/header'
+import emptyState from '../components/emptyState'
 
 export default class RecognitionNotice extends wepy.page {
   config = {
     navigationBarTitleText: '表扬通知'
   };
   components = {
-    mHeader
+    mHeader,
+    emptyState
   };
   computed = {
     height () {
@@ -58,6 +64,10 @@ export default class RecognitionNotice extends wepy.page {
       current: 1,
       size: 10,
       total: ''
+    },
+    emptyOption: {
+      url: 'https://pub.file.k12.vip/tbzw/v2/empty/dz.png',
+      text: '暂时没有人给你点赞， 交作业后记得分享给熟悉的小伙伴哦！ '
     },
     dataList: []
   };
@@ -85,7 +95,6 @@ export default class RecognitionNotice extends wepy.page {
 
   methods = {
     bindLoadItem (data) {
-      console.log(111111)
       if (this.page.current < Math.ceil(this.page.total / this.page.size)) {
         this.page.current++
         this.getList()

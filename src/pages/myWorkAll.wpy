@@ -2,38 +2,34 @@
   <view class="container p-myWorkAll">
     <mHeader title="我的作业"></mHeader>
     <view class="container-scroll" style="margin-top:{{height}}px">
-      <view class="p-myWorkAll-title">{{detailInfo.name}}【{{detailInfo.grade}}】</view>
-      <scroll-view class="item-scroll"
-                   @scrolltolower="bindLoadItem"
-                   scroll-y
-                   scroll-with-animation>
-        <repeat for="{{dataList}}" key="index" index="index" item="item">
-          <view class="p-myWorkAll-item">
-            <view class="-list-item">
-              <view class="-list-item-left">
-                <view class="-num">{{index+1}}</view>
-                <view class="-name">{{item.name}}</view>
-              </view>
-              <view class="-list-item-right">
-                <image class="-icon" wx:if="{{detailInfo.type==='1'}}"
-                       src="https://pub.file.k12.vip/2019/06/05/1136167662351831042.png"></image>
-                <image class="-icon" wx:if="{{detailInfo.type==='2'}}"
-                       src="https://pub.file.k12.vip/2019/06/05/1136167768069263362.png"></image>
-                {{detailInfo.type==='1' ? '交作业' : '看点评'}}
-              </view>
+      <view class="p-myWorkAll-title">{{detailInfo.name}}</view>
+      <repeat for="{{dataList}}" key="index" index="index" item="item">
+        <view class="p-myWorkAll-item">
+          <view class="-list-item">
+            <view class="-list-item-left">
+              <view class="-num">{{index+1}}</view>
+              <view class="-name">{{item.name}}</view>
+            </view>
+            <view class="-list-item-right" @tap="workDetail({{item}})">
+              <image class="-icon" wx:if="{{detailInfo.type==='1'}}"
+                     src="https://pub.file.k12.vip/2019/06/05/1136167662351831042.png"></image>
+              <image class="-icon" wx:if="{{detailInfo.type==='2'}}"
+                     src="https://pub.file.k12.vip/2019/06/05/1136167768069263362.png"></image>
+              {{detailInfo.type==='1' ? '交作业' : '看点评'}}
             </view>
           </view>
-        </repeat>
-      </scroll-view>
+        </view>
+      </repeat>
     </view>
   </view>
 </template>
 
 <script>
-  import wepy from 'wepy'
-import mHeader from '../components/header'
+  import wepy from 'wepy';
+  import api from '../request/api'
+  import mHeader from '../components/header';
 
-export default class Notice extends wepy.page {
+  export default class Notice extends wepy.page {
     config = {
       navigationBarTitleText: '我的作业'
     };
@@ -42,52 +38,43 @@ export default class Notice extends wepy.page {
     };
     computed = {
       height() {
-        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
       }
     };
 
     data = {
-      page: {
-        current: 1,
-        size: 10,
-        total: ''
-      },
-      dataList: [
-        {
-          name: '回家过大年（写人的脸色）'
-        },
-        {
-          name: '回家过大年（写人的脸色）'
-        },
-        {
-          name: '回家过大年（写人的脸色）'
-        },
-        {
-          name: '回家过大年（写人的脸色）'
-        },
-        {
-          name: '回家过大年（写人的脸色）'
-        }
-      ],
+      dataList: [],
       detailInfo: ''
     };
 
     onLoad(option) {
-      this.detailInfo = option
+      this.detailInfo = option;
+      this.getList()
+    }
+
+    getList() {
+      api.study.listExistWorkByPage({
+        existwork: this.detailInfo.type !== '1',
+        grade: this.detailInfo.grade
+      })
+        .then(({ data }) => {
+          this.dataList = data.resultData[0].lessons;
+          this.$apply();
+        });
     }
 
     methods = {
-      bindLoadItem(data) {
-        console.log(111111)
-        if (this.page.current < Math.ceil(this.page.total / this.page.size)) {
-          this.page.current++
-        // this.getAccountInfo();
+      workDetail (item) {
+        if (this.detailInfo.type === '1') {
+          wx.navigateTo({ url: `/pages/submitHomework?id=${item.lessonId}`})
+        } else {
+          wx.navigateTo({ url: `/pages/completionOfWork?type=1&id=${item.lessonId}`})
         }
       }
     };
 
     events = {};
-}
+  }
 </script>
 <style lang="scss">
   @import '../assets/style/mixin.scss';
@@ -136,13 +123,13 @@ export default class Notice extends wepy.page {
 
         &-right {
           @include flex-center;
-          width:140px;
-          height:46px;
-          background:rgba(34,234,171,1);
-          border-radius:22px;
-          font-size:24px;
-          font-weight:500;
-          color:rgba(255,255,255,1);
+          width: 140px;
+          height: 46px;
+          background: rgba(34, 234, 171, 1);
+          border-radius: 22px;
+          font-size: 24px;
+          font-weight: 500;
+          color: rgba(255, 255, 255, 1);
 
           .-icon {
             margin-right: 10px;

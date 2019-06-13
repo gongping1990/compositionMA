@@ -1,0 +1,51 @@
+<!--  -->
+<template>
+  <view class="p-empty">
+    <image class="p-empty-img" src="{{emptyInfo.url}}"></image>
+    <view class="p-empty-text">{{emptyInfo.text}}</view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy';
+
+  export default class EmptyState extends wepy.component {
+    props = {
+      emptyInfo: {
+        type: Object,
+        default: {}
+      },
+    };
+    data = {};
+    components = {};
+    methods = {};
+    events = {};
+
+    onLoad() {
+    };
+  }
+</script>
+<style lang="scss">
+  @import '../assets/style/mixin.scss';
+
+  .p-empty {
+
+    &-img {
+      display: block;
+      margin: 328px auto 0;
+      width: 254px;
+      height: 254px;
+    }
+
+    &-text {
+      text-align: center;
+      margin: 22px auto 0;
+      width:560px;
+      height:120px;
+      height:40px;
+      font-size:28px;
+      font-weight:300;
+      color:rgba(88,66,43,0.5);
+      line-height:40px;
+    }
+  }
+</style>

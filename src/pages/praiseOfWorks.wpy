@@ -160,7 +160,7 @@
       addMyLike(item) {
         if (!item.myLike) {
           api.study.addLike({
-            workId: item.id
+            workId: item.workId
           }).then(() => {
             this.getList();
           });

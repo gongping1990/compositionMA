@@ -186,7 +186,7 @@ export default class PraiseOfWorks extends wepy.page {
 
 .p-praiseOfWorks {
   @include bg('/v2/zpbz/zpbz-background.png');
-  background-color: #fced42;
+  background-color: #FFD262;
   margin-bottom: 100px;
 
   .item-scroll {

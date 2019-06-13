@@ -141,12 +141,12 @@
             wx:if="{{!isCard}}">
         <view class="-popup-look-title">请选择要学习的内容</view>
         <view class="-popup-look-content">
-          <view>
+          <view @tap="openUrl({{1}})">
             <image class="-popup-look-img"
                    src="https://pub.file.k12.vip/2019/06/06/1136558111751163906.png"></image>
             <view>回看课程</view>
           </view>
-          <view>
+          <view @tap="openUrl({{2}})">
             <image class="-popup-look-img"
                    src="https://pub.file.k12.vip/2019/06/06/1136558295600091137.png"></image>
             <view>随堂检测</view>
@@ -204,12 +204,13 @@ export default class SubmitHomework extends wepy.page {
     isCard: false,
     workDetail: '',
     lessonDetail: '',
+    lessonId: '',
     dataList: []
   };
 
   getLessonInfo () {
     api.study.getLessonDetail({
-      lessonId: '1134359706941546498'
+      lessonId: this.lessonId
     }).then(res => {
       this.lessonDetail = res.data.resultData
     })
@@ -217,7 +218,7 @@ export default class SubmitHomework extends wepy.page {
 
   getMyHomework () {
     api.study.viewMyHomework({
-      lessonId: '1134359706941546498'
+      lessonId: this.lessonId
     }).then(res => {
       this.workDetail = res.data.resultData
       if (this.workDetail) {
@@ -231,7 +232,7 @@ export default class SubmitHomework extends wepy.page {
     api.study.listHomeworkByLesson({
       current: this.page.current,
       size: this.page.size,
-      lessonId: '1134359706941546498'
+      lessonId: this.lessonId
     }).then(({ data }) => {
       if (this.page.current > 1) {
         this.dataList = this.dataList.concat(data.resultData.records)
@@ -249,6 +250,13 @@ export default class SubmitHomework extends wepy.page {
   };
 
   methods = {
+    openUrl (num) {
+      if (num === 1) {
+        wx.navigateTo({url: `/pages/study?id=${this.workDetail.lessonId}&lookback=1`})
+      } else {
+        wx.navigateTo({url: `/pages/test?id=${this.workDetail.lessonId}`})
+      }
+    },
     addLike (item) {
       api.study.addLike({
         workId: item.id
@@ -301,6 +309,10 @@ export default class SubmitHomework extends wepy.page {
   };
 
   events = {};
+
+  onLoad (query) {
+    this.lessonId = query.id
+  }
 
   onShow () {
     this.getLessonInfo()

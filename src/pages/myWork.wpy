@@ -15,7 +15,7 @@
               item="list">
         <view class="p-myWork-list">
           <view class="-list-title">
-            <view class="-list-title-left">{{list.gradeText}}【{{list.grade}}】</view>
+            <view class="-list-title-left">{{list.gradeText}}</view>
             <view class="-list-title-right"
                   @tap="toDetail({{list}})">
               查看全部
@@ -33,7 +33,7 @@
                 <view class="-name">{{item.name}}</view>
               </view>
               <view class="-list-item-right"
-                    @tap="workDetail">
+                    @tap="workDetail({{item}})">
                 <image class="-icon"
                        wx:if="{{tabActive==='1'}}"
                        src="https://pub.file.k12.vip/2019/06/05/1136167662351831042.png"></image>
@@ -46,6 +46,9 @@
           </repeat>
         </view>
       </repeat>
+      <view wx:if="{{!dataList.length}}">
+        <emptyState :emptyInfo.sync="emptyOption"></emptyState>
+      </view>
     </view>
   </view>
 </template>
@@ -54,13 +57,15 @@
 import wepy from 'wepy'
 import api from '../request/api'
 import mHeader from '../components/header'
+import emptyState from '../components/emptyState'
 
 export default class MyWork extends wepy.page {
   config = {
     navigationBarTitleText: '我的作业'
   };
   components = {
-    mHeader
+    mHeader,
+    emptyState
   };
   computed = {
     height () {
@@ -70,32 +75,11 @@ export default class MyWork extends wepy.page {
 
   data = {
     tabActive: '1',
-    dataList: [
-      {
-        gradeText: '同步作文课',
-        grade: '三年级',
-        lessons: [
-          {
-            name: '回家过大年（写人的脸色）'
-          },
-          {
-            name: '钢铁是怎么样炼成的（写人的坚韧）'
-          }
-        ]
-      },
-      {
-        gradeText: '精度阿萨德拉上了',
-        grade: '五年级',
-        lessons: [
-          {
-            name: '回家叫你吃饭跑（写人的脸色）'
-          },
-          {
-            name: '小蝌蚪找妈妈（写人的坚韧）'
-          }
-        ]
-      }
-    ]
+    dataList: [],
+    emptyOption: {
+      url: 'https://pub.file.k12.vip/tbzw/v2/empty/wtj.png',
+      text: '真棒，你没有需要上交的作业！'
+    }
   };
 
   getList () {
@@ -103,7 +87,7 @@ export default class MyWork extends wepy.page {
       existwork: this.tabActive !== '1'
     })
       .then(({ data }) => {
-        this.dataList = data.resultData.records
+        this.dataList = data.resultData
         this.$apply()
       })
   }
@@ -111,16 +95,22 @@ export default class MyWork extends wepy.page {
   methods = {
     changeTab (num) {
       this.tabActive = num
+      if (!this.dataList.length) {
+        this.emptyOption = {
+          url: `https://pub.file.k12.vip/tbzw/v2/empty/${this.tabActive === '1' ? 'wtj' : 'ytj'}.png`,
+          text: this.tabActive === '1' ? '真棒，你没有需要上交的作业！' : '你还没有交过作业，上课后别忘记交作业哦！'
+        }
+      }
       this.getList()
     },
     toDetail (params) {
-      wx.navigateTo({ url: `/pages/myWorkAll?type=${this.tabActive}&name=${params.name}&grade=${params.grade}` })
+      wx.navigateTo({ url: `/pages/myWorkAll?type=${this.tabActive}&name=${params.gradeText}&grade=${params.grade}` })
     },
-    workDetail () {
+    workDetail (item) {
       if (this.tabActive === '1') {
-        wx.navigateTo({ url: `/pages/submitHomework` })
+        wx.navigateTo({ url: `/pages/submitHomework?id=${item.lessonId}` })
       } else {
-        wx.navigateTo({ url: `/pages/completionOfWork` })
+        wx.navigateTo({ url: `/pages/completionOfWork?type=1&id=${item.lessonId}` })
       }
     }
   };

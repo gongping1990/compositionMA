@@ -4,6 +4,7 @@
     <view class="container-scroll"
           style="margin-top:{{height}}px">
       <scroll-view class="item-scroll"
+                   wx:if="{{dataList.length}}"
                    @scrolltolower="bindLoadItem"
                    scroll-y
                    scroll-with-animation>
@@ -30,6 +31,9 @@
           </view>
         </repeat>
       </scroll-view>
+      <view wx:if="{{!dataList.length}}">
+        <emptyState :emptyInfo="emptyOption"></emptyState>
+      </view>
     </view>
   </view>
 </template>
@@ -39,13 +43,15 @@ import wepy from 'wepy'
 import api from '../request/api'
 import dayjs from 'dayjs'
 import mHeader from '../components/header'
+import emptyState from '../components/emptyState'
 
 export default class Notice extends wepy.page {
   config = {
     navigationBarTitleText: '点赞通知'
   };
   components = {
-    mHeader
+    mHeader,
+    emptyState
   };
   computed = {
     height () {
@@ -59,38 +65,11 @@ export default class Notice extends wepy.page {
       size: 10,
       total: ''
     },
-    dataList: [
-      {
-        userImg: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
-        userName: 'heaven小林哥',
-        datetime: '1560152687088',
-        know: true
-      },
-      {
-        userImg: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
-        userName: '风锅锅',
-        datetime: '2019-5-12 17:35',
-        know: false
-      },
-      {
-        userImg: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
-        userName: '大江东旭',
-        datetime: '2019-4-11 17:35',
-        know: false
-      },
-      {
-        userImg: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
-        userName: 'liangchenas',
-        datetime: '1560152687088',
-        know: false
-      },
-      {
-        userImg: 'https://pub.file.k12.vip/2019/06/05/1136101261121441794.png',
-        userName: 'liangchenas',
-        datetime: '1560152687088',
-        know: false
-      }
-    ]
+    emptyOption: {
+      url: 'https://pub.file.k12.vip/tbzw/v2/empty/by.png',
+      text: '暂时没有收到老师的表扬， 要坚持每天认真完成作业，老师一定会表扬你的！'
+    },
+    dataList: []
   };
 
   getList () {
@@ -116,7 +95,6 @@ export default class Notice extends wepy.page {
 
   methods = {
     bindLoadItem (data) {
-      console.log(111111)
       if (this.page.current < Math.ceil(this.page.total / this.page.size)) {
         this.page.current++
         this.getList()

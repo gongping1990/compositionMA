@@ -211,8 +211,7 @@ export default class CompletionOfWork extends wepy.page {
   };
 
   timeToFormat (times) {
-    var result = '00:00'
-    // eslint-disable-next-line no-unused-vars
+    var result = '00:00';
     var hour, minute, second
     if (times > 0) {
       minute = Math.floor(times / 60)
@@ -276,7 +275,7 @@ export default class CompletionOfWork extends wepy.page {
     },
     addLike () {
       if (this.queryInfo.type === '1') {
-
+        
       } else {
         api.study.addLike({
           workId: this.queryInfo.id
@@ -325,15 +324,14 @@ export default class CompletionOfWork extends wepy.page {
   }
 
   onUnload () {
-    console.log(2)
     this.myAudio.destroy()
   }
 
   onShareAppMessage () {
     return {
-      title: `我刚写了一篇作文《${this.workDetail.homeworkTitle}》，希望你可以给我点个赞`,
-      path: '/pages/shareHomework',
-      imageUrl: 'https://pub.file.k12.vip/read/ldshared.jpeg'
+      title: this.queryInfo.type === '1' ? `我已坚持学习${this.workDetail.learnDay}天，刚完成今天的作业，请给我点个赞吧` : `快来给@${this.workDetailnickname}点个赞，TA已坚持学习了${this.workDetail.learnDay}天`,
+      path: this.queryInfo.type === '1' ? `/pages/shareHomework?id=${this.workDetail.lessonId}` : `/pages/completionOfWork?type=2&id=${this.workDetail.id}`,
+      imageUrl: this.queryInfo.type === '1' ? 'https://pub.file.k12.vip/read/ldshared.jpeg' : ''
     }
   }
 }

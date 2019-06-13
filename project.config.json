@@ -138,6 +138,20 @@
 					"pathName": "pages/card",
 					"query": "",
 					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "111",
+					"pathName": "pages/recognitionNotice",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "111",
+					"pathName": "pages/myWork",
+					"query": "",
+					"scene": null
 				}
 			]
 		}

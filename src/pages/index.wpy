@@ -16,8 +16,8 @@
             wx:if="{{empty}}">
         <view class="swiper-item active">
           <view class="no-swiper-img"></view>
-          <text class="no-swiper-text">真棒，你购买的课程已经全部学完咯~</text>
-          <button class="swiper-btn" @tap="bindClickMoreLesson">查看已购课程</button>
+          <text class="no-swiper-text">真棒，你已学完了全部作文课程！</text>
+          <button class="swiper-btn" @tap="bindClickMoreLesson">课程回看</button>
         </view>
       </view>
       <view class="swiper"
@@ -89,7 +89,7 @@
                mode="aspectFit" />
         作品表彰
       </van-tabbar-item>
-      <van-tabbar-item>
+      <van-tabbar-item dot="{{!remindData.todaycard}}">
         <image slot="icon"
                src="../assets/image/icon-dkjl.png"
                mode="aspectFit" />
@@ -98,7 +98,7 @@
                mode="aspectFit" />
         打卡记录
       </van-tabbar-item>
-      <van-tabbar-item>
+      <van-tabbar-item dot="{{remindData.uctip}}">
         <image slot="icon"
                src="../assets/image/icon-grzx.png"
                mode="aspectFit" />
@@ -256,6 +256,9 @@ export default class Home extends wepy.page {
       this.infoData = data.resultData
       this.infoListData = data.resultData.infoList[0]
       this.empty = !data.resultData.infoList.length
+      if (!data.resultData.buyCourse) {
+        wx.redirectTo({ url: '/pages/enroll' })
+      }
       this.$apply()
     })
   }

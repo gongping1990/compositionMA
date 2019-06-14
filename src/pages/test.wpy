@@ -161,6 +161,7 @@ export default class Example extends wepy.page {
   };
   methods = {
     clickLinkHomeWork() {
+      this.changeLearnStage(3)
       wx.redirectTo({ url: '/pages/submitHomework?id=' + this.lessonId })
     },
     clickStudy () {
@@ -448,6 +449,15 @@ export default class Example extends wepy.page {
     })
   }
 
+  // 更新课程状态
+  changeLearnStage(id, type) {
+    let { api } = this.$parent.globalData
+    api.study.changeLearnStage({
+      id: this.lessonId,
+      stage: type
+    })
+  }
+
   onLoad (option) {
     this.lessonId = option.id
     // eslint-disable-next-line no-undef
@@ -456,17 +466,17 @@ export default class Example extends wepy.page {
 
   onReady () {
     console.log('ready')
-    this.audioContext = this.$parent.globalData.audioContext
+    this.audioContext = wx.createInnerAudioContext()
   };
   onShow () {
     this.getClassInfo()
     this.getLessonRoom()
   }
   onHide () {
-    this.audioContext.stop()
+    this.audioContext.destroy()
   }
   onUnload() {
-    this.audioContext.stop()
+    this.audioContext.destroy()
   }
 }
 </script>

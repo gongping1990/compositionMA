@@ -1,7 +1,7 @@
 {
 	"description": "A WePY project",
 	"setting": {
-		"urlCheck": false,
+		"urlCheck": true,
 		"es6": false,
 		"postcss": false,
 		"minified": false,
@@ -37,7 +37,7 @@
 				{
 					"id": 0,
 					"name": "classroom",
-					"pathName": "pages/catalog",
+					"pathName": "pages/enroll",
 					"query": "id=1134359706941546498&lookback=1",
 					"scene": null
 				},

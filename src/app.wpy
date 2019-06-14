@@ -46,7 +46,8 @@ export default class extends wepy.app {
       'pages/recognitionNotice',
       'pages/address',
       'pages/subscribe',
-      'pages/authorize'
+      'pages/authorize',
+      'pages/enroll'
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -84,6 +85,9 @@ export default class extends wepy.app {
 
   onLaunch (options) {
     const that = this
+    wx.setKeepScreenOn({
+      keepScreenOn: true
+    })
     wepy.login().then(res => {
       let params = {
         code: res.code

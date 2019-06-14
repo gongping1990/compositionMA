@@ -64,7 +64,7 @@
                mode="aspectFit" />
         作品表彰
       </van-tabbar-item>
-      <van-tabbar-item>
+      <van-tabbar-item dot="{{!remindData.todaycard}}">
         <image slot="icon"
                src="../assets/image/icon-dkjl.png"
                mode="aspectFit" />
@@ -73,7 +73,7 @@
                mode="aspectFit" />
         打卡记录
       </van-tabbar-item>
-      <van-tabbar-item>
+      <van-tabbar-item dot="{{remindData.uctip}}">
         <image slot="icon"
                src="../assets/image/icon-grzx.png"
                mode="aspectFit" />

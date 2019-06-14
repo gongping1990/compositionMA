@@ -1,0 +1,115 @@
+<!--  -->
+<template>
+  <view class='container enroll'>
+    <mHeader flag="0"></mHeader>
+    <view class="container-scroll"
+          style="margin-top:{{height}}px">
+      <view class="enroll-btn" @tap="bindClickBtn">
+        我要报名
+      </view>
+    </view>
+    <van-popup show="{{ showKF }}"
+               position="bottom"
+               @close="onClose">
+      <view class="kf-pop">
+        <text class="kf-pop-title">报名课程</text>
+        <image src=""
+               class="kf-pop-img" />
+        <text class="kf-pop-text">点击下方按钮</text>
+        <text class="kf-pop-text red">回复“1”即可报名学习</text>
+        <button class="kf-pop-btn"
+                open-type="contact">
+          回复“1”立即报名
+        </button>
+      </view>
+    </van-popup>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import mHeader from '../components/header'
+export default class Enroll extends wepy.page {
+  config = {
+    navigationBarTitleText: '',
+    usingComponents: {
+      'van-popup': '../vant/popup/index'
+    }
+  };
+  data = {
+    showKF: false
+  };
+  components = {
+    mHeader
+  };
+  methods = {
+    bindClickBtn() {
+      this.showKF = true
+    },
+    onClose() {
+      this.showKF = false
+    }
+  };
+  computed = {
+    height () {
+      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+    }
+  }
+}
+</script>
+<style lang='scss'>
+@import '../assets/style/mixin.scss';
+.enroll {
+  &-btn {
+    @include flex-center;
+    position: fixed;
+    left: 50%;
+    bottom: 48px;
+    width: 654px;
+    height: 100px;
+    background: linear-gradient(
+      90deg,
+      rgba(249, 230, 11, 1) 0%,
+      rgba(253, 219, 85, 1) 100%
+    );
+    box-shadow: 0px 8px 16px 4px rgba(230, 194, 81, 0.4);
+    border-radius: 50px;
+    transform: translateX(-50%);
+  }
+  .kf-pop {
+    @include flex-column-center;
+    padding: 16px 24px;
+    background: rgba(255, 255, 255, 1);
+    border-radius: 16px 16px 0px 0px;
+    &-title {
+      font-size: 36px;
+    }
+    &-img {
+      margin: 48px 0;
+    }
+    &-text {
+      font-size: 36px;
+      line-height: 50px;
+      color: rgba($color: #58422b, $alpha: 0.5);
+      &.red {
+        color: #ff7c76;
+        font-weight: bold;
+      }
+    }
+    &-btn {
+      @include flex-center;
+      margin: 32px 0;
+      width: 654px;
+      height: 100px;
+      font-size: 32px;
+      color: #58422b;
+      background: linear-gradient(
+        90deg,
+        rgba(249, 230, 11, 1) 0%,
+        rgba(253, 219, 85, 1) 100%
+      );
+      box-shadow: 0px 8px 16px 4px rgba(230, 194, 81, 0.4);
+      border-radius: 54px;
+    }
+  }
+}
+</style>

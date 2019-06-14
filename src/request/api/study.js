@@ -10,6 +10,9 @@ const study = {
   getLessonRoom(params) {
     return request.get('/study/getLessonRoom', params)
   },
+  getUCRemindVO() {
+    return request.get('/study/getUCRemindVO')
+  },
   resetLearn(params) {
     return request.get('/study/resetLearn', params)
   },

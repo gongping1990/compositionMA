@@ -29,9 +29,7 @@ module.exports = {
     },
     babel: {
       sourceMap: true,
-      presets: [
-        'env'
-      ],
+      presets: ['env'],
       plugins: [
         'transform-class-properties',
         'transform-decorators-legacy',
@@ -40,29 +38,32 @@ module.exports = {
       ]
     }
   },
-  plugins: {
-    'px2units': {
-      filter: /\.wxss$/
-      // 忽略 abc.wxss 文件示例
-      // filter: /(?<!\/abc)\.wxss$/i
-    }
-  },
   appConfig: {
     noPromiseAPI: ['createSelectorQuery'],
-    baseUrl: process.env.NODE_ENV === 'production' ? 'https://huoke.prod.k12.vip/composition' : 'https://huoke.test.k12.vip/composition'
+    baseUrl:
+      process.env.NODE_ENV === 'production'
+        ? 'https://huoke.test.k12.vip/composition'
+        : 'https://huoke.test.k12.vip/composition'
+  }
+}
+
+module.exports.plugins = {
+  px2units: {
+    filter: /\.wxss$/
+    // 忽略 abc.wxss 文件示例
+    // filter: /(?<!\/abc)\.wxss$/i
   }
 }
 
 if (prod) {
   // 压缩sass
   // module.exports.compilers['sass'] = {outputStyle: 'compressed'}
-
   // 压缩js
   module.exports.plugins = {
+    ...module.exports.plugins,
     uglifyjs: {
       filter: /\.js$/,
-      config: {
-      }
+      config: {}
     },
     imagemin: {
       filter: /\.(jpg|png|jpeg)$/,

@@ -63,9 +63,9 @@ export default class Classroom extends wepy.page {
   methods = {
     bindClickRoom() {
       if (this.roomData && this.roomData.stage === 1) {
-        wx.navigateTo({ url: '/pages/study?id=' + this.lessonId })
+        wx.redirectTo({ url: '/pages/study?id=' + this.lessonId })
       } else {
-        wx.navigateTo({ url: '/pages/ready?id=' + this.lessonId })
+        wx.redirectTo({ url: '/pages/ready?id=' + this.lessonId })
       }
     }
   }

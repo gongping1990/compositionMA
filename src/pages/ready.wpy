@@ -42,12 +42,14 @@
     </view>
 
     <view class="ready-btn {{isReady && 'show'}}"
-          @tap="clickStudy">{{time ? '开始上课（' + time + ')s' : '开始上课'}}</view>
+          @tap="clickStudy">{{time ? '开始上课（' + time + '）s' : '开始上课'}}</view>
+    <loading wx:if="{{loading}}"></loading>
   </view>
 </template>
 <script>
 import wepy from 'wepy'
 import mHeader from '@/components/header'
+import loading from '@/components/loading'
 export default class Example extends wepy.page {
   config = {
     navigationBarTitleText: '',
@@ -65,12 +67,14 @@ export default class Example extends wepy.page {
     duration: 0,
     currentTime: 0,
     time: 3,
+    loading: true,
     isReady: false,
     showContinueDiaolig: true,
     timeText: '00’’00’'
   };
   components = {
-    mHeader
+    mHeader,
+    loading
   };
   methods = {
     clickStudy () {
@@ -94,13 +98,10 @@ export default class Example extends wepy.page {
   };
 
   imitateReady () {
-    console.log(this)
     let { readyArr } = this
     let random = parseInt(Math.random() * 3)
     this.readyArr[random] = 1
-    console.log(readyArr)
     if (!(readyArr[0] && readyArr[1] && readyArr[2])) {
-      console.log(111)
       setTimeout(() => {
         this.imitateReady()
         this.$apply()
@@ -119,7 +120,7 @@ export default class Example extends wepy.page {
     } else {
       console.log('endtime')
       this.readyArr[3] = 1
-      wx.navigateTo({ url: '/pages/study?id=' + this.lessonId })
+      wx.redirectTo({ url: '/pages/study?id=' + this.lessonId })
     }
     this.$apply()
   }
@@ -187,6 +188,7 @@ export default class Example extends wepy.page {
     api.course.getClassInfo({
       lessonId: this.lessonId
     }).then(({ data }) => {
+      this.loading = false
       this.courseInfo = data.resultData
       setTimeout(() => {
         this.initAudio(data.resultData.guideAudio)
@@ -195,22 +197,18 @@ export default class Example extends wepy.page {
     })
   }
 
-  onReady () {
-    console.log(this.$parent.globalData.audioContext)
-    this.audioContext = this.$parent.globalData.audioContext
-  }
-
   onLoad (option) {
     this.lessonId = option.id
   }
   onShow () {
+    this.audioContext = wx.createInnerAudioContext()
     this.initPage()
   }
   onHide () {
-    this.audioContext.stop()
+    this.audioContext.destroy()
   }
   onUnload () {
-    this.audioContext.stop()
+    this.audioContext.destroy()
   }
 }
 </script>

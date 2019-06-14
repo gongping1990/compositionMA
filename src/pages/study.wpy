@@ -113,11 +113,13 @@
         </view>
       </view>
     </van-popup>
+    <loading wx:if="{{loading}}"></loading>
   </view>
 </template>
 <script>
 import wepy from 'wepy'
 import mHeader from '../components/header'
+import loading from '../components/loading'
 export default class Example extends wepy.page {
   config = {
     navigationBarTitleText: '',
@@ -162,10 +164,12 @@ export default class Example extends wepy.page {
     roomData: {},
     mateInfo: [],
     setTimeOut: null,
-    isEnd: false
+    isEnd: false,
+    loading: true
   };
   components = {
-    mHeader
+    mHeader,
+    loading
   };
   watch = {
     isPlay (n) {
@@ -222,6 +226,7 @@ export default class Example extends wepy.page {
     bindended() {
       this.isEnd = true
       if (!this.isLookBack) {
+        this.changeLearnStage(this.roomData.id, 2)
         wx.redirectTo({ url: '/pages/test?id=' + this.lessonId })
       } else {
         wx.redirectTo({ url: '/pages/submitHomework?id=' + this.lessonId })
@@ -437,7 +442,7 @@ export default class Example extends wepy.page {
       } else {
         this.showContinueDiaolig = true
       }
-
+      this.loading = false
       this.$apply()
     })
   }
@@ -467,6 +472,7 @@ export default class Example extends wepy.page {
     if (this.isEnd) {
       this.changeLearnStage(this.roomData.id, 2)
     } else {
+      this.reset()
       this.changeLearnStage(this.roomData.id, 1)
     }
   }
@@ -474,6 +480,7 @@ export default class Example extends wepy.page {
     if (this.isEnd) {
       this.changeLearnStage(this.roomData.id, 2)
     } else {
+      this.reset()
       this.changeLearnStage(this.roomData.id, 1)
     }
   }

@@ -292,7 +292,7 @@ export default class Home extends wepy.page {
       this.infoData = data.resultData
       this.infoListData = data.resultData.infoList[0]
       this.empty = !data.resultData.infoList.length
-      this.showPraise = !this.infoData.awardsPop
+      this.showPraise = this.infoData.awardsPop
       this.$apply()
     })
   }

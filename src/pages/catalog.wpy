@@ -82,9 +82,6 @@ export default class Index extends wepy.page {
   };
 
   watch = {
-    todayScrollTop(n) {
-
-    },
     scrollTop(n) {
       let {titleScrollTopArr} = this
       if (n === titleScrollTopArr[0] || n < titleScrollTopArr[1]) {
@@ -166,7 +163,7 @@ export default class Index extends wepy.page {
     query.select('#sk').boundingClientRect()
     query.selectViewport().scrollOffset()
     query.exec((res) => {
-      this.todayScrollTop = res[0].top - this.height - this.infoHeight
+      this.todayScrollTop = res[0].top - this.height - this.infoHeight + 60
       this.$apply()
     })
   }

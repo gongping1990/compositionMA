@@ -344,8 +344,7 @@ export default class Example extends wepy.page {
   }
 
   initAudio (src) {
-    let { audioContext } = this.$parent.globalData
-    console.log(audioContext)
+    let { audioContext } = this
     audioContext.src = src
     setTimeout(() => {
       audioContext.play()

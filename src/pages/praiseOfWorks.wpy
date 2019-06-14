@@ -1,6 +1,6 @@
 <template>
   <view class="container">
-    <mHeader title="作品表彰"></mHeader>
+    <mHeader flag="0" title="作品表彰"></mHeader>
     <view class="container-scroll p-praiseOfWorks"
           style="margin-top:{{height}}px">
       <scroll-view class="item-scroll"

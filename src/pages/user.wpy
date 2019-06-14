@@ -1,6 +1,6 @@
 <template>
   <view class="container">
-    <mHeader title="个人中心"></mHeader>
+    <mHeader flag="0" title="个人中心"></mHeader>
     <view class="container-scroll p-user" style="margin-top:{{height}}px">
       <view class="p-user-header">
         <view class="-header-top">

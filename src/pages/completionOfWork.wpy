@@ -331,7 +331,7 @@ export default class CompletionOfWork extends wepy.page {
     return {
       title: this.queryInfo.type === '1' ? `我已坚持学习${this.workDetail.learnDay}天，刚完成今天的作业，请给我点个赞吧` : `快来给@${this.workDetailnickname}点个赞，TA已坚持学习了${this.workDetail.learnDay}天`,
       path: this.queryInfo.type === '1' ? `/pages/shareHomework?id=${this.workDetail.lessonId}` : `/pages/completionOfWork?type=2&id=${this.workDetail.id}`,
-      imageUrl: this.queryInfo.type === '1' ? 'https://pub.file.k12.vip/read/ldshared.jpeg' : ''
+      imageUrl: ''
     }
   }
 }

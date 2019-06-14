@@ -190,8 +190,8 @@ export default class Example extends wepy.page {
     }).then(({ data }) => {
       this.courseInfo = data.resultData
       setTimeout(() => {
-        this.initAudio(data.resultData.guideAudio)
         this.loading = false
+        this.initAudio(data.resultData.guideAudio)
       }, 1000)
       this.$apply()
     })

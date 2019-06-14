@@ -367,8 +367,10 @@ export default class Example extends wepy.page {
           if (this.publishEnd) {
             clearInterval(this.timer)
           } else {
+            console.log(111)
             this.answerTime += 1
           }
+          this.$apply()
         }, 1000)
         this.$apply()
       }, 500)
@@ -448,8 +450,8 @@ export default class Example extends wepy.page {
         return e
       })
       setTimeout(() => {
-        this.initAudio(this.courseInfo.guideAudio)
         this.loading = false
+        this.initAudio(this.courseInfo.guideAudio)
       }, 1000)
       this.$apply()
     })

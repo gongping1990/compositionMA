@@ -220,7 +220,7 @@ import mHeader from '../components/header'
       }
 
       .-header-down {
-        @include bg('/course/card.png');
+        @include bg('/v2/mycard.png');
 
         margin-top: 12px;
         width: 686px;

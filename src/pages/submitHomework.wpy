@@ -79,7 +79,7 @@
       <view class="p-submitHomework-card"
             wx:if="{{tabActive === '1'}}"
             @tap="addMyCard">
-        <view class="-text">{{workDetail.todayCard ? '已打卡' : '点我打卡'}}</view>
+        <view class="-text">{{cardDetail.todayCard ? '已打卡' : '点我打卡'}}</view>
       </view>
 
       <view class="p-submitHomework-center "
@@ -204,6 +204,7 @@ export default class SubmitHomework extends wepy.page {
     isCard: false,
     workDetail: '',
     lessonDetail: '',
+    cardDetail: '',
     lessonId: '',
     dataList: []
   };
@@ -214,6 +215,14 @@ export default class SubmitHomework extends wepy.page {
     }).then(res => {
       this.lessonDetail = res.data.resultData
     })
+  };
+
+  getCardInfo () {
+    api.study.countCard()
+      .then(res => {
+        this.cardDetail = res.data.resultData
+        this.$apply()
+      })
   };
 
   getMyHomework () {
@@ -265,7 +274,7 @@ export default class SubmitHomework extends wepy.page {
       })
     },
     addMyCard () {
-      if (this.workDetail.todayCard) return
+      if (this.cardDetail.todayCard) return
       api.study.addCard()
         .then(() => {
           this.isCard = true
@@ -316,6 +325,7 @@ export default class SubmitHomework extends wepy.page {
 
   onShow () {
     this.getLessonInfo()
+    this.getCardInfo()
     this.getMyHomework()
   }
 }

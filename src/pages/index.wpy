@@ -135,6 +135,40 @@
         </button>
       </view>
     </van-popup>
+
+    <van-popup show="{{ showPraise }}">
+      <view class="praise-pop">
+        <view class="praise-pop-content">
+          <view class="-content-top">
+            <view class="-content-top-name">
+              <text class="-title">{{infoData.awardsInfo.nickName}}</text> 同学
+            </view>
+            <view class="-content-top-body">
+              作文“{{infoData.awardsInfo.homework}}“被评为
+              <text class="-red">优秀作品</text>
+              特发此状，以此鼓励
+            </view>
+            <view class="-content-top-text">同步作文课</view>
+            <view class="-content-top-text">{{infoData.awardsInfo.citeTime}}</view>
+          </view>
+          <view class="-content-down">
+            <view class="-content-down-title">
+              <image class="-title-img" src="{{infoData.awardsInfo.teacherHeadImage}}"></image>
+              <view class="-title-name">{{infoData.awardsInfo.teacherName}}</view>
+            </view>
+            <view class="-content-down-des">
+              {{infoData.awardsInfo.nickName}}，你的作文“{{infoData.awardsInfo.homework}}”写的太棒啦，
+              老师要将它推荐到作品表彰墙，让小朋友们都向你学习
+            </view>
+          </view>
+        </view>
+        <view class="praise-pop-btn">
+          <!--<button class="-btn">保存奖状</button>-->
+          <button class="-btn" open-type="share" >炫耀一下</button>
+        </view>
+        <view class="dialog-close" @tap="onClose"></view>
+      </view>
+    </van-popup>
   </view>
 </template>
 <script>
@@ -161,6 +195,7 @@ export default class Home extends wepy.page {
     show: false,
     showKF: false,
     showHeader: true,
+    showPraise: false,
     infoData: {},
     infoListData: {},
     broadcastList: [],
@@ -215,6 +250,7 @@ export default class Home extends wepy.page {
     onClose () {
       this.show = false
       this.showKF = false
+      this.showPraise = false
     }
   };
   events = {
@@ -256,6 +292,7 @@ export default class Home extends wepy.page {
       this.infoData = data.resultData
       this.infoListData = data.resultData.infoList[0]
       this.empty = !data.resultData.infoList.length
+      this.showPraise = !this.infoData.awardsPop
       this.$apply()
     })
   }
@@ -276,6 +313,14 @@ export default class Home extends wepy.page {
       this.initPage()
     }
   };
+
+  onShareAppMessage () {
+    return {
+      title:`我的作业受到${this.infoData.awardsInfo.teacherName}的表扬，快来给我点个赞吧`,
+      path: `/pages/completionOfWork?type=2&id=${this.infoData.awardsInfo.homeworkId}`,
+      imageUrl: ''
+    }
+  }
 }
 </script>
 <style lang='scss'>
@@ -316,6 +361,113 @@ export default class Home extends wepy.page {
       );
       box-shadow: 0px 8px 16px 4px rgba(230, 194, 81, 0.4);
       border-radius: 54px;
+    }
+  }
+  .praise-pop {
+
+    &-content{
+      border-top: 1px solid transparent;
+      @include bg('/by/dialog.png');
+      margin: 0 auto;
+      width:640px;
+      height:768px;
+
+      .-content-top {
+        @include bg('/by/jz.png');
+        margin: 104px auto 0;
+        width: 466px;
+        height: 296px;
+
+        &-name {
+          margin: 90px 0 0 78px;
+          display: inline-block;
+          height:26px;
+          font-size:18px;
+          font-weight:400;
+          color:rgba(88,66,43,1);
+          line-height:26px;
+
+          .-title {
+            text-decoration: underline;
+          }
+        }
+
+        &-body {
+          margin: 8px 0 28px 78px;
+          width:292px;
+          height:58px;
+          font-size:18px;
+          font-weight:500;
+          color:rgba(88,66,43,1);
+          line-height:26px;
+
+          .-red {
+            color: #CE5C18
+          }
+        }
+
+        &-text {
+          margin-right: 120px;
+          text-align: right;
+          height:22px;
+          font-size:16px;
+          font-weight:400;
+          line-height:22px;
+        }
+      }
+
+      .-content-down {
+        margin-top: 30px;
+        margin-left: 96px;
+
+        &-title {
+          display: flex;
+
+          .-title-img {
+            width:60px;
+            height:60px;
+            border:2px solid rgba(230,169,119,1);
+            border-radius: 50%;
+            margin-right: 24px;
+          }
+
+          .-title-name {
+            height:44px;
+            font-size:32px;
+            font-weight:500;
+            color:rgba(88,66,43,1);
+            line-height:44px;
+          }
+        }
+
+        &-des {
+          margin: 24px 0;
+          width:448px;
+          height:102px;
+          font-size:24px;
+          font-weight:400;
+          color:rgba(88,66,43,1);
+          line-height:34px;
+        }
+      }
+    }
+
+    &-btn {
+      margin-top: 50px;
+
+      .-btn {
+        text-align: center;
+        margin: 0 auto;
+        width:312px;
+        height:102px;
+        background:linear-gradient(90deg,rgba(249,230,11,1) 0%,rgba(253,219,85,1) 100%);
+        box-shadow:0px 8px 16px 4px rgba(230,194,81,0.4);
+        border-radius:51px;
+        font-size:36px;
+        font-weight:500;
+        color:rgba(88,66,43,1);
+        line-height:102px;
+      }
     }
   }
   .no-swiper {

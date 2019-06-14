@@ -8,16 +8,16 @@ export default class testMixin extends wepy.mixin {
     onChangeTabbar(event) {
       switch (event.detail) {
         case 0:
-          wx.navigateTo({ url: '/pages/index' })
+          wx.redirectTo({ url: '/pages/index' })
           break
         case 1:
-          wx.navigateTo({ url: '/pages/praiseOfWorks' })
+          wx.redirectTo({ url: '/pages/praiseOfWorks' })
           break
         case 2:
-          wx.navigateTo({ url: '/pages/card' })
+          wx.redirectTo({ url: '/pages/card' })
           break
         case 3:
-          wx.navigateTo({ url: '/pages/user' })
+          wx.redirectTo({ url: '/pages/user' })
           break
       }
     }

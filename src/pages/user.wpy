@@ -18,12 +18,12 @@
                 key="index"
                 index="index"
                 item="item">
-          <div class="-content-item">
+          <div class="-content-item" @tap="toJump({{item.id}})">
             <view class="-content-item-left">
               <image class="-left-img" src="{{item.url}}" mode="widthFix"></image>
               <view class="-left-text">{{item.name}}</view>
             </view>
-            <view class="-content-item-right" @tap="toJump({{item.id}})">
+            <view class="-content-item-right">
               <view class="-right-tip" wx:if="{{index!==3}}">{{item.num}}</view>
               <image class="-right-img" src="https://pub.file.k12.vip/tbzw/course/my-icon-arrow.png"
                      mode="widthFix"></image>

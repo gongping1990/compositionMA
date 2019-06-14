@@ -205,9 +205,11 @@ export default class Example extends wepy.page {
     this.initPage()
   }
   onHide () {
+    this.audioContext.stop()
     this.audioContext.destroy()
   }
   onUnload () {
+    this.audioContext.stop()
     this.audioContext.destroy()
   }
 }

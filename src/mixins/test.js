@@ -22,13 +22,13 @@ export default class testMixin extends wepy.mixin {
       }
     }
   }
-  getUCRemindVO() {
+  getUCRemindVOL() {
     let {api} = this.$parent.globalData
     api.study.getUCRemindVO().then(({data}) => {
       this.remindData = data.resultData
     })
   }
   onShow() {
-    this.getUCRemindVO()
+    this.getUCRemindVOL()
   }
 }

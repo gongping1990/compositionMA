@@ -113,7 +113,7 @@ export default class Index extends wepy.page {
           if (lesson.stage === 2) {
             wx.navigateTo({ url: '/pages/submitHomework?id=' + lesson.lessonId })
           } else {
-            wx.navigateTo({ url: '/pages/text?id=' + lesson.lessonId })
+            wx.navigateTo({ url: '/pages/test?id=' + lesson.lessonId })
           }
           break
         case 5:
@@ -163,8 +163,10 @@ export default class Index extends wepy.page {
     query.select('#sk').boundingClientRect()
     query.selectViewport().scrollOffset()
     query.exec((res) => {
-      this.todayScrollTop = res[0].top - this.height - this.infoHeight - 60
-      this.$apply()
+      if (res[0]) {
+        this.todayScrollTop = res[0].top - this.height - this.infoHeight - 60
+        this.$apply()
+      }
     })
   }
 

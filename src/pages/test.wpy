@@ -474,9 +474,9 @@ export default class Example extends wepy.page {
 
   onReady () {
     console.log('ready')
-    this.audioContext = wx.createInnerAudioContext()
   };
   onShow () {
+    this.audioContext = wx.createInnerAudioContext()
     this.getClassInfo()
     this.getLessonRoom()
   }

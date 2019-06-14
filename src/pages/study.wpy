@@ -464,10 +464,8 @@ export default class Example extends wepy.page {
     this.lessonId = option.id
     this.isLookBack = option.lookback
   };
-  onReady () {
-    this.videoContext = wx.createVideoContext('video')
-  }
   onShow () {
+    this.videoContext = wx.createVideoContext('video')
     this.initPage()
   };
   onHide() {

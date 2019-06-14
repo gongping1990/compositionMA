@@ -188,10 +188,10 @@ export default class Example extends wepy.page {
     api.course.getClassInfo({
       lessonId: this.lessonId
     }).then(({ data }) => {
-      this.loading = false
       this.courseInfo = data.resultData
       setTimeout(() => {
         this.initAudio(data.resultData.guideAudio)
+        this.loading = false
       }, 1000)
       this.$apply()
     })

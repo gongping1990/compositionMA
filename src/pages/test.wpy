@@ -113,11 +113,13 @@
         <text class="dialog-text {{isSuccess ? 'success' : 'error'}}">{{isSuccess ? '回答正确' : '回答错误'}}</text>
       </view>
     </van-popup>
+    <loading wx:if="{{loading}}"></loading>
   </view>
 </template>
 <script>
 import wepy from 'wepy'
 import mHeader from '@/components/header'
+import loading from '@/components/loading'
 export default class Example extends wepy.page {
   config = {
     navigationBarTitleText: '',
@@ -126,6 +128,7 @@ export default class Example extends wepy.page {
     }
   };
   data = {
+    loading: true,
     lessonId: 0,
     summaryIndex: 0,
     summaryAnimateIndex: 0,
@@ -157,7 +160,8 @@ export default class Example extends wepy.page {
     answerTime: 0
   };
   components = {
-    mHeader
+    mHeader,
+    loading
   };
   methods = {
     clickLinkHomeWork() {
@@ -443,7 +447,10 @@ export default class Example extends wepy.page {
         e.isRight = 3
         return e
       })
-      this.initAudio(this.courseInfo.guideAudio)
+      setTimeout(() => {
+        this.initAudio(this.courseInfo.guideAudio)
+        this.loading = false
+      }, 1000)
       this.$apply()
     })
   }

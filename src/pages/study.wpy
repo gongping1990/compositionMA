@@ -439,7 +439,7 @@ export default class Example extends wepy.page {
       if (data.resultData.newstart) {
         this.changeLearnStage(data.resultData.id, 1)
         this.videoContext.play()
-      } else {
+      } else if (!data.resultData.stage) {
         this.showContinueDiaolig = true
       }
       this.loading = false

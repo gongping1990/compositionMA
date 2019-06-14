@@ -34,7 +34,6 @@
           </view>
           <view class="swiper-title">{{infoListData.lessonSort + '.' + infoListData.name}}</view>
           <view class="swiper-subtitle">
-            <text>{{gradeText[infoListData.grade - 3]}}</text>
             <text class="swiper-subtitle-text"
                   wx:if="{{infoListData.expLesson}}">体验课</text>
           </view>

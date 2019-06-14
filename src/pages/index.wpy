@@ -33,6 +33,7 @@
                    class="swiper-cover-image" />
           </view>
           <view class="swiper-title">{{infoListData.lessonSort + '.' + infoListData.name}}</view>
+          <view class="swiper-subtitle">小语轻作文 Level {{infoListData.grade - 2}}</view>
           <view class="swiper-subtitle">
             <text class="swiper-subtitle-text"
                   wx:if="{{infoListData.expLesson}}">体验课</text>
@@ -686,7 +687,7 @@ export default class Home extends wepy.page {
     }
     &-subtitle {
       @include flex-center;
-      margin-bottom: 38px;
+      margin-bottom: 18px;
       font-size: 28px;
       color: rgba($color: #58422b, $alpha: 0.5);
       &-text {

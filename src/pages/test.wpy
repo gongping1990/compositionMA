@@ -21,7 +21,7 @@
               {{item.status ? '已完成' : '答题中...'}}
             </view>
             <view class="student-flower"
-                  wx:if="{{item.flower}}">
+                  wx:if="{{item.flower && index == 3}}">
               <view class="student-flower-icon"></view>
               x{{item.flower}}
             </view>
@@ -422,7 +422,7 @@ export default class Example extends wepy.page {
   // 获取教室信息
   getLessonRoom (type) {
     let { api } = this.$parent.globalData
-    api.study.resetLearn({
+    api.study.getLessonRoom({
       lessonId: this.lessonId
     }).then(({ data }) => {
       this.roomData = data.resultData

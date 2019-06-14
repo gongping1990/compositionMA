@@ -201,7 +201,7 @@ export default class Example extends wepy.page {
       if (this.answerTime) {
         let minute = 0
         let second = 0
-        let time = this.roomData.progressTime
+        let time = this.answerTime
         minute = parseInt(time / 60)
         second = time % 60
         minute = minute < 10 ? '0' + minute : minute
@@ -367,8 +367,8 @@ export default class Example extends wepy.page {
           if (this.publishEnd) {
             clearInterval(this.timer)
           } else {
-            console.log(111)
             this.answerTime += 1
+            console.log(this.answerTime)
           }
           this.$apply()
         }, 1000)
@@ -461,7 +461,7 @@ export default class Example extends wepy.page {
   changeLearnStage(type) {
     let { api } = this.$parent.globalData
     api.study.changeLearnStage({
-      id: this.lessonId,
+      id: this.roomData.id,
       stage: type
     })
   }

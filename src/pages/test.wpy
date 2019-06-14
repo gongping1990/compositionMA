@@ -458,7 +458,7 @@ export default class Example extends wepy.page {
   }
 
   // 更新课程状态
-  changeLearnStage(id, type) {
+  changeLearnStage(type) {
     let { api } = this.$parent.globalData
     api.study.changeLearnStage({
       id: this.lessonId,

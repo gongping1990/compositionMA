@@ -214,6 +214,7 @@ export default class SubmitHomework extends wepy.page {
       lessonId: this.lessonId
     }).then(res => {
       this.lessonDetail = res.data.resultData
+      this.$apply()
     })
   };
 
@@ -234,6 +235,7 @@ export default class SubmitHomework extends wepy.page {
         this.isSuccessWork = true
         this.workDetail.workTime = dayjs(+this.workDetail.workTime).format('YYYY-MM-DD HH:mm:ss')
       }
+      this.$apply()
     })
   };
 

@@ -12,7 +12,7 @@
                 key="index"
                 index="index"
                 item="item">
-          <view class="p-praiseOfWorks-item">
+          <view class="p-praiseOfWorks-item" @tap="toWorkDetail({{item}})">
             <view class="p-praiseOfWorks-item-top">
               <view class="-item-top">
                 <view class="-item-top-left">
@@ -157,6 +157,9 @@ export default class PraiseOfWorks extends wepy.page {
   };
 
   methods = {
+    toWorkDetail (data) {
+      wx.navigateTo({ url: `/pages/completionOfWork?type=2&id=${data.workId}` })
+    },
     addMyLike (item) {
       if (!item.myLike) {
         api.study.addLike({
@@ -208,7 +211,7 @@ export default class PraiseOfWorks extends wepy.page {
   &-item {
     margin: 0 auto 32px;
     width: 686px;
-    height: 508px;
+    /*height: 508px;*/
     background: rgba(255, 255, 255, 1);
     box-shadow: 0px 8px 16px 4px rgba(228, 212, 20, 1);
     border-radius: 32px;
@@ -320,6 +323,7 @@ export default class PraiseOfWorks extends wepy.page {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      padding-bottom: 28px;
       margin: 18px 48px 0 44px;
 
       .-down-left {

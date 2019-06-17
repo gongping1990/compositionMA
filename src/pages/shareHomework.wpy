@@ -86,7 +86,8 @@ export default class ShareHomework extends wepy.page {
     isPlay: false,
     myAudio: '',
     durationTime: '',
-    shareInfo: ''
+    shareInfo: '',
+    workId: ''
   };
 
   initAudio () {
@@ -104,9 +105,9 @@ export default class ShareHomework extends wepy.page {
     })
   }
 
-  getMyHomework () {
-    api.study.viewMyHomework({
-      lessonId: this.lessonId || '1134359706941546498'
+  getOtherHomework () {
+    api.study.viewHomework({
+      workId:  this.workId
     }).then(res => {
       this.shareInfo = res.data.resultData
       this.initAudio()
@@ -152,7 +153,7 @@ export default class ShareHomework extends wepy.page {
           wx.showToast({
             title: '点赞成功'
           })
-          this.getMyHomework()
+          this.getOtherHomework()
         })
     }
   };
@@ -160,8 +161,8 @@ export default class ShareHomework extends wepy.page {
   events = {};
 
   onLoad (query) {
-    this.lessonId = query.id
-    this.getMyHomework()
+    this.workId = query.id
+    this.getOtherHomework()
   }
   onUnload () {
     this.myAudio.destroy()

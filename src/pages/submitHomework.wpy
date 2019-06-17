@@ -83,9 +83,9 @@
       </view>
 
       <view class="p-submitHomework-center "
-            wx:if="{{tabActive === '2' && isSuccessWork}}">
+            wx:if="{{tabActive === '2'}}">
         <repeat for="{{dataList}}"
-                wx:if="{{dataList.length}}"
+                wx:if="{{dataList.length && isSuccessWork}}"
                 key="index"
                 index="index"
                 item="item">
@@ -118,7 +118,7 @@
           </view>
         </repeat>
         <view class="-center-other-no"
-              wx:if="{{!dataList.length}}">
+              wx:if="{{!dataList.length && isSuccessWork}}">
           <image class="-no-icon"
                  src="https://pub.file.k12.vip/tbzw/empty/zy.png"></image>
           <view class="-no-text">自己写完作业后，才能查看同伴作业哦～</view>
@@ -233,7 +233,7 @@ export default class SubmitHomework extends wepy.page {
       this.workDetail = res.data.resultData
       if (this.workDetail) {
         this.isSuccessWork = true
-        this.workDetail.workTime = dayjs(+this.workDetail.workTime).format('YYYY-MM-DD HH:mm:ss')
+        this.workDetail.workTime = dayjs(+this.workDetail.workTime).format('YYYY-MM-DD HH:mm')
       }
       this.$apply()
     })
@@ -252,7 +252,7 @@ export default class SubmitHomework extends wepy.page {
       }
 
       this.dataList.forEach(item => {
-        item.workTime = dayjs(+item.workTime).format('YYYY-MM-DD HH:mm:ss')
+        item.workTime = dayjs(+item.workTime).format('YYYY-MM-DD HH:mm')
       })
 
       this.page.total = data.resultData.total

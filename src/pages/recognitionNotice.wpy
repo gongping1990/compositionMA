@@ -85,7 +85,7 @@ export default class RecognitionNotice extends wepy.page {
         }
 
         this.dataList.forEach(item => {
-          item.datetime = dayjs(+item.datetime).format('YYYY-MM-DD HH:mm:ss')
+          item.datetime = dayjs(+item.datetime).format('YYYY-MM-DD HH:mm')
         })
 
         this.page.total = data.resultData.total

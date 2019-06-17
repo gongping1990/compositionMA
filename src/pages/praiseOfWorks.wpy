@@ -150,7 +150,7 @@ export default class PraiseOfWorks extends wepy.page {
         }
 
         this.dataList.forEach(item => {
-          item.worktime = dayjs(+item.worktime).format('YYYY-MM-DD HH:mm:ss')
+          item.worktime = dayjs(+item.worktime).format('YYYY-MM-DD HH:mm')
         })
 
         this.page.total = data.resultData.total

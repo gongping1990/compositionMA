@@ -40,7 +40,7 @@
           </view>
           <image class="-content-down-img"
                  src="{{shareInfo.replyImg}}"></image>
-          <view class="-content-down-reply">
+          <view class="-content-down-reply" wx:if="{{shareInfo.replyTeacher}}">
             <image class="-reply-img"
                    src="{{shareInfo.replyTeacherImg}}"></image>
             <view class="-reply-info">

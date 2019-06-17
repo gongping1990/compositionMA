@@ -72,7 +72,7 @@ export default class Example extends wepy.page {
     loading: true,
     isReady: false,
     showContinueDiaolig: true,
-    timeText: '00’’00’',
+    timeText: '00:00',
     showDownTime: false
   };
   components = {
@@ -171,7 +171,7 @@ export default class Example extends wepy.page {
     second = time % 60
     minute = minute < 10 ? '0' + minute : minute
     second = second < 10 ? '0' + second : second
-    this.timeText = `${minute}’’${second}’`
+    this.timeText = `${minute}:${second}`
     this.$apply()
   }
 

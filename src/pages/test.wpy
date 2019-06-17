@@ -146,7 +146,7 @@ export default class Example extends wepy.page {
     publishEnd: false,
     currentTime: 0,
     duration: 0,
-    timeText: '00’’00’',
+    timeText: '00:00',
     summaryArr: [],
     questionArr: [],
     answerArr: [],
@@ -420,7 +420,7 @@ export default class Example extends wepy.page {
     second = time % 60
     minute = minute < 10 ? '0' + minute : minute
     second = second < 10 ? '0' + second : second
-    this.timeText = `${minute}’’${second}’`
+    this.timeText = `${minute}:${second}`
     this.$apply()
   }
 

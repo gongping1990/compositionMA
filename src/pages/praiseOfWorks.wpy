@@ -80,7 +80,7 @@
                mode="aspectFit" />
         作品表彰
       </van-tabbar-item>
-      <van-tabbar-item dot="{{!remindData.todaycard}}">
+      <van-tabbar-item dot="{{remindData.todaycard}}">
         <image slot="icon"
                src="../assets/image/icon-dkjl.png"
                mode="aspectFit" />

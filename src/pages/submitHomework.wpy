@@ -83,7 +83,7 @@
       </view>
 
       <view class="p-submitHomework-center "
-            wx:if="{{tabActive === '2'}}">
+            wx:if="{{tabActive === '2' && isSuccessWork}}">
         <repeat for="{{dataList}}"
                 wx:if="{{dataList.length}}"
                 key="index"

@@ -16,7 +16,7 @@
              @timeupdate="bindtimeupdate"
              src="{{courseInfo.videoUrl}}"></video>
     </view>
-    <view class="avatar-mask">
+    <view class="avatar-mask" wx:if="{{!controls}}">
       <image src="{{roomData.teacherImg}}"
              class="avatar teacher" />
       <view class="student">
@@ -448,14 +448,20 @@ export default class Example extends wepy.page {
         e.flower = !this.isLookBack ? e.correctNum : 0
         return e
       })
-      if (data.resultData.newstart) {
-        this.changeLearnStage(data.resultData.id, 1)
-        this.videoContext.play()
-      } else if (data.resultData.stage > 0) {
-        this.showContinueDiaolig = true
+      if (!this.isLookBack) {
+        if (data.resultData.newstart) {
+          this.changeLearnStage(data.resultData.id, 1)
+          this.videoContext.play()
+        } else if (data.resultData.stage > 0) {
+          this.showContinueDiaolig = true
+        } else {
+          this.videoContext.play()
+        }
       } else {
+        this.controls = true
         this.videoContext.play()
       }
+
       this.loading = false
       this.$apply()
     })

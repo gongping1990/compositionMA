@@ -1,6 +1,6 @@
 <template>
   <view class="container course">
-    <mHeader title="课程目录"></mHeader>
+    <mHeader title="课程目录" flag="4"></mHeader>
     <view class="container-scroll"
           style="margin-top:{{height}}px;height: calc(100vh - {{height}}px)">
       <view class="course-info" id="info">
@@ -103,21 +103,14 @@ export default class Index extends wepy.page {
 
   methods = {
     bindClickBtn(lesson) {
-      console.log(lesson.studyStatus)
-      switch (lesson.studyStatus) {
-        case 1:
-        case 2:
-          wx.navigateTo({ url: '/pages/classroom?id=' + lesson.lessonId })
-          break
-        case 3:
-          if (lesson.stage === 2) {
-            wx.navigateTo({ url: '/pages/submitHomework?id=' + lesson.lessonId })
-          } else {
-            wx.navigateTo({ url: '/pages/test?id=' + lesson.lessonId })
-          }
-          break
-        case 5:
-          wx.navigateTo({url: `/pages/study?id=${lesson.lessonId}&lookback=1`})
+      if (!lesson.stage) {
+        wx.navigateTo({ url: '/pages/classroom?id=' + lesson.lessonId })
+      } else if (lesson.stage === 1) {
+        wx.navigateTo({ url: '/pages/study?id=' + lesson.lessonId })
+      } else if (lesson.stage === 2) {
+        wx.navigateTo({url: '/pages/test?id=' + lesson.lessonId})
+      } else {
+        wx.navigateTo({ url: '/pages/submitHomework?id=' + lesson.lessonId })
       }
     },
     bindScroll (event) {
@@ -129,6 +122,9 @@ export default class Index extends wepy.page {
   events = {
     'tap-btn' (num) {
       wx.navigateTo({ url: '/pages/classroom' })
+    },
+    back() {
+      wx.redirectTo({ url: '/pages/index' })
     }
   }
   // 获取课程目录

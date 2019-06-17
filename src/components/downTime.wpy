@@ -1,0 +1,112 @@
+<!--  -->
+<template>
+  <view class="down-time {{show && 'show'}}">
+    {{num}}
+    <image class="down-time-img one {{num == 1 && 'animation'}}"
+           src="https://pub.file.k12.vip/tbzw/v2/time/1@3x.png" />
+    <image class="down-time-img two {{num == 2 && 'animation'}}"
+           src="https://pub.file.k12.vip/tbzw/v2/time/2@3x.png" />
+    <image class="down-time-img three {{num == 3 && 'animation'}}"
+           src="https://pub.file.k12.vip/tbzw/v2/time/3@3x.png" />
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+export default class Example extends wepy.component {
+  props = {
+    show: {
+      type: Boolean,
+      default: false
+    }
+  }
+  data = {
+    num: 0
+  };
+  components = {};
+  methods = {};
+  events = {};
+  watch = {
+    show (n) {
+      let { audioContext } = wepy.$instance.globalData
+      if (n) {
+        audioContext.onTimeUpdate(this.onTimeUpdate)
+        audioContext.seek(3)
+        audioContext.play()
+        this.downTime()
+      }
+    }
+  };
+  onTimeUpdate() {
+    let { audioContext } = wepy.$instance.globalData
+    let currentTime = parseInt(audioContext.currentTime)
+    console.log(currentTime)
+    if (currentTime === 6) {
+      audioContext.stop()
+      audioContext.offTimeUpdate(this.onTimeUpdate)
+    }
+  }
+  downTime () {
+    if (this.num !== 3) {
+      this.num += 1
+      setTimeout(() => {
+        this.downTime()
+      }, 1000)
+    } else {
+      this.$emit('downTimeEnd')
+    }
+    this.$apply()
+  }
+}
+</script>
+<style lang='scss'>
+@import '../assets/style/mixin.scss';
+.down-time {
+  @include flex-center;
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  background: rgba($color: #000000, $alpha: 0.8);
+  visibility: hidden;
+  &.show {
+    visibility: visible;
+  }
+  &-img {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    height: 174px;
+    margin-top: -(174px / 2);
+    opacity: 0;
+    &.one {
+      width: 75px;
+      margin-left: -(75px / 2);
+    }
+    &.two {
+      width: 114px;
+      margin-left: -(114px / 2);
+    }
+    &.three {
+      width: 117px;
+      margin-left: -(117px / 2);
+    }
+    &.animation {
+      animation: down 1s;
+    }
+  }
+}
+@keyframes down {
+  0% {
+    opacity: 1;
+    transform: scale(0.8);
+  }
+  20% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.4);
+    opacity: 0;
+  }
+}
+</style>

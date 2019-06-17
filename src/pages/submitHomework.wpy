@@ -265,7 +265,7 @@ export default class SubmitHomework extends wepy.page {
       if (num === 1) {
         wx.navigateTo({url: `/pages/study?id=${this.lessonId}&lookback=1`})
       } else {
-        wx.navigateTo({url: `/pages/test?id=${this.lessonId}`})
+        wx.navigateTo({url: `/pages/test?id=${this.lessonId}&lookback=1`})
       }
     },
     addLike (item) {

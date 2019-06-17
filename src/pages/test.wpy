@@ -157,7 +157,8 @@ export default class Example extends wepy.page {
     chartAnimate: null,
     itemAnimate: null,
     timer: null,
-    answerTime: 0
+    answerTime: 0,
+    lookback: false
   };
   components = {
     mHeader,
@@ -165,7 +166,6 @@ export default class Example extends wepy.page {
   };
   methods = {
     clickLinkHomeWork() {
-      this.changeLearnStage(3)
       wx.redirectTo({ url: '/pages/submitHomework?id=' + this.lessonId })
     },
     clickStudy () {
@@ -272,6 +272,7 @@ export default class Example extends wepy.page {
     setTimeout(() => {
       this.showAlert = false
       if (this.stepIndex === this.questionArr.length - 1) {
+        this.changeLearnStage(3)
         this.setSummary()
         this.answerArr[3].status = 1
         this.publishEnd = true
@@ -347,6 +348,22 @@ export default class Example extends wepy.page {
     }, 500)
   }
 
+  initQuestion() {
+    this.showQuestion = true
+    this.correctAnswer = this.questionArr[0].answer
+    this.app.show(this, 'questionAnimate', 1)
+    this.timer = setInterval(() => {
+      if (this.publishEnd) {
+        clearInterval(this.timer)
+      } else {
+        this.answerTime += 1
+        console.log(this.answerTime)
+      }
+      this.$apply()
+    }, 1000)
+    this.$apply()
+  }
+
   initAudio (src) {
     let { audioContext } = this
     audioContext.src = src
@@ -360,19 +377,7 @@ export default class Example extends wepy.page {
       console.log('end')
       this.app.show(this, 'chartAnimate', 0)
       setTimeout(() => {
-        this.showQuestion = true
-        this.correctAnswer = this.questionArr[0].answer
-        this.app.show(this, 'questionAnimate', 1)
-        this.timer = setInterval(() => {
-          if (this.publishEnd) {
-            clearInterval(this.timer)
-          } else {
-            this.answerTime += 1
-            console.log(this.answerTime)
-          }
-          this.$apply()
-        }, 1000)
-        this.$apply()
+        this.initQuestion()
       }, 500)
       // this.showQuestion = true
       this.$apply()
@@ -430,7 +435,7 @@ export default class Example extends wepy.page {
       this.answerArr = this.mateInfo.map(e => {
         e.status = 0
         e.answer = 0
-        e.flower = e.correctNum
+        e.flower = this.lookback ? 0 : e.correctNum
         return e
       })
 
@@ -451,7 +456,12 @@ export default class Example extends wepy.page {
       })
       setTimeout(() => {
         this.loading = false
-        this.initAudio(this.courseInfo.guideAudio)
+        console.log(this.lookback)
+        if (this.lookback) {
+          this.initQuestion()
+        } else {
+          this.initAudio(this.courseInfo.guideAudio)
+        }
       }, 1000)
       this.$apply()
     })
@@ -468,6 +478,7 @@ export default class Example extends wepy.page {
 
   onLoad (option) {
     this.lessonId = option.id
+    this.lookback = option.lookback
     // eslint-disable-next-line no-undef
     this.app = this.$parent.globalData
   }
@@ -483,10 +494,12 @@ export default class Example extends wepy.page {
   onHide () {
     this.audioContext.stop()
     this.audioContext.destroy()
+    clearInterval(this.timer)
   }
   onUnload() {
     this.audioContext.stop()
     this.audioContext.destroy()
+    clearInterval(this.timer)
   }
 }
 </script>

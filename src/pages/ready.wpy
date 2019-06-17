@@ -44,12 +44,14 @@
     <view class="ready-btn {{isReady && 'show'}}"
           @tap="clickStudy">{{time ? '开始上课（' + time + '）s' : '开始上课'}}</view>
     <loading wx:if="{{loading}}"></loading>
+    <downTime :show.sync="showDownTime"></downTime>
   </view>
 </template>
 <script>
 import wepy from 'wepy'
 import mHeader from '@/components/header'
 import loading from '@/components/loading'
+import downTime from '@/components/downTime'
 export default class Example extends wepy.page {
   config = {
     navigationBarTitleText: '',
@@ -70,11 +72,13 @@ export default class Example extends wepy.page {
     loading: true,
     isReady: false,
     showContinueDiaolig: true,
-    timeText: '00’’00’'
+    timeText: '00’’00’',
+    showDownTime: false
   };
   components = {
     mHeader,
-    loading
+    loading,
+    downTime
   };
   methods = {
     clickStudy () {
@@ -88,6 +92,10 @@ export default class Example extends wepy.page {
   events = {
     back () {
       wx.redirectTo({ url: '/pages/catalog' })
+    },
+    downTimeEnd () {
+      this.showDownTime = false
+      wx.redirectTo({ url: '/pages/study?id=' + this.lessonId })
     }
   };
   watch = {};
@@ -120,7 +128,7 @@ export default class Example extends wepy.page {
     } else {
       console.log('endtime')
       this.readyArr[3] = 1
-      wx.redirectTo({ url: '/pages/study?id=' + this.lessonId })
+      this.showDownTime = true
     }
     this.$apply()
   }
@@ -205,10 +213,12 @@ export default class Example extends wepy.page {
     this.initPage()
   }
   onHide () {
+    this.$parent.globalData.aduioContext.stop()
     this.audioContext.stop()
     this.audioContext.destroy()
   }
   onUnload () {
+    this.$parent.globalData.aduioContext.stop()
     this.audioContext.stop()
     this.audioContext.destroy()
   }

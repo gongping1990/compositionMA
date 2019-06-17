@@ -63,7 +63,7 @@ export default class extends wepy.app {
     userInfo: null,
     systemInfo: null,
     headHeight: 46,
-    audioContext: wx.createInnerAudioContext(),
+    audioContext: null,
     show(that, param, opacity) {
       var animation = wx.createAnimation({
       // 持续时间800ms
@@ -85,6 +85,9 @@ export default class extends wepy.app {
 
   onLaunch (options) {
     const that = this
+    let audioContext = wx.createInnerAudioContext()
+    audioContext.src = 'https://pub.file.k12.vip/tbzw/v2/time/yx.mp3'
+    this.globalData.audioContext = audioContext
     wx.setKeepScreenOn({
       keepScreenOn: true
     })

@@ -40,7 +40,7 @@
           </view>
           <button class="swiper-btn"
                   @tap="bindClickStudyStart()"
-                  wx:if="{{infoListData.startStudy != 5}}">{{infoListData.studyStatus == 2 ? '开始今日学习' : "交作业"}}</button>
+                  wx:if="{{infoListData.studyStatus != 5}}">{{infoListData.studyStatus == 2 ? '开始今日学习' : "交作业"}}</button>
           <button class="swiper-btn line "
                   @tap="bindClickBtn({{3}})"
                   wx:if="{{infoListData.status == 2 }}">
@@ -89,7 +89,7 @@
                mode="aspectFit" />
         作品表彰
       </van-tabbar-item>
-      <van-tabbar-item dot="{{!remindData.todaycard}}">
+      <van-tabbar-item dot="{{remindData.todaycard}}">
         <image slot="icon"
                src="../assets/image/icon-dkjl.png"
                mode="aspectFit" />
@@ -233,7 +233,7 @@ export default class Home extends wepy.page {
       }
     },
     bindClickBtn (type) {
-      wx.navigateTo({ url: '/pages/catalog' })
+      wx.redirectTo({ url: '/pages/catalog' })
     },
     bindChangeTabBar (event) {
       switch (event.detail) {
@@ -272,6 +272,9 @@ export default class Home extends wepy.page {
     },
     tagText() {
       let {infoListData} = this
+      if (!infoListData) {
+        return ''
+      }
       return infoListData.studyStatus < 3 ? '未上完课' : (infoListData.studyStatus === 3) && '未交作业'
     }
   };

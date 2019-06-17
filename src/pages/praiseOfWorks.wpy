@@ -3,16 +3,17 @@
     <mHeader flag="0" title="作品表彰"></mHeader>
     <view class="container-scroll p-praiseOfWorks"
           style="margin-top:{{height}}px">
+      <view class="p-praiseOfWorks-title">作品表彰</view>
+
       <scroll-view class="item-scroll"
                    @scrolltolower="bindLoadItem"
                    scroll-y
                    scroll-with-animation>
-        <view class="p-praiseOfWorks-title">作品表彰</view>
         <repeat for="{{dataList}}"
                 key="index"
                 index="index"
                 item="item">
-          <view class="p-praiseOfWorks-item">
+          <view class="p-praiseOfWorks-item" @tap="toWorkDetail({{item}})">
             <view class="p-praiseOfWorks-item-top">
               <view class="-item-top">
                 <view class="-item-top-left">
@@ -58,6 +59,7 @@
       </scroll-view>
     </view>
     <van-tabbar active="1"
+                z-index="2"
                 active-color="#58422B"
                 bind:change="onChangeTabbar">
       <van-tabbar-item>
@@ -157,6 +159,9 @@ export default class PraiseOfWorks extends wepy.page {
   };
 
   methods = {
+    toWorkDetail (data) {
+      wx.navigateTo({ url: `/pages/completionOfWork?type=2&id=${data.workId}` })
+    },
     addMyLike (item) {
       if (!item.myLike) {
         api.study.addLike({
@@ -188,6 +193,7 @@ export default class PraiseOfWorks extends wepy.page {
 .p-praiseOfWorks {
   @include bg('/v2/zpbz/zpbz-background.png');
   background-color: #ffd262;
+  overflow-y: hidden;
   margin-bottom: 100px;
 
   .item-scroll {
@@ -208,7 +214,7 @@ export default class PraiseOfWorks extends wepy.page {
   &-item {
     margin: 0 auto 32px;
     width: 686px;
-    height: 508px;
+    /*height: 508px;*/
     background: rgba(255, 255, 255, 1);
     box-shadow: 0px 8px 16px 4px rgba(228, 212, 20, 1);
     border-radius: 32px;
@@ -320,6 +326,7 @@ export default class PraiseOfWorks extends wepy.page {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      padding-bottom: 28px;
       margin: 18px 48px 0 44px;
 
       .-down-left {

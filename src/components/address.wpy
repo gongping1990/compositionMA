@@ -6,14 +6,14 @@
              bindinput="bindClickName"
              type="text"
              placeholder-class="placeholder"
-             placeholder="收获人姓名" />
+             placeholder="收货人姓名" />
     </view>
     <view class="_input">
       <input value="{{form.telephone}}"
              bindinput="bindClickPhone"
              type="number"
              placeholder-class="placeholder"
-             placeholder="收获人手机号" />
+             placeholder="收货人手机号" />
     </view>
     <view class="_input select"
           @tap="bindClickRegion">
@@ -92,6 +92,12 @@ export default class Example extends wepy.component {
       this.show = !this.show
     },
     save () {
+      if(!this.form.name || !this.form.telephone || !this.form.address || !this.form.areas) {
+        return wx.showToast({
+          icon: 'none',
+          title: '请输入完整的收货信息哟~'
+        })
+      }
       this.$emit('save', this.form)
     }
   };

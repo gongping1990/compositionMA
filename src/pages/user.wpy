@@ -10,7 +10,9 @@
           </view>
           <view class="-header-text">{{userInfo.nickname}}</view>
         </view>
-        <view class="-header-down"></view>
+        <view class="-header-down">
+          <button class="-header-down-btn" @tap="onClose"></button>
+        </view>
       </view>
 
       <view class="p-user-content">
@@ -40,43 +42,60 @@
         <text class="-footer-text">随时约课随时学，赶紧来体验吧～</text>
       </view>
     </view>
+
+    <van-popup show="{{ showKF }}"
+               position="bottom"
+               @close="onClose">
+      <view class="p-user-kf-pop">
+        <text class="p-user-kf-pop-title">添加老师微信</text>
+        <image src=""
+               class="p-user-kf-pop-img"/>
+        <text class="p-user-kf-pop-text">点击下方按钮</text>
+        <text class="p-user-kf-pop-text red">回复“2”即可添加老师微信</text>
+        <button class="p-user-kf-pop-btn"
+                open-type="contact">
+          回复“2”立即添加
+        </button>
+      </view>
+    </van-popup>
+
     <van-tabbar active="3"
                 active-color="#58422B"
                 bind:change="onChangeTabbar">
       <van-tabbar-item>
         <image slot="icon"
                src="../assets/image/icon-jrxx.png"
-               mode="aspectFit" />
+               mode="aspectFit"/>
         <image slot="icon-active"
                src="../assets/image/icon-jrxx1.png"
-               mode="aspectFit" />
+               mode="aspectFit"/>
         今日学习
       </van-tabbar-item>
       <van-tabbar-item>
         <image slot="icon"
                src="../assets/image/icon-zpbz.png"
-               mode="aspectFit" />
+               mode="aspectFit"/>
         <image slot="icon-active"
                src="../assets/image/icon-zpbz1.png"
-               mode="aspectFit" />
+               mode="aspectFit"/>
         作品表彰
       </van-tabbar-item>
       <van-tabbar-item dot="{{remindData.todaycard}}">
         <image slot="icon"
                src="../assets/image/icon-dkjl.png"
-               mode="aspectFit" />
+               mode="aspectFit"/>
         <image slot="icon-active"
                src="../assets/image/icon-dkjl1.png"
-               mode="aspectFit" />
+               mode="aspectFit"/>
         打卡记录
       </van-tabbar-item>
       <van-tabbar-item dot="{{remindData.uctip}}">
         <image slot="icon"
                src="../assets/image/icon-grzx.png"
-               mode="aspectFit" />
+               mode="aspectFit"/>
         <image slot="icon-active"
                src="../assets/image/icon-grzx1.png"
-               mode="aspectFit" />
+               mode="aspectFit"/>
         个人中心
       </van-tabbar-item>
     </van-tabbar>
@@ -84,15 +103,15 @@
 </template>
 
 <script>
-  import wepy from 'wepy'
-import api from '../request/api'
-import { connect } from 'wepy-redux'
-import testMixin from '../mixins/test'
-import mHeader from '../components/header'
+  import wepy from 'wepy';
+  import api from '../request/api';
+  import { connect } from 'wepy-redux';
+  import testMixin from '../mixins/test';
+  import mHeader from '../components/header';
 
-@connect({
+  @connect({
     userInfo(state) {
-      return state.user.userInfo
+      return state.user.userInfo;
     }
   })
   export default class User extends wepy.page {
@@ -100,7 +119,8 @@ import mHeader from '../components/header'
       navigationBarTitleText: '个人中心',
       usingComponents: {
         'van-tabbar': '../vant/tabbar/index',
-        'van-tabbar-item': '../vant/tabbar-item/index'
+        'van-tabbar-item': '../vant/tabbar-item/index',
+        'van-popup': '../vant/popup/index'
       }
     };
     mixins = [testMixin];
@@ -109,18 +129,19 @@ import mHeader from '../components/header'
     };
     computed = {
       height() {
-        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
       }
     };
 
     data = {
+      showKF: false,
       itemList: []
     };
 
     getUCRemindVO() {
       api.study.getUCRemindVO()
         .then(res => {
-          let notice = res.data.resultData
+          let notice = res.data.resultData;
           this.itemList = [
             {
               id: 2,
@@ -145,29 +166,33 @@ import mHeader from '../components/header'
               name: '我的收货地址',
               url: 'https://pub.file.k12.vip/tbzw/course/my-icon-address.png'
             }
-          ]
-          this.$apply()
-        })
+          ];
+          this.$apply();
+        });
     }
 
     methods = {
+      onClose () {
+        this.showKF = !this.showKF
+        this.$apply()
+      },
       toJump(data) {
         switch (+data) {
           case 2:
-            wx.navigateTo({ url: '/pages/myWork' })
-            break
+            wx.navigateTo({ url: '/pages/myWork' });
+            break;
           case 3:
-            wx.navigateTo({ url: '/pages/pointNotice' })
-            break
+            wx.navigateTo({ url: '/pages/pointNotice' });
+            break;
           case 4:
-            wx.navigateTo({ url: '/pages/recognitionNotice' })
-            break
+            wx.navigateTo({ url: '/pages/recognitionNotice' });
+            break;
           case 5:
-            wx.navigateTo({ url: '/pages/address' })
-            break
+            wx.navigateTo({ url: '/pages/address' });
+            break;
           case 6:
-            wx.navigateTo({ url: '/pages/subscribe' })
-            break
+            wx.navigateTo({ url: '/pages/subscribe' });
+            break;
         }
       }
     };
@@ -175,7 +200,7 @@ import mHeader from '../components/header'
     events = {};
 
     onShow() {
-      this.getUCRemindVO()
+      this.getUCRemindVO();
     }
   }
 </script>
@@ -220,11 +245,19 @@ import mHeader from '../components/header'
       }
 
       .-header-down {
-        @include bg('/v2/mycard.png');
+        @include bg('/v2/tc.png');
 
         margin-top: 12px;
         width: 686px;
         height: 360px;
+
+        &-btn {
+          display: inline-block;
+          margin: 236px 0 0 242px;
+          width:238px;
+          height:60px;
+          background:transparent;
+        }
       }
     }
 
@@ -319,6 +352,43 @@ import mHeader from '../components/header'
         font-weight: 400;
         color: rgba(88, 66, 43, 0.5);
         line-height: 28px;
+      }
+    }
+
+    &-kf-pop {
+      @include flex-column-center;
+      padding: 16px 24px;
+      background: rgba(255, 255, 255, 1);
+      border-radius: 16px 16px 0px 0px;
+      &-title {
+        font-size: 36px;
+      }
+      &-img {
+        margin: 48px 0;
+      }
+      &-text {
+        font-size: 36px;
+        line-height: 50px;
+        color: rgba($color: #58422b, $alpha: 0.5);
+        &.red {
+          color: #ff7c76;
+          font-weight: bold;
+        }
+      }
+      &-btn {
+        @include flex-center;
+        margin: 32px 0;
+        width: 654px;
+        height: 100px;
+        font-size: 32px;
+        color: #58422b;
+        background: linear-gradient(
+            90deg,
+            rgba(249, 230, 11, 1) 0%,
+            rgba(253, 219, 85, 1) 100%
+        );
+        box-shadow: 0px 8px 16px 4px rgba(230, 194, 81, 0.4);
+        border-radius: 54px;
       }
     }
   }

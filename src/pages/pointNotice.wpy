@@ -12,7 +12,7 @@
                 key="index"
                 index="index"
                 item="item">
-          <view class="p-notice-item">
+          <view class="p-notice-item" @tap="toWorkDetail({{item}})">
             <view class="-item-left">
               <image class="-img"
                      src="{{item.userImg}}"></image>
@@ -94,6 +94,9 @@ export default class Notice extends wepy.page {
   };
 
   methods = {
+    toWorkDetail (data) {
+      wx.navigateTo({ url: `/pages/completionOfWork?type=2&id=${data.workId}` })
+    },
     bindLoadItem (data) {
       if (this.page.current < Math.ceil(this.page.total / this.page.size)) {
         this.page.current++

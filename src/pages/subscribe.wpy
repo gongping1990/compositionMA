@@ -20,7 +20,7 @@
                    src="{{lessonDetail.coverphoto}}"></image>
           </view>
           <view class="-content-title">{{lessonDetail.lessonName}}</view>
-          <view class="-content-des">原计划明日开课</view>
+          <view class="-content-des">{{lessonDetail.studyStatus === 6 ? '原计划明日开课' : '已预约到今日上课'}}</view>
           <view class="-content-btn {{lessonDetail.studyStatus===4 ? '-gray' : ''}} {{lessonDetail.studyStatus===5 ? '-line' : ''}}"
                 @tap="submitBtn">
             {{btnText}}

@@ -61,7 +61,7 @@
             <image class="-right-work"
                    src="{{workDetail.workImg}}"></image>
             <view class="-right-tip"
-                  wx:if="{{workDetail.replyTime}}">
+                  wx:if="{{!workDetail.replyknow}}">
               <view class="-tip-text">老师已点评， 敬请收听</view>
             </view>
             <view class="-right-btn"
@@ -77,7 +77,7 @@
       </view>
 
       <view class="p-submitHomework-card"
-            wx:if="{{tabActive === '1'}}"
+            wx:if="{{tabActive === '1' && cardDetail.todayLearned}}"
             @tap="addMyCard">
         <view class="-text">{{cardDetail.todayCard ? '已打卡' : '点我打卡'}}</view>
       </view>
@@ -311,6 +311,11 @@ export default class SubmitHomework extends wepy.page {
       wx.navigateTo({ url: `/pages/card` })
     },
     lookWorkDetail (data) {
+      if (data.self) {
+        api.study.knowReply({
+          id: data.id
+        })
+      }
       wx.navigateTo({ url: `/pages/completionOfWork?type=${data.self ? 1 : 2}&id=${data.self ? data.lessonId : data.id}` })
     },
     changeTab (num) {

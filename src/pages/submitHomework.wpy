@@ -501,6 +501,8 @@ export default class SubmitHomework extends wepy.page {
         font-weight: 500;
         color: rgba(255, 255, 255, 0.9);
         line-height: 34px;
+        height: 135px;
+        overflow: hidden;
       }
     }
 

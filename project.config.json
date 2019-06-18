@@ -32,7 +32,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 17,
+			"current": 18,
 			"list": [
 				{
 					"id": 0,
@@ -158,6 +158,13 @@
 					"name": "课程详情",
 					"pathName": "pages/submitHomework",
 					"query": "id=1139442398134145025",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "上传",
+					"pathName": "pages/uploadHomework",
+					"query": "url=http://tmp/wxf8ad572ff36a4c11.o6zAJsx77hRqe0qnWoOefeSL0Yhw.83zXE0S5AZ92affdaa4897753252274d51100f4ba32d.jpg&name=我是听音辨人的高手&id=1134359706941546498&sortnum=1",
 					"scene": null
 				}
 			]

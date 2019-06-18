@@ -61,7 +61,7 @@
             <image class="-right-work"
                    src="{{workDetail.workImg}}"></image>
             <view class="-right-tip"
-                  wx:if="{{!workDetail.replyknow}}">
+                  wx:if="{{!workDetail.replyknow && workDetail.replyTime}}">
               <view class="-tip-text">老师已点评， 敬请收听</view>
             </view>
             <view class="-right-btn"
@@ -311,7 +311,7 @@ export default class SubmitHomework extends wepy.page {
       wx.navigateTo({ url: `/pages/card` })
     },
     lookWorkDetail (data) {
-      if (data.self) {
+      if (data.self && data.replyTime) {
         api.study.knowReply({
           id: data.id
         })

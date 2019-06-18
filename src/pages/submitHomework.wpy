@@ -101,7 +101,7 @@
                      src="{{item.workImg}}"
                      @tap="lookWorkDetail({{item}})"></image>
               <view class="-right-zan">
-                <view class="-zan-left {{item.isZan ? '-zan-ok' : ''}}"
+                <view class="-zan-left {{item.otherLike ? '-zan-ok' : ''}}"
                       @tap="addLike({{item}})">
                   <image class="-img"
                          wx:if="{{!item.otherLike}}"
@@ -118,7 +118,7 @@
           </view>
         </repeat>
         <view class="-center-other-no"
-              wx:if="{{!dataList.length && isSuccessWork}}">
+              wx:if="{{(!dataList.length && isSuccessWork) || !isSuccessWork }}">
           <image class="-no-icon"
                  src="https://pub.file.k12.vip/tbzw/empty/zy.png"></image>
           <view class="-no-text">自己写完作业后，才能查看同伴作业哦～</view>

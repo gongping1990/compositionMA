@@ -8,7 +8,7 @@
         <view class="card-day">
           <view class="card-day-left">
             <view class="card-day-num">
-              {{cardDetail.continuousdays}}
+              {{cardDetail.continuousdays||0}}
               <text>天</text>
             </view>
             <text>累计打卡</text>

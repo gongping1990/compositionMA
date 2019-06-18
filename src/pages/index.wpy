@@ -285,6 +285,7 @@ export default class Home extends wepy.page {
   initPage () {
     this.getHomePageInfo()
     this.getBroadcastList()
+    this.checkPopByRecipient()
   }
   // 开始今日学习
   startLessonStudy () {
@@ -317,6 +318,13 @@ export default class Home extends wepy.page {
     }).then(({ data }) => {
       this.broadcastList = data.resultData.records
       this.$apply()
+    })
+  }
+
+  checkPopByRecipient() {
+    let { api } = this.$parent.globalData
+    api.order.checkPopByRecipient().then(({data}) => {
+      console.log(data)
     })
   }
 

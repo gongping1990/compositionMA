@@ -221,10 +221,20 @@ export default class Example extends wepy.page {
       }, 3000)
     },
     bindClickInput (i) {
-      console.log(i)
+      if (this.answerEnd) {
+        return
+      }
       this.selectIndex = i
     },
     bindSubmit () {
+      if (this.selectIndex) {
+        wx.showToast({
+          title: '你还没有选择答案呦！', // 提示的内容,
+          icon: 'none', // 图标,
+          duration: 2000
+        })
+        return
+      }
       this.answerArr[3].status = 1
       this.answerEnd = true
       this.imitateEnd && (this.time = 1)

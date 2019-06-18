@@ -6,6 +6,9 @@ const order = {
   },
   saveRecipient(params) {
     return request.post('/order/saveRecipient', params)
+  },
+  checkPopByRecipient() {
+    return request.get('/order/checkPopByRecipient')
   }
 }
 

@@ -29,7 +29,7 @@
                   item="item">
             <view class="-list-item">
               <view class="-list-item-left">
-                <view class="-num">0{{index+1}}</view>
+                <view class="-num">{{index+1}}</view>
                 <view class="-name">{{item.name}}</view>
               </view>
               <view class="-list-item-right"
@@ -98,7 +98,7 @@ export default class MyWork extends wepy.page {
       if (!this.dataList.length) {
         this.emptyOption = {
           url: `https://pub.file.k12.vip/tbzw/v2/empty/${this.tabActive === '1' ? 'wtj' : 'ytj'}.png`,
-          text: this.tabActive === '1' ? '真棒，你没有需要上交的作业！' : '你还没有交过作业，上课后别忘记交作业哦！'
+          text: this.tabActive !== '1' ? '真棒，你没有需要上交的作业！' : '你还没有交过作业，上课后别忘记交作业哦！'
         }
       }
       this.getList()

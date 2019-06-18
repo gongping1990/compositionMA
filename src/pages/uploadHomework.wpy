@@ -8,7 +8,10 @@
                src="{{queryInfo.url}}"></image>
       </view>
       <view class="p-uploadHomework-tip">作业提交到</view>
-      <view class="p-uploadHomework-name">{{queryInfo.name}}</view>
+      <view class="p-uploadHomework-title">
+        <view class="-num">{{queryInfo.sortnum}}</view>
+        <view class="-name">{{queryInfo.name}}</view>
+      </view>
       <button class="p-uploadHomework-btn"
               @tap="uploadWork">确认提交</button>
     </view>
@@ -137,13 +140,30 @@ export default class UploadHomework extends wepy.page {
     line-height: 50px;
   }
 
-  &-name {
+  &-title {
+    display: flex;
+    align-items: center;
     margin-left: 32px;
-    height: 40px;
-    font-size: 28px;
-    font-weight: 400;
-    color: rgba(46, 46, 46, 1);
-    line-height: 40px;
+
+    .-num {
+      @include bg('/word/ title-tag.png');
+      margin-right: 16px;
+      text-align: center;
+      width: 52px;
+      height: 32px;
+      font-size: 28px;
+      font-weight: 400;
+      color: rgba(88, 66, 43, 1);
+      line-height: 32px;
+    }
+
+    -name {
+      height: 40px;
+      font-size: 28px;
+      font-weight: 400;
+      color: rgba(46, 46, 46, 1);
+      line-height: 40px;
+    }
   }
 
   &-btn {

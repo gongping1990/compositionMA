@@ -1,7 +1,7 @@
 <!--  -->
 <template>
   <view class='container '>
-    <mHeader title="课程目录"></mHeader>
+    <mHeader title="约课"></mHeader>
     <view class="container-scroll"
           style="margin-top:{{height}}px">
       <view class="subscribe">
@@ -125,137 +125,137 @@ export default class Subscribe extends wepy.page {
       {
         isDisabled: false,
         time: '09:00',
-        date: `${dayjs(new Date()).format('YYYY-MM-DD')} 09:00`
+        date: `${dayjs(new Date()).format('YYYY/MM/DD')} 09:00`
       },
       {
         isDisabled: false,
         time: '09:30',
-        date: `${dayjs(new Date()).format('YYYY-MM-DD')} 09:30`
+        date: `${dayjs(new Date()).format('YYYY/MM/DD')} 09:30`
       },
       {
         isDisabled: false,
         time: '10:00',
-        date: `${dayjs(new Date()).format('YYYY-MM-DD')} 10:00`
+        date: `${dayjs(new Date()).format('YYYY/MM/DD')} 10:00`
       },
       {
         isDisabled: false,
         time: '10:30',
-        date: `${dayjs(new Date()).format('YYYY-MM-DD')} 10:30`
+        date: `${dayjs(new Date()).format('YYYY/MM/DD')} 10:30`
       },
       {
         isDisabled: false,
         time: '11:00',
-        date: `${dayjs(new Date()).format('YYYY-MM-DD')} 11:00`
+        date: `${dayjs(new Date()).format('YYYY/MM/DD')} 11:00`
       },
       {
         isDisabled: false,
         time: '11:30',
-        date: `${dayjs(new Date()).format('YYYY-MM-DD')} 11:30`
+        date: `${dayjs(new Date()).format('YYYY/MM/DD')} 11:30`
       },
       {
         isDisabled: false,
         time: '12:00',
-        date: `${dayjs(new Date()).format('YYYY-MM-DD')} 12:00`
+        date: `${dayjs(new Date()).format('YYYY/MM/DD')} 12:00`
       }
     ],
     timeListPm: [
       {
         isDisabled: false,
         time: '12:30',
-        date: `${dayjs(new Date()).format('YYYY-MM-DD')} 12:30`
+        date: `${dayjs(new Date()).format('YYYY/MM/DD')} 12:30`
       },
       {
         isDisabled: false,
         time: '13:00',
-        date: `${dayjs(new Date()).format('YYYY-MM-DD')} 13:00`
+        date: `${dayjs(new Date()).format('YYYY/MM/DD')} 13:00`
       },
       {
         isDisabled: false,
         time: '13:30',
-        date: `${dayjs(new Date()).format('YYYY-MM-DD')} 13:30`
+        date: `${dayjs(new Date()).format('YYYY/MM/DD')} 13:30`
       },
       {
         isDisabled: false,
         time: '14:00',
-        date: `${dayjs(new Date()).format('YYYY-MM-DD')} 14:00`
+        date: `${dayjs(new Date()).format('YYYY/MM/DD')} 14:00`
       },
       {
         isDisabled: false,
         time: '14:30',
-        date: `${dayjs(new Date()).format('YYYY-MM-DD')} 14:30`
+        date: `${dayjs(new Date()).format('YYYY/MM/DD')} 14:30`
       },
       {
         isDisabled: false,
         time: '15:00',
-        date: `${dayjs(new Date()).format('YYYY-MM-DD')} 15:00`
+        date: `${dayjs(new Date()).format('YYYY/MM/DD')} 15:00`
       },
       {
         isDisabled: false,
         time: '15:30',
-        date: `${dayjs(new Date()).format('YYYY-MM-DD')} 15:30`
+        date: `${dayjs(new Date()).format('YYYY/MM/DD')} 15:30`
       }, {
         isDisabled: false,
         time: '16:00',
-        date: `${dayjs(new Date()).format('YYYY-MM-DD')} 16:00`
+        date: `${dayjs(new Date()).format('YYYY/MM/DD')} 16:00`
       },
       {
         isDisabled: false,
         time: '16:30',
-        date: `${dayjs(new Date()).format('YYYY-MM-DD')} 16:30`
+        date: `${dayjs(new Date()).format('YYYY/MM/DD')} 16:30`
       },
       {
         isDisabled: false,
         time: '17:00',
-        date: `${dayjs(new Date()).format('YYYY-MM-DD')} 17:00`
+        date: `${dayjs(new Date()).format('YYYY/MM/DD')} 17:00`
       },
       {
         isDisabled: false,
         time: '17:30',
-        date: `${dayjs(new Date()).format('YYYY-MM-DD')} 17:30`
+        date: `${dayjs(new Date()).format('YYYY/MM/DD')} 17:30`
       }, {
         isDisabled: false,
         time: '18:00',
-        date: `${dayjs(new Date()).format('YYYY-MM-DD')} 18:00`
+        date: `${dayjs(new Date()).format('YYYY/MM/DD')} 18:00`
       },
       {
         isDisabled: false,
         time: '18:30',
-        date: `${dayjs(new Date()).format('YYYY-MM-DD')} 18:30`
+        date: `${dayjs(new Date()).format('YYYY/MM/DD')} 18:30`
       },
       {
         isDisabled: false,
         time: '19:00',
-        date: `${dayjs(new Date()).format('YYYY-MM-DD')} 19:00`
+        date: `${dayjs(new Date()).format('YYYY/MM/DD')} 19:00`
       },
       {
         isDisabled: false,
         time: '19:30',
-        date: `${dayjs(new Date()).format('YYYY-MM-DD')} 19:30`
+        date: `${dayjs(new Date()).format('YYYY/MM/DD')} 19:30`
       },
       {
         isDisabled: false,
         time: '20:00',
-        date: `${dayjs(new Date()).format('YYYY-MM-DD')} 20:00`
+        date: `${dayjs(new Date()).format('YYYY/MM/DD')} 20:00`
       },
       {
         isDisabled: false,
         time: '20:30',
-        date: `${dayjs(new Date()).format('YYYY-MM-DD')} 20:30`
+        date: `${dayjs(new Date()).format('YYYY/MM/DD')} 20:30`
       },
       {
         isDisabled: false,
         time: '21:00',
-        date: `${dayjs(new Date()).format('YYYY-MM-DD')} 21:00`
+        date: `${dayjs(new Date()).format('YYYY/MM/DD')} 21:00`
       },
       {
         isDisabled: false,
         time: '21:30',
-        date: `${dayjs(new Date()).format('YYYY-MM-DD')} 21:30`
+        date: `${dayjs(new Date()).format('YYYY/MM/DD')} 21:30`
       },
       {
         isDisabled: false,
         time: '22:00',
-        date: `${dayjs(new Date()).format('YYYY-MM-DD')} 22:00`
+        date: `${dayjs(new Date()).format('YYYY/MM/DD')} 22:00`
       }
     ]
   };

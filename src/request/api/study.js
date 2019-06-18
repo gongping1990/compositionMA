@@ -49,9 +49,6 @@ const study = {
   addHomework(params) {
     return request.post('/study/submitHomework', params)
   },
-  getUCRemindVO(params) {
-    return request.get('/study/getUCRemindVO', params)
-  },
   getLessonDetail(params) {
     return request.get('/study/viewLesson', params)
   },
@@ -69,6 +66,9 @@ const study = {
   },
   listCard(params) {
     return request.get('/study/listCard', params)
+  },
+  knowReply(params) {
+    return request.post('/study/knowReply', params)
   }
 }
 

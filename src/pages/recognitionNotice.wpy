@@ -67,7 +67,7 @@ export default class RecognitionNotice extends wepy.page {
     },
     emptyOption: {
       url: 'https://pub.file.k12.vip/tbzw/v2/empty/dz.png',
-      text: '暂时没有人给你点赞， 交作业后记得分享给熟悉的小伙伴哦！ '
+      text: '暂时没有收到老师的表扬，要坚持每天认真完成作业，老师一定会表扬你的！'
     },
     dataList: []
   };
@@ -85,7 +85,7 @@ export default class RecognitionNotice extends wepy.page {
         }
 
         this.dataList.forEach(item => {
-          item.datetime = dayjs(+item.datetime).format('YYYY-MM-DD HH:mm:ss')
+          item.datetime = dayjs(+item.datetime).format('YYYY-MM-DD HH:mm')
         })
 
         this.page.total = data.resultData.total

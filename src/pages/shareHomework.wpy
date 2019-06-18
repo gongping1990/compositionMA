@@ -40,7 +40,7 @@
           </view>
           <image class="-content-down-img"
                  src="{{shareInfo.replyImg}}"></image>
-          <view class="-content-down-reply">
+          <view class="-content-down-reply" wx:if="{{shareInfo.replyTeacher}}">
             <image class="-reply-img"
                    src="{{shareInfo.replyTeacherImg}}"></image>
             <view class="-reply-info">
@@ -86,7 +86,8 @@ export default class ShareHomework extends wepy.page {
     isPlay: false,
     myAudio: '',
     durationTime: '',
-    shareInfo: ''
+    shareInfo: '',
+    workId: ''
   };
 
   initAudio () {
@@ -104,9 +105,9 @@ export default class ShareHomework extends wepy.page {
     })
   }
 
-  getMyHomework () {
-    api.study.viewMyHomework({
-      lessonId: this.lessonId || '1134359706941546498'
+  getOtherHomework () {
+    api.study.viewHomework({
+      workId:  this.workId
     }).then(res => {
       this.shareInfo = res.data.resultData
       this.initAudio()
@@ -148,11 +149,13 @@ export default class ShareHomework extends wepy.page {
       api.study.addLike({
         workId: this.shareInfo.id
       })
-        .then(() => {
-          wx.showToast({
-            title: '点赞成功'
-          })
-          this.getMyHomework()
+        .then(res => {
+          if (res.data.code === '200') {
+            wx.showToast({
+              title: '点赞成功'
+            })
+            this.getOtherHomework()
+          }
         })
     }
   };
@@ -160,8 +163,8 @@ export default class ShareHomework extends wepy.page {
   events = {};
 
   onLoad (query) {
-    this.lessonId = query.id
-    this.getMyHomework()
+    this.workId = query.id
+    this.getOtherHomework()
   }
   onUnload () {
     this.myAudio.destroy()

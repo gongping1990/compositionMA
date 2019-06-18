@@ -17,7 +17,7 @@
         </view>
         <view class="card-btn {{cardDetail.todayCard ? 'isCard' : ''}}"
               @tap="addMyCard">
-          {{cardDetail.todayCard ? '已打卡' : '未打卡，立即打卡'}}
+          {{cardDetail.todayCard ? '真棒！今天已打卡' : '未打卡，立即打卡'}}
         </view>
       </view>
       <view class="card-content">
@@ -42,6 +42,29 @@
                 @tap="bindClose">我知道了</view>
         </view>
       </van-popup>
+
+
+      <van-popup show="{{showNoLearn}}">
+        <view class="card-popup">
+          <view class="card-popup-title">
+            <view>对不起</view>
+            <view>学完今天的课程才能打卡哦</view>
+          </view>
+
+          <view class="card-popup-flex">
+            <button class="card-popup-btn" @tap="closePopup">稍后学习</button>
+            <button class="card-popup-btn card-popup-btn2" @tap="toLearn">立即学习</button>
+          </view>
+
+        </view>
+
+        <van-icon name="close"
+                  class="p-submitHomework-close"
+                  color="#fff"
+                  size="36px"
+                  @click="closePopup" />
+      </van-popup>
+
     </view>
     <van-tabbar active="2"
                 active-color="#58422B"
@@ -104,7 +127,8 @@ export default class Example extends wepy.page {
   data = {
     today: '',
     cardDetail: '',
-    show: false
+    show: false,
+    showNoLearn: false
   };
   components = {
     calendar,
@@ -121,13 +145,24 @@ export default class Example extends wepy.page {
   };
 
   methods = {
+    toLearn () {
+      wx.navigateTo({ url: `/pages/classroom?id=${this.cardDetail.lessonId}` })
+    },
     addMyCard () {
-      if (this.cardDetail.todayCard) return
-      api.study.addCard()
-        .then(() => {
-          this.show = true
-          this.$apply()
-        })
+      if (this.cardDetail.todayLearned) {
+        if (this.cardDetail.todayCard) return
+        api.study.addCard()
+          .then(() => {
+            this.show = true
+            this.$apply()
+          })
+      } else {
+        this.showNoLearn = true
+      }
+
+    },
+    closePopup () {
+      this.showNoLearn = false
     },
     bindClose () {
       this.show = !this.show
@@ -250,9 +285,9 @@ export default class Example extends wepy.page {
     box-shadow: 0px 8px 16px 4px rgba(230, 194, 81, 0.4);
     border-radius: 50px;
     &.isCard {
-      color: #d18a3b;
-      background: #ffd129;
       box-shadow: none;
+      background:rgba(242,242,242,1);
+      color:rgba(88,66,43,0.3);
     }
   }
   &-day {
@@ -283,6 +318,52 @@ export default class Example extends wepy.page {
   &-header {
     padding: 0 96px;
     padding-top: 88px;
+  }
+  &-popup {
+    width:590px;
+    height:366px;
+    background:rgba(255,255,255,1);
+    border-radius:32px;
+
+    &-title {
+      padding-top: 72px;
+      text-align: center;
+      margin: 0 auto 48px;
+      width:496px;
+      height:100px;
+      font-size:36px;
+      font-weight:500;
+      color:rgba(88,66,43,1);
+      line-height:50px;
+    }
+
+    &-flex {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 0 48px;
+    }
+
+    &-btn {
+      text-align: center;
+      width:224px;
+      height:76px;
+      border-radius:40px;
+      border:2px solid rgba(88,66,43,0.1);
+      font-size:32px;
+      font-weight:400;
+      color:rgba(88,66,43,0.5);
+      line-height:76px;
+    }
+
+    &-btn2 {
+      border: none;
+      background:linear-gradient(90deg,rgba(249,230,11,1) 0%,rgba(253,219,85,1) 100%);
+      box-shadow:0px 8px 16px 4px rgba(230,194,81,0.4);
+      font-weight:500;
+      color:rgba(70,65,60,1);
+    }
+
   }
 }
 </style>

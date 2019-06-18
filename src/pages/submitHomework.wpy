@@ -61,7 +61,7 @@
             <image class="-right-work"
                    src="{{workDetail.workImg}}"></image>
             <view class="-right-tip"
-                  wx:if="{{workDetail.replyTime}}">
+                  wx:if="{{!workDetail.replyknow && workDetail.replyTime}}">
               <view class="-tip-text">老师已点评， 敬请收听</view>
             </view>
             <view class="-right-btn"
@@ -77,15 +77,15 @@
       </view>
 
       <view class="p-submitHomework-card"
-            wx:if="{{tabActive === '1'}}"
+            wx:if="{{tabActive === '1' && cardDetail.todayLearned}}"
             @tap="addMyCard">
         <view class="-text">{{cardDetail.todayCard ? '已打卡' : '点我打卡'}}</view>
       </view>
 
       <view class="p-submitHomework-center "
-            wx:if="{{tabActive === '2' && isSuccessWork}}">
+            wx:if="{{tabActive === '2'}}">
         <repeat for="{{dataList}}"
-                wx:if="{{dataList.length}}"
+                wx:if="{{dataList.length && isSuccessWork}}"
                 key="index"
                 index="index"
                 item="item">
@@ -101,7 +101,7 @@
                      src="{{item.workImg}}"
                      @tap="lookWorkDetail({{item}})"></image>
               <view class="-right-zan">
-                <view class="-zan-left {{item.isZan ? '-zan-ok' : ''}}"
+                <view class="-zan-left {{item.otherLike ? '-zan-ok' : ''}}"
                       @tap="addLike({{item}})">
                   <image class="-img"
                          wx:if="{{!item.otherLike}}"
@@ -118,7 +118,7 @@
           </view>
         </repeat>
         <view class="-center-other-no"
-              wx:if="{{!dataList.length}}">
+              wx:if="{{(!dataList.length && isSuccessWork) || !isSuccessWork }}">
           <image class="-no-icon"
                  src="https://pub.file.k12.vip/tbzw/empty/zy.png"></image>
           <view class="-no-text">自己写完作业后，才能查看同伴作业哦～</view>
@@ -233,7 +233,7 @@ export default class SubmitHomework extends wepy.page {
       this.workDetail = res.data.resultData
       if (this.workDetail) {
         this.isSuccessWork = true
-        this.workDetail.workTime = dayjs(+this.workDetail.workTime).format('YYYY-MM-DD HH:mm:ss')
+        this.workDetail.workTime = dayjs(+this.workDetail.workTime).format('YYYY-MM-DD HH:mm')
       }
       this.$apply()
     })
@@ -252,7 +252,7 @@ export default class SubmitHomework extends wepy.page {
       }
 
       this.dataList.forEach(item => {
-        item.workTime = dayjs(+item.workTime).format('YYYY-MM-DD HH:mm:ss')
+        item.workTime = dayjs(+item.workTime).format('YYYY-MM-DD HH:mm')
       })
 
       this.page.total = data.resultData.total
@@ -302,7 +302,7 @@ export default class SubmitHomework extends wepy.page {
         success: function (res) {
           // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
           wx.navigateTo({
-            url: `/pages/uploadHomework?url=${res.tempFilePaths[0]}&name=${_self.lessonDetail.name}&id=${_self.lessonDetail.id}`
+            url: `/pages/uploadHomework?url=${res.tempFilePaths[0]}&name=${_self.lessonDetail.name}&id=${_self.lessonDetail.id}&sortnum=${_self.lessonDetail.sortnum}`
           })
         }
       })
@@ -311,6 +311,11 @@ export default class SubmitHomework extends wepy.page {
       wx.navigateTo({ url: `/pages/card` })
     },
     lookWorkDetail (data) {
+      if (data.self && data.replyTime) {
+        api.study.knowReply({
+          id: data.id
+        })
+      }
       wx.navigateTo({ url: `/pages/completionOfWork?type=${data.self ? 1 : 2}&id=${data.self ? data.lessonId : data.id}` })
     },
     changeTab (num) {

@@ -294,7 +294,7 @@ export default class Subscribe extends wepy.page {
     submitBtn () {
       switch (this.lessonDetail.studyStatus) {
         case 2:
-          wx.navigateTo({ url: `/pages/ready?id=${this.lessonDetail.lessonId}` })
+          wx.navigateTo({ url: `/pages/classroom?id=${this.lessonDetail.lessonId}&type=1` })
           break
         case 3:
           if (this.lessonDetail.stage === 3) {

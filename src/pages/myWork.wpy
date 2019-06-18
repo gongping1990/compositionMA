@@ -5,9 +5,14 @@
           style="margin-top:{{height}}px">
       <view class="p-myWork-tab">
         <view class="-tab-text {{tabActive === '1' ? '-active' : ''}}"
-              @tap="changeTab({{'1'}})">未提交</view>
+              @tap="changeTab({{'1'}})">
+          <view class="-text">未提交</view>
+        </view>
         <view class="-tab-text {{tabActive === '2' ? '-active' : ''}}"
-              @tap="changeTab({{'2'}})">已提交</view>
+              @tap="changeTab({{'2'}})">
+          <view class="-text">已提交</view>
+        </view>
+
       </view>
       <repeat for="{{dataList}}"
               key="index"
@@ -140,6 +145,12 @@ export default class MyWork extends wepy.page {
       font-weight: 400;
       color: rgba(88, 66, 43, 0.3);
       border-bottom: 8px solid transparent;
+      width: 64px;
+
+      .-text {
+        transform: translateX(-10px);
+        width: 90px;
+      }
     }
 
     .-active {

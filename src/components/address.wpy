@@ -92,7 +92,7 @@ export default class Example extends wepy.component {
       this.show = !this.show
     },
     save () {
-      if(!this.form.name || !this.form.telephone || !this.form.address || !this.form.areas) {
+      if (!this.form.name || !this.form.telephone || !this.form.address || !this.form.areas) {
         return wx.showToast({
           icon: 'none',
           title: '请输入完整的收货信息哟~'

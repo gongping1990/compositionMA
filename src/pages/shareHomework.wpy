@@ -107,7 +107,7 @@ export default class ShareHomework extends wepy.page {
 
   getOtherHomework () {
     api.study.viewHomework({
-      workId:  this.workId
+      workId: this.workId
     }).then(res => {
       this.shareInfo = res.data.resultData
       this.initAudio()

@@ -1,17 +1,21 @@
 <template>
   <view class="container">
-    <mHeader flag="0" title="个人中心"></mHeader>
-    <view class="container-scroll p-user" style="margin-top:{{height}}px">
+    <mHeader flag="0"
+             title="个人中心"></mHeader>
+    <view class="container-scroll p-user"
+          style="margin-top:{{height}}px">
       <view class="p-user-header">
         <view class="-header-top">
           <view class="-header-img">
-            <image class="-img" mode="widthFix"
+            <image class="-img"
+                   mode="widthFix"
                    src="{{userInfo.headimgurl}}"></image>
           </view>
           <view class="-header-text">{{userInfo.nickname}}</view>
         </view>
         <view class="-header-down">
-          <button class="-header-down-btn" @tap="onClose"></button>
+          <button class="-header-down-btn"
+                  @tap="onClose"></button>
         </view>
       </view>
 
@@ -20,14 +24,19 @@
                 key="index"
                 index="index"
                 item="item">
-          <div class="-content-item" @tap="toJump({{item.id}})">
+          <div class="-content-item"
+               @tap="toJump({{item.id}})">
             <view class="-content-item-left">
-              <image class="-left-img" src="{{item.url}}" mode="widthFix"></image>
+              <image class="-left-img"
+                     src="{{item.url}}"
+                     mode="widthFix"></image>
               <view class="-left-text">{{item.name}}</view>
             </view>
             <view class="-content-item-right">
-              <view class="-right-tip" wx:if="{{index!==3}}">{{item.num}}</view>
-              <image class="-right-img" src="https://pub.file.k12.vip/tbzw/course/my-icon-arrow.png"
+              <view class="-right-tip"
+                    wx:if="{{index!==3}}">{{item.num}}</view>
+              <image class="-right-img"
+                     src="https://pub.file.k12.vip/tbzw/course/my-icon-arrow.png"
                      mode="widthFix"></image>
             </view>
           </div>
@@ -35,8 +44,10 @@
       </view>
 
       <view class="p-user-footer">
-        <view class="-footer-btn" @tap="toJump({{'6'}})">
-          <image class="-btn-img" src="https://pub.file.k12.vip/2019/06/05/1136090714887966722.png"></image>
+        <view class="-footer-btn"
+              @tap="toJump({{'6'}})">
+          <image class="-btn-img"
+                 src="https://pub.file.k12.vip/2019/06/05/1136090714887966722.png"></image>
           <text class="-btn-text">约课</text>
         </view>
         <text class="-footer-text">随时约课随时学，赶紧来体验吧～</text>
@@ -49,7 +60,7 @@
       <view class="p-user-kf-pop">
         <text class="p-user-kf-pop-title">添加老师微信</text>
         <image src=""
-               class="p-user-kf-pop-img"/>
+               class="p-user-kf-pop-img" />
         <text class="p-user-kf-pop-text">点击下方按钮</text>
         <text class="p-user-kf-pop-text red">回复“2”即可添加老师微信</text>
         <button class="p-user-kf-pop-btn"
@@ -65,37 +76,37 @@
       <van-tabbar-item>
         <image slot="icon"
                src="../assets/image/icon-jrxx.png"
-               mode="aspectFit"/>
+               mode="aspectFit" />
         <image slot="icon-active"
                src="../assets/image/icon-jrxx1.png"
-               mode="aspectFit"/>
+               mode="aspectFit" />
         今日学习
       </van-tabbar-item>
       <van-tabbar-item>
         <image slot="icon"
                src="../assets/image/icon-zpbz.png"
-               mode="aspectFit"/>
+               mode="aspectFit" />
         <image slot="icon-active"
                src="../assets/image/icon-zpbz1.png"
-               mode="aspectFit"/>
+               mode="aspectFit" />
         作品表彰
       </van-tabbar-item>
       <van-tabbar-item dot="{{remindData.todaycard}}">
         <image slot="icon"
                src="../assets/image/icon-dkjl.png"
-               mode="aspectFit"/>
+               mode="aspectFit" />
         <image slot="icon-active"
                src="../assets/image/icon-dkjl1.png"
-               mode="aspectFit"/>
+               mode="aspectFit" />
         打卡记录
       </van-tabbar-item>
       <van-tabbar-item dot="{{remindData.uctip}}">
         <image slot="icon"
                src="../assets/image/icon-grzx.png"
-               mode="aspectFit"/>
+               mode="aspectFit" />
         <image slot="icon-active"
                src="../assets/image/icon-grzx1.png"
-               mode="aspectFit"/>
+               mode="aspectFit" />
         个人中心
       </van-tabbar-item>
     </van-tabbar>
@@ -103,294 +114,293 @@
 </template>
 
 <script>
-  import wepy from 'wepy';
-  import api from '../request/api';
-  import { connect } from 'wepy-redux';
-  import testMixin from '../mixins/test';
-  import mHeader from '../components/header';
+import wepy from 'wepy'
+import api from '../request/api'
+import { connect } from 'wepy-redux'
+import testMixin from '../mixins/test'
+import mHeader from '../components/header'
 
-  @connect({
-    userInfo(state) {
-      return state.user.userInfo;
-    }
-  })
-  export default class User extends wepy.page {
-    config = {
-      navigationBarTitleText: '个人中心',
-      usingComponents: {
-        'van-tabbar': '../vant/tabbar/index',
-        'van-tabbar-item': '../vant/tabbar-item/index',
-        'van-popup': '../vant/popup/index'
-      }
-    };
-    mixins = [testMixin];
-    components = {
-      mHeader
-    };
-    computed = {
-      height() {
-        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
-      }
-    };
-
-    data = {
-      showKF: false,
-      itemList: []
-    };
-
-    getUCRemindVO() {
-      api.study.getUCRemindVO()
-        .then(res => {
-          let notice = res.data.resultData;
-          this.itemList = [
-            {
-              id: 2,
-              num: notice.nowork,
-              name: '我的作业',
-              url: 'https://pub.file.k12.vip/tbzw/course/my-icon- homework.png'
-            },
-            {
-              id: 3,
-              num: notice.like,
-              name: '点赞通知',
-              url: 'https://pub.file.k12.vip/tbzw/course/my-icon-give a like.png'
-            },
-            {
-              id: 4,
-              num: notice.praise,
-              name: '表扬通知',
-              url: 'https://pub.file.k12.vip/tbzw/course/my-icon-praise.png'
-            },
-            {
-              id: 5,
-              name: '我的收货地址',
-              url: 'https://pub.file.k12.vip/tbzw/course/my-icon-address.png'
-            }
-          ];
-          this.$apply();
-        });
-    }
-
-    methods = {
-      onClose () {
-        this.showKF = !this.showKF
-        this.$apply()
-      },
-      toJump(data) {
-        switch (+data) {
-          case 2:
-            wx.navigateTo({ url: '/pages/myWork' });
-            break;
-          case 3:
-            wx.navigateTo({ url: '/pages/pointNotice' });
-            break;
-          case 4:
-            wx.navigateTo({ url: '/pages/recognitionNotice' });
-            break;
-          case 5:
-            wx.navigateTo({ url: '/pages/address' });
-            break;
-          case 6:
-            wx.navigateTo({ url: '/pages/subscribe' });
-            break;
-        }
-      }
-    };
-
-    events = {};
-
-    onShow() {
-      this.getUCRemindVO();
-    }
+@connect({
+  userInfo (state) {
+    return state.user.userInfo
   }
+})
+export default class User extends wepy.page {
+  config = {
+    navigationBarTitleText: '个人中心',
+    usingComponents: {
+      'van-tabbar': '../vant/tabbar/index',
+      'van-tabbar-item': '../vant/tabbar-item/index',
+      'van-popup': '../vant/popup/index'
+    }
+  };
+  mixins = [testMixin];
+  components = {
+    mHeader
+  };
+  computed = {
+    height () {
+      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+    }
+  };
+
+  data = {
+    showKF: false,
+    itemList: []
+  };
+
+  getUCRemindVO () {
+    api.study.getUCRemindVO()
+      .then(res => {
+        let notice = res.data.resultData
+        this.itemList = [
+          {
+            id: 2,
+            num: notice.nowork,
+            name: '我的作业',
+            url: 'https://pub.file.k12.vip/tbzw/course/my-icon- homework.png'
+          },
+          {
+            id: 3,
+            num: notice.like,
+            name: '点赞通知',
+            url: 'https://pub.file.k12.vip/tbzw/course/my-icon-give a like.png'
+          },
+          {
+            id: 4,
+            num: notice.praise,
+            name: '表扬通知',
+            url: 'https://pub.file.k12.vip/tbzw/course/my-icon-praise.png'
+          },
+          {
+            id: 5,
+            name: '我的收货地址',
+            url: 'https://pub.file.k12.vip/tbzw/course/my-icon-address.png'
+          }
+        ]
+        this.$apply()
+      })
+  }
+
+  methods = {
+    onClose () {
+      this.showKF = !this.showKF
+      this.$apply()
+    },
+    toJump (data) {
+      switch (+data) {
+        case 2:
+          wx.navigateTo({ url: '/pages/myWork' })
+          break
+        case 3:
+          wx.navigateTo({ url: '/pages/pointNotice' })
+          break
+        case 4:
+          wx.navigateTo({ url: '/pages/recognitionNotice' })
+          break
+        case 5:
+          wx.navigateTo({ url: '/pages/address' })
+          break
+        case 6:
+          wx.navigateTo({ url: '/pages/subscribe' })
+          break
+      }
+    }
+  };
+
+  events = {};
+
+  onShow () {
+    this.getUCRemindVO()
+  }
+}
 </script>
 <style lang="scss">
-  @import '../assets/style/mixin.scss';
+@import '../assets/style/mixin.scss';
 
-  .p-user {
-    margin-bottom: 120px;
+.p-user {
+  margin-bottom: 120px;
 
-    &-header {
-      @include bg('/course/background.png');
+  &-header {
+    @include bg('/course/background.png');
 
-      position: relative;
-      padding: 32px;
-      width: 100vw;
-      height: 326px;
+    position: relative;
+    padding: 32px;
+    width: 100vw;
+    height: 326px;
 
-      .-header-top {
-        @include flex-y-center;
+    .-header-top {
+      @include flex-y-center;
 
-        .-header-img {
-          overflow: hidden;
-          margin-right: 24px;
-          width: 72px;
-          height: 72px;
-          box-shadow: 0px 0px 40px 0px rgba(235, 171, 5, 1);
-          border: 4px solid rgba(255, 255, 255, 1);
-          border-radius: 50%;
+      .-header-img {
+        overflow: hidden;
+        margin-right: 24px;
+        width: 72px;
+        height: 72px;
+        box-shadow: 0px 0px 40px 0px rgba(235, 171, 5, 1);
+        border: 4px solid rgba(255, 255, 255, 1);
+        border-radius: 50%;
 
-          .-img {
-            width: 100%;
-          }
+        .-img {
+          width: 100%;
+        }
+      }
+
+      .-header-text {
+        height: 40px;
+        font-size: 28px;
+        font-weight: 500;
+        color: rgba(88, 66, 43, 1);
+        line-height: 40px;
+      }
+    }
+
+    .-header-down {
+      @include bg('/v2/tc.png');
+
+      margin-top: 12px;
+      width: 686px;
+      height: 360px;
+
+      &-btn {
+        display: inline-block;
+        margin: 236px 0 0 242px;
+        width: 238px;
+        height: 60px;
+        background: transparent;
+      }
+    }
+  }
+
+  &-content {
+    margin-top: 100px;
+
+    .-content-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 100px;
+      padding: 0 48px;
+      border-bottom: 2px solid #fafaf9;
+
+      &-left {
+        @include flex-center;
+
+        .-left-img {
+          width: 44px;
+          height: 44px;
         }
 
-        .-header-text {
+        .-left-text {
+          margin-left: 24px;
           height: 40px;
           font-size: 28px;
-          font-weight: 500;
+          font-weight: 400;
           color: rgba(88, 66, 43, 1);
           line-height: 40px;
         }
       }
 
-      .-header-down {
-        @include bg('/v2/tc.png');
-
-        margin-top: 12px;
-        width: 686px;
-        height: 360px;
-
-        &-btn {
-          display: inline-block;
-          margin: 236px 0 0 242px;
-          width:238px;
-          height:60px;
-          background:transparent;
-        }
-      }
-    }
-
-    &-content {
-      margin-top: 100px;
-
-      .-content-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        height: 100px;
-        padding: 0 48px;
-        border-bottom: 2px solid #FAFAF9;
-
-        &-left {
-          @include flex-center;
-
-          .-left-img {
-            width: 44px;
-            height: 44px;
-          }
-
-          .-left-text {
-            margin-left: 24px;
-            height: 40px;
-            font-size: 28px;
-            font-weight: 400;
-            color: rgba(88, 66, 43, 1);
-            line-height: 40px;
-          }
-        }
-
-        &-right {
-          @include flex-center;
-
-          .-right-tip {
-            @include flex-center;
-
-            width: 32px;
-            height: 32px;
-            background: rgba(255, 137, 131, 1);
-            border-radius: 50%;
-            font-size: 20px;
-            font-weight: 500;
-            color: rgba(255, 255, 255, 1);
-          }
-
-          .-right-img {
-            margin-left: 16px;
-            width: 16px;
-            height: 32px;
-          }
-        }
-      }
-
-      .-content-item:last-child {
-        border-bottom: none;
-      }
-    }
-
-    &-footer {
-      margin-top: 25px;
-      text-align: center;
-
-      .-footer-btn {
+      &-right {
         @include flex-center;
 
-        width: 296px;
-        height: 82px;
-        border-radius: 50px;
-        border: 2px solid rgba(88, 66, 43, 0.1);
-        margin: 0 auto;
+        .-right-tip {
+          @include flex-center;
 
-        .-btn-img {
-          width: 35px;
-          height: 31px;
-          margin-right: 26px;
-        }
-
-        .-btn-text {
-          height: 44px;
-          font-size: 32px;
+          width: 32px;
+          height: 32px;
+          background: rgba(255, 137, 131, 1);
+          border-radius: 50%;
+          font-size: 20px;
           font-weight: 500;
-          color: rgba(88, 66, 43, 0.5);
+          color: rgba(255, 255, 255, 1);
         }
-      }
 
-      .-footer-text {
-        margin-top: 12px;
-        height: 28px;
-        font-size: 20px;
-        font-weight: 400;
-        color: rgba(88, 66, 43, 0.5);
-        line-height: 28px;
+        .-right-img {
+          margin-left: 16px;
+          width: 16px;
+          height: 32px;
+        }
       }
     }
 
-    &-kf-pop {
-      @include flex-column-center;
-      padding: 16px 24px;
-      background: rgba(255, 255, 255, 1);
-      border-radius: 16px 16px 0px 0px;
-      &-title {
-        font-size: 36px;
-      }
-      &-img {
-        margin: 48px 0;
-      }
-      &-text {
-        font-size: 36px;
-        line-height: 50px;
-        color: rgba($color: #58422b, $alpha: 0.5);
-        &.red {
-          color: #ff7c76;
-          font-weight: bold;
-        }
-      }
-      &-btn {
-        @include flex-center;
-        margin: 32px 0;
-        width: 654px;
-        height: 100px;
-        font-size: 32px;
-        color: #58422b;
-        background: linear-gradient(
-            90deg,
-            rgba(249, 230, 11, 1) 0%,
-            rgba(253, 219, 85, 1) 100%
-        );
-        box-shadow: 0px 8px 16px 4px rgba(230, 194, 81, 0.4);
-        border-radius: 54px;
-      }
+    .-content-item:last-child {
+      border-bottom: none;
     }
   }
 
+  &-footer {
+    margin-top: 25px;
+    text-align: center;
+
+    .-footer-btn {
+      @include flex-center;
+
+      width: 296px;
+      height: 82px;
+      border-radius: 50px;
+      border: 2px solid rgba(88, 66, 43, 0.1);
+      margin: 0 auto;
+
+      .-btn-img {
+        width: 35px;
+        height: 31px;
+        margin-right: 26px;
+      }
+
+      .-btn-text {
+        height: 44px;
+        font-size: 32px;
+        font-weight: 500;
+        color: rgba(88, 66, 43, 0.5);
+      }
+    }
+
+    .-footer-text {
+      margin-top: 12px;
+      height: 28px;
+      font-size: 20px;
+      font-weight: 400;
+      color: rgba(88, 66, 43, 0.5);
+      line-height: 28px;
+    }
+  }
+
+  &-kf-pop {
+    @include flex-column-center;
+    padding: 16px 24px;
+    background: rgba(255, 255, 255, 1);
+    border-radius: 16px 16px 0px 0px;
+    &-title {
+      font-size: 36px;
+    }
+    &-img {
+      margin: 48px 0;
+    }
+    &-text {
+      font-size: 36px;
+      line-height: 50px;
+      color: rgba($color: #58422b, $alpha: 0.5);
+      &.red {
+        color: #ff7c76;
+        font-weight: bold;
+      }
+    }
+    &-btn {
+      @include flex-center;
+      margin: 32px 0;
+      width: 654px;
+      height: 100px;
+      font-size: 32px;
+      color: #58422b;
+      background: linear-gradient(
+        90deg,
+        rgba(249, 230, 11, 1) 0%,
+        rgba(253, 219, 85, 1) 100%
+      );
+      box-shadow: 0px 8px 16px 4px rgba(230, 194, 81, 0.4);
+      border-radius: 54px;
+    }
+  }
+}
 </style>

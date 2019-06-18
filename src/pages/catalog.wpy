@@ -23,7 +23,7 @@
 
           <view class="course-content" wx:for="{{catalogData.lessonInfos}}" wx:key="{{index}}">
             <text class="course-title" id="{{'title' + (index + 1)}}">Level {{index + 1}}</text>
-            <view id="{{lesson.studyStatus == 2 && 'sk'}}" class="course-item {{lesson.studyStatus == 1 && 'bk'}} {{lesson.studyStatus == 2 && 'sk'}} {{lesson.studyStatus == 3 && 'jzy'}} {{lesson.studyStatus == 4 && 'dkk'}}" wx:for="{{item.lessonInfoList}}" wx:for-item="lesson" wx:for-index="idx" wx:key="{{lesson.id}}">
+            <view id="{{today == lesson.schedulingTime && 'sk'}}" class="course-item {{today == lesson.schedulingTime && 'today'}} {{lesson.studyStatus == 1 && 'bk'}} {{lesson.studyStatus == 2 && 'sk'}} {{lesson.studyStatus == 3 && 'jzy'}} {{lesson.studyStatus == 4 && 'dkk'}}" wx:for="{{item.lessonInfoList}}" wx:for-item="lesson" wx:for-index="idx" wx:key="{{lesson.id}}">
               <text class="course-item-title">{{lesson.lessonName}}</text>
               <view class="course-item-footer">
                 <text class="course-item-date">{{lesson.schedulingTime}}</text>
@@ -78,6 +78,9 @@ export default class Index extends wepy.page {
   computed = {
     height () {
       return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+    },
+    today() {
+      return dayjs(new Date()).format('MM月DD日')
     }
   };
 
@@ -104,7 +107,16 @@ export default class Index extends wepy.page {
   methods = {
     bindClickBtn(lesson) {
       if (!lesson.stage) {
-        wx.navigateTo({ url: '/pages/classroom?id=' + lesson.lessonId })
+        if (lesson.studyStatus !== 4) {
+          wx.navigateTo({ url: '/pages/classroom?id=' + lesson.lessonId })
+        } else {
+          wx.showToast({
+            title: '课程尚未开始，先看看其他课程吧！', // 提示的内容,
+            icon: 'none', // 图标,
+            duration: 2000, // 延迟时间,
+            mask: true
+          })
+        }
       } else if (lesson.stage === 1) {
         wx.navigateTo({ url: '/pages/study?id=' + lesson.lessonId })
       } else if (lesson.stage === 2) {
@@ -161,6 +173,7 @@ export default class Index extends wepy.page {
     query.exec((res) => {
       if (res[0]) {
         this.todayScrollTop = res[0].top - this.height - this.infoHeight - 60
+        console.log(this.todayScrollTop)
         this.$apply()
       }
     })
@@ -191,6 +204,13 @@ export default class Index extends wepy.page {
 
   onShow () {
     this.getCourseCatalog()
+  }
+
+  onHide() {
+    this.todayScrollTop = 0
+  }
+  onUnload() {
+    this.todayScrollTop = 0
   }
 }
 </script>
@@ -247,7 +267,7 @@ export default class Index extends wepy.page {
       width: 26px;
       background-position: center;
     }
-    &.sk {
+    &.sk, &.today {
       background:linear-gradient(90deg,rgba(249,230,11,1) 0%,rgba(253,219,85,1) 100%);
     }
     &.sk &-btn {
@@ -274,6 +294,9 @@ export default class Index extends wepy.page {
     }
     &.dkk &-icon {
       @include bg('/kcml/icon-waiting.png');
+    }
+    &.jzy &-icon {
+      @include bg('/kcml/icon-hand in.png');
     }
 
   }

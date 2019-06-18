@@ -263,6 +263,9 @@ export default class Home extends wepy.page {
       console.log(n)
       if (n.id) {
         this.initPage()
+        if (this.getUCRemindVOL) {
+          this.getUCRemindVOL()
+        }
       }
     }
   };

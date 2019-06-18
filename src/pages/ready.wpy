@@ -200,6 +200,7 @@ export default class Example extends wepy.page {
       setTimeout(() => {
         this.loading = false
         this.initAudio(data.resultData.guideAudio)
+        this.$apply()
       }, 1000)
       this.$apply()
     })
@@ -213,12 +214,12 @@ export default class Example extends wepy.page {
     this.initPage()
   }
   onHide () {
-    this.$parent.globalData.aduioContext.stop()
+    this.$parent.globalData.audioContext.stop()
     this.audioContext.stop()
     this.audioContext.destroy()
   }
   onUnload () {
-    this.$parent.globalData.aduioContext.stop()
+    this.$parent.globalData.audioContext.stop()
     this.audioContext.stop()
     this.audioContext.destroy()
   }

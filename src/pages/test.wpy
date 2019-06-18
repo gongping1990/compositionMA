@@ -235,7 +235,7 @@ export default class Example extends wepy.page {
     let numText = ['一', '二', '三', '四', '五']
     let {answerArr, questionArr} = this
     let arr = []
-    let errorNum = questionArr.length - answerArr[3].flower
+    let errorNum = answerArr[3].answerError
     if (errorNum) {
       arr.push(`${answerArr[3].mateName}，恭喜你完成了随堂测验。用时${this.anwserTimeText}。你做错了${errorNum}道，不要灰心，来听听下面老师的错题分析，下次会更棒哦！`)
     } else {
@@ -251,6 +251,7 @@ export default class Example extends wepy.page {
     this.summaryArr = arr
   }
 
+  // 设置显示答题的索引
   setSummaryIndex() {
     console.log(this.summaryArr)
     let {summaryIndex, summaryArr} = this
@@ -267,6 +268,7 @@ export default class Example extends wepy.page {
     }
   }
 
+  // 弹窗结束后切换题目
   changeAlertVisible () {
     this.showAlert = true
     setTimeout(() => {
@@ -285,22 +287,22 @@ export default class Example extends wepy.page {
     }, 2000)
   }
 
+  // 模拟其他用户完成答题
   imitateReady () {
     let { answerArr } = this
     let random = parseInt(Math.random() * 3)
     this.answerArr[random].status = 1
     if (!(answerArr[0].status && answerArr[1].status && answerArr[2].status)) {
-      console.log(111)
       setTimeout(() => {
         this.imitateReady()
         this.$apply()
       }, 600)
     } else {
-      console.log('ready end')
       this.readyEnd = true
     }
   }
 
+  // 公布答案
   publishAnswer () {
     if (this.selectIndex === this.correctAnswer) {
       this.alertSuccess()
@@ -308,6 +310,7 @@ export default class Example extends wepy.page {
       this.answerArr[3].flower += 1
     } else {
       this.questionArr[this.stepIndex].isRight = 2
+      this.answerArr[3].answerError += 1
       this.alertError()
     }
     this.$apply()
@@ -435,6 +438,7 @@ export default class Example extends wepy.page {
       this.answerArr = this.mateInfo.map(e => {
         e.status = 0
         e.answer = 0
+        e.answerError = 0
         e.flower = this.lookback ? 0 : e.correctNum
         return e
       })

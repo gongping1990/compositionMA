@@ -149,11 +149,13 @@ export default class ShareHomework extends wepy.page {
       api.study.addLike({
         workId: this.shareInfo.id
       })
-        .then(() => {
-          wx.showToast({
-            title: '点赞成功'
-          })
-          this.getOtherHomework()
+        .then(res => {
+          if (res.data.code === '200') {
+            wx.showToast({
+              title: '点赞成功'
+            })
+            this.getOtherHomework()
+          }
         })
     }
   };

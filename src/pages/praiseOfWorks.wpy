@@ -180,10 +180,16 @@ export default class PraiseOfWorks extends wepy.page {
     }
   };
 
-  events = {};
-
   onLoad () {
     this.getList()
+  }
+
+  onShareAppMessage () {
+    return {
+      title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
+      path: `/pages/index`,
+      imageUrl: ''
+    }
   }
 }
 </script>

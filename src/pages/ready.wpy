@@ -223,6 +223,13 @@ export default class Example extends wepy.page {
     this.audioContext.stop()
     this.audioContext.destroy()
   }
+  onShareAppMessage () {
+    return {
+      title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
+      path: `/pages/index`,
+      imageUrl: ''
+    }
+  }
 }
 </script>
 <style lang='scss'>
@@ -286,7 +293,7 @@ export default class Example extends wepy.page {
         height: 30px;
       }
       &.voice .icon {
-        @include bg('/sk/icon-audio.png');
+        @include bg('/v2/time/au.gif');
         margin-left: 16px;
         width: 26px;
         height: 43px;

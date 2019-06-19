@@ -212,12 +212,22 @@ export default class Index extends wepy.page {
   onUnload() {
     this.todayScrollTop = 0
   }
+  onShareAppMessage () {
+    return {
+      title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
+      path: `/pages/index`,
+      imageUrl: ''
+    }
+  }
 }
 </script>
 <style lang="scss">
 @import '../assets/style/mixin.scss';
 .course {
   color: #58422b;
+  &-scroll-wrap {
+    padding-bottom: 120px;
+  }
   &-item {
     box-sizing: border-box;
     margin: 0 32px;

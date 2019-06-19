@@ -64,16 +64,26 @@ export default class extends wepy.app {
     systemInfo: null,
     headHeight: 46,
     audioContext: null,
-    show(that, param, opacity) {
+    show (that, param, opacity) {
       var animation = wx.createAnimation({
-      // 持续时间800ms
+        // 持续时间800ms
         duration: 500,
         timingFunction: 'ease'
       })
-    // var animation = this.animation
+      // var animation = this.animation
       animation.opacity(opacity).step()
-    // 设置动画
+      // 设置动画
       that[param] = animation.export()
+    },
+    clickBtnSound(audioContext) {
+      audioContext.src = 'https://pub.file.k12.vip/tbzw/v2/audio1.wav'
+      audioContext.stop()
+      audioContext.play()
+    },
+    publishResultsSound(audioContext) {
+      audioContext.src = 'https://pub.file.k12.vip/tbzw/v2/audio5.wav'
+      audioContext.stop()
+      audioContext.play()
     }
   }
 
@@ -86,7 +96,7 @@ export default class extends wepy.app {
   onLaunch (options) {
     const that = this
     let audioContext = wx.createInnerAudioContext()
-    audioContext.src = 'https://pub.file.k12.vip/tbzw/v2/time/yx.mp3'
+    audioContext.volume = 0.5
     this.globalData.audioContext = audioContext
     wx.setKeepScreenOn({
       keepScreenOn: true

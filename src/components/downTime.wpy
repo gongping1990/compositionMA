@@ -27,26 +27,17 @@ export default class Example extends wepy.component {
   events = {};
   watch = {
     show (n) {
-      let { audioContext } = wepy.$instance.globalData
       if (n) {
-        audioContext.onTimeUpdate(this.onTimeUpdate)
-        audioContext.seek(3)
-        audioContext.play()
+        let { audioContext, playSound } = wepy.$instance.globalData
+        playSound(audioContext, 7)
         this.downTime()
       }
     }
   };
-  onTimeUpdate() {
-    let { audioContext } = wepy.$instance.globalData
-    let currentTime = parseInt(audioContext.currentTime)
-    console.log(currentTime)
-    if (currentTime === 6) {
-      audioContext.stop()
-      audioContext.offTimeUpdate(this.onTimeUpdate)
-    }
-  }
   downTime () {
     if (this.num !== 3) {
+      let { audioContext, playSound } = wepy.$instance.globalData
+      playSound(audioContext, 7)
       this.num += 1
       setTimeout(() => {
         this.downTime()

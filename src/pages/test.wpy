@@ -601,14 +601,14 @@ export default class Example extends wepy.page {
     &-item {
       flex: 1;
       margin-right: 48px;
-      height: 4px;
+      height: 6px;
       background: #f2f2f2;
       border-radius: 4px;
       &.error {
-        background: #ff7c76;
+        background: #FF7C76;
       }
       &.success {
-        background: #ffaf29;
+        background: #39DDA9;
       }
       &:last-child {
         margin-right: 0;

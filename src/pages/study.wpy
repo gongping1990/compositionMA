@@ -215,6 +215,7 @@ export default class Example extends wepy.page {
       this.videoContext.play()
     },
     bindClickConfirmTwo () {
+      this.reset()
       this.showContinueDiaolig = false
       this.videoContext.seek(this.roomData.progressTime)
       this.videoContext.play()
@@ -228,16 +229,16 @@ export default class Example extends wepy.page {
       }, 3000)
     },
     bindClickInput (i) {
-      let { audioContext, clickBtnSound } = this.$parent.globalData
+      let { audioContext, playSound } = this.$parent.globalData
       if (this.answerEnd) {
         return
       }
-      clickBtnSound(audioContext)
+      playSound(audioContext, 1)
       this.selectIndex = i
     },
     bindSubmit () {
-      let { audioContext, clickBtnSound } = this.$parent.globalData
-      clickBtnSound(audioContext)
+      let { audioContext, playSound } = this.$parent.globalData
+      playSound(audioContext, 1)
       if (this.selectIndex === -1) {
         wx.showToast({
           title: '你还没有选择答案呦！', // 提示的内容,
@@ -370,7 +371,7 @@ export default class Example extends wepy.page {
   setAnswerStatus () {
     let isErr = parseInt(Math.random() * 2)
     let index = parseInt(Math.random() * 3)
-    let { audioContext, publishResultsSound } = this.$parent.globalData
+    let { audioContext, playSound } = this.$parent.globalData
     for (let i = 0; i < 3; i++) {
       this.answerArr[i].answer = 1
     }
@@ -388,7 +389,7 @@ export default class Example extends wepy.page {
 
     setTimeout(() => {
       console.log('palySound')
-      publishResultsSound(audioContext)
+      playSound(audioContext, 5)
       this.showResult = true
       this.answerArr.forEach((e, i) => {
         if (e.answer === 1) {
@@ -402,7 +403,7 @@ export default class Example extends wepy.page {
         this.show = false
         this.reset()
         this.$apply()
-      }, 3000000)
+      }, 4000)
     }, 3000)
     this.$apply()
     console.log(this.answerArr)

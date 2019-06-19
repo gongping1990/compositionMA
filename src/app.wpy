@@ -64,6 +64,7 @@ export default class extends wepy.app {
     systemInfo: null,
     headHeight: 46,
     audioContext: null,
+    audioReadyIndex: 1,
     show (that, param, opacity) {
       var animation = wx.createAnimation({
         // 持续时间800ms
@@ -75,13 +76,8 @@ export default class extends wepy.app {
       // 设置动画
       that[param] = animation.export()
     },
-    clickBtnSound(audioContext) {
-      audioContext.src = 'https://pub.file.k12.vip/tbzw/v2/audio1.wav'
-      audioContext.stop()
-      audioContext.play()
-    },
-    publishResultsSound(audioContext) {
-      audioContext.src = 'https://pub.file.k12.vip/tbzw/v2/audio5.wav'
+    playSound(audioContext, index) {
+      audioContext.src = `https://pub.file.k12.vip/tbzw/v2/audio${index}.wav`
       audioContext.stop()
       audioContext.play()
     }
@@ -93,11 +89,24 @@ export default class extends wepy.app {
     this.use('promisify')
   }
 
+  readySound() {
+    let {audioContext} = this.globalData
+    audioContext.src = `https://pub.file.k12.vip/tbzw/v2/audio${this.globalData.audioReadyIndex}.wav`
+    audioContext.onCanplay(() => {
+      console.log('canplay', this.globalData.audioReadyIndex)
+      if (this.globalData.audioReadyIndex <= 7) {
+        this.globalData.audioReadyIndex += 1
+        this.readySound()
+      }
+    })
+  }
+
   onLaunch (options) {
     const that = this
     let audioContext = wx.createInnerAudioContext()
     audioContext.volume = 0.5
     this.globalData.audioContext = audioContext
+    this.readySound()
     wx.setKeepScreenOn({
       keepScreenOn: true
     })

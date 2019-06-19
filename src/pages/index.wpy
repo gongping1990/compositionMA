@@ -8,7 +8,7 @@
         <image class="avatar"
                src="{{userInfo.headimgurl}}" />
         <view class="header-right">
-          <text class="subtitle">欢迎来到同步作文课，</text>
+          <text class="subtitle">欢迎来到小语轻作文，</text>
           <text class="title">赶快开始今天的学习吧</text>
         </view>
       </view>

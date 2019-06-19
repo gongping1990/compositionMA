@@ -32,7 +32,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": -1,
+			"current": 17,
 			"list": [
 				{
 					"id": 0,
@@ -151,6 +151,13 @@
 					"name": "作业详情",
 					"pathName": "pages/completionOfWork",
 					"query": "type=1&id=1139442398134145025",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "我的作业",
+					"pathName": "pages/myWork",
+					"query": "",
 					"scene": null
 				}
 			]

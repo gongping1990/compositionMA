@@ -35,8 +35,10 @@ export default class Example extends wepy.page {
       })
       api.order.saveRecipient(params)
         .then(() => {
-          wx.hideToast()
-          // this.getList()
+          wx.showToast({
+            icon: 'succerss',
+            title: '保存成功'
+          })
         })
     }
   };

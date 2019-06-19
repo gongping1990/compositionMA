@@ -100,11 +100,9 @@ export default class MyWork extends wepy.page {
   methods = {
     changeTab (num) {
       this.tabActive = num
-      if (!this.dataList.length) {
-        this.emptyOption = {
-          url: `https://pub.file.k12.vip/tbzw/v2/empty/${this.tabActive === '1' ? 'wtj' : 'ytj'}.png`,
-          text: this.tabActive === '1' ? '真棒，你没有需要上交的作业！' : '你还没有交过作业，上课后别忘记交作业哦！'
-        }
+      this.emptyOption = {
+        url: `https://pub.file.k12.vip/tbzw/v2/empty/${this.tabActive === '1' ? 'wtj' : 'ytj'}.png`,
+        text: this.tabActive === '1' ? '真棒，你没有需要上交的作业！' : '你还没有交过作业，上课后别忘记交作业哦！'
       }
       this.getList()
     },

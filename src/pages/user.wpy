@@ -59,7 +59,7 @@
                @close="onClose">
       <view class="p-user-kf-pop">
         <text class="p-user-kf-pop-title">添加老师微信</text>
-        <image src=""
+        <image src="https://pub.file.k12.vip/tbzw/v2/yindao.gif"
                class="p-user-kf-pop-img" />
         <text class="p-user-kf-pop-text">点击下方按钮</text>
         <text class="p-user-kf-pop-text red">回复“2”即可添加老师微信</text>

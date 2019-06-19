@@ -136,39 +136,7 @@
       </view>
     </van-popup>
 
-    <van-popup show="{{ showPraise }}">
-      <view class="praise-pop">
-        <view class="praise-pop-content">
-          <view class="-content-top">
-            <view class="-content-top-name">
-              <text class="-title">{{infoData.awardsInfo.nickName}}</text> 同学
-            </view>
-            <view class="-content-top-body">
-              作文“{{infoData.awardsInfo.homework}}“被评为
-              <text class="-red">优秀作品</text>
-              特发此状，以此鼓励
-            </view>
-            <view class="-content-top-text">同步作文课</view>
-            <view class="-content-top-text">{{infoData.awardsInfo.citeTime}}</view>
-          </view>
-          <view class="-content-down">
-            <view class="-content-down-title">
-              <image class="-title-img" src="{{infoData.awardsInfo.teacherHeadImage}}"></image>
-              <view class="-title-name">{{infoData.awardsInfo.teacherName}}</view>
-            </view>
-            <view class="-content-down-des">
-              {{infoData.awardsInfo.nickName}}，你的作文“{{infoData.awardsInfo.homework}}”写的太棒啦，
-              老师要将它推荐到作品表彰墙，让小朋友们都向你学习
-            </view>
-          </view>
-        </view>
-        <view class="praise-pop-btn">
-          <!--<button class="-btn">保存奖状</button>-->
-          <button class="-btn" open-type="share" >炫耀一下</button>
-        </view>
-        <view class="dialog-close" @tap="onClose"></view>
-      </view>
-    </van-popup>
+    <praiseModal :isShow.sync="showPraise" typeProps="1" :dataInfo.sync="infoData.awardsInfo"></praiseModal>
   </view>
 </template>
 <script>
@@ -176,6 +144,7 @@ import wepy from 'wepy'
 import { connect } from 'wepy-redux'
 import testMixin from '../mixins/test'
 import mHeader from '@/components/header'
+import praiseModal from '../components/praiseModal'
 
 @connect({
   userInfo (state) {
@@ -207,7 +176,8 @@ export default class Home extends wepy.page {
   };
   mixins = [testMixin]
   components = {
-    mHeader
+    mHeader,
+    praiseModal
   };
   methods = {
     bindClickMoreLesson() {
@@ -255,12 +225,15 @@ export default class Home extends wepy.page {
     onClose () {
       this.show = false
       this.showKF = false
-      this.showPraise = false
     }
   };
   events = {
     select (date) {
       this.selectTime = date.formatDate
+    },
+
+    changePopupStatus () {
+      this.showPraise = false
     }
   };
   watch = {

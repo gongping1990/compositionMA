@@ -12,7 +12,7 @@
                 key="index"
                 index="index"
                 item="item">
-          <view class="p-notice-item">
+          <view class="p-notice-item" @tap="openPopup({{item}})">
             <view class="-item-left">
               <image class="-img"
                      src="{{item.teacherImg}}"></image>
@@ -35,6 +35,8 @@
         <emptyState :emptyInfo="emptyOption"></emptyState>
       </view>
     </view>
+
+    <praiseModal :isShow.sync="isShowPopup" typeProps="2" :dataInfo.sync="dataItem"></praiseModal>
   </view>
 </template>
 
@@ -44,14 +46,20 @@ import api from '../request/api'
 import dayjs from 'dayjs'
 import mHeader from '../components/header'
 import emptyState from '../components/emptyState'
+import praiseModal from '../components/praiseModal'
 
 export default class RecognitionNotice extends wepy.page {
   config = {
-    navigationBarTitleText: '表扬通知'
+    navigationBarTitleText: '表扬通知',
+    usingComponents: {
+      'van-icon': '../vant/icon/index',
+      'van-popup': '../vant/popup/index'
+    }
   };
   components = {
     mHeader,
-    emptyState
+    emptyState,
+    praiseModal
   };
   computed = {
     height () {
@@ -60,6 +68,7 @@ export default class RecognitionNotice extends wepy.page {
   };
 
   data = {
+    isShowPopup: false,
     page: {
       current: 1,
       size: 10,
@@ -69,7 +78,8 @@ export default class RecognitionNotice extends wepy.page {
       url: 'https://pub.file.k12.vip/tbzw/v2/empty/dz.png',
       text: '暂时没有收到老师的表扬，要坚持每天认真完成作业，老师一定会表扬你的！'
     },
-    dataList: []
+    dataList: [],
+    dataItem: ''
   };
 
   getList () {
@@ -94,6 +104,10 @@ export default class RecognitionNotice extends wepy.page {
   };
 
   methods = {
+    openPopup(item) {
+      this.isShowPopup = true
+      this.dataItem = item
+    },
     bindLoadItem (data) {
       if (this.page.current < Math.ceil(this.page.total / this.page.size)) {
         this.page.current++
@@ -102,14 +116,20 @@ export default class RecognitionNotice extends wepy.page {
     }
   };
 
+  events = {
+    changePopupStatus () {
+      this.isShowPopup = false
+    }
+  }
+
   onLoad () {
     this.getList()
   }
 
   onShareAppMessage () {
     return {
-      title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
-      path: `/pages/index`,
+      title: `我的作业受到${this.dataItem.teacherName}的表扬，快来给我点个赞吧`,
+      path: `/pages/completionOfWork?type=2&id=${this.dataItem.homeworkId}`,
       imageUrl: ''
     }
   }

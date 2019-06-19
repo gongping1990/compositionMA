@@ -32,7 +32,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 17,
+			"current": 18,
 			"list": [
 				{
 					"id": 0,
@@ -157,6 +157,13 @@
 					"id": -1,
 					"name": "我的作业",
 					"pathName": "pages/myWork",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "表扬",
+					"pathName": "pages/recognitionNotice",
 					"query": "",
 					"scene": null
 				}

@@ -1,9 +1,9 @@
 <template>
   <view class="container p-completionOfWork">
-    <mHeader title="课后作业"></mHeader>
+    <mHeader title="作业详情"></mHeader>
 
     <view class="container-scroll -height-wrap"
-          style="margin-top:{{height}}px">
+          style="margin-top:{{height}}px" wx:if="{{isFetching}}">
       <view class="p-completionOfWork-top">
         <view class="-top-left">
           <image class="-top-left-img"
@@ -59,16 +59,20 @@
       </view>
 
       <view class="p-completionOfWork-footer {{isReply ? 'p-completionOfWork-footer-reply' : ''}}">
+        <view class="-footer-texiao" style="z-index:{{isCompliment ? '5' : ''}}">
+          <image wx:if="{{isShowAn}}" class="-footer-texiao-long {{isShowAn ? '-scollAn' : ''}}"
+                 src="https://pub.file.k12.vip/tbzw/v2/xiao.png"></image>
+        </view>
         <view class="-footer-wrap">
           <button class="-footer-btn {{isCompliment ? '-footer-btn-zan' : ''}}"
                   @tap="addLike">
-            <image class="-footer-btn-icon"
+            <image class="-footer-btn-icon {{isZan ? '-footer-animation' : ''}}"
                    wx:if="{{!isCompliment}}"
                    src="https://pub.file.k12.vip/tbzw/word-detail/icon-give-pre.png"></image>
             <image class="-footer-btn-icon"
                    wx:if="{{isCompliment}}"
                    src="https://pub.file.k12.vip/tbzw/word-detail/icon-givea-def.png"></image>
-            {{workDetail.likenum || 0}}
+            {{likenum || 0}}
           </button>
           <button class="-footer-btn"
                   open-type="share">
@@ -80,7 +84,6 @@
                  wx:if="{{workDetail.evaluation === 1 || workDetail.evaluation === 2}}"
                  src="https://pub.file.k12.vip/2019/06/05/1136201296525938689.png"></image>
         </view>
-
       </view>
 
       <van-popup show="{{isOpenPopup}}">
@@ -122,8 +125,8 @@
                       value="{{stumsg}}"
                       bindinput="bindClickMessage"
                       placeholder="你想对点评老师说…"
-                      placeholder-style="font-size: 12px;" />
-            </view>
+                      placeholder-style="font-size: 12px;"/>
+          </view>
           <button class="-popup-btn" @tap="submitEvaluate">提交</button>
         </view>
 
@@ -142,7 +145,7 @@
             如果觉得老师点评的好， 记得分享给好友哦～
           </view>
           <button class="-popup-jg-btn -one" wx:if="{{isActive === '0'}}">好的，我知道了</button>
-          <button class="-popup-jg-btn" wx:if="{{isActive !== '0'}}">分享给好友</button>
+          <button class="-popup-jg-btn" open-type="share" wx:if="{{isActive !== '0'}}" @tap="shareFriend">分享给好友</button>
         </view>
 
         <van-icon name="close"
@@ -156,568 +159,644 @@
 </template>
 
 <script>
-import wepy from 'wepy'
-import api from '../request/api'
-import dayjs from 'dayjs'
-import mHeader from '../components/header'
+  import wepy from 'wepy';
+  import api from '../request/api';
+  import dayjs from 'dayjs';
+  import mHeader from '../components/header';
 
-export default class CompletionOfWork extends wepy.page {
-  config = {
-    navigationBarTitleText: '课后作业',
-    'usingComponents': {
-      'van-icon': '../vant/icon/index',
-      'van-popup': '../vant/popup/index'
-    }
-  };
-  components = {
-    mHeader
-  };
-  computed = {
-    height () {
-      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
-    }
-  };
-
-  data = {
-    isOpenPopup: false,
-    isCompliment: false,
-    isReply: true,
-    isEvaluate: false,
-    isPlay: false,
-    isActive: '',
-    stumsg: '',
-    workDetail: '',
-    queryInfo: '',
-    myAudio: '',
-    durationTime: ''
-  };
-
-  initAudio () {
-    this.myAudio = wx.createInnerAudioContext()
-    this.myAudio.src = this.workDetail.replyAudioAuthorUrl
-
-    this.myAudio.onEnded(() => {
-      this.isPlay = false
-      if (this.queryInfo.type === '1' && this.workDetail.evaluation === null) {
-        this.isOpenPopup = true
+  export default class CompletionOfWork extends wepy.page {
+    config = {
+      navigationBarTitleText: '作业详情',
+      'usingComponents': {
+        'van-icon': '../vant/icon/index',
+        'van-popup': '../vant/popup/index'
       }
-      this.$apply()
-    })
-
-    this.myAudio.onTimeUpdate(() => {
-      this.durationTime = this.timeToFormat(this.myAudio.duration)
-      this.$apply()
-    })
-  };
-
-  timeToFormat (times) {
-    var result = '00:00'
-    var minute, second
-    if (times > 0) {
-      minute = Math.floor(times / 60)
-      if (minute < 10) {
-        minute = '0' + minute
+    };
+    components = {
+      mHeader
+    };
+    computed = {
+      height() {
+        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
       }
+    };
 
-      second = Math.floor((times - 60 * minute) % 60)
-      if (second < 10) {
-        second = '0' + second
+    data = {
+      isFetching: false,
+      isOpenPopup: false,
+      isCompliment: false,
+      isReply: true,
+      isEvaluate: false,
+      isPlay: false,
+      isZan: false,
+      isShowAn: false,
+      isActive: '',
+      stumsg: '',
+      workDetail: '',
+      queryInfo: '',
+      myAudio: '',
+      durationTime: '',
+      likenum: '1998'
+    };
+
+    initAudio() {
+      this.myAudio = wx.createInnerAudioContext();
+      this.myAudio.src = this.workDetail.replyAudioAuthorUrl;
+
+      this.myAudio.onEnded(() => {
+        this.isPlay = false;
+        if (this.queryInfo.type === '1' && this.workDetail.evaluation === null) {
+          this.isOpenPopup = true;
+        }
+        this.$apply();
+      });
+
+      this.myAudio.onTimeUpdate(() => {
+        this.durationTime = this.timeToFormat(this.myAudio.duration);
+        this.$apply();
+      });
+    };
+
+    timeToFormat(times) {
+      var result = '00:00';
+      var hour, minute, second;
+      if (times > 0) {
+        minute = Math.floor(times / 60);
+        if (minute < 10) {
+          minute = '0' + minute;
+        }
+
+        second = Math.floor((times - 60 * minute) % 60);
+        if (second < 10) {
+          second = '0' + second;
+        }
+        result = `${minute}"${second}"`;
       }
-      result = `${minute}"${second}"`
-    }
-    return result
-  };
+      return result;
+    };
 
-  getMyHomework () {
-    api.study.viewMyHomework({
-      lessonId: this.queryInfo.id
-    }).then(res => {
-      this.workDetail = res.data.resultData
-      this.workDetail.workTime = dayjs(+this.workDetail.workTime).format('YYYY-MM-DD HH:mm:ss')
-      if (this.workDetail.replyTime) {
-        this.workDetail.replyTime = dayjs(+this.workDetail.replyTime).format('YYYY-MM-DD HH:mm:ss')
-        this.isReply = true
-      } else {
-        this.isReply = false
-      }
-      this.initAudio()
-      this.$apply()
-    })
-  };
+    getMyHomework() {
+      this.isFetching = true;
+      api.study.viewMyHomework({
+        lessonId: this.queryInfo.id
+      }).then(res => {
+        this.workDetail = res.data.resultData;
+        this.workDetail.workTime = dayjs(+this.workDetail.workTime).format('YYYY-MM-DD HH:mm:ss');
+        if (this.workDetail.replyTime) {
+          this.workDetail.replyTime = dayjs(+this.workDetail.replyTime).format('YYYY-MM-DD HH:mm:ss');
+          this.isReply = true;
+        } else {
+          this.isReply = false;
+        }
+        this.initAudio();
+        this.$apply();
+      }, () => {
+        this.isFetching = false;
+      });
+    };
 
-  getOtherHomework () {
-    api.study.viewHomework({
-      workId: this.queryInfo.id
-    }).then(res => {
-      this.workDetail = res.data.resultData
-      this.workDetail.workTime = dayjs(+this.workDetail.workTime).format('YYYY-MM-DD HH:mm:ss')
-      if (this.workDetail.replyTime) {
-        this.workDetail.replyTime = dayjs(+this.workDetail.replyTime).format('YYYY-MM-DD HH:mm:ss')
-        this.isReply = true
-      } else {
-        this.isReply = false
-      }
-      this.isCompliment = this.workDetail.otherLike
-      this.initAudio()
-      this.$apply()
-    })
-  };
+    getOtherHomework() {
+      this.isFetching = true;
+      api.study.viewHomework({
+        workId: this.queryInfo.id
+      }).then(res => {
+        this.workDetail = res.data.resultData;
+        this.workDetail.workTime = dayjs(+this.workDetail.workTime).format('YYYY-MM-DD HH:mm');
+        if (this.workDetail.replyTime) {
+          this.workDetail.replyTime = dayjs(+this.workDetail.replyTime).format('YYYY-MM-DD HH:mm');
+          this.isReply = true;
+        } else {
+          this.isReply = false;
+        }
+        this.isCompliment = this.workDetail.otherLike;
+        this.initAudio();
+        this.$apply();
+      }, () => {
+        this.isFetching = false;
+      });
+    };
 
-  methods = {
-    changeAudioStatus () {
-      if (this.isPlay) {
-        this.isPlay = false
-        this.myAudio.pause()
-      } else {
-        this.isPlay = true
-        this.myAudio.play()
-      }
-    },
-    addLike () {
-      if (this.queryInfo.type === '1') {
+    methods = {
+      shareFriend () {
+        this.getMyHomework();
+      },
+      changeAudioStatus() {
+        if (this.isPlay) {
+          this.isPlay = false;
+          this.myAudio.pause();
+        } else {
+          this.isPlay = true;
+          this.myAudio.play();
+        }
+      },
+      addLike() {
+        if (this.queryInfo.type === '1') {
+          this.isZan = true;
 
-      } else {
-        api.study.addLike({
-          workId: this.queryInfo.id
-        })
-          .then(() => {
-            this.getOtherHomework()
+          setTimeout(() => {
+            this.isShowAn = true;
+            this.$apply();
+          }, 250);
+          setTimeout(() => {
+            this.likenum = 1999;
+            console.log(this.likenum);
+            this.isCompliment = true;
+            this.$apply();
+          }, 900);
+
+
+        } else {
+          api.study.addLike({
+            workId: this.queryInfo.id
           })
+            .then(() => {
+              this.getOtherHomework();
+            });
+        }
+      },
+      bindClickMessage(e) {
+        this.stumsg = e.detail.value;
+      },
+      submitEvaluate() {
+        if (!this.isActive) {
+          return wx.showToast({
+            icon: 'none',
+            title: '请选择对老师评价的标签哦~'
+          });
+        }
+        api.study.evaluationToTeacher({
+          id: this.workDetail.id,
+          evaluation: this.isActive,
+          stumsg: this.stumsg
+        }).then(() => {
+          this.isEvaluate = true;
+        });
+      },
+      choiceTab(num) {
+        this.isActive = num;
+      },
+      changePopup() {
+        this.isOpenPopup = !this.isOpenPopup;
       }
-    },
-    bindClickMessage (e) {
-      this.stumsg = e.detail.value
-    },
-    submitEvaluate () {
-      if (!this.isActive) {
-        return wx.showToast({
-          icon: 'none',
-          title: '请选择对老师评价的标签哦~'
-        })
+    };
+
+    events = {};
+
+    onLoad(query) {
+      this.queryInfo = query;
+      if (query.type === '1') {
+        this.getMyHomework();
+      } else {
+        this.getOtherHomework();
       }
-      api.study.evaluationToTeacher({
-        id: this.workDetail.id,
-        evaluation: this.isActive,
-        stumsg: this.stumsg
-      }).then(() => {
-        this.isEvaluate = true
-      })
-    },
-    choiceTab (num) {
-      this.isActive = num
-    },
-    changePopup () {
-      this.isOpenPopup = !this.isOpenPopup
+      this.$apply();
     }
-  };
 
-  events = {};
-
-  onLoad (query) {
-    this.queryInfo = query
-    if (query.type === '1') {
-      this.getMyHomework()
-    } else {
-      this.getOtherHomework()
+    onUnload() {
+      this.myAudio.destroy();
     }
-    this.$apply()
-  }
 
-  onUnload () {
-    this.myAudio.destroy()
-  }
-
-  onShareAppMessage () {
-    return {
-      title: this.queryInfo.type === '1' ? `我已坚持学习${this.workDetail.learnDay}天，刚完成今天的作业，请给我点个赞吧` : `快来给@${this.workDetailnickname}点个赞，TA已坚持学习了${this.workDetail.learnDay}天`,
-      path: this.queryInfo.type === '1' ? `/pages/shareHomework?id=${this.workDetail.lessonId}` : `/pages/completionOfWork?type=2&id=${this.workDetail.id}`,
-      imageUrl: ''
+    onShareAppMessage() {
+      return {
+        title: this.queryInfo.type === '1' ? `我已坚持学习${this.workDetail.learnDay}天，刚完成今天的作业，请给我点个赞吧` : `快来给@${this.workDetail.nickname}点个赞，TA已坚持学习了${this.workDetail.learnDay}天`,
+        path: this.queryInfo.type === '1' ? `/pages/shareHomework?id=${this.workDetail.id}` : `/pages/completionOfWork?type=2&id=${this.workDetail.id}`,
+        imageUrl: ''
+      };
     }
   }
-}
 </script>
 
 <style lang="scss">
-@import '../assets/style/mixin.scss';
+  @import '../assets/style/mixin.scss';
 
-.p-completionOfWork {
-  .-height-wrap {
-    height: calc(100vh - 150px);
-  }
-
-  &-top {
-    display: flex;
-    padding: 40px 0 0 64px;
-
-    .-top-left {
-      &-img {
-        margin-right: 24px;
-        width: 96px;
-        height: 96px;
-        border-radius: 50%;
-      }
+  .p-completionOfWork {
+    .-height-wrap {
+      height: calc(100vh - 150px);
     }
 
-    .-top-right {
-      &-name {
-        height: 40px;
-        font-size: 28px;
-        font-weight: 500;
-        color: rgba(88, 66, 43, 1);
-        line-height: 40px;
-      }
+    &-top {
+      display: flex;
+      padding: 40px 0 0 64px;
 
-      &-time {
-        margin-top: 8px;
-        height: 34px;
-        font-size: 24px;
-        font-weight: 400;
-        color: rgba(88, 66, 43, 0.5);
-        line-height: 34px;
-      }
-
-      &-work {
-        margin-top: 30px;
-        width: 502px;
-        height: 610px;
-      }
-    }
-  }
-
-  &-down {
-    display: flex;
-    margin: 66px 0 138px 64px;
-
-    .-down-left {
-      &-img {
-        margin-right: 44px;
-        width: 70px;
-        height: 54px;
-      }
-    }
-
-    .-down-right {
-      &-info {
-        @include flex-y-center;
-
-        .-info-img {
-          width: 56px;
-          height: 56px;
+      .-top-left {
+        &-img {
+          margin-right: 24px;
+          width: 96px;
+          height: 96px;
           border-radius: 50%;
-          border: 2px solid rgba(255, 255, 255, 1);
-          margin-right: 18px;
         }
+      }
 
-        .-info-name {
-          height: 50px;
-          font-size: 36px;
+      .-top-right {
+        &-name {
+          height: 40px;
+          font-size: 28px;
           font-weight: 500;
           color: rgba(88, 66, 43, 1);
-          line-height: 50px;
+          line-height: 40px;
         }
-      }
 
-      &-text {
-        margin-top: 8px;
-        height: 36px;
-        font-size: 26px;
-        font-weight: 400;
-        color: rgba(88, 66, 43, 0.5);
-        line-height: 36px;
+        &-time {
+          margin-top: 8px;
+          height: 34px;
+          font-size: 24px;
+          font-weight: 400;
+          color: rgba(88, 66, 43, 0.5);
+          line-height: 34px;
+        }
+
+        &-work {
+          margin-top: 30px;
+          width: 502px;
+          height: 610px;
+        }
       }
     }
 
-    .-down-reply {
-      margin-left: 124px;
+    &-down {
+      display: flex;
+      margin: 66px 0 138px 64px;
 
-      .-down-reply-info {
-        display: flex;
-
-        .-reply-info-img {
-          margin-right: 16px;
-          width: 56px;
-          height: 56px;
-          border-radius: 50%;
+      .-down-left {
+        &-img {
+          margin-right: 44px;
+          width: 70px;
+          height: 54px;
         }
+      }
 
-        .-reply-info-user {
-          .-user-text {
-            height: 28px;
-            font-size: 20px;
-            font-weight: 400;
-            color: rgba(70, 65, 60, 0.4);
-            line-height: 28px;
+      .-down-right {
+        &-info {
+          @include flex-y-center;
 
-            .-name {
-              margin-right: 40px;
-              font-size: 24px;
-            }
-          }
-        }
-
-        .-reply-info-wrap {
-          margin-top: 14px;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-
-          .-info-content {
-            margin-left: 16px;
-            position: relative;
-            flex: 1;
-            width: 246px;
-            font-size: 28px;
-            line-height: 40px;
-            padding: 24px 32px;
-            background: rgba(255, 245, 209, 1);
-            border-radius: 16px;
-            border: 3px solid rgba(232, 197, 157, 1);
-            &::before {
-              @include bg('/icon.png');
-              content: '';
-              position: absolute;
-              left: -20px;
-              top: 12px;
-              width: 50px;
-              height: 30px;
-            }
-            &.voice .icon {
-              @include bg('/sk/icon-audio.png');
-              margin-left: 16px;
-              width: 26px;
-              height: 43px;
-            }
+          .-info-img {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 1);
+            margin-right: 18px;
           }
 
-          .-reply-time {
-            margin: 0 36px 0 24px;
-            height: 32px;
-            font-size: 28px;
+          .-info-name {
+            height: 50px;
+            font-size: 36px;
+            font-weight: 500;
             color: rgba(88, 66, 43, 1);
-            line-height: 34px;
+            line-height: 50px;
           }
+        }
+
+        &-text {
+          margin-top: 8px;
+          height: 36px;
+          font-size: 26px;
+          font-weight: 400;
+          color: rgba(88, 66, 43, 0.5);
+          line-height: 36px;
         }
       }
 
-      .-down-reply-img {
-        margin-top: 32px;
-        width: 500px;
-        height: 282px;
-        border: 2px solid rgba(151, 151, 151, 1);
+      .-down-reply {
+        margin-left: 124px;
+
+        .-down-reply-info {
+          display: flex;
+
+          .-reply-info-img {
+            margin-right: 16px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+          }
+
+          .-reply-info-user {
+            .-user-text {
+              height: 28px;
+              font-size: 20px;
+              font-weight: 400;
+              color: rgba(70, 65, 60, 0.4);
+              line-height: 28px;
+
+              .-name {
+                margin-right: 40px;
+                font-size: 24px;
+              }
+            }
+          }
+
+          .-reply-info-wrap {
+            margin-top: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            .-info-content {
+              margin-left: 16px;
+              position: relative;
+              flex: 1;
+              width: 246px;
+              font-size: 28px;
+              line-height: 40px;
+              padding: 24px 32px;
+              background: rgba(255, 245, 209, 1);
+              border-radius: 16px;
+              border: 3px solid rgba(232, 197, 157, 1);
+              &::before {
+                @include bg('/icon.png');
+                content: '';
+                position: absolute;
+                left: -20px;
+                top: 12px;
+                width: 50px;
+                height: 30px;
+              }
+              &.voice .icon {
+                @include bg('/sk/icon-audio.png');
+                margin-left: 16px;
+                width: 26px;
+                height: 43px;
+              }
+            }
+
+            .-reply-time {
+              margin: 0 36px 0 24px;
+              height: 32px;
+              font-size: 28px;
+              color: rgba(88, 66, 43, 1);
+              line-height: 34px;
+            }
+          }
+        }
+
+        .-down-reply-img {
+          margin-top: 32px;
+          width: 500px;
+          height: 282px;
+          border: 2px solid rgba(151, 151, 151, 1);
+        }
       }
     }
-  }
 
-  &-footer {
-    position: absolute;
-    bottom: 0px;
-    width: 100%;
-
-    .-footer-wrap {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 64px 24px;
-    }
-
-    .-footer-btn {
-      @include flex-center;
-      background-color: #ffffff;
-      margin: 0;
-      width: 276px;
-      height: 82px;
-      border-radius: 44px;
-      border: 2px solid rgba(88, 66, 43, 0.1);
-      font-size: 32px;
-      font-weight: 500;
-      color: rgba(88, 66, 43, 0.5);
-
-      &-icon {
-        margin-right: 24px;
-        width: 40px;
-        height: 40px;
-      }
-    }
-
-    .-footer-btn-zan {
-      color: #58422b;
-      background: linear-gradient(
-        90deg,
-        rgba(249, 230, 11, 1) 0%,
-        rgba(253, 219, 85, 1) 100%
-      );
-    }
-
-    .-footer-tip {
+    &-footer {
       position: absolute;
-      width: 456px;
-      height: 96px;
-      top: -100px;
-      right: 90px;
-    }
-  }
+      bottom: 20px;
+      width: 100%;
 
-  &-footer-reply {
-    position: relative;
-    margin-top: 120px;
-  }
+      .-footer-texiao {
+        text-align: center;
+        padding: 20px;
+        position: absolute;
+        left: 22px;
+        bottom: 54px;
+        width: 276px;
+        height: 265px;
+        overflow: hidden;
+        /*background-color: #2b2828;*/
 
-  &-popup-dp {
-    text-align: center;
-    width: 590px;
-    height: 668px;
-    background: rgba(255, 255, 255, 1);
-    border-radius: 32px;
+        &-long {
+          transform: translateY(265px);
+          width: 100%;
+          height: 13765px;
+        }
 
-    .-popup-title {
-      padding-top: 32px;
-      height: 50px;
-      font-size: 36px;
-      font-weight: 500;
-      color: rgba(70, 65, 60, 1);
-      line-height: 50px;
-    }
-
-    .-popup-text {
-      margin-top: 12px;
-      height: 34px;
-      font-size: 24px;
-      font-weight: 300;
-      color: rgba(70, 65, 60, 0.5);
-      line-height: 34px;
-    }
-
-    .-popup-list {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 38px 64px 40px;
-
-      .-list-img {
-        width: 100px;
-        height: 100px;
+        .-scollAn {
+          animation: myImg .75s;
+        }
       }
 
-      .-list-text {
-        margin-top: 14px;
+      .-footer-wrap {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 64px 24px;
+      }
+
+      .-footer-btn {
+        @include flex-center;
+        z-index: 4;
+        background-color: #ffffff;
+        margin: 0;
+        width: 276px;
+        height: 82px;
+        border-radius: 44px;
+        border: 2px solid rgba(88, 66, 43, 0.1);
+        font-size: 32px;
+        font-weight: 500;
+        color: rgba(88, 66, 43, 0.5);
+
+        &-icon {
+          margin-right: 24px;
+          width: 40px;
+          height: 40px;
+        }
+      }
+
+      .-footer-btn-zan {
+        animation: myBack .7s;
+        animation-fill-mode: forwards;
+      }
+
+      .-footer-tip {
+        position: absolute;
+        width: 456px;
+        height: 96px;
+        top: -100px;
+        right: 90px;
+      }
+
+      .-footer-animation {
+        animation: myZan 1s
+      }
+
+      @keyframes myImg {
+        0% {
+          transform: translateY(265px);
+        }
+        100% {
+          display: none;
+          transform: translateY(-13765px);
+        }
+      }
+
+      @keyframes myBack {
+        100% {
+          border: none;
+          background: linear-gradient(90deg, #F9E60B 0%, #FDDB55 100%);
+          color: #58422b;
+        }
+      }
+
+      @keyframes myZan {
+        50% {
+          transform: scale(1.2);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+    }
+
+    &-footer-reply {
+      position: relative;
+      margin-top: 120px;
+    }
+
+    &-popup-dp {
+      text-align: center;
+      width: 590px;
+      height: 668px;
+      background: rgba(255, 255, 255, 1);
+      border-radius: 32px;
+
+      .-popup-title {
+        padding-top: 32px;
+        height: 50px;
+        font-size: 36px;
+        font-weight: 500;
+        color: rgba(70, 65, 60, 1);
+        line-height: 50px;
+      }
+
+      .-popup-text {
+        margin-top: 12px;
         height: 34px;
         font-size: 24px;
-        font-weight: 500;
+        font-weight: 300;
         color: rgba(70, 65, 60, 0.5);
         line-height: 34px;
       }
 
-      .-active-text {
+      .-popup-list {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 38px 64px 40px;
+
+        .-list-img {
+          width: 100px;
+          height: 100px;
+        }
+
+        .-list-text {
+          margin-top: 14px;
+          height: 34px;
+          font-size: 24px;
+          font-weight: 500;
+          color: rgba(70, 65, 60, 0.5);
+          line-height: 34px;
+        }
+
+        .-active-text {
+          color: rgba(70, 65, 60, 1);
+        }
+      }
+
+      .-popup-input {
+        .-input {
+          font-size: 20px;
+          text-align: left;
+          margin: 0 auto;
+          padding: 24px 32px;
+          width: 446px;
+          height: 130px;
+          background: rgba(255, 255, 255, 1);
+          border-radius: 32px;
+          border: 2px solid rgba(88, 66, 43, 0.3);
+        }
+      }
+
+      .-popup-btn {
+        margin: 32px auto 0;
+        text-align: center;
+        width: 354px;
+        height: 76px;
+        background: linear-gradient(
+            90deg,
+            rgba(249, 230, 11, 1) 0%,
+            rgba(253, 219, 85, 1) 100%
+        );
+        border-radius: 40px;
+        font-size: 32px;
+        font-weight: 500;
         color: rgba(70, 65, 60, 1);
+        line-height: 76px;
       }
     }
 
-    .-popup-input {
-      .-input {
-        font-size: 20px;
-        text-align: left;
+    &-popup-jg {
+      position: relative;
+      text-align: center;
+      margin: 0 auto;
+      width: 590px;
+      height: 384px;
+      background: rgba(255, 255, 255, 1);
+      border-radius: 32px;
+
+      .-popup-jg-img {
         margin: 0 auto;
-        padding: 24px 32px;
-        width: 446px;
-        height: 130px;
-        background: rgba(255, 255, 255, 1);
-        border-radius: 32px;
-        border: 2px solid rgba(88, 66, 43, 0.3);
+        position: absolute;
+        top: -92px;
+        width: 184px;
+        height: 184px;
+        left: 210px;
+      }
+
+      .-popup-jg-text {
+        margin: 0 auto;
+        padding-top: 144px;
+        width: 480px;
+        height: 88px;
+        font-size: 32px;
+        font-weight: 500;
+        color: rgba(70, 65, 60, 1);
+        line-height: 44px;
+      }
+
+      .-popup-jd-text-two {
+        margin: 12px auto 48px;
+        width: 308px;
+        height: 80px;
+        font-size: 28px;
+        font-family: PingFangSC-Light;
+        font-weight: 300;
+        color: rgba(70, 65, 60, 0.5);
+        line-height: 40px;
+      }
+
+      .-popup-jg-btn {
+        text-align: center;
+        width: 354px;
+        height: 76px;
+        background: linear-gradient(
+            90deg,
+            rgba(249, 230, 11, 1) 0%,
+            rgba(253, 219, 85, 1) 100%
+        );
+        border-radius: 40px;
+        font-size: 32px;
+        font-weight: 500;
+        color: rgba(70, 65, 60, 1);
+        line-height: 76px;
+      }
+
+      .-one {
+        margin-top: 28px;
       }
     }
 
-    .-popup-btn {
-      margin: 32px auto 0;
-      text-align: center;
-      width: 354px;
-      height: 76px;
-      background: linear-gradient(
-        90deg,
-        rgba(249, 230, 11, 1) 0%,
-        rgba(253, 219, 85, 1) 100%
-      );
-      border-radius: 40px;
-      font-size: 32px;
-      font-weight: 500;
-      color: rgba(70, 65, 60, 1);
-      line-height: 76px;
+    &-popup-height {
+      height: 452px;
+
+      .-popup-jg-text {
+        width: 512px;
+        height: 44px;
+      }
     }
-  }
 
-  &-popup-jg {
-    position: relative;
-    text-align: center;
-    margin: 0 auto;
-    width: 590px;
-    height: 384px;
-    background: rgba(255, 255, 255, 1);
-    border-radius: 32px;
-
-    .-popup-jg-img {
-      margin: 0 auto;
+    &-popup-close {
       position: absolute;
-      top: -92px;
-      width: 184px;
-      height: 184px;
-      left: 210px;
-    }
-
-    .-popup-jg-text {
-      margin: 0 auto;
-      padding-top: 144px;
-      width: 480px;
-      height: 88px;
-      font-size: 32px;
-      font-weight: 500;
-      color: rgba(70, 65, 60, 1);
-      line-height: 44px;
-    }
-
-    .-popup-jd-text-two {
-      margin: 12px auto 48px;
-      width: 308px;
-      height: 80px;
-      font-size: 28px;
-      font-family: PingFangSC-Light;
-      font-weight: 300;
-      color: rgba(70, 65, 60, 0.5);
-      line-height: 40px;
-    }
-
-    .-popup-jg-btn {
-      text-align: center;
-      width: 354px;
-      height: 76px;
-      background: linear-gradient(
-        90deg,
-        rgba(249, 230, 11, 1) 0%,
-        rgba(253, 219, 85, 1) 100%
-      );
-      border-radius: 40px;
-      font-size: 32px;
-      font-weight: 500;
-      color: rgba(70, 65, 60, 1);
-      line-height: 76px;
-    }
-
-    .-one {
-      margin-top: 28px;
+      top: -200px;
+      right: -40px;
     }
   }
-
-  &-popup-height {
-    height: 452px;
-
-    .-popup-jg-text {
-      width: 512px;
-      height: 44px;
-    }
-  }
-
-  &-popup-close {
-    position: absolute;
-    top: -200px;
-    right: -40px;
-  }
-}
 </style>

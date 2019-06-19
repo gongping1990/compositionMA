@@ -29,9 +29,13 @@
 
         <view class="p-submitHomework-header-down">
           <view class="-down-text {{tabActive === '1' ? '-active' : ''}}"
-                @tap="changeTab({{'1'}})">我的作业</view>
+                @tap="changeTab({{'1'}})">
+            <view class="-text">我的作业</view>
+          </view>
           <view class="-down-text {{tabActive === '2' ? '-active' : ''}}"
-                @tap="changeTab({{'2'}})">同学作业</view>
+                @tap="changeTab({{'2'}})">
+            <view class="-text">同学作业</view>
+          </view>
         </view>
       </view>
 
@@ -450,6 +454,12 @@ export default class SubmitHomework extends wepy.page {
         font-weight: 400;
         color: rgba(88, 66, 43, 0.3);
         border-bottom: 8px solid transparent;
+        width: 64px;
+
+        .-text {
+          transform: translateX(-20px);
+          width: 120px;
+        }
       }
 
       .-active {
@@ -499,6 +509,8 @@ export default class SubmitHomework extends wepy.page {
         font-weight: 500;
         color: rgba(255, 255, 255, 0.9);
         line-height: 34px;
+        height: 135px;
+        overflow: hidden;
       }
     }
 

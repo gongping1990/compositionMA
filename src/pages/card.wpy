@@ -8,7 +8,7 @@
         <view class="card-day">
           <view class="card-day-left">
             <view class="card-day-num">
-              {{cardDetail.continuousdays}}
+              {{cardDetail.continuousdays||0}}
               <text>天</text>
             </view>
             <text>累计打卡</text>
@@ -146,7 +146,7 @@ export default class Example extends wepy.page {
 
   methods = {
     toLearn () {
-      wx.navigateTo({ url: `/pages/classroom?id=${this.cardDetail.lessonId}` })
+      wx.navigateTo({ url: `/pages/classroom?id=${this.cardDetail.todayLessonId}` })
     },
     addMyCard () {
       if (this.cardDetail.todayLearned) {

@@ -49,13 +49,6 @@
 					"scene": null
 				},
 				{
-					"id": 2,
-					"name": "我的课程",
-					"pathName": "pages/myCourse",
-					"query": "",
-					"scene": null
-				},
-				{
 					"id": 3,
 					"name": "点赞",
 					"pathName": "pages/pointNotice",
@@ -66,13 +59,6 @@
 					"id": 4,
 					"name": "课后作业",
 					"pathName": "pages/completionOfWork",
-					"query": "",
-					"scene": null
-				},
-				{
-					"id": -1,
-					"name": "111",
-					"pathName": "pages/index",
 					"query": "",
 					"scene": null
 				},
@@ -127,13 +113,6 @@
 				},
 				{
 					"id": -1,
-					"name": "约课quanbu",
-					"pathName": "pages/subscribeAll",
-					"query": "",
-					"scene": null
-				},
-				{
-					"id": -1,
 					"name": "打卡",
 					"pathName": "pages/card",
 					"query": "",
@@ -165,6 +144,13 @@
 					"name": "上传",
 					"pathName": "pages/uploadHomework",
 					"query": "url=http://tmp/wxf8ad572ff36a4c11.o6zAJsx77hRqe0qnWoOefeSL0Yhw.83zXE0S5AZ92affdaa4897753252274d51100f4ba32d.jpg&name=我是听音辨人的高手&id=1134359706941546498&sortnum=1",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "作业详情",
+					"pathName": "pages/completionOfWork",
+					"query": "type=1&id=1139442398134145025",
 					"scene": null
 				}
 			]

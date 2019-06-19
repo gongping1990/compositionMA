@@ -1,20 +1,19 @@
 <template>
-  <view class="container">
-    <mHeader flag="0" title="作品表彰"></mHeader>
-    <view class="container-scroll p-praiseOfWorks"
-          style="margin-top:{{height}}px">
-      <view class="p-praiseOfWorks-title">作品表彰</view>
-
-      <scroll-view class="item-scroll"
-                   @scrolltolower="bindLoadItem"
-                   scroll-y
-                   scroll-with-animation>
+  <scroll-view class="item-scroll"
+               @scrolltolower="bindLoadItem"
+               scroll-y
+               scroll-with-animation>
+    <view class="container">
+      <mHeader flag="0" title="作品表彰"></mHeader>
+      <view class="container-scroll p-praiseOfWorks"
+            style="margin-top:{{height}}px">
+        <view class="p-praiseOfWorks-title">作品表彰</view>
         <repeat for="{{dataList}}"
                 key="index"
                 index="index"
                 item="item">
-          <view class="p-praiseOfWorks-item" @tap="toWorkDetail({{item}})">
-            <view class="p-praiseOfWorks-item-top">
+          <view class="p-praiseOfWorks-item">
+            <view class="p-praiseOfWorks-item-top" @tap="toWorkDetail({{item}})">
               <view class="-item-top">
                 <view class="-item-top-left">
                   <image class="-left-img"
@@ -56,50 +55,51 @@
             </view>
           </view>
         </repeat>
-      </scroll-view>
+      </view>
+      <van-tabbar active="1"
+                  z-index="2"
+                  active-color="#58422B"
+                  bind:change="onChangeTabbar">
+        <van-tabbar-item>
+          <image slot="icon"
+                 src="../assets/image/icon-jrxx.png"
+                 mode="aspectFit" />
+          <image slot="icon-active"
+                 src="../assets/image/icon-jrxx1.png"
+                 mode="aspectFit" />
+          今日学习
+        </van-tabbar-item>
+        <van-tabbar-item>
+          <image slot="icon"
+                 src="../assets/image/icon-zpbz.png"
+                 mode="aspectFit" />
+          <image slot="icon-active"
+                 src="../assets/image/icon-zpbz1.png"
+                 mode="aspectFit" />
+          作品表彰
+        </van-tabbar-item>
+        <van-tabbar-item dot="{{remindData.todaycard}}">
+          <image slot="icon"
+                 src="../assets/image/icon-dkjl.png"
+                 mode="aspectFit" />
+          <image slot="icon-active"
+                 src="../assets/image/icon-dkjl1.png"
+                 mode="aspectFit" />
+          打卡记录
+        </van-tabbar-item>
+        <van-tabbar-item dot="{{remindData.uctip}}">
+          <image slot="icon"
+                 src="../assets/image/icon-grzx.png"
+                 mode="aspectFit" />
+          <image slot="icon-active"
+                 src="../assets/image/icon-grzx1.png"
+                 mode="aspectFit" />
+          个人中心
+        </van-tabbar-item>
+      </van-tabbar>
     </view>
-    <van-tabbar active="1"
-                z-index="2"
-                active-color="#58422B"
-                bind:change="onChangeTabbar">
-      <van-tabbar-item>
-        <image slot="icon"
-               src="../assets/image/icon-jrxx.png"
-               mode="aspectFit" />
-        <image slot="icon-active"
-               src="../assets/image/icon-jrxx1.png"
-               mode="aspectFit" />
-        今日学习
-      </van-tabbar-item>
-      <van-tabbar-item>
-        <image slot="icon"
-               src="../assets/image/icon-zpbz.png"
-               mode="aspectFit" />
-        <image slot="icon-active"
-               src="../assets/image/icon-zpbz1.png"
-               mode="aspectFit" />
-        作品表彰
-      </van-tabbar-item>
-      <van-tabbar-item dot="{{remindData.todaycard}}">
-        <image slot="icon"
-               src="../assets/image/icon-dkjl.png"
-               mode="aspectFit" />
-        <image slot="icon-active"
-               src="../assets/image/icon-dkjl1.png"
-               mode="aspectFit" />
-        打卡记录
-      </van-tabbar-item>
-      <van-tabbar-item dot="{{remindData.uctip}}">
-        <image slot="icon"
-               src="../assets/image/icon-grzx.png"
-               mode="aspectFit" />
-        <image slot="icon-active"
-               src="../assets/image/icon-grzx1.png"
-               mode="aspectFit" />
-        个人中心
-      </van-tabbar-item>
-    </van-tabbar>
-  </view>
+  </scroll-view>
+
 </template>
 
 <script>
@@ -195,16 +195,14 @@ export default class PraiseOfWorks extends wepy.page {
 </script>
 <style lang="scss">
 @import '../assets/style/mixin.scss';
-
+.item-scroll {
+  height: 100vh;
+}
 .p-praiseOfWorks {
   @include bg('/v2/zpbz/zpbz-background.png');
   background-color: #ffd262;
   overflow-y: hidden;
   margin-bottom: 100px;
-
-  .item-scroll {
-    height: calc(100vh - 215px);
-  }
 
   &-title {
     padding-top: 56px;
@@ -411,5 +409,11 @@ export default class PraiseOfWorks extends wepy.page {
       }
     }
   }
+
+  &-item:last-child{
+    margin-bottom: 190px;
+  }
+
+
 }
 </style>

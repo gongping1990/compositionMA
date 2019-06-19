@@ -44,10 +44,10 @@
                 <text class="-name">{{workDetail.replyTeacher}}</text>
                 <text>{{workDetail.replyTime}}</text>
               </view>
-              <view class="-reply-info-wrap"
-                    @tap="changeAudioStatus">
-                <view class="-info-content voice">
-                  <view class="icon"></view>
+              <view class="-reply-info-wrap">
+                <view class="-info-content voice"  @tap="changeAudioStatus">
+                  <view class="icon" wx:if="{{!isPlay}}"></view>
+                  <view class="playIcon" wx:if="{{isPlay}}"></view>
                 </view>
                 <view class="-reply-time">{{durationTime}}</view>
               </view>
@@ -241,9 +241,9 @@
         lessonId: this.queryInfo.id
       }).then(res => {
         this.workDetail = res.data.resultData;
-        this.workDetail.workTime = dayjs(+this.workDetail.workTime).format('YYYY-MM-DD HH:mm:ss');
+        this.workDetail.workTime = dayjs(+this.workDetail.workTime).format('YYYY-MM-DD HH:mm');
         if (this.workDetail.replyTime) {
-          this.workDetail.replyTime = dayjs(+this.workDetail.replyTime).format('YYYY-MM-DD HH:mm:ss');
+          this.workDetail.replyTime = dayjs(+this.workDetail.replyTime).format('YYYY-MM-DD HH:mm');
           this.isReply = true;
         } else {
           this.isReply = false;
@@ -512,6 +512,12 @@
               }
               &.voice .icon {
                 @include bg('/sk/icon-audio.png');
+                margin-left: 16px;
+                width: 26px;
+                height: 43px;
+              }
+              &.voice .playIcon {
+                @include bg('/v2/time/au.gif');
                 margin-left: 16px;
                 width: 26px;
                 height: 43px;

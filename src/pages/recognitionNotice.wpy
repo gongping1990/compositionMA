@@ -129,7 +129,7 @@ export default class RecognitionNotice extends wepy.page {
   onShareAppMessage () {
     return {
       title: `我的作业受到${this.dataItem.teacherName}的表扬，快来给我点个赞吧`,
-      path: `/pages/completionOfWork?type=2&id=${this.dataItem.homeworkId}`,
+      path: `/pages/completionOfWork?type=2&id=${this.dataItem.workId}`,
       imageUrl: ''
     }
   }

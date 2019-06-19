@@ -26,7 +26,7 @@
         </view>
       </view>
       <view class="praise-pop-btn">
-        <button class="-btn" wx:if="{{typeProps==='2'}}">查看作业</button>
+        <button class="-btn" wx:if="{{typeProps==='2'}}" @tap="toHomeWork">查看作业</button>
         <button class="-btn" style="margin-left:{{ typeProps==='2' ? '30' : 'none'}}px" open-type="share" >炫耀一下</button>
       </view>
       <view class="praise-pop-close" @tap="onClose"></view>
@@ -60,6 +60,9 @@
     };
 
     methods = {
+      toHomeWork () {
+        wx.navigateTo({ url: `/pages/completionOfWork?type=1&id=${this.dataInfo.lessonId}`})
+      },
       onClose () {
         this.$emit('changePopupStatus')
       }
@@ -133,6 +136,7 @@
 
         &-title {
           display: flex;
+          align-items: center;
 
           .-title-img {
             width:60px;

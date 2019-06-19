@@ -750,7 +750,7 @@
       .-popup-jg-text {
         margin: 0 auto;
         padding-top: 144px;
-        width: 480px;
+        width: 482px;
         height: 88px;
         font-size: 32px;
         font-weight: 500;
@@ -760,7 +760,7 @@
 
       .-popup-jd-text-two {
         margin: 12px auto 48px;
-        width: 308px;
+        width: 328px;
         height: 80px;
         font-size: 28px;
         font-family: PingFangSC-Light;

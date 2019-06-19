@@ -32,6 +32,7 @@ export default class Example extends wepy.component {
   top: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.9);
+  z-index: 1200;
   .dots {
     width: 3.5em;
     display: flex;

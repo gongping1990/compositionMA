@@ -9,7 +9,7 @@
                src="{{userInfo.headimgurl}}" />
         <view class="header-right">
           <text class="subtitle">欢迎来到同步作文课，</text>
-          <text class="title">欢迎来到同步作文课，赶快开始今天的学习吧</text>
+          <text class="title">赶快开始今天的学习吧</text>
         </view>
       </view>
       <view class="no-swiper"
@@ -116,8 +116,8 @@
         <text class="dialog-text">请您完善收货地址</text>
         <text class="dialog-text">以便为您配送课程配套的“实物大礼包”</text>
         <view class="dialog-btn"
-              @tap="bindClose">去完善</view>
-        <view class="dialog-close"></view>
+              @tap="bindPerfect">去完善</view>
+        <view class="dialog-close" @tap="onClose"></view>
       </view>
     </van-popup>
     <van-popup show="{{ showKF }}"
@@ -176,6 +176,7 @@ import wepy from 'wepy'
 import { connect } from 'wepy-redux'
 import testMixin from '../mixins/test'
 import mHeader from '@/components/header'
+
 @connect({
   userInfo (state) {
     return state.user.userInfo
@@ -246,6 +247,10 @@ export default class Home extends wepy.page {
     },
     bindChangeSwiper (event) {
       this.swiperActive = event.detail.current
+    },
+    bindPerfect() {
+      this.show = false
+      wx.navigateTo({ url: '/pages/address' })
     },
     onClose () {
       this.show = false
@@ -324,7 +329,8 @@ export default class Home extends wepy.page {
   checkPopByRecipient() {
     let { api } = this.$parent.globalData
     api.order.checkPopByRecipient().then(({data}) => {
-      console.log(data)
+      this.show = data.resultData
+      this.$apply()
     })
   }
 
@@ -333,6 +339,7 @@ export default class Home extends wepy.page {
     if (this.userInfo.id) {
       this.initPage()
     }
+    console.log(wepy)
   };
 
   onShareAppMessage () {

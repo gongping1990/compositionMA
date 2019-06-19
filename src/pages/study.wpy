@@ -16,9 +16,15 @@
              @timeupdate="bindtimeupdate"
              src="{{courseInfo.videoUrl}}"></video>
     </view>
-    <view class="avatar-mask" wx:if="{{!controls}}">
-      <image src="{{roomData.teacherImg}}"
-             class="avatar teacher" />
+    <view class="avatar-mask"
+          wx:if="{{!controls}}">
+      <view class="teacher-avatar">
+        <view class="teacher-avatar-mask">
+          <view class="teacher-avatar-icon"></view>
+        </view>
+        <image src="{{roomData.teacherImg}}"
+               class="avatar teacher" />
+      </view>
       <view class="student">
         <view class="avatar-student"
               wx:for="{{answerArr}}"
@@ -59,19 +65,19 @@
 
           </view>
         </view>
-        <view wx:if="{{showResult}}">
+        <view class="result-wrap {{showResult && 'animation'}} {{'a' + correctNum}}">
           <view class="result-header">
-            <text class="result-title">恭喜以下{{correctNum}}位同学</text>
+            <view class="result-title">恭喜以下{{correctNum}}位同学</view>
             <view class="result-header-icon"></view>
           </view>
           <view class="result-list">
             <view class="result-item"
-                  wx:for="{{answerArr}}"
+                  wx:for="{{formatAnswerArr}}"
                   wx:key="index"
                   wx:if="{{item.answer==1}}">
               <image class="result-avatar"
                      src="{{item.mateImg}}" />
-              <view class="result-icon"></view>
+              <view class="result-icon {{'icon-' + (index + 1)}}"></view>
             </view>
           </view>
         </view>
@@ -126,6 +132,7 @@
 import wepy from 'wepy'
 import mHeader from '../components/header'
 import loading from '../components/loading'
+
 export default class Example extends wepy.page {
   config = {
     navigationBarTitleText: '',
@@ -221,13 +228,17 @@ export default class Example extends wepy.page {
       }, 3000)
     },
     bindClickInput (i) {
+      let { audioContext, clickBtnSound } = this.$parent.globalData
       if (this.answerEnd) {
         return
       }
+      clickBtnSound(audioContext)
       this.selectIndex = i
     },
     bindSubmit () {
-      if (this.selectIndex) {
+      let { audioContext, clickBtnSound } = this.$parent.globalData
+      clickBtnSound(audioContext)
+      if (this.selectIndex === -1) {
         wx.showToast({
           title: '你还没有选择答案呦！', // 提示的内容,
           icon: 'none', // 图标,
@@ -253,7 +264,6 @@ export default class Example extends wepy.page {
       if (this.currentTime !== parseInt(currentTime)) {
         let data = this.courseInfo.qaMap[this.currentTime]
         this.currentTime = parseInt(currentTime)
-        console.log(this.currentTime)
         if (!(this.currentTime % 10)) {
           this.changeLearnStage(this.roomData.id, 1)
         }
@@ -271,8 +281,8 @@ export default class Example extends wepy.page {
           }, 1000)
         }
         if (data && data.anEnum === 2) {
+          console.log(2112121)
           this.correctAnswer = data.answer
-          console.log(this.correctAnswer)
           this.setAnswerStatus()
         }
       }
@@ -285,6 +295,13 @@ export default class Example extends wepy.page {
     }
   };
   computed = {
+    formatAnswerArr () {
+      let arr = this.answerArr.filter(e => {
+        return e.answer === 1
+      })
+      console.log(arr)
+      return arr
+    },
     correctNum () {
       let num = 0
       this.answerArr.forEach(e => {
@@ -311,7 +328,6 @@ export default class Example extends wepy.page {
   };
   // 倒计时
   downTime () {
-    console.log(this.time)
     if (this.time === this.randomTime) {
       this.imitateAnswer()
     }
@@ -354,6 +370,7 @@ export default class Example extends wepy.page {
   setAnswerStatus () {
     let isErr = parseInt(Math.random() * 2)
     let index = parseInt(Math.random() * 3)
+    let { audioContext, publishResultsSound } = this.$parent.globalData
     for (let i = 0; i < 3; i++) {
       this.answerArr[i].answer = 1
     }
@@ -370,6 +387,8 @@ export default class Example extends wepy.page {
     this.setAnswerStatusEnd = true
 
     setTimeout(() => {
+      console.log('palySound')
+      publishResultsSound(audioContext)
       this.showResult = true
       this.answerArr.forEach((e, i) => {
         if (e.answer === 1) {
@@ -383,7 +402,7 @@ export default class Example extends wepy.page {
         this.show = false
         this.reset()
         this.$apply()
-      }, 3000)
+      }, 3000000)
     }, 3000)
     this.$apply()
     console.log(this.answerArr)
@@ -458,6 +477,7 @@ export default class Example extends wepy.page {
         e.flower = !this.isLookBack ? e.correctNum : 0
         return e
       })
+      this.reset()
       if (!this.isLookBack) {
         if (data.resultData.newstart) {
           this.changeLearnStage(data.resultData.id, 1)
@@ -512,6 +532,13 @@ export default class Example extends wepy.page {
       this.changeLearnStage(this.roomData.id, 1)
     }
   }
+  onShareAppMessage () {
+    return {
+      title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
+      path: `/pages/index`,
+      imageUrl: ''
+    }
+  }
 }
 </script>
 <style lang='scss'>
@@ -519,6 +546,27 @@ export default class Example extends wepy.page {
 .study {
   height: 100vh;
   overflow: hidden;
+  background-color: #000000;
+  .teacher-avatar {
+    position: relative;
+    width: 96px;
+    height: 96px;
+    &-mask {
+      @include flex-center();
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      border-radius: 16px;
+      background-color: rgba($color: #000000, $alpha: 0.7);
+    }
+    &-icon {
+      @include bg('/v2/time/au.gif');
+      width: 26px;
+      height: 44px;
+    }
+  }
   .dialog {
     @include flex-column-center;
     box-sizing: border-box;
@@ -561,6 +609,10 @@ export default class Example extends wepy.page {
     }
   }
   .result {
+    &-wrap {
+      height: 0;
+      visibility: hidden;
+    }
     &-header {
       @include flex-column-center;
       @include bg('/sk/image1.png');
@@ -571,14 +623,22 @@ export default class Example extends wepy.page {
         @include bg('/sk/image2.png');
         width: 262px;
         height: 64px;
+        opacity: 0;
+        transform: scale(1.5);
+        transform-origin: 50% 0%;
+        transition: all 1s;
       }
     }
     &-title {
       margin-bottom: 16px;
+      width: 0;
       font-size: 44px;
       font-weight: 500;
       color: #58422b;
       line-height: 60px;
+      overflow: hidden;
+      white-space: nowrap;
+      transition: all 1s;
     }
     &-list {
       @include flex-center;
@@ -586,6 +646,27 @@ export default class Example extends wepy.page {
       margin: 0 auto;
       margin-bottom: 40px;
       width: 468px;
+    }
+    &-icon {
+      @include bg('/sk/icon-flower.png');
+      position: absolute;
+      bottom: -(81px / 2);
+      left: 50%;
+      width: 75px;
+      height: 81px;
+      margin-left:  -(75px / 2);
+      &.icon-1 {
+        z-index: 1000;
+      }
+      &.icon-2 {
+        z-index: 999;
+      }
+      &.icon-3 {
+        z-index: 998;
+      }
+      &.icon-4 {
+        z-index: 997;
+      }
     }
     &-item {
       @include flex-center;
@@ -604,14 +685,57 @@ export default class Example extends wepy.page {
       height: 128px;
       border-radius: 16px;
     }
-    &-icon {
-      @include bg('/sk/icon-flower.png');
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      width: 75px;
-      height: 81px;
-      transform: translate(-50%, 50%);
+
+    &-wrap {
+      &.animation {
+        visibility: visible;
+        height: auto;
+        .result-header-icon {
+          opacity: 1;
+          transform: scale(1);
+        }
+        .result-title {
+          width: 340px;
+        }
+        .icon-1 {
+          animation: icon-1 2s 1s backwards;
+        }
+        .icon-2 {
+          animation: icon-2 1.4s 1.6s backwards;
+        }
+        &.a3 {
+          .icon-3 {
+            animation: icon-3 1.3s 1.7s backwards;
+          }
+        }
+        &.a4 {
+          .icon-3 {
+            animation: icon-4 1.3s 1.7s backwards;
+          }
+          .icon-4 {
+            animation: icon-5 1.2s 1.8s backwards;
+          }
+        }
+      }
+
+      // &.a3 {
+      //   .icon-3 {
+      //     bottom: 182px;
+      //     left: 53%;
+      //   }
+      // }
+      // &.a4 {
+      //   .icon-3 {
+      //     left: 188px;
+      //   }
+      //   .icon-4 {
+      //     left: -47px;
+      //   }
+      //   .icon-3,
+      //   .icon-4 {
+      //     bottom: 182px;
+      //   }
+      // }
     }
   }
   .popup {
@@ -806,7 +930,7 @@ export default class Example extends wepy.page {
   }
   .video {
     width: 100vw;
-    height: 100vh;
+    height: 99vh;
   }
   .avatar-mask {
     @include flex-center;
@@ -875,4 +999,88 @@ export default class Example extends wepy.page {
     }
   }
 }
+@keyframes icon-1 {
+  0% {
+    left: 188px;
+    bottom: -500px;
+    transform: scale(2);
+  }
+  20% {
+    left: 188px;
+    bottom: 0;
+    transform: scale(2);
+  }
+  30% {
+    left: 188px;
+    bottom: 0;
+    transform: scale(1);
+  }
+  100% {
+    left: 50%;
+    bottom: -(81px / 2);
+    transform: scale(1);
+  }
+}
+@keyframes icon-2 {
+  0% {
+    left: -40px;
+    bottom: 0;
+    opacity: 0;
+  }
+  10% {
+    left: -40px;
+    bottom: 0;
+    opacity: 1;
+  }
+  100% {
+    left: 50%;
+    bottom: -(81px / 2);
+  }
+}
+@keyframes icon-3 {
+  0% {
+    bottom: 170px;
+    opacity: 0;
+  }
+  10% {
+    bottom: 170px;
+    opacity: 1;
+  }
+  100% {
+    bottom: -(81px / 2);
+  }
+}
+@keyframes icon-4 {
+  0% {
+    left: 188px;
+    bottom: 170px;
+    opacity: 0;
+  }
+  10% {
+    eft: -188px;
+    bottom: 170px;
+    opacity: 1;
+  }
+  100% {
+    left: 50%;
+    bottom: -(81px / 2);
+  }
+}
+@keyframes icon-5 {
+  0% {
+    left: -40px;
+    bottom: 170px;
+    opacity: 0;
+  }
+  10% {
+    eft: -40px;
+    bottom: 170px;
+    opacity: 1;
+  }
+  100% {
+    left: 50%;
+    bottom: -(81px / 2);
+  }
+}
+
 </style>

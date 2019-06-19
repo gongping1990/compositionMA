@@ -100,7 +100,7 @@
                 wx:if="{{!isSummary}}"
                 @tap="clickStudy">{{stepIndex != questionArr.length - 1 ? '下一题' : '完成答题'}}</view>
           <view class="question-btn"
-                wx:else
+                wx:if="{{setSummaryEnd}}"
                 @tap="clickLinkHomeWork">去完成课后作业</view>
         </view>
       </view>
@@ -158,7 +158,8 @@ export default class Example extends wepy.page {
     itemAnimate: null,
     timer: null,
     answerTime: 0,
-    lookback: false
+    lookback: false,
+    setSummaryEnd: false
   };
   components = {
     mHeader,
@@ -169,6 +170,17 @@ export default class Example extends wepy.page {
       wx.redirectTo({ url: '/pages/submitHomework?id=' + this.lessonId })
     },
     clickStudy () {
+      if (this.answerEnd) {
+        return
+      }
+      if (this.selectIndex === -1) {
+        wx.showToast({
+          title: '你还没有选择答案呦！', // 提示的内容,
+          icon: 'none', // 图标,
+          duration: 2000
+        })
+        return
+      }
       this.answerEnd = true
       this.publishAnswer()
     },
@@ -222,11 +234,15 @@ export default class Example extends wepy.page {
   }
 
   alertError () {
+    let {audioContext, playSound} = this.$parent.globalData
+    playSound(audioContext, 2)
     this.isSuccess = false
     this.changeAlertVisible()
   }
 
   alertSuccess () {
+    let {audioContext, playSound} = this.$parent.globalData
+    playSound(audioContext, 3)
     this.isSuccess = true
     this.changeAlertVisible()
   }
@@ -265,6 +281,8 @@ export default class Example extends wepy.page {
         this.setSummaryIndex()
         this.$apply()
       }, 1000)
+    } else {
+      this.setSummaryEnd = true
     }
   }
 
@@ -343,7 +361,7 @@ export default class Example extends wepy.page {
     this.app.show(this, 'itemAnimate', 0)
     setTimeout(() => {
       this.stepIndex += 1
-
+      this.answerEnd = false
       this.selectIndex = -1
       this.correctAnswer = this.questionArr[this.stepIndex].answer
       this.app.show(this, 'itemAnimate', 1)

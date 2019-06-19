@@ -13,7 +13,7 @@
                @close="onClose">
       <view class="kf-pop">
         <text class="kf-pop-title">报名课程</text>
-        <image src=""
+        <image src="https://pub.file.k12.vip/tbzw/v2/baoming.gif"
                class="kf-pop-img" />
         <text class="kf-pop-text">点击下方按钮</text>
         <text class="kf-pop-text red">回复“1”即可报名学习</text>

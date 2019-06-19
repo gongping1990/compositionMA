@@ -33,14 +33,14 @@
                    class="swiper-cover-image" />
           </view>
           <view class="swiper-title">{{infoListData.lessonSort + '.' + infoListData.name}}</view>
-          <view class="swiper-subtitle">小语轻作文 Level {{infoListData.grade - 2}}</view>
           <view class="swiper-subtitle">
+            小语轻作文 Level {{infoListData.grade - 2}}
             <text class="swiper-subtitle-text"
                   wx:if="{{infoListData.expLesson}}">体验课</text>
           </view>
           <button class="swiper-btn"
                   @tap="bindClickStudyStart()"
-                  wx:if="{{infoListData.studyStatus != 5}}">{{infoListData.studyStatus == 2 ? '开始今日学习' : "交作业"}}</button>
+                  wx:if="{{infoListData.studyStatus != 5}}">{{btnText}}</button>
           <button class="swiper-btn line "
                   @tap="bindClickBtn({{3}})"
                   wx:if="{{infoListData.status == 2 }}">
@@ -125,7 +125,7 @@
                @close="onClose">
       <view class="kf-pop">
         <text class="kf-pop-title">报名课程</text>
-        <image src=""
+        <image src="https://pub.file.k12.vip/tbzw/v2/baoming.gif"
                class="kf-pop-img" />
         <text class="kf-pop-text">点击下方按钮</text>
         <text class="kf-pop-text red">回复“1”即可报名学习</text>
@@ -284,6 +284,9 @@ export default class Home extends wepy.page {
         return ''
       }
       return infoListData.studyStatus < 3 ? '未上完课' : (infoListData.studyStatus === 3) && '未交作业'
+    },
+    btnText() {
+      return this.infoListData.studyStatus <= 2 ? '开始今日学习' : '交作业'
     }
   };
 
@@ -713,6 +716,7 @@ export default class Home extends wepy.page {
       color: rgba($color: #58422b, $alpha: 0.5);
       &-text {
         @include flex-center;
+        margin-left: 8px;
         width: 84px;
         height: 36px;
         font-size: 20px;

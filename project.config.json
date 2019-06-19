@@ -32,12 +32,12 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 17,
+			"current": 0,
 			"list": [
 				{
 					"id": 0,
 					"name": "classroom",
-					"pathName": "pages/study",
+					"pathName": "pages/test",
 					"query": "id=1134359706941546498",
 					"scene": null
 				},
@@ -158,6 +158,13 @@
 					"name": "我的作业",
 					"pathName": "pages/myWork",
 					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "classroom",
+					"pathName": "pages/completionOfWork",
+					"query": "type=1&id=1139442473879080962",
 					"scene": null
 				}
 			]

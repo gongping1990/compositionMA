@@ -620,6 +620,8 @@ export default class Example extends wepy.page {
       margin: 32px 0;
       width: 100%;
       height: 234px;
+      background-position-y: 100%;
+      transition: all .5s;
       &-icon {
         @include bg('/sk/image2.png');
         width: 262px;
@@ -691,6 +693,9 @@ export default class Example extends wepy.page {
       &.animation {
         visibility: visible;
         height: auto;
+        .result-header {
+          background-position-y: 0;
+        }
         .result-header-icon {
           opacity: 1;
           transform: scale(1);
@@ -699,22 +704,22 @@ export default class Example extends wepy.page {
           width: 340px;
         }
         .icon-1 {
-          animation: icon-1 2s 1s backwards;
+          animation: icon-1 2s 1s backwards cubic-bezier(.66,.29,.39,1.08);
         }
         .icon-2 {
-          animation: icon-2 1.4s 1.6s backwards;
+          animation: icon-2 1.4s 1.6s backwards cubic-bezier(.66,.29,.39,1.08);
         }
         &.a3 {
           .icon-3 {
-            animation: icon-3 1.3s 1.7s backwards;
+            animation: icon-3 1.3s 1.7s backwards cubic-bezier(.66,.29,.39,1.08);
           }
         }
         &.a4 {
           .icon-3 {
-            animation: icon-4 1.3s 1.7s backwards;
+            animation: icon-4 1.3s 1.7s backwards cubic-bezier(.66,.29,.39,1.08);
           }
           .icon-4 {
-            animation: icon-5 1.2s 1.8s backwards;
+            animation: icon-5 1.2s 1.8s backwards cubic-bezier(.66,.29,.39,1.08);
           }
         }
       }

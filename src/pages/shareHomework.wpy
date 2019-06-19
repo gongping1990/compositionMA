@@ -35,8 +35,8 @@
 
         <view class="-content-down">
           <view class="-content-down-title">
-            <view>我已完成第{{shareInfo.week}}周的作文训练</view>
-            <view class="-title-small">今天的作文题目是“{{shareInfo.homeworkTitle}}”</view>
+            <view>我刚完成了今天的作业</view>
+            <view class="-title-small">以《{{shareInfo.homeworkTitle}}》写一篇作文</view>
           </view>
           <image class="-content-down-img"
                  src="{{shareInfo.replyImg}}"></image>

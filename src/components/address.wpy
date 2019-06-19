@@ -63,8 +63,9 @@ export default class Example extends wepy.component {
   getList () {
     api.order.getRecipient()
       .then(({ data }) => {
-        this.form = data.resultData
-        console.log(this.form, 1)
+        if(data.resultData !== null) {
+          this.form = data.resultData
+        }
         this.$apply()
       })
   };

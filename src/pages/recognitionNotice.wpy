@@ -15,7 +15,7 @@
           <view class="p-notice-item" @tap="openPopup({{item}})">
             <view class="-item-left">
               <image class="-img"
-                     src="{{item.teacherImg}}"></image>
+                     src="{{item.teacherHeadImage}}"></image>
             </view>
             <view class="-item-right">
               <view class="-item-right-top">

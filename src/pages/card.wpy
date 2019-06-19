@@ -47,7 +47,7 @@
       <van-popup show="{{showNoLearn}}">
         <view class="card-popup">
           <view class="card-popup-title">
-            <view>对不起</view>
+            <view>小朋友</view>
             <view>学完今天的课程才能打卡哦</view>
           </view>
 

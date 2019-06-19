@@ -77,10 +77,10 @@
 					"scene": null
 				},
 				{
-					"id": -1,
+					"id": 6,
 					"name": "作业分享",
 					"pathName": "pages/shareHomework",
-					"query": "",
+					"query": "id=1140827538970128385",
 					"scene": null
 				},
 				{
@@ -162,9 +162,15 @@
 				},
 				{
 					"id": -1,
+<<<<<<< HEAD
 					"name": "classroom",
 					"pathName": "pages/completionOfWork",
 					"query": "type=1&id=1139442473879080962",
+=======
+					"name": "表扬",
+					"pathName": "pages/recognitionNotice",
+					"query": "",
+>>>>>>> 39b477b4772563936e81df3e2aa107b10c49fca4
 					"scene": null
 				}
 			]

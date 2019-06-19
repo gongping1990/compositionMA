@@ -12,8 +12,8 @@
                 key="index"
                 index="index"
                 item="item">
-          <view class="p-praiseOfWorks-item" @tap="toWorkDetail({{item}})">
-            <view class="p-praiseOfWorks-item-top">
+          <view class="p-praiseOfWorks-item">
+            <view class="p-praiseOfWorks-item-top" @tap="toWorkDetail({{item}})">
               <view class="-item-top">
                 <view class="-item-top-left">
                   <image class="-left-img"

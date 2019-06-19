@@ -21,7 +21,7 @@
             <view class="-right-study">
               <view class="-right-num">{{shareInfo.learnDay}}</view>
               <view class="-right-text">学习天数</view>
-              <view class="-right-btn">我也要学</view>
+              <view class="-right-btn" @tap="openPopup">我也要学</view>
             </view>
             <view class="-right-center">|</view>
             <view class="-right-zan">
@@ -57,10 +57,24 @@
           </view>
         </view>
       </view>
-
       <view class="p-shareHomework-btn">
-        <button class="-btn"></button>
+        <button class="-btn" @tap="openPopup"></button>
       </view>
+      <van-popup show="{{ showKF }}"
+                 position="bottom"
+                 @close="onClose">
+        <view class="kf-pop">
+          <text class="kf-pop-title">报名课程</text>
+          <image src="https://pub.file.k12.vip/tbzw/v2/baoming.gif"
+                 class="kf-pop-img" />
+          <text class="kf-pop-text">点击下方按钮</text>
+          <text class="kf-pop-text red">回复“1”即可报名学习</text>
+          <button class="kf-pop-btn"
+                  open-type="contact">
+            回复“1”立即报名
+          </button>
+        </view>
+      </van-popup>
     </view>
   </view>
 </template>
@@ -72,7 +86,11 @@ import mHeader from '../components/header'
 
 export default class ShareHomework extends wepy.page {
   config = {
-    navigationBarTitleText: '作业分享'
+    navigationBarTitleText: '作业分享',
+    'usingComponents': {
+      'van-icon': '../vant/icon/index',
+      'van-popup': '../vant/popup/index'
+    }
   };
   components = {
     mHeader
@@ -85,6 +103,7 @@ export default class ShareHomework extends wepy.page {
 
   data = {
     isPlay: false,
+    showKF: false,
     myAudio: '',
     durationTime: '',
     shareInfo: '',
@@ -136,6 +155,12 @@ export default class ShareHomework extends wepy.page {
   };
 
   methods = {
+    openPopup() {
+      this.showKF = true
+    },
+    onClose () {
+      this.showKF = false
+    },
     changeAudioStatus () {
       console.log(11)
       if (this.isPlay) {
@@ -408,6 +433,43 @@ export default class ShareHomework extends wepy.page {
       width: 220px;
       height: 75px;
       background-color: transparent;
+    }
+  }
+
+  .kf-pop {
+    @include flex-column-center;
+    padding: 16px 24px;
+    background: rgba(255, 255, 255, 1);
+    border-radius: 16px 16px 0px 0px;
+    &-title {
+      font-size: 36px;
+    }
+    &-img {
+      margin: 48px 0;
+    }
+    &-text {
+      font-size: 36px;
+      line-height: 50px;
+      color: rgba($color: #58422b, $alpha: 0.5);
+      &.red {
+        color: #ff7c76;
+        font-weight: bold;
+      }
+    }
+    &-btn {
+      @include flex-center;
+      margin: 32px 0;
+      width: 654px;
+      height: 100px;
+      font-size: 32px;
+      color: #58422b;
+      background: linear-gradient(
+          90deg,
+          rgba(249, 230, 11, 1) 0%,
+          rgba(253, 219, 85, 1) 100%
+      );
+      box-shadow: 0px 8px 16px 4px rgba(230, 194, 81, 0.4);
+      border-radius: 54px;
     }
   }
 }

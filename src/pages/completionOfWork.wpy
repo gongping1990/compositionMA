@@ -344,6 +344,11 @@ export default class CompletionOfWork extends wepy.page {
       this.isActive = num
     },
     changePopup () {
+      if (this.queryInfo.type === '1' && this.isOpenPopup) {
+        this.getMyHomework()
+      } else {
+        this.getOtherHomework()
+      }
       this.isOpenPopup = !this.isOpenPopup
     }
   };

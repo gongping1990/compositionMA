@@ -186,7 +186,7 @@ export default class CompletionOfWork extends wepy.page {
 
   data = {
     isFetching: false,
-    isOpenPopup: false,
+    isOpenPopup: true,
     isCompliment: false,
     isReply: true,
     isEvaluate: false,
@@ -337,6 +337,7 @@ export default class CompletionOfWork extends wepy.page {
         stumsg: this.stumsg
       }).then(() => {
         this.isEvaluate = true
+        this.$apply()
       })
     },
     choiceTab (num) {
@@ -718,27 +719,28 @@ export default class CompletionOfWork extends wepy.page {
       }
     }
 
-    .-popup-jg-text {
-      margin: 0 auto;
-      padding-top: 144px;
-      width: 482px;
-      height: 88px;
-      font-size: 32px;
-      font-weight: 500;
-      color: rgba(70, 65, 60, 1);
-      line-height: 44px;
+    .-popup-btn {
+      text-align: center;
+      margin: 32px auto 0;
+      width:354px;
+      height:76px;
+      background:linear-gradient(90deg,rgba(249,230,11,1) 0%,rgba(253,219,85,1) 100%);
+      border-radius:40px;
+      font-size:32px;
+      font-weight:500;
+      color:rgba(70,65,60,1);
+      line-height:76px;
     }
+  }
 
-    .-popup-jd-text-two {
-      margin: 12px auto 48px;
-      width: 328px;
-      height: 80px;
-      font-size: 28px;
-      font-family: PingFangSC-Light;
-      font-weight: 300;
-      color: rgba(70, 65, 60, 0.5);
-      line-height: 40px;
-    }
+  &-popup-jg {
+    position: relative;
+    text-align: center;
+    margin: 0 auto;
+    width: 590px;
+    height: 384px;
+    background: rgba(255, 255, 255, 1);
+    border-radius: 32px;
 
     .-popup-jg-img {
       margin: 0 auto;
@@ -776,9 +778,9 @@ export default class CompletionOfWork extends wepy.page {
       width: 354px;
       height: 76px;
       background: linear-gradient(
-        90deg,
-        rgba(249, 230, 11, 1) 0%,
-        rgba(253, 219, 85, 1) 100%
+          90deg,
+          rgba(249, 230, 11, 1) 0%,
+          rgba(253, 219, 85, 1) 100%
       );
       border-radius: 40px;
       font-size: 32px;

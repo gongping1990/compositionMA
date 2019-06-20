@@ -60,6 +60,7 @@ export default class extends wepy.app {
 
   globalData = {
     api: api,
+    isIpx: false,
     userInfo: null,
     systemInfo: null,
     headHeight: 46,
@@ -129,6 +130,9 @@ export default class extends wepy.app {
       success (res) {
         that.globalData.systemInfo = res
         that.globalData.headHeight = res.statusBarHeight + 46
+        if (res.model.indexOf('iPhone X') > -1) {
+          that.globalData.isIpx = true
+        }
       }
     })
   }

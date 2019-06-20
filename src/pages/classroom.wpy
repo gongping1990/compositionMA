@@ -9,7 +9,7 @@
         <view class="classroom-info">
           <view class="classroom-text">
             <text class="classroom-title">{{lessonData.name}}</text>
-            <text class="classroom-subtitle">《每日轻作文》</text>
+            <text class="classroom-subtitle">《小语轻作文》</text>
           </view>
           <text class="classroom-num">{{lessonData.uv}} 人已学</text>
         </view>

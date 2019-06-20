@@ -1,0 +1,123 @@
+<!--  -->
+<template>
+  <view class="flower {{show}} {{showAnimation && 'animation'}}">
+    <view class="flower-icon"></view>
+    <view class="flower-text-wrap">
+      <view class="flower-text">x{{num}}</view>
+      <view class="flower-subtext">x{{num+1}}</view>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+export default class Flower extends wepy.component {
+  props = {
+    flower: Number
+  };
+  data = {
+    num: 0,
+    showAnimation: false
+  };
+  components = {};
+  methods = {};
+  events = {};
+  watch = {
+    flower (n, o) {
+      console.log(n, o)
+      if (!o) {
+        this.num = this.flower
+      } else if (n > 1) {
+        this.showAnimation = true
+        setTimeout(() => {
+          this.num += 1
+          this.showAnimation = false
+          this.$apply()
+        }, 500)
+      }
+      this.$apply()
+    }
+  };
+  computed = {
+    show () {
+      return this.num < 1 ? 'hide' : 'show'
+    }
+  }
+}
+</script>
+<style lang='scss'>
+@import '../assets/style/mixin.scss';
+.flower {
+  @include flex-center;
+  padding: 0 10px;
+  height: 36px;
+  font-size: 20px;
+  color: #58422b;
+  background: rgba(255, 209, 41, 1);
+  border-radius: 18px;
+  border: 3px solid rgba(255, 255, 255, 1);
+  transition: all 0.5s;
+  transform: translateY(0);
+  &.hide {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  &-text {
+    &-wrap {
+      position: relative;
+      margin-bottom: 4px;
+    }
+  }
+  &-subtext {
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  &.show {
+    .flower-text-wrap {
+      animation: text-wrap 0.5s 0.5s backwards ease-in;
+    }
+  }
+  &.animation {
+    .flower-text {
+      animation: text 0.5s ease-in;
+    }
+    .flower-subtext {
+      animation: sub-text 0.5s;
+    }
+  }
+  &-icon {
+    @include bg('/sk/icon-flower.png');
+    margin-top: 4px;
+    margin-right: 4px;
+    width: 21px;
+    height: 23px;
+  }
+}
+@keyframes text {
+  100% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+@keyframes sub-text {
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes text-wrap {
+  0% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+    font-weight: 500;
+    transform: scale(2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+</style>

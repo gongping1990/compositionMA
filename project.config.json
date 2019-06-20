@@ -1,5 +1,8 @@
 {
-	"description": "A WePY project",
+	"description": "项目配置文件",
+	"packOptions": {
+		"ignore": []
+	},
 	"setting": {
 		"urlCheck": true,
 		"es6": false,
@@ -10,9 +13,15 @@
 		"checkInvalidKey": true
 	},
 	"compileType": "miniprogram",
+	"libVersion": "2.7.0",
 	"appid": "wxf8ad572ff36a4c11",
 	"projectname": "chinese-wepy",
 	"miniprogramRoot": "dist/",
+	"cloudfunctionTemplateRoot": "",
+	"debugOptions": {
+		"hidedInDevtools": []
+	},
+	"scripts": {},
 	"simulatorType": "wechat",
 	"simulatorPluginLibVersion": {},
 	"condition": {
@@ -37,7 +46,7 @@
 				{
 					"id": 0,
 					"name": "classroom",
-					"pathName": "pages/test",
+					"pathName": "pages/catalog",
 					"query": "id=1134359706941546498",
 					"scene": null
 				},
@@ -77,10 +86,10 @@
 					"scene": null
 				},
 				{
-					"id": 6,
+					"id": -1,
 					"name": "作业分享",
 					"pathName": "pages/shareHomework",
-					"query": "id=1140827538970128385",
+					"query": "",
 					"scene": null
 				},
 				{
@@ -162,15 +171,9 @@
 				},
 				{
 					"id": -1,
-<<<<<<< HEAD
 					"name": "classroom",
 					"pathName": "pages/completionOfWork",
 					"query": "type=1&id=1139442473879080962",
-=======
-					"name": "表扬",
-					"pathName": "pages/recognitionNotice",
-					"query": "",
->>>>>>> 39b477b4772563936e81df3e2aa107b10c49fca4
 					"scene": null
 				}
 			]

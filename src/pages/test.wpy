@@ -1,7 +1,8 @@
 <!--  -->
 <template>
   <view class='container test'>
-    <mHeader title="随堂练习" flag="4"></mHeader>
+    <mHeader title="随堂练习"
+             flag="4"></mHeader>
     <view class="container-scroll"
           style="margin-top:{{height}}px">
       <view class="header">
@@ -9,7 +10,7 @@
           <image class="header-avatar"
                  src="{{courseInfo.teacherHeadImage}}" />
           <text class="header-title">{{courseInfo.teacherName}}</text>
-          <text class="header-subtitle">著名写作老师</text>
+          <text class="header-subtitle">写作老师</text>
         </view>
         <view class="header-right">
           <view class="student {{item.status == 1 && 'success'}}"
@@ -20,10 +21,8 @@
             <view class="student-status">
               {{item.status ? '已完成' : '答题中...'}}
             </view>
-            <view class="student-flower"
-                  wx:if="{{item.flower && index == 3}}">
-              <view class="student-flower-icon"></view>
-              x{{item.flower}}
+            <view class="student-flower" wx:if="{{index == 3}}">
+              <flower :flower.sync="flower"></flower>
             </view>
           </view>
 
@@ -62,18 +61,22 @@
               </view>
             </view>
           </view>
-          <view class="summary" wx:if="{{isSummary}}">
+          <view class="summary"
+                wx:if="{{isSummary}}">
             <view class="summary-list">
-              <view class="chart-item summary-item {{summaryIndex >= index && summaryAnimateIndex >= index && 'show'}}" wx:if="{{summaryIndex >= index }}" wx:for="{{summaryArr}}" wx:key="{{index}}">
-              <image class="chart-avatar"
-                     src="{{courseInfo.teacherHeadImage}}" />
-              <view class="chart-right">
-                <text class="chart-title">{{courseInfo.teacherName}}</text>
-                <view class="chart-content-wrap">
-                  <view class="chart-content">{{item}}</view>
+              <view class="chart-item summary-item {{summaryIndex >= index && summaryAnimateIndex >= index && 'show'}}"
+                    wx:if="{{summaryIndex >= index }}"
+                    wx:for="{{summaryArr}}"
+                    wx:key="{{index}}">
+                <image class="chart-avatar"
+                       src="{{courseInfo.teacherHeadImage}}" />
+                <view class="chart-right">
+                  <text class="chart-title">{{courseInfo.teacherName}}</text>
+                  <view class="chart-content-wrap">
+                    <view class="chart-content">{{item}}</view>
+                  </view>
                 </view>
               </view>
-            </view>
             </view>
 
           </view>
@@ -87,7 +90,8 @@
             <text class="chart-title">{{courseInfo.teacherName}}</text>
             <view class="chart-content-wrap">
 
-              <view class="chart-content voice" @tap="bindClickVoice">
+              <view class="chart-content voice"
+                    @tap="bindClickVoice">
                 <view class="icon"></view>
               </view>
               <view class="chart-time">{{timeText}}</view>
@@ -120,6 +124,7 @@
 import wepy from 'wepy'
 import mHeader from '@/components/header'
 import loading from '@/components/loading'
+import flower from '@/components/flower'
 export default class Example extends wepy.page {
   config = {
     navigationBarTitleText: '',
@@ -159,14 +164,16 @@ export default class Example extends wepy.page {
     timer: null,
     answerTime: 0,
     lookback: false,
-    setSummaryEnd: false
+    setSummaryEnd: false,
+    flower: 0
   };
   components = {
     mHeader,
-    loading
+    loading,
+    flower
   };
   methods = {
-    clickLinkHomeWork() {
+    clickLinkHomeWork () {
       wx.redirectTo({ url: '/pages/submitHomework?id=' + this.lessonId })
     },
     clickStudy () {
@@ -194,12 +201,12 @@ export default class Example extends wepy.page {
     }
   };
   events = {
-    back() {
+    back () {
       wx.redirectTo({ url: '/pages/catalog' })
     }
   };
   watch = {
-    stepIndex(n) {
+    stepIndex (n) {
       if (n === this.questionArr.length - 1) {
         this.imitateReady()
       }
@@ -234,22 +241,22 @@ export default class Example extends wepy.page {
   }
 
   alertError () {
-    let {audioContext, playSound} = this.$parent.globalData
+    let { audioContext, playSound } = this.$parent.globalData
     playSound(audioContext, 2)
     this.isSuccess = false
     this.changeAlertVisible()
   }
 
   alertSuccess () {
-    let {audioContext, playSound} = this.$parent.globalData
+    let { audioContext, playSound } = this.$parent.globalData
     playSound(audioContext, 3)
     this.isSuccess = true
     this.changeAlertVisible()
   }
   // 设置答题完成后的总结
-  setSummary() {
+  setSummary () {
     let numText = ['一', '二', '三', '四', '五']
-    let {answerArr, questionArr} = this
+    let { answerArr, questionArr } = this
     let arr = []
     let errorNum = answerArr[3].answerError
     if (errorNum) {
@@ -268,9 +275,9 @@ export default class Example extends wepy.page {
   }
 
   // 设置显示答题的索引
-  setSummaryIndex() {
+  setSummaryIndex () {
     console.log(this.summaryArr)
-    let {summaryIndex, summaryArr} = this
+    let { summaryIndex, summaryArr } = this
     if (summaryIndex !== summaryArr.length) {
       setTimeout(() => {
         this.summaryIndex += 1
@@ -326,6 +333,7 @@ export default class Example extends wepy.page {
       this.alertSuccess()
       this.questionArr[this.stepIndex].isRight = 1
       this.answerArr[3].flower += 1
+      this.flower += 1
     } else {
       this.questionArr[this.stepIndex].isRight = 2
       this.answerArr[3].answerError += 1
@@ -369,7 +377,7 @@ export default class Example extends wepy.page {
     }, 500)
   }
 
-  initQuestion() {
+  initQuestion () {
     this.showQuestion = true
     this.correctAnswer = this.questionArr[0].answer
     this.app.show(this, 'questionAnimate', 1)
@@ -460,7 +468,7 @@ export default class Example extends wepy.page {
         e.flower = this.lookback ? 0 : e.correctNum
         return e
       })
-
+      this.flower = this.answerArr[3].flower
       this.$apply()
     })
   }
@@ -478,19 +486,19 @@ export default class Example extends wepy.page {
       })
       setTimeout(() => {
         this.loading = false
-        console.log(this.lookback)
         if (this.lookback) {
           this.initQuestion()
         } else {
           this.initAudio(this.courseInfo.guideAudio)
         }
+        this.$apply()
       }, 1000)
       this.$apply()
     })
   }
 
   // 更新课程状态
-  changeLearnStage(type) {
+  changeLearnStage (type) {
     let { api } = this.$parent.globalData
     api.study.changeLearnStage({
       id: this.roomData.id,
@@ -518,7 +526,7 @@ export default class Example extends wepy.page {
     this.audioContext.destroy()
     clearInterval(this.timer)
   }
-  onUnload() {
+  onUnload () {
     this.audioContext.stop()
     this.audioContext.destroy()
     clearInterval(this.timer)
@@ -623,10 +631,10 @@ export default class Example extends wepy.page {
       background: #f2f2f2;
       border-radius: 4px;
       &.error {
-        background: #FF7C76;
+        background: #ff7c76;
       }
       &.success {
-        background: #39DDA9;
+        background: #39dda9;
       }
       &:last-child {
         margin-right: 0;
@@ -755,23 +763,9 @@ export default class Example extends wepy.page {
     border: 3px solid #ffaf29;
     border-radius: 16px;
     &-flower {
-      @include flex-center;
       position: absolute;
       top: -16px;
       right: -10px;
-      padding: 0 10px;
-      height: 36px;
-      font-size: 20px;
-      color: #58422b;
-      background: rgba(255, 209, 41, 1);
-      border-radius: 18px;
-      border: 3px solid rgba(255, 255, 255, 1);
-      &-icon {
-        @include bg('/sk/icon-flower.png');
-        margin-right: 4px;
-        width: 21px;
-        height: 23px;
-      }
     }
     &-avatar {
       box-sizing: border-box;
@@ -824,8 +818,8 @@ export default class Example extends wepy.page {
           45deg,
           transparent 0,
           transparent 25%,
-          rgba(61,53,45,0.1) 0,
-          rgba(61,53,45,0.1) 50%
+          rgba(61, 53, 45, 0.1) 0,
+          rgba(61, 53, 45, 0.1) 50%
         );
       background-size: 20px 20px;
       border: 4px dashed transparent;
@@ -863,7 +857,7 @@ export default class Example extends wepy.page {
     overflow-y: auto;
     &-item {
       opacity: 0;
-      transition: all .5s;
+      transition: all 0.5s;
       &.show {
         opacity: 1;
       }

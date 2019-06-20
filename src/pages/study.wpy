@@ -8,6 +8,7 @@
     <view @tap="bindClickVideo">
       <video class="video"
              id="video"
+             style="height:{{isIpx ? 'calc(100vh - 68rpx' : '100vh'}}"
              show-center-play-btn="{{false}}"
              enable-progress-gesture="{{progressEnable}}"
              loop="{{false}}"
@@ -40,6 +41,7 @@
       </view>
     </view>
     <van-popup show="{{ show }}"
+               overlay="{{false}}"
                position="bottom">
       <view class="popup">
         <view class="popup-header">
@@ -56,10 +58,11 @@
               <view class="popup-student-status">
                 {{item.answer ? (item.answer ==1 ? '正确' : item.answer ==2 ? '错误' : '已放弃') : (item.status == 2 ? '已放弃' : item.status ? '已回答' : '答题中...')}}
               </view>
-              <view class="popup-student-flower"
-                    wx:if="{{item.flower}}">
-                <view class="popup-student-flower-icon"></view>
-                x{{item.flower}}
+              <view class="popup-student-flower">
+                <flower :flower.sync="flowerOne" wx:if="{{index == 0}}"></flower>
+                <flower1 :flower.sync="flowerTwo" wx:if="{{index == 1}}"></flower1>
+                <flower2 :flower.sync="flowerThree" wx:if="{{index == 2}}"></flower2>
+                <flower3 :flower.sync="flowerFour" wx:if="{{index == 3}}"></flower3>
               </view>
             </view>
 
@@ -132,7 +135,10 @@
 import wepy from 'wepy'
 import mHeader from '../components/header'
 import loading from '../components/loading'
-
+import flower from '../components/flower'
+import flower1 from '../components/flower1'
+import flower2 from '../components/flower2'
+import flower3 from '../components/flower3'
 export default class Example extends wepy.page {
   config = {
     navigationBarTitleText: '',
@@ -178,11 +184,19 @@ export default class Example extends wepy.page {
     mateInfo: [],
     setTimeOut: null,
     isEnd: false,
-    loading: true
+    loading: true,
+    flowerOne: 0,
+    flowerTwo: 0,
+    flowerThree: 0,
+    flowerFour: 0
   };
   components = {
     mHeader,
-    loading
+    loading,
+    flower,
+    flower1,
+    flower2,
+    flower3
   };
   watch = {
     isPlay (n) {
@@ -325,6 +339,9 @@ export default class Example extends wepy.page {
       } else {
         return '00分00秒'
       }
+    },
+    isIpx() {
+      return this.$parent.globalData.isIpx
     }
   };
   // 倒计时
@@ -396,6 +413,10 @@ export default class Example extends wepy.page {
           this.answerArr[i].flower += 1
         }
       })
+      this.flowerOne = this.answerArr[0].flower
+      this.flowerTwo = this.answerArr[1].flower
+      this.flowerThree = this.answerArr[2].flower
+      this.flowerFour = this.answerArr[3].flower
 
       this.changeLearnInfo(1)
       this.$apply()
@@ -478,6 +499,11 @@ export default class Example extends wepy.page {
         e.flower = !this.isLookBack ? e.correctNum : 0
         return e
       })
+
+      this.flowerOne = this.answerArr[0].flower
+      this.flowerTwo = this.answerArr[1].flower
+      this.flowerThree = this.answerArr[2].flower
+      this.flowerFour = this.answerArr[3].flower
       this.reset()
       if (!this.isLookBack) {
         if (data.resultData.newstart) {
@@ -563,7 +589,7 @@ export default class Example extends wepy.page {
       background-color: rgba($color: #000000, $alpha: 0.7);
     }
     &-icon {
-      @include bg('/v2/time/au.gif');
+      @include bg('/v2/audio-pay.gif');
       width: 26px;
       height: 44px;
     }
@@ -704,22 +730,22 @@ export default class Example extends wepy.page {
           width: 340px;
         }
         .icon-1 {
-          animation: icon-1 2s 1s backwards cubic-bezier(.66,.29,.39,1.08);
+          animation: icon-1 2s 1s backwards ;
         }
         .icon-2 {
-          animation: icon-2 1.4s 1.6s backwards cubic-bezier(.66,.29,.39,1.08);
+          animation: icon-2 1.4s 1.6s backwards ;
         }
         &.a3 {
           .icon-3 {
-            animation: icon-3 1.3s 1.7s backwards cubic-bezier(.66,.29,.39,1.08);
+            animation: icon-3 1.3s 1.7s backwards ;
           }
         }
         &.a4 {
           .icon-3 {
-            animation: icon-4 1.3s 1.7s backwards cubic-bezier(.66,.29,.39,1.08);
+            animation: icon-4 1.3s 1.7s backwards ;
           }
           .icon-4 {
-            animation: icon-5 1.2s 1.8s backwards cubic-bezier(.66,.29,.39,1.08);
+            animation: icon-5 1.2s 1.8s backwards ;
           }
         }
       }
@@ -788,7 +814,7 @@ export default class Example extends wepy.page {
         align-items: center;
         justify-content: space-between;
         box-sizing: border-box;
-        margin-top: 48px;
+        margin-top: 32px;
         padding: 0 60px;
         width: 100%;
         height: 100px;
@@ -831,7 +857,7 @@ export default class Example extends wepy.page {
       }
     }
     &-content {
-      padding: 46px;
+      padding: 22px 46px;
       &-title {
         font-size: 36px;
         line-height: 50px;
@@ -850,19 +876,6 @@ export default class Example extends wepy.page {
         position: absolute;
         top: -16px;
         right: -10px;
-        padding: 0 10px;
-        height: 36px;
-        font-size: 20px;
-        color: #58422b;
-        background: rgba(255, 209, 41, 1);
-        border-radius: 18px;
-        border: 3px solid rgba(255, 255, 255, 1);
-        &-icon {
-          @include bg('/sk/icon-flower.png');
-          margin-right: 4px;
-          width: 21px;
-          height: 23px;
-        }
       }
       &-avatar {
         box-sizing: border-box;
@@ -913,8 +926,8 @@ export default class Example extends wepy.page {
     }
     &-header {
       @include flex-center;
-      padding-top: 32px;
-      padding-bottom: 48px;
+      padding-top: 22px;
+      padding-bottom: 24px;
       border-bottom: 2px solid rgba($color: #3d352d, $alpha: 0.1);
       &-left {
         @include flex-column-center;
@@ -936,7 +949,7 @@ export default class Example extends wepy.page {
   }
   .video {
     width: 100vw;
-    height: 99vh;
+    height: 100vh;
   }
   .avatar-mask {
     @include flex-center;

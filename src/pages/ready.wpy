@@ -10,7 +10,7 @@
           <image class="header-avatar"
                  src="{{roomData.teacherImg}}" />
           <text class="header-title">{{roomData.teacherName}}</text>
-          <text class="header-subtitle">著名写作老师</text>
+          <text class="header-subtitle">写作老师</text>
         </view>
         <view class="header-right {{isReady && 'isReady'}}">
           <view class="header-student {{readyArr[index] && 'isReady'}}"
@@ -85,8 +85,8 @@ export default class Example extends wepy.page {
       this.time = 0
     },
     bindClickVoice () {
-      this.stop()
-      this.play()
+      this.audioContext.stop()
+      this.audioContext.play()
     }
   };
   events = {

@@ -232,7 +232,7 @@ export default class CompletionOfWork extends wepy.page {
       if (second < 10) {
         second = '0' + second
       }
-      result = `${minute}"${second}"`
+      result = `${minute} : ${second}`
     }
     return result
   };
@@ -726,7 +726,7 @@ export default class CompletionOfWork extends wepy.page {
 
     .-popup-btn {
       text-align: center;
-      margin: 32px auto 0;
+      margin: 32px auto 30px;
       width:354px;
       height:76px;
       background:linear-gradient(90deg,rgba(249,230,11,1) 0%,rgba(253,219,85,1) 100%);

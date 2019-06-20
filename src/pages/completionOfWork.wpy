@@ -147,7 +147,7 @@
           <view class="-popup-jd-text-two" wx:if="{{isActive !== '0'}}">
             如果觉得老师点评的好， 记得分享给好友哦～
           </view>
-          <button class="-popup-jg-btn -one" wx:if="{{isActive === '0'}}">好的，我知道了</button>
+          <button class="-popup-jg-btn -one" wx:if="{{isActive === '0'}}" @tap="changePopup">好的，我知道了</button>
           <button class="-popup-jg-btn" open-type="share" wx:if="{{isActive !== '0'}}" @tap="shareFriend">分享给好友</button>
         </view>
 
@@ -186,7 +186,7 @@ export default class CompletionOfWork extends wepy.page {
 
   data = {
     isFetching: false,
-    isOpenPopup: true,
+    isOpenPopup: false,
     isCompliment: false,
     isReply: true,
     isEvaluate: false,

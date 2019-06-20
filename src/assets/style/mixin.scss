@@ -71,3 +71,34 @@
   background: url('https://pub.file.k12.vip/tbzw' + $path) no-repeat;
   background-size: 100%;
 }
+
+@mixin texiao {
+  @include bg('/v2/like.png');
+  box-sizing: border-box;
+  background-size: 100%;
+  text-align: center;
+  position: absolute;
+  left: 22px;
+  bottom: 54px;
+  width: 276px;
+  height: 177px;
+}
+
+@mixin texiao-bg {
+  color: #58422B;
+  border-color: #f9e60b ;
+  background: linear-gradient(90deg, #f9e60b 0%, #fddb55 100%);
+}
+
+@mixin texiao-icon {
+  animation: myZan 1s;
+
+  @keyframes myZan {
+    50% {
+      transform: scale(1.2);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+}

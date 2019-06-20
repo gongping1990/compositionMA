@@ -192,7 +192,6 @@ export default class CompletionOfWork extends wepy.page {
     isEvaluate: false,
     isPlay: false,
     isZan: false,
-    isShowAn: false,
     isActive: '',
     stumsg: '',
     workDetail: '',
@@ -316,7 +315,6 @@ export default class CompletionOfWork extends wepy.page {
             }, 500)
 
             setTimeout(() => {
-              this.isCompliment = true
               this.getOtherHomework()
               this.$apply()
             }, 900)
@@ -632,15 +630,6 @@ export default class CompletionOfWork extends wepy.page {
       animation: myZan 1s;
     }
 
-    @keyframes myImg {
-      0% {
-        transform: translateY(265px);
-      }
-      100% {
-        display: none;
-        transform: translateY(-13765px);
-      }
-    }
 
     @keyframes myBack {
       100% {

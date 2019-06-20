@@ -136,7 +136,7 @@
       </view>
     </van-popup>
 
-    <praiseModal :isShow.sync="showPraise" typeProps="1" :dataInfo.sync="infoData.awardsInfo"></praiseModal>
+    <praiseModal :isShow.sync="showPraise" typeProps="1" :dataInfo.sync="awardsInfo"></praiseModal>
   </view>
 </template>
 <script>
@@ -172,6 +172,7 @@ export default class Home extends wepy.page {
     gradeText: ['三年级', '四年级', '五年级', '六年级'],
     swiperActive: 0,
     selectItem: {},
+    awardsInfo: {},
     selectTime: 0
   };
   mixins = [testMixin]
@@ -288,6 +289,7 @@ export default class Home extends wepy.page {
         wx.redirectTo({ url: '/pages/enroll' })
       }
       this.showPraise = this.infoData.awardsPop
+      this.awardsInfo = this.infoData.awardsInfo
       this.$apply()
     })
   }
@@ -320,8 +322,8 @@ export default class Home extends wepy.page {
 
   onShareAppMessage () {
     return {
-      title: `我的作业受到${this.infoData.awardsInfo.teacherName}的表扬，快来给我点个赞吧`,
-      path: `/pages/completionOfWork?type=2&id=${this.infoData.awardsInfo.homeworkId}`,
+      title: `我的作业受到${this.awardsInfo.teacherName}的表扬，快来给我点个赞吧`,
+      path: `/pages/completionOfWork?type=2&id=${this.awardsInfo.homeworkId}`,
       imageUrl: ''
     }
   }

@@ -42,7 +42,7 @@
                  src="{{shareInfo.replyImg}}"></image>
           <view class="-content-down-reply" wx:if="{{shareInfo.replyTeacher}}">
             <image class="-reply-img"
-                   src="{{shareInfo.replyTeacherImg}}"></image>
+                   src="{{shareInfo.replyTeacherImg || shareInfo.workImg}}"></image>
             <view class="-reply-info">
               <view class="-info-name">{{shareInfo.replyTeacher}}</view>
               <view class="-info-wrap">
@@ -176,7 +176,7 @@ export default class ShareHomework extends wepy.page {
         workId: this.shareInfo.id
       })
         .then(res => {
-          if (res.data.code === '200') {
+          if (res.data.code === 200) {
             wx.showToast({
               title: '点赞成功'
             })

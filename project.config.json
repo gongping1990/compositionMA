@@ -13,11 +13,7 @@
 		"checkInvalidKey": true
 	},
 	"compileType": "miniprogram",
-<<<<<<< HEAD
-	"libVersion": "2.7.0",
-=======
 	"libVersion": "2.7.1",
->>>>>>> e9988bd99b1ec73c62760fb534e4d204574908e5
 	"appid": "wxf8ad572ff36a4c11",
 	"projectname": "chinese-wepy",
 	"miniprogramRoot": "dist/",
@@ -26,8 +22,6 @@
 		"hidedInDevtools": []
 	},
 	"scripts": {},
-	"simulatorType": "wechat",
-	"simulatorPluginLibVersion": {},
 	"condition": {
 		"search": {
 			"current": -1,
@@ -45,12 +39,12 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 16,
+			"current": 6,
 			"list": [
 				{
 					"id": 0,
 					"name": "classroom",
-					"pathName": "pages/catalog",
+					"pathName": "pages/study",
 					"query": "id=1134359706941546498",
 					"scene": null
 				},
@@ -90,10 +84,10 @@
 					"scene": null
 				},
 				{
-					"id": -1,
+					"id": 6,
 					"name": "作业分享",
 					"pathName": "pages/shareHomework",
-					"query": "",
+					"query": "id=1141590442825830402",
 					"scene": null
 				},
 				{
@@ -146,10 +140,10 @@
 					"scene": null
 				},
 				{
-					"id": -1,
+					"id": 14,
 					"name": "课程详情",
 					"pathName": "pages/submitHomework",
-					"query": "id=1139442398134145025",
+					"query": "id=1134359706941546498",
 					"scene": null
 				},
 				{
@@ -175,9 +169,9 @@
 				},
 				{
 					"id": -1,
-					"name": "classroom",
-					"pathName": "pages/completionOfWork",
-					"query": "type=1&id=1139442473879080962",
+					"name": "表扬",
+					"pathName": "pages/recognitionNotice",
+					"query": "",
 					"scene": null
 				}
 			]

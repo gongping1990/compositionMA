@@ -105,16 +105,20 @@
                      src="{{item.workImg}}"
                      @tap="lookWorkDetail({{item}})"></image>
               <view class="-right-zan">
-                <view class="-zan-left {{item.otherLike ? '-zan-ok' : ''}}"
+                <view class="-texiao"
+                      wx:if="{{dataItem.id === item.id}}"
+                      style="background-position-y:-{{backgroundY}}rpx;"></view>
+
+                <view class="-zan-left {{item.otherLike ? '-zan-animation' : ''}}"
                       @tap="addLike({{item}})">
-                  <image class="-img"
+                  <image class="-img {{dataItem.id === item.id ? '-icon-animation' : ''}}"
                          wx:if="{{!item.otherLike}}"
                          src="https://pub.file.k12.vip/tbzw/word-detail/icon-give-pre.png"></image>
                   <image class="-img"
                          wx:if="{{item.otherLike}}"
                          src="https://pub.file.k12.vip/2019/06/06/1136572565700235266.png"></image>
                 </view>
-                <view class="-zan-right {{item.otherLike ? '-zan-ok' : ''}}"
+                <view class="-zan-right {{item.otherLike ? '-zan-animation' : ''}}"
                       @tap="addLike({{item}})">{{item.likenum}}
                 </view>
               </view>
@@ -202,6 +206,8 @@ export default class SubmitHomework extends wepy.page {
       size: 10,
       total: ''
     },
+    dataItem : '',
+    backgroundY: 0,
     tabActive: '1',
     isSuccessWork: false,
     isOpenPopup: false,
@@ -264,6 +270,24 @@ export default class SubmitHomework extends wepy.page {
     })
   };
 
+  startLikeAnimation () {
+    const base = 270 / 414
+    const bgBase = 13865 / 414
+    const width = 276
+    let height = width * base
+    let time = (1000 * 0.75) / 51
+    let bgHeight = parseInt(width * bgBase)
+    setTimeout(() => {
+      if (this.backgroundY < bgHeight) {
+        this.backgroundY += height
+        this.startLikeAnimation()
+      } else {
+        this.backgroundY = 0
+      }
+      this.$apply()
+    }, time)
+  };
+
   methods = {
     openUrl (num) {
       if (num === 1) {
@@ -273,11 +297,27 @@ export default class SubmitHomework extends wepy.page {
       }
     },
     addLike (item) {
-      api.study.addLike({
-        workId: item.id
-      }).then(() => {
-        this.getOtherHomeWork()
-      })
+      if (!item.otherLike) {
+        api.study.addLike({
+          workId: item.id
+        }).then(() => {
+          this.dataItem = item
+          setTimeout(() => {
+            this.startLikeAnimation()
+          }, 500)
+
+          setTimeout(() => {
+            this.getOtherHomeWork()
+            this.$apply()
+          }, 900)
+        })
+
+      } else {
+        wx.showToast({
+          icon: 'none',
+          title: '你已经点过赞啦~'
+        })
+      }
     },
     addMyCard () {
       if (this.cardDetail.todayCard) return
@@ -656,13 +696,18 @@ export default class SubmitHomework extends wepy.page {
           line-height: 36px;
         }
 
-        .-zan-ok {
-          background: linear-gradient(
-            90deg,
-            rgba(249, 230, 11, 1) 0%,
-            rgba(253, 219, 85, 1) 100%
-          );
-          border: none;
+        .-texiao {
+          @include texiao;
+          left: 290px;
+          bottom: 25px;
+        }
+
+        .-zan-animation {
+          @include texiao-bg
+        }
+
+        .-icon-animation {
+          @include texiao-icon
         }
       }
     }

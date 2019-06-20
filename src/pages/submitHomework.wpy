@@ -337,7 +337,12 @@ export default class SubmitHomework extends wepy.page {
   onShow () {
     this.getLessonInfo()
     this.getCardInfo()
-    this.getMyHomework()
+
+    if (this.tabActive === '1') {
+      this.getMyHomework()
+    } else {
+      this.getOtherHomeWork()
+    }
   }
 
   onShareAppMessage () {

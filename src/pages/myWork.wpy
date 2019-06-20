@@ -28,7 +28,7 @@
                      src="https://pub.file.k12.vip/tbzw/word/icon-return.png"></image>
             </view>
           </view>
-          <repeat for="{{list.lessons}}"
+          <repeat for="{{list.lessonsList}}"
                   key="index"
                   index="index"
                   item="item">
@@ -93,6 +93,10 @@ export default class MyWork extends wepy.page {
     })
       .then(({ data }) => {
         this.dataList = data.resultData
+        for (let list of this.dataList) {
+          list.lessonsList = list.lessons.slice(0,2)
+        }
+        console.log(this.dataList)
         this.$apply()
       })
   }

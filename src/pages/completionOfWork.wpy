@@ -57,7 +57,7 @@
               </view>
             </view>
           </view>
-          <image class="-down-reply-img"
+          <image class="-down-reply-img" @tap="enlargeImage({{workDetail.replyImg}})"
                  src="{{workDetail.replyImg}}"></image>
         </view>
       </view>
@@ -158,6 +158,7 @@
                   @click="changePopup"/>
       </van-popup>
     </view>
+    <lookImage :isShow.sync="isShowImage" :imgUrl.sync="itemUrl"></lookImage>
   </view>
 </template>
 
@@ -166,6 +167,7 @@ import wepy from 'wepy'
 import api from '../request/api'
 import dayjs from 'dayjs'
 import mHeader from '../components/header'
+import lookImage from '../components/lookImage'
 
 export default class CompletionOfWork extends wepy.page {
   config = {
@@ -176,7 +178,8 @@ export default class CompletionOfWork extends wepy.page {
     }
   };
   components = {
-    mHeader
+    mHeader,
+    lookImage
   };
   computed = {
     height () {
@@ -192,12 +195,14 @@ export default class CompletionOfWork extends wepy.page {
     isEvaluate: false,
     isPlay: false,
     isZan: false,
+    isShowImage: false,
     isActive: '',
     stumsg: '',
     workDetail: '',
     queryInfo: '',
     myAudio: '',
     durationTime: '',
+    itemUrl: '',
     backgroundY: 0
   };
 
@@ -279,6 +284,10 @@ export default class CompletionOfWork extends wepy.page {
   };
 
   methods = {
+    enlargeImage (url) {
+      this.itemUrl = url
+      this.isShowImage = true
+    },
     shareFriend () {
       this.getMyHomework()
     },
@@ -353,7 +362,11 @@ export default class CompletionOfWork extends wepy.page {
     }
   };
 
-  events = {};
+  events = {
+    changePopupStatus () {
+      this.isShowImage = false
+    }
+  };
 
   startLikeAnimation () {
     const base = 270 / 414
@@ -549,7 +562,7 @@ export default class CompletionOfWork extends wepy.page {
             }
 
             &.voice .playIcon {
-              @include bg('/v2/time/au.gif');
+              @include bg('/v2/audio-pay.gif');
               margin-left: 16px;
               width: 26px;
               height: 43px;
@@ -570,7 +583,7 @@ export default class CompletionOfWork extends wepy.page {
         margin-top: 32px;
         width: 500px;
         height: 282px;
-        border: 2px solid rgba(151, 151, 151, 1);
+        /*border: 2px solid rgba(151, 151, 151, 1);*/
       }
     }
   }

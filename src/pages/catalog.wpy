@@ -276,6 +276,11 @@ export default class Index extends wepy.page {
     &.sk, &.today {
       background:linear-gradient(90deg,rgba(249,230,11,1) 0%,rgba(253,219,85,1) 100%);
     }
+    &.today {
+      .course-item-date {
+        color: #FF7C76;
+      }
+    }
     &.sk &-btn {
       box-shadow:0px 8px 16px 4px rgba(230,194,81,0.4);
       border-color: #fff;

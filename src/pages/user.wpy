@@ -203,14 +203,14 @@ export default class User extends wepy.page {
           wx.navigateTo({ url: '/pages/address' })
           break
         case 6:
-          if (this.noticeInfo.finishcourse === 1) {
+          if (this.noticeInfo.finishcourse === 0) {
             wx.showToast({
               icon: 'none',
               title: '你已经学完了全部作文课程，可以直接回看~'
             })
-          } else if (this.noticeInfo.finishcourse === 0) {
-            wx.navigateTo({ url: '/pages/subscribe' })
           } else if (this.noticeInfo.finishcourse === -1) {
+            wx.navigateTo({ url: '/pages/subscribe' })
+          } else if (this.noticeInfo.finishcourse === 1) {
             wx.showToast({
               icon: 'none',
               title: '购买课程后才能预约上课哦~'

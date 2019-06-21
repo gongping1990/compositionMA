@@ -146,29 +146,30 @@ export default class User extends wepy.page {
 
   data = {
     showKF: false,
+    noticeInfo: '',
     itemList: []
   };
 
   getUCRemindVO () {
     api.study.getUCRemindVO()
       .then(res => {
-        let notice = res.data.resultData
+        this.noticeInfo = res.data.resultData
         this.itemList = [
           {
             id: 2,
-            num: notice.nowork,
+            num: this.noticeInfo.nowork,
             name: '我的作业',
             url: 'https://pub.file.k12.vip/tbzw/course/my-icon- homework.png'
           },
           {
             id: 3,
-            num: notice.like,
+            num: this.noticeInfo.like,
             name: '点赞通知',
             url: 'https://pub.file.k12.vip/tbzw/course/my-icon-give a like.png'
           },
           {
             id: 4,
-            num: notice.praise,
+            num: this.noticeInfo.praise,
             name: '表扬通知',
             url: 'https://pub.file.k12.vip/tbzw/course/my-icon-praise.png'
           },
@@ -202,7 +203,19 @@ export default class User extends wepy.page {
           wx.navigateTo({ url: '/pages/address' })
           break
         case 6:
-          wx.navigateTo({ url: '/pages/subscribe' })
+          if (this.noticeInfo.finishcourse === 1) {
+            wx.showToast({
+              icon: 'none',
+              title: '你已经学完了全部作文课程，可以直接回看~'
+            })
+          } else if (this.noticeInfo.finishcourse === 0) {
+            wx.navigateTo({ url: '/pages/subscribe' })
+          } else if (this.noticeInfo.finishcourse === -1) {
+            wx.showToast({
+              icon: 'none',
+              title: '购买课程后才能预约上课哦~'
+            })
+          }
           break
       }
     }

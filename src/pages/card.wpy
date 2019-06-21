@@ -154,11 +154,13 @@ export default class Example extends wepy.page {
         api.study.addCard()
           .then(() => {
             this.show = true
+            this.$invoke('calendar', 'getCardList')
             this.$apply()
           })
       } else {
         this.showNoLearn = true
       }
+
     },
     closePopup () {
       this.showNoLearn = false

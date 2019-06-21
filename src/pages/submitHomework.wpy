@@ -63,7 +63,7 @@
             <view class="-right-name">{{workDetail.nickname}}</view>
             <view class="-right-time">{{workDetail.workTime}}</view>
             <image class="-right-work"
-                   src="{{workDetail.workImg}}"></image>
+                   src="{{workDetail.workImg}}" @tap="lookWorkDetail({{workDetail}})"></image>
             <view class="-right-tip"
                   wx:if="{{!workDetail.replyknow && workDetail.replyTime}}">
               <view class="-tip-text">老师已点评， 敬请收听</view>

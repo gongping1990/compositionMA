@@ -39,10 +39,10 @@
             <view class="-title-small">以《{{shareInfo.homeworkTitle}}》写一篇作文</view>
           </view>
           <image class="-content-down-img"
-                 src="{{shareInfo.replyImg}}"></image>
-          <view class="-content-down-reply" wx:if="{{shareInfo.replyTeacher}}">
+                 src="{{shareInfo.replyImg || shareInfo.workImg}}"></image>
+          <view class="-content-down-reply" wx:if="{{shareInfo.replyTime}}">
             <image class="-reply-img"
-                   src="{{shareInfo.replyTeacherImg || shareInfo.workImg}}"></image>
+                   src="{{shareInfo.replyTeacherImg}}"></image>
             <view class="-reply-info">
               <view class="-info-name">{{shareInfo.replyTeacher}}</view>
               <view class="-info-wrap">

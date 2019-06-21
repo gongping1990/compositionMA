@@ -38,7 +38,7 @@
             <view>我刚完成了今天的作业</view>
             <view class="-title-small">以《{{shareInfo.homeworkTitle}}》写一篇作文</view>
           </view>
-          <image class="-content-down-img"
+          <image class="-content-down-img {{!shareInfo.replyTime ? '-content-down-colunm-img' : ''}}"
                  src="{{shareInfo.replyImg || shareInfo.workImg}}" @tap="enlargeImage({{shareInfo}})"></image>
           <view class="-content-down-reply" wx:if="{{shareInfo.replyTime}}">
             <image class="-reply-img"
@@ -361,6 +361,13 @@ export default class ShareHomework extends wepy.page {
         width: 606px;
         height: 342px;
         border-radius: 32px;
+      }
+
+      &-colunm-img {
+        margin-top: 40px;
+        border-radius: 0;
+        width:254px;
+        height:342px;
       }
 
       &-reply {

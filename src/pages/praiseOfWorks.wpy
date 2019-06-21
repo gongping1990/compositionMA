@@ -42,15 +42,19 @@
               </view>
               <view class="-down-right"
                     @tap="addMyLike({{item}})">
-                <view class="-zan-left {{item.myLike ? '-zan-ok' : ''}}">
-                  <image class="-img"
+                <view class="-texiao"
+                      wx:if="{{dataItem.workId === item.workId}}"
+                      style="background-position-y:-{{backgroundY}}rpx;">
+                </view>
+                <view class="-zan-left {{item.myLike ? '-zan-animation' : ''}}">
+                  <image class="-img {{dataItem.workId === item.workId ? '-icon-animation' : ''}}"
                          wx:if="{{!item.myLike}}"
                          src="https://pub.file.k12.vip/tbzw/word-detail/icon-give-pre.png"></image>
                   <image class="-img"
                          wx:if="{{item.myLike}}"
                          src="https://pub.file.k12.vip/2019/06/06/1136572565700235266.png"></image>
                 </view>
-                <view class="-zan-right {{item.myLike ? '-zan-ok' : ''}}">{{item.like}}</view>
+                <view class="-zan-right {{item.myLike ? '-zan-animation' : ''}}">{{item.like}}</view>
               </view>
             </view>
           </view>
@@ -134,6 +138,8 @@ export default class PraiseOfWorks extends wepy.page {
       size: 10,
       total: ''
     },
+    dataItem : '',
+    backgroundY: 0,
     dataList: []
   };
 
@@ -158,6 +164,24 @@ export default class PraiseOfWorks extends wepy.page {
       })
   };
 
+  startLikeAnimation () {
+    const base = 270 / 414
+    const bgBase = 13865 / 414
+    const width = 276
+    let height = width * base
+    let time = (1000 * 0.75) / 51
+    let bgHeight = parseInt(width * bgBase)
+    setTimeout(() => {
+      if (this.backgroundY < bgHeight) {
+        this.backgroundY += height
+        this.startLikeAnimation()
+      } else {
+        this.backgroundY = 0
+      }
+      this.$apply()
+    }, time)
+  }
+
   methods = {
     toWorkDetail (data) {
       wx.navigateTo({ url: `/pages/completionOfWork?type=2&id=${data.workId}` })
@@ -167,8 +191,22 @@ export default class PraiseOfWorks extends wepy.page {
         api.study.addLike({
           workId: item.workId
         }).then(() => {
-          this.getList()
+          this.dataItem = item
+          setTimeout(() => {
+            this.startLikeAnimation()
+          }, 500)
+
+          setTimeout(() => {
+            this.getList()
+            this.$apply()
+          }, 900)
+
         })
+      } else {
+       wx.showToast({
+         icon: 'none',
+         title: '你已经点过赞啦~'
+       })
       }
     },
     bindLoadItem (data) {
@@ -201,7 +239,7 @@ export default class PraiseOfWorks extends wepy.page {
 .p-praiseOfWorks {
   @include bg('/v2/zpbz/zpbz-background.png');
   background-color: #ffd262;
-  overflow-y: hidden;
+  overflow: hidden;
   margin-bottom: 100px;
 
   &-title {
@@ -368,6 +406,12 @@ export default class PraiseOfWorks extends wepy.page {
         justify-content: flex-end;
         align-items: center;
 
+        .-texiao {
+         @include texiao;
+          left: 0px;
+          bottom: 25px;
+        }
+
         .-zan-left {
           @include flex-center;
           position: relative;
@@ -398,13 +442,12 @@ export default class PraiseOfWorks extends wepy.page {
           line-height: 36px;
         }
 
-        .-zan-ok {
-          background: linear-gradient(
-            90deg,
-            rgba(249, 230, 11, 1) 0%,
-            rgba(253, 219, 85, 1) 100%
-          );
-          border: none;
+        .-zan-animation {
+          @include texiao-bg
+        }
+
+        .-icon-animation {
+          @include texiao-icon
         }
       }
     }

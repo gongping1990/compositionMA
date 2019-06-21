@@ -17,7 +17,8 @@
         <view class="swiper-item active">
           <view class="no-swiper-img"></view>
           <text class="no-swiper-text">真棒，你已学完了全部作文课程！</text>
-          <button class="swiper-btn" @tap="bindClickMoreLesson">课程回看</button>
+          <button class="swiper-btn"
+                  @tap="bindClickMoreLesson">课程回看</button>
         </view>
       </view>
       <view class="swiper"
@@ -117,7 +118,8 @@
         <text class="dialog-text">以便为您配送课程配套的“实物大礼包”</text>
         <view class="dialog-btn"
               @tap="bindPerfect">去完善</view>
-        <view class="dialog-close" @tap="onClose"></view>
+        <view class="dialog-close"
+              @tap="onClose"></view>
       </view>
     </van-popup>
     <van-popup show="{{ showKF }}"
@@ -136,7 +138,9 @@
       </view>
     </van-popup>
 
-    <praiseModal :isShow.sync="showPraise" typeProps="1" :dataInfo.sync="infoData.awardsInfo"></praiseModal>
+    <praiseModal :isShow.sync="showPraise"
+                 typeProps="1"
+                 :dataInfo.sync="awardsInfo"></praiseModal>
   </view>
 </template>
 <script>
@@ -172,6 +176,7 @@ export default class Home extends wepy.page {
     gradeText: ['三年级', '四年级', '五年级', '六年级'],
     swiperActive: 0,
     selectItem: {},
+    awardsInfo: {},
     selectTime: 0
   };
   mixins = [testMixin]
@@ -180,7 +185,7 @@ export default class Home extends wepy.page {
     praiseModal
   };
   methods = {
-    bindClickMoreLesson() {
+    bindClickMoreLesson () {
       wx.navigateTo({ url: '/pages/catalog' })
     },
     bindClickCover () {
@@ -189,7 +194,7 @@ export default class Home extends wepy.page {
       }
     },
     bindClickStudyStart () {
-      let {infoListData} = this
+      let { infoListData } = this
       if (!infoListData.stage) {
         if (infoListData.status !== 2) {
           this.startLessonStudy()
@@ -218,7 +223,7 @@ export default class Home extends wepy.page {
     bindChangeSwiper (event) {
       this.swiperActive = event.detail.current
     },
-    bindPerfect() {
+    bindPerfect () {
       this.show = false
       wx.navigateTo({ url: '/pages/address' })
     },
@@ -251,14 +256,14 @@ export default class Home extends wepy.page {
     height () {
       return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
     },
-    tagText() {
-      let {infoListData} = this
+    tagText () {
+      let { infoListData } = this
       if (!infoListData) {
         return ''
       }
       return infoListData.studyStatus < 3 ? '未上完课' : (infoListData.studyStatus === 3) && '未交作业'
     },
-    btnText() {
+    btnText () {
       return this.infoListData.studyStatus <= 2 ? '开始今日学习' : '交作业'
     }
   };
@@ -288,6 +293,7 @@ export default class Home extends wepy.page {
         wx.redirectTo({ url: '/pages/enroll' })
       }
       this.showPraise = this.infoData.awardsPop
+      this.awardsInfo = this.infoData.awardsInfo
       this.$apply()
     })
   }
@@ -302,9 +308,9 @@ export default class Home extends wepy.page {
     })
   }
 
-  checkPopByRecipient() {
+  checkPopByRecipient () {
     let { api } = this.$parent.globalData
-    api.order.checkPopByRecipient().then(({data}) => {
+    api.order.checkPopByRecipient().then(({ data }) => {
       this.show = data.resultData
       this.$apply()
     })
@@ -320,9 +326,9 @@ export default class Home extends wepy.page {
 
   onShareAppMessage () {
     return {
-      title: `我的作业受到${this.infoData.awardsInfo.teacherName}的表扬，快来给我点个赞吧`,
-      path: `/pages/completionOfWork?type=2&id=${this.infoData.awardsInfo.homeworkId}`,
-      imageUrl: 'https://pub.file.k12.vip/tbzw/v2/logo2.png'
+      title: this.showPraise ? `我的作业受到${this.awardsInfo.teacherName}的表扬，快来给我点个赞吧` : '每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。',
+      path: this.showPraise ? `/pages/completionOfWork?type=2&id=${this.awardsInfo.homeworkId}` : '/pages/index',
+      imageUrl: ''
     }
   }
 }
@@ -368,13 +374,12 @@ export default class Home extends wepy.page {
     }
   }
   .praise-pop {
-
-    &-content{
+    &-content {
       border-top: 1px solid transparent;
       @include bg('/by/dialog.png');
       margin: 0 auto;
-      width:640px;
-      height:768px;
+      width: 640px;
+      height: 768px;
 
       .-content-top {
         @include bg('/by/jz.png');
@@ -385,11 +390,11 @@ export default class Home extends wepy.page {
         &-name {
           margin: 90px 0 0 78px;
           display: inline-block;
-          height:26px;
-          font-size:18px;
-          font-weight:400;
-          color:rgba(88,66,43,1);
-          line-height:26px;
+          height: 26px;
+          font-size: 18px;
+          font-weight: 400;
+          color: rgba(88, 66, 43, 1);
+          line-height: 26px;
 
           .-title {
             text-decoration: underline;
@@ -398,25 +403,25 @@ export default class Home extends wepy.page {
 
         &-body {
           margin: 8px 0 28px 78px;
-          width:292px;
-          height:58px;
-          font-size:18px;
-          font-weight:500;
-          color:rgba(88,66,43,1);
-          line-height:26px;
+          width: 292px;
+          height: 58px;
+          font-size: 18px;
+          font-weight: 500;
+          color: rgba(88, 66, 43, 1);
+          line-height: 26px;
 
           .-red {
-            color: #CE5C18
+            color: #ce5c18;
           }
         }
 
         &-text {
           margin-right: 120px;
           text-align: right;
-          height:22px;
-          font-size:16px;
-          font-weight:400;
-          line-height:22px;
+          height: 22px;
+          font-size: 16px;
+          font-weight: 400;
+          line-height: 22px;
         }
       }
 
@@ -428,30 +433,30 @@ export default class Home extends wepy.page {
           display: flex;
 
           .-title-img {
-            width:60px;
-            height:60px;
-            border:2px solid rgba(230,169,119,1);
+            width: 60px;
+            height: 60px;
+            border: 2px solid rgba(230, 169, 119, 1);
             border-radius: 50%;
             margin-right: 24px;
           }
 
           .-title-name {
-            height:44px;
-            font-size:32px;
-            font-weight:500;
-            color:rgba(88,66,43,1);
-            line-height:44px;
+            height: 44px;
+            font-size: 32px;
+            font-weight: 500;
+            color: rgba(88, 66, 43, 1);
+            line-height: 44px;
           }
         }
 
         &-des {
           margin: 24px 0;
-          width:448px;
-          height:102px;
-          font-size:24px;
-          font-weight:400;
-          color:rgba(88,66,43,1);
-          line-height:34px;
+          width: 448px;
+          height: 102px;
+          font-size: 24px;
+          font-weight: 400;
+          color: rgba(88, 66, 43, 1);
+          line-height: 34px;
         }
       }
     }
@@ -462,15 +467,19 @@ export default class Home extends wepy.page {
       .-btn {
         text-align: center;
         margin: 0 auto;
-        width:312px;
-        height:102px;
-        background:linear-gradient(90deg,rgba(249,230,11,1) 0%,rgba(253,219,85,1) 100%);
-        box-shadow:0px 8px 16px 4px rgba(230,194,81,0.4);
-        border-radius:51px;
-        font-size:36px;
-        font-weight:500;
-        color:rgba(88,66,43,1);
-        line-height:102px;
+        width: 312px;
+        height: 102px;
+        background: linear-gradient(
+          90deg,
+          rgba(249, 230, 11, 1) 0%,
+          rgba(253, 219, 85, 1) 100%
+        );
+        box-shadow: 0px 8px 16px 4px rgba(230, 194, 81, 0.4);
+        border-radius: 51px;
+        font-size: 36px;
+        font-weight: 500;
+        color: rgba(88, 66, 43, 1);
+        line-height: 102px;
       }
     }
   }

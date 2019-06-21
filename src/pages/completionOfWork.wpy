@@ -57,7 +57,7 @@
               </view>
             </view>
           </view>
-          <image class="-down-reply-img"
+          <image class="-down-reply-img" @tap="enlargeImage({{workDetail.replyImg}})"
                  src="{{workDetail.replyImg}}"></image>
         </view>
       </view>
@@ -147,7 +147,7 @@
           <view class="-popup-jd-text-two" wx:if="{{isActive !== '0'}}">
             如果觉得老师点评的好， 记得分享给好友哦～
           </view>
-          <button class="-popup-jg-btn -one" wx:if="{{isActive === '0'}}">好的，我知道了</button>
+          <button class="-popup-jg-btn -one" wx:if="{{isActive === '0'}}" @tap="changePopup">好的，我知道了</button>
           <button class="-popup-jg-btn" open-type="share" wx:if="{{isActive !== '0'}}" @tap="shareFriend">分享给好友</button>
         </view>
 
@@ -158,6 +158,7 @@
                   @click="changePopup"/>
       </van-popup>
     </view>
+    <lookImage :isShow.sync="isShowImage" :imgUrl.sync="itemUrl"></lookImage>
   </view>
 </template>
 
@@ -166,6 +167,7 @@ import wepy from 'wepy'
 import api from '../request/api'
 import dayjs from 'dayjs'
 import mHeader from '../components/header'
+import lookImage from '../components/lookImage'
 
 export default class CompletionOfWork extends wepy.page {
   config = {
@@ -176,7 +178,8 @@ export default class CompletionOfWork extends wepy.page {
     }
   };
   components = {
-    mHeader
+    mHeader,
+    lookImage
   };
   computed = {
     height () {
@@ -192,13 +195,14 @@ export default class CompletionOfWork extends wepy.page {
     isEvaluate: false,
     isPlay: false,
     isZan: false,
-    isShowAn: false,
+    isShowImage: false,
     isActive: '',
     stumsg: '',
     workDetail: '',
     queryInfo: '',
     myAudio: '',
     durationTime: '',
+    itemUrl: '',
     backgroundY: 0
   };
 
@@ -233,7 +237,7 @@ export default class CompletionOfWork extends wepy.page {
       if (second < 10) {
         second = '0' + second
       }
-      result = `${minute}"${second}"`
+      result = `${minute} : ${second}`
     }
     return result
   };
@@ -280,6 +284,10 @@ export default class CompletionOfWork extends wepy.page {
   };
 
   methods = {
+    enlargeImage (url) {
+      this.itemUrl = url
+      this.isShowImage = true
+    },
     shareFriend () {
       this.getMyHomework()
     },
@@ -315,7 +323,6 @@ export default class CompletionOfWork extends wepy.page {
             }, 500)
 
             setTimeout(() => {
-              this.isCompliment = true
               this.getOtherHomework()
               this.$apply()
             }, 900)
@@ -338,17 +345,27 @@ export default class CompletionOfWork extends wepy.page {
         stumsg: this.stumsg
       }).then(() => {
         this.isEvaluate = true
+        this.$apply()
       })
     },
     choiceTab (num) {
       this.isActive = num
     },
     changePopup () {
+      if (this.queryInfo.type === '1' && this.isOpenPopup) {
+        this.getMyHomework()
+      } else {
+        this.getOtherHomework()
+      }
       this.isOpenPopup = !this.isOpenPopup
     }
   };
 
-  events = {};
+  events = {
+    changePopupStatus () {
+      this.isShowImage = false
+    }
+  };
 
   startLikeAnimation () {
     const base = 270 / 414
@@ -565,7 +582,7 @@ export default class CompletionOfWork extends wepy.page {
         margin-top: 32px;
         width: 500px;
         height: 282px;
-        border: 2px solid rgba(151, 151, 151, 1);
+        /*border: 2px solid rgba(151, 151, 151, 1);*/
       }
     }
   }
@@ -631,15 +648,6 @@ export default class CompletionOfWork extends wepy.page {
       animation: myZan 1s;
     }
 
-    @keyframes myImg {
-      0% {
-        transform: translateY(265px);
-      }
-      100% {
-        display: none;
-        transform: translateY(-13765px);
-      }
-    }
 
     @keyframes myBack {
       100% {
@@ -728,27 +736,28 @@ export default class CompletionOfWork extends wepy.page {
       }
     }
 
-    .-popup-jg-text {
-      margin: 0 auto;
-      padding-top: 144px;
-      width: 482px;
-      height: 88px;
-      font-size: 32px;
-      font-weight: 500;
-      color: rgba(70, 65, 60, 1);
-      line-height: 44px;
+    .-popup-btn {
+      text-align: center;
+      margin: 32px auto 30px;
+      width:354px;
+      height:76px;
+      background:linear-gradient(90deg,rgba(249,230,11,1) 0%,rgba(253,219,85,1) 100%);
+      border-radius:40px;
+      font-size:32px;
+      font-weight:500;
+      color:rgba(70,65,60,1);
+      line-height:76px;
     }
+  }
 
-    .-popup-jd-text-two {
-      margin: 12px auto 48px;
-      width: 328px;
-      height: 80px;
-      font-size: 28px;
-      font-family: PingFangSC-Light;
-      font-weight: 300;
-      color: rgba(70, 65, 60, 0.5);
-      line-height: 40px;
-    }
+  &-popup-jg {
+    position: relative;
+    text-align: center;
+    margin: 0 auto;
+    width: 590px;
+    height: 384px;
+    background: rgba(255, 255, 255, 1);
+    border-radius: 32px;
 
     .-popup-jg-img {
       margin: 0 auto;
@@ -786,9 +795,9 @@ export default class CompletionOfWork extends wepy.page {
       width: 354px;
       height: 76px;
       background: linear-gradient(
-        90deg,
-        rgba(249, 230, 11, 1) 0%,
-        rgba(253, 219, 85, 1) 100%
+          90deg,
+          rgba(249, 230, 11, 1) 0%,
+          rgba(253, 219, 85, 1) 100%
       );
       border-radius: 40px;
       font-size: 32px;

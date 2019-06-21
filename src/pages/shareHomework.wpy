@@ -39,8 +39,8 @@
             <view class="-title-small">以《{{shareInfo.homeworkTitle}}》写一篇作文</view>
           </view>
           <image class="-content-down-img"
-                 src="{{shareInfo.replyImg}}"></image>
-          <view class="-content-down-reply" wx:if="{{shareInfo.replyTeacher}}">
+                 src="{{shareInfo.replyImg || shareInfo.workImg}}" @tap="enlargeImage({{shareInfo}})"></image>
+          <view class="-content-down-reply" wx:if="{{shareInfo.replyTime}}">
             <image class="-reply-img"
                    src="{{shareInfo.replyTeacherImg}}"></image>
             <view class="-reply-info">
@@ -76,6 +76,8 @@
         </view>
       </van-popup>
     </view>
+
+    <lookImage :isShow.sync="isShowImage" :imgUrl.sync="itemUrl"></lookImage>
   </view>
 </template>
 
@@ -83,6 +85,7 @@
 import wepy from 'wepy'
 import api from '../request/api'
 import mHeader from '../components/header'
+import lookImage from '../components/lookImage'
 
 export default class ShareHomework extends wepy.page {
   config = {
@@ -93,7 +96,8 @@ export default class ShareHomework extends wepy.page {
     }
   };
   components = {
-    mHeader
+    mHeader,
+    lookImage
   };
   computed = {
     height () {
@@ -104,10 +108,12 @@ export default class ShareHomework extends wepy.page {
   data = {
     isPlay: false,
     showKF: false,
+    isShowImage: false,
     myAudio: '',
     durationTime: '',
     shareInfo: '',
-    workId: ''
+    workId: '',
+    itemUrl: ''
   };
 
   initAudio () {
@@ -149,12 +155,16 @@ export default class ShareHomework extends wepy.page {
       if (second < 10) {
         second = '0' + second
       }
-      result = `${minute}"${second}"`
+      result = `${minute} : ${second}`
     }
     return result
   };
 
   methods = {
+    enlargeImage (data) {
+      this.itemUrl = data.replyImg || data.workImg
+      this.isShowImage = true
+    },
     openPopup() {
       this.showKF = true
     },
@@ -176,7 +186,7 @@ export default class ShareHomework extends wepy.page {
         workId: this.shareInfo.id
       })
         .then(res => {
-          if (res.data.code === '200') {
+          if (res.data.code === 200) {
             wx.showToast({
               title: '点赞成功'
             })
@@ -185,6 +195,12 @@ export default class ShareHomework extends wepy.page {
         })
     }
   };
+
+  events = {
+    changePopupStatus () {
+      this.isShowImage = false
+    }
+  }
 
   onLoad (query) {
     this.workId = query.id

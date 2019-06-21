@@ -13,11 +13,7 @@
 		"checkInvalidKey": true
 	},
 	"compileType": "miniprogram",
-<<<<<<< HEAD
 	"libVersion": "2.7.0",
-=======
-	"libVersion": "2.7.1",
->>>>>>> e9988bd99b1ec73c62760fb534e4d204574908e5
 	"appid": "wxf8ad572ff36a4c11",
 	"projectname": "chinese-wepy",
 	"miniprogramRoot": "dist/",
@@ -45,13 +41,13 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 16,
+			"current": 0,
 			"list": [
 				{
 					"id": 0,
 					"name": "classroom",
-					"pathName": "pages/catalog",
-					"query": "id=1134359706941546498",
+					"pathName": "pages/test",
+					"query": "id=1139442398134145025",
 					"scene": null
 				},
 				{
@@ -160,10 +156,10 @@
 					"scene": null
 				},
 				{
-					"id": 16,
+					"id": -1,
 					"name": "作业详情",
 					"pathName": "pages/completionOfWork",
-					"query": "type=2&id=1140558805118627841",
+					"query": "type=1&id=1139442398134145025",
 					"scene": null
 				},
 				{

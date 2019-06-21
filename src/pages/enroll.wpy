@@ -3,8 +3,39 @@
   <view class='container enroll'>
     <mHeader flag="0"></mHeader>
     <view class="container-scroll"
+          style="margin-top:{{height}}px;height: calc(100vh - {{height}}px)">
+      <image mode="widthFix"
+             src="https://pub.file.k12.vip/tbzw/v2/detail/bg_01.png"
+             class="enroll-img" />
+      <image mode="widthFix"
+             src="https://pub.file.k12.vip/tbzw/v2/detail/bg_02.png"
+             class="enroll-img" />
+      <image mode="widthFix"
+             src="https://pub.file.k12.vip/tbzw/v2/detail/bg_03.jpg"
+             class="enroll-img" />
+      <image mode="widthFix"
+             src="https://pub.file.k12.vip/tbzw/v2/detail/bg_04.jpg"
+             class="enroll-img" />
+      <image mode="widthFix"
+             src="https://pub.file.k12.vip/tbzw/v2/detail/bg_05.jpg"
+             class="enroll-img" />
+      <image mode="widthFix"
+             src="https://pub.file.k12.vip/tbzw/v2/detail/bg_06.jpg"
+             class="enroll-img" />
+      <image mode="widthFix"
+             src="https://pub.file.k12.vip/tbzw/v2/detail/bg_07.jpg"
+             class="enroll-img" />
+      <image mode="widthFix"
+             src="https://pub.file.k12.vip/tbzw/v2/detail/bg_08.jpg"
+             class="enroll-img" />
+      <image mode="widthFix"
+             src="https://pub.file.k12.vip/tbzw/v2/detail/bg_09.png"
+             class="enroll-img" />
+    </view>
+    <view class="container-scroll"
           style="margin-top:{{height}}px">
-      <view class="enroll-btn" @tap="bindClickBtn">
+      <view class="enroll-btn"
+            @tap="bindClickBtn">
         我要报名
       </view>
     </view>
@@ -42,10 +73,10 @@ export default class Enroll extends wepy.page {
     mHeader
   };
   methods = {
-    bindClickBtn() {
+    bindClickBtn () {
       this.showKF = true
     },
-    onClose() {
+    onClose () {
       this.showKF = false
     }
   };
@@ -58,7 +89,7 @@ export default class Enroll extends wepy.page {
     return {
       title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
       path: `/pages/index`,
-      imageUrl: ''
+      imageUrl: 'https://pub.file.k12.vip/tbzw/v2/logo2.png'
     }
   }
 }
@@ -66,6 +97,12 @@ export default class Enroll extends wepy.page {
 <style lang='scss'>
 @import '../assets/style/mixin.scss';
 .enroll {
+  .container-scroll {
+    padding-bottom: 200px;
+  }
+  &-img {
+    width: 100%;
+  }
   &-btn {
     @include flex-center;
     position: fixed;

@@ -115,7 +115,7 @@ export default class UploadHomework extends wepy.page {
     return {
       title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
       path: `/pages/index`,
-      imageUrl: ''
+      imageUrl: 'https://pub.file.k12.vip/tbzw/v2/logo2.png'
     }
   }
 }

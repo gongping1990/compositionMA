@@ -20,24 +20,23 @@ export default class Example extends wepy.component {
     }
   }
   data = {
-    num: 0
+    num: 0,
+    audioContext: null
   };
-  components = {};
-  methods = {};
-  events = {};
-  watch = {
-    show (n) {
-      if (n) {
-        let { audioContext, playSound } = wepy.$instance.globalData
-        playSound(audioContext, 7)
-        this.downTime()
-      }
+  events = {
+    startDownTime () {
+      this.playSound()
+      this.downTime()
     }
-  };
+  }
+  playSound () {
+    this.audioContext.volume = 1
+    this.audioContext.seek(0)
+    this.audioContext.play()
+  }
   downTime () {
     if (this.num !== 3) {
-      let { audioContext, playSound } = wepy.$instance.globalData
-      playSound(audioContext, 7)
+      this.playSound()
       this.num += 1
       setTimeout(() => {
         this.downTime()
@@ -46,6 +45,12 @@ export default class Example extends wepy.component {
       this.$emit('downTimeEnd')
     }
     this.$apply()
+  }
+  onLoad() {
+    this.audioContext = wx.createInnerAudioContext()
+    this.audioContext.src = 'https://pub.file.k12.vip/tbzw/v2/sound/sound_7.mp3'
+    this.audioContext.volume = 0
+    this.audioContext.autoplay = true
   }
 }
 </script>

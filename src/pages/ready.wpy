@@ -32,7 +32,7 @@
             <view class="chart-content-wrap">
 
               <view class="chart-content voice" @tap="bindClickVoice">
-                <view class="icon"></view>
+                <view class="icon {{paused && 'paused'}}"></view>
               </view>
               <view class="chart-time">{{timeText}}</view>
             </view>
@@ -73,7 +73,8 @@ export default class Example extends wepy.page {
     isReady: false,
     showContinueDiaolig: true,
     timeText: '00:00',
-    showDownTime: false
+    showDownTime: false,
+    paused: false
   };
   components = {
     mHeader,
@@ -82,11 +83,20 @@ export default class Example extends wepy.page {
   };
   methods = {
     clickStudy () {
+      let { audioContext, playSound } = this.$parent.globalData
+      playSound(audioContext, 1)
       this.time = 0
     },
     bindClickVoice () {
-      this.audioContext.stop()
-      this.audioContext.play()
+      if (this.paused) {
+        this.paused = false
+        this.audioContext.seek(0)
+        this.audioContext.play()
+      } else {
+        this.paused = true
+        this.audioContext.pause()
+      }
+      this.$apply()
     }
   };
   events = {
@@ -129,6 +139,7 @@ export default class Example extends wepy.page {
       console.log('endtime')
       this.readyArr[3] = 1
       this.showDownTime = true
+      this.$broadcast('startDownTime')
     }
     this.$apply()
   }
@@ -150,7 +161,11 @@ export default class Example extends wepy.page {
       // this.randomImitateReady()
       this.$apply()
     })
+    audioContext.onPlay(() => {
+
+    })
     audioContext.onTimeUpdate(() => {
+      console.log(audioContext.currentTime)
       if (!this.currentTime) {
         this.duration = parseInt(audioContext.duration)
       }
@@ -227,7 +242,7 @@ export default class Example extends wepy.page {
     return {
       title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
       path: `/pages/index`,
-      imageUrl: ''
+      imageUrl: 'https://pub.file.k12.vip/tbzw/v2/logo2.png'
     }
   }
 }
@@ -293,10 +308,13 @@ export default class Example extends wepy.page {
         height: 30px;
       }
       &.voice .icon {
-        @include bg('/v2/time/au.gif');
+        @include bg('/v2/audio-pay.gif');
         margin-left: 16px;
         width: 26px;
         height: 43px;
+      }
+      &.voice .paused {
+        @include bg('/sk/icon-audio.png');
       }
     }
   }

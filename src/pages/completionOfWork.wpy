@@ -298,9 +298,8 @@ export default class CompletionOfWork extends wepy.page {
           icon: 'none',
           title: '不能给自己点赞哟~'
         })
-
       } else {
-        if(this.workDetail.otherLike) {
+        if (this.workDetail.otherLike) {
           return wx.showToast({
             icon: 'none',
             title: '已经点过赞啦~'
@@ -387,7 +386,7 @@ export default class CompletionOfWork extends wepy.page {
     return {
       title: this.queryInfo.type === '1' ? `我已坚持学习${this.workDetail.learnDay}天，刚完成今天的作业，请给我点个赞吧` : `快来给@${this.workDetail.nickname}点个赞，TA已坚持学习了${this.workDetail.learnDay}天`,
       path: this.queryInfo.type === '1' ? `/pages/shareHomework?id=${this.workDetail.id}` : `/pages/completionOfWork?type=2&id=${this.workDetail.id}`,
-      imageUrl: ''
+      imageUrl: 'https://pub.file.k12.vip/tbzw/v2/logo2.png'
     }
   }
 }
@@ -545,7 +544,7 @@ export default class CompletionOfWork extends wepy.page {
             }
 
             &.voice .playIcon {
-              @include bg('/v2/time/au.gif');
+              @include bg('/v2/audio-pay.gif');
               margin-left: 16px;
               width: 26px;
               height: 43px;

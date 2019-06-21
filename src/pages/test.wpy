@@ -182,6 +182,8 @@ export default class Example extends wepy.page {
       if (this.answerEnd) {
         return
       }
+      let { audioContext, playSound } = this.$parent.globalData
+      playSound(audioContext, 1)
       if (this.selectIndex === -1) {
         wx.showToast({
           title: '你还没有选择答案呦！', // 提示的内容,
@@ -205,7 +207,8 @@ export default class Example extends wepy.page {
       this.$apply()
     },
     bindClickInput (i) {
-      console.log(i)
+      let { audioContext, playSound } = this.$parent.globalData
+      playSound(audioContext, 1)
       this.selectIndex = i
     }
   };
@@ -308,6 +311,8 @@ export default class Example extends wepy.page {
     setTimeout(() => {
       this.showAlert = false
       if (this.stepIndex === this.questionArr.length - 1) {
+        let { audioContext, playSound } = this.$parent.globalData
+        playSound(audioContext, 6)
         this.changeLearnStage(3)
         this.setSummary()
         this.answerArr[3].status = 1

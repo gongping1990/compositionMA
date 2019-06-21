@@ -3,7 +3,7 @@
   <view class='container enroll'>
     <mHeader flag="0"></mHeader>
     <view class="container-scroll"
-          style="margin-top:{{height}}px;height: calc(100vh - {{height}}px)">
+          style="margin-top:{{height}}px;">
       <image mode="widthFix"
              src="https://pub.file.k12.vip/tbzw/v2/detail/bg_01.png"
              class="enroll-img" />
@@ -32,8 +32,7 @@
              src="https://pub.file.k12.vip/tbzw/v2/detail/bg_09.png"
              class="enroll-img" />
     </view>
-    <view class="container-scroll"
-          style="margin-top:{{height}}px">
+    <view class="enroll-btn-wrap">
       <view class="enroll-btn"
             @tap="bindClickBtn">
         我要报名
@@ -98,16 +97,14 @@ export default class Enroll extends wepy.page {
 @import '../assets/style/mixin.scss';
 .enroll {
   .container-scroll {
-    padding-bottom: 200px;
+    padding-bottom: 160px;
   }
   &-img {
     width: 100%;
   }
   &-btn {
     @include flex-center;
-    position: fixed;
-    left: 50%;
-    bottom: 48px;
+
     width: 654px;
     height: 100px;
     background: linear-gradient(
@@ -117,7 +114,15 @@ export default class Enroll extends wepy.page {
     );
     box-shadow: 0px 8px 16px 4px rgba(230, 194, 81, 0.4);
     border-radius: 50px;
-    transform: translateX(-50%);
+    &-wrap {
+      @include flex-center;
+      position: fixed;
+      padding: 32px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #fff;
+    }
   }
   .kf-pop {
     @include flex-column-center;

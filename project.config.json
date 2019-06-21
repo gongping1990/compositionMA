@@ -39,12 +39,12 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 6,
+			"current": 0,
 			"list": [
 				{
 					"id": 0,
 					"name": "classroom",
-					"pathName": "pages/study",
+					"pathName": "pages/enroll",
 					"query": "id=1134359706941546498",
 					"scene": null
 				},

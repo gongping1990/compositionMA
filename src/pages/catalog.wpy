@@ -26,7 +26,7 @@
             <view id="{{today == lesson.schedulingTime && 'sk'}}" class="course-item {{today == lesson.schedulingTime && 'today'}} {{lesson.studyStatus == 1 && 'bk'}} {{lesson.studyStatus == 2 && 'sk'}} {{lesson.studyStatus == 3 && 'jzy'}} {{lesson.studyStatus == 4 && 'dkk'}}" wx:for="{{item.lessonInfoList}}" wx:for-item="lesson" wx:for-index="idx" wx:key="{{lesson.id}}">
               <view class="course-item-title">{{lesson.mark + '.' + lesson.lessonName}}</view>
               <view class="course-item-footer">
-                <text class="course-item-date">{{lesson.schedulingTime}}</text>
+                <text class="course-item-date">{{today == lesson.schedulingTime ? '今日（' + lesson.schedulingTime + '）' : lesson.schedulingTime}}</text>
                 <view class="course-item-btn" @tap="bindClickBtn({{lesson}})">
                   <view class="course-item-icon"></view>
                   <text>{{lesson.statusText}}</text>
@@ -54,11 +54,7 @@ import mHeader from '../components/header'
 
 export default class Index extends wepy.page {
   config = {
-    navigationBarTitleText: '课程目录',
-    usingComponents: {
-      'i-sticky': '../iview/sticky/index',
-      'i-sticky-item': '../iview/sticky-item/index'
-    }
+    navigationBarTitleText: '课程目录'
   }
 
   components = {
@@ -279,6 +275,11 @@ export default class Index extends wepy.page {
     }
     &.sk, &.today {
       background:linear-gradient(90deg,rgba(249,230,11,1) 0%,rgba(253,219,85,1) 100%);
+    }
+    &.today {
+      .course-item-date {
+        color: #FF7C76;
+      }
     }
     &.sk &-btn {
       box-shadow:0px 8px 16px 4px rgba(230,194,81,0.4);

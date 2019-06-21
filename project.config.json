@@ -44,7 +44,7 @@
 				{
 					"id": 0,
 					"name": "classroom",
-					"pathName": "pages/enroll",
+					"pathName": "pages/catalog",
 					"query": "id=1134359706941546498",
 					"scene": null
 				},

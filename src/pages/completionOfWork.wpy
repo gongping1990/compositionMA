@@ -13,7 +13,8 @@
         <view class="-top-right">
           <view class="-top-right-name">{{workDetail.nickname}}</view>
           <view class="-top-right-time">{{workDetail.workTime}}</view>
-          <image class="-top-right-work" mode="widthFix"
+          <image class="-top-right-work"
+                 mode="widthFix"
                  src="{{workDetail.workImg}}"></image>
         </view>
       </view>
@@ -57,7 +58,8 @@
               </view>
             </view>
           </view>
-          <image class="-down-reply-img" @tap="enlargeImage({{workDetail.replyImg}})"
+          <image class="-down-reply-img"
+                 @tap="enlargeImage({{workDetail.replyImg}})"
                  src="{{workDetail.replyImg}}"></image>
         </view>
       </view>
@@ -306,9 +308,8 @@ export default class CompletionOfWork extends wepy.page {
           icon: 'none',
           title: '不能给自己点赞哟~'
         })
-
       } else {
-        if(this.workDetail.otherLike) {
+        if (this.workDetail.otherLike) {
           return wx.showToast({
             icon: 'none',
             title: '已经点过赞啦~'
@@ -649,7 +650,6 @@ export default class CompletionOfWork extends wepy.page {
       animation: myZan 1s;
     }
 
-
     @keyframes myBack {
       100% {
         border: none;
@@ -740,14 +740,18 @@ export default class CompletionOfWork extends wepy.page {
     .-popup-btn {
       text-align: center;
       margin: 32px auto 30px;
-      width:354px;
-      height:76px;
-      background:linear-gradient(90deg,rgba(249,230,11,1) 0%,rgba(253,219,85,1) 100%);
-      border-radius:40px;
-      font-size:32px;
-      font-weight:500;
-      color:rgba(70,65,60,1);
-      line-height:76px;
+      width: 354px;
+      height: 76px;
+      background: linear-gradient(
+        90deg,
+        rgba(249, 230, 11, 1) 0%,
+        rgba(253, 219, 85, 1) 100%
+      );
+      border-radius: 40px;
+      font-size: 32px;
+      font-weight: 500;
+      color: rgba(70, 65, 60, 1);
+      line-height: 76px;
     }
   }
 
@@ -796,9 +800,9 @@ export default class CompletionOfWork extends wepy.page {
       width: 354px;
       height: 76px;
       background: linear-gradient(
-          90deg,
-          rgba(249, 230, 11, 1) 0%,
-          rgba(253, 219, 85, 1) 100%
+        90deg,
+        rgba(249, 230, 11, 1) 0%,
+        rgba(253, 219, 85, 1) 100%
       );
       border-radius: 40px;
       font-size: 32px;

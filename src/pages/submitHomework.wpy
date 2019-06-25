@@ -63,7 +63,8 @@
             <view class="-right-name">{{workDetail.nickname}}</view>
             <view class="-right-time">{{workDetail.workTime}}</view>
             <image class="-right-work"
-                   src="{{workDetail.workImg}}" @tap="lookWorkDetail({{workDetail}})"></image>
+                   src="{{workDetail.workImg}}"
+                   @tap="lookWorkDetail({{workDetail}})"></image>
             <view class="-right-tip"
                   wx:if="{{!workDetail.replyknow && workDetail.replyTime}}">
               <view class="-tip-text">老师已点评， 敬请收听</view>
@@ -206,7 +207,7 @@ export default class SubmitHomework extends wepy.page {
       size: 10,
       total: ''
     },
-    dataItem : '',
+    dataItem: '',
     backgroundY: 0,
     tabActive: '1',
     isSuccessWork: false,
@@ -291,9 +292,9 @@ export default class SubmitHomework extends wepy.page {
   methods = {
     openUrl (num) {
       if (num === 1) {
-        wx.navigateTo({url: `/pages/study?id=${this.lessonId}&lookback=1`})
+        wx.navigateTo({ url: `/pages/study?id=${this.lessonId}&lookback=1` })
       } else {
-        wx.navigateTo({url: `/pages/test?id=${this.lessonId}&lookback=1`})
+        wx.navigateTo({ url: `/pages/test?id=${this.lessonId}&lookback=1` })
       }
     },
     addLike (item) {
@@ -311,7 +312,6 @@ export default class SubmitHomework extends wepy.page {
             this.$apply()
           }, 900)
         })
-
       } else {
         wx.showToast({
           icon: 'none',
@@ -703,11 +703,11 @@ export default class SubmitHomework extends wepy.page {
         }
 
         .-zan-animation {
-          @include texiao-bg
+          @include texiao-bg;
         }
 
         .-icon-animation {
-          @include texiao-icon
+          @include texiao-icon;
         }
       }
     }

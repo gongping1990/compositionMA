@@ -1,65 +1,67 @@
 <template>
-  <van-popup show="{{ isShow }}" @close="onClose">
+  <van-popup show="{{ isShow }}"
+             @close="onClose">
     <view class="p-image">
-      <image class="p-image-content" mode="widthFix" src="{{imgUrl}}"></image>
+      <image class="p-image-content"
+             mode="widthFix"
+             src="{{imgUrl}}"></image>
     </view>
   </van-popup>
 </template>
 
 <script>
-  import wepy from 'wepy'
+import wepy from 'wepy'
 
-  export default class LookImage extends wepy.component {
-    props = {
-      isShow: {
-        type: Boolean,
-        default: false
-      },
-      imgUrl: {
-        type: String,
-        default: ''
-      }
-    }
-
-    computed = {};
-
-    data = {
-
-    };
-
-    methods = {
-      toHomeWork () {
-        wx.navigateTo({ url: `/pages/completionOfWork?type=1&id=${this.dataInfo.lessonId}`})
-      },
-      onClose () {
-        this.$emit('changePopupStatus')
-      }
-    };
-
-    events = {};
-
-    onLoad() {
+export default class LookImage extends wepy.component {
+  props = {
+    isShow: {
+      type: Boolean,
+      default: false
+    },
+    imgUrl: {
+      type: String,
+      default: ''
     }
   }
+
+  computed = {};
+
+  data = {
+
+  };
+
+  methods = {
+    toHomeWork () {
+      wx.navigateTo({ url: `/pages/completionOfWork?type=1&id=${this.dataInfo.lessonId}` })
+    },
+    onClose () {
+      this.$emit('changePopupStatus')
+    }
+  };
+
+  events = {};
+
+  onLoad () {
+  }
+}
 </script>
 <style lang="scss">
-  @import '../assets/style/mixin.scss';
+@import '../assets/style/mixin.scss';
 
-  .p-image {
-    width: 100vw;
+.p-image {
+  width: 100vw;
 
-    &-content {
-      width: 100%;
-    }
-
-    &-close {
-      @include bg('/jrxx/icon-close.png');
-      position: absolute;
-      top: -100px;
-      right: -2px;
-      width: 72px;
-      height: 72px;
-    }
+  &-content {
+    width: 100%;
   }
 
+  &-close {
+    @include bg('/jrxx/icon-close.png');
+    position: absolute;
+    top: -100px;
+    right: -2px;
+    width: 72px;
+    height: 72px;
+  }
+}
 </style>

@@ -266,6 +266,9 @@ export default class Home extends wepy.page {
       return infoListData.studyStatus < 3 ? '未上完课' : (infoListData.studyStatus === 3) && '未交作业'
     },
     btnText () {
+      if (!this.infoListData.studyStatus) {
+        return '开始今日学习'
+      }
       return this.infoListData.studyStatus <= 2 ? '开始今日学习' : '交作业'
     }
   };

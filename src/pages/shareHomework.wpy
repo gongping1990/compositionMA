@@ -83,10 +83,16 @@
 
 <script>
 import wepy from 'wepy'
+import {connect} from 'wepy-redux'
 import api from '../request/api'
 import mHeader from '../components/header'
 import lookImage from '../components/lookImage'
 
+@connect({
+  userInfo (state) {
+    return state.user.userInfo
+  }
+})
 export default class ShareHomework extends wepy.page {
   config = {
     navigationBarTitleText: '作业分享',
@@ -102,6 +108,13 @@ export default class ShareHomework extends wepy.page {
   computed = {
     height () {
       return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+    }
+  };
+  watch = {
+    userInfo (n) {
+      if (n.id) {
+        this.getOtherHomework()
+      }
     }
   };
 

@@ -92,7 +92,6 @@ export default class UploadHomework extends wepy.page {
           }
         },
         fail: function (e) {
-          console.log(e)
           wx.showModal({
             title: '提示',
             content: '上传失败',

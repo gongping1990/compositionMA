@@ -108,11 +108,20 @@
 
 <script>
 import wepy from 'wepy'
+import { connect } from 'wepy-redux'
 import api from '../request/api'
 import dayjs from 'dayjs'
 import testMixin from '../mixins/test'
 import mHeader from '../components/header'
 
+@connect({
+  userInfo (state) {
+    return state.user.userInfo
+  },
+  remindData (state) {
+    return state.user.remindData
+  }
+})
 export default class PraiseOfWorks extends wepy.page {
   config = {
     navigationBarTitleText: '作品表彰',
@@ -138,7 +147,7 @@ export default class PraiseOfWorks extends wepy.page {
       size: 10,
       total: ''
     },
-    dataItem : '',
+    dataItem: '',
     backgroundY: 0,
     dataList: []
   };
@@ -200,17 +209,15 @@ export default class PraiseOfWorks extends wepy.page {
             this.getList()
             this.$apply()
           }, 900)
-
         })
       } else {
-       wx.showToast({
-         icon: 'none',
-         title: '你已经点过赞啦~'
-       })
+        wx.showToast({
+          icon: 'none',
+          title: '你已经点过赞啦~'
+        })
       }
     },
     bindLoadItem (data) {
-      console.log(111111)
       if (this.page.current < Math.ceil(this.page.total / this.page.size)) {
         this.page.current++
         this.getList()

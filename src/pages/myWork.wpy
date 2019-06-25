@@ -94,9 +94,8 @@ export default class MyWork extends wepy.page {
       .then(({ data }) => {
         this.dataList = data.resultData
         for (let list of this.dataList) {
-          list.lessonsList = list.lessons.slice(0,2)
+          list.lessonsList = list.lessons.slice(0, 2)
         }
-        console.log(this.dataList)
         this.$apply()
       })
   }

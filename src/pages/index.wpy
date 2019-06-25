@@ -153,6 +153,9 @@ import praiseModal from '../components/praiseModal'
 @connect({
   userInfo (state) {
     return state.user.userInfo
+  },
+  remindData (state) {
+    return state.user.remindData
   }
 })
 export default class Home extends wepy.page {
@@ -243,7 +246,6 @@ export default class Home extends wepy.page {
   };
   watch = {
     userInfo (n) {
-      console.log(n)
       if (n.id) {
         this.initPage()
         if (this.getUCRemindVOL) {
@@ -317,11 +319,9 @@ export default class Home extends wepy.page {
   }
 
   onShow () {
-    console.log(this.userInfo, 200)
     if (this.userInfo.id) {
       this.initPage()
     }
-    console.log(wepy)
   };
 
   onShareAppMessage () {

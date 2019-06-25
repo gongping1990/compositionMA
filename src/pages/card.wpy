@@ -110,11 +110,20 @@
 </template>
 <script>
 import wepy from 'wepy'
+import {connect} from 'wepy-redux'
 import api from '../request/api'
 import calendar from '../components/calendar'
 import mHeader from '../components/header'
 import testMixin from '../mixins/test'
 
+@connect({
+  userInfo (state) {
+    return state.user.userInfo
+  },
+  remindData (state) {
+    return state.user.remindData
+  }
+})
 export default class Example extends wepy.page {
   config = {
     navigationBarTitleText: '',
@@ -160,7 +169,6 @@ export default class Example extends wepy.page {
       } else {
         this.showNoLearn = true
       }
-
     },
     closePopup () {
       this.showNoLearn = false

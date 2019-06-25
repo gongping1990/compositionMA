@@ -84,7 +84,6 @@ export default {
   },
   post: function(url, data, contentType) {
     let params = { url, data, contentType }
-    console.log(contentType)
     return this.baseOptions(params, 'POST')
   }
 }

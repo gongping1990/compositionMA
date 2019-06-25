@@ -201,7 +201,6 @@ export default class Example extends wepy.page {
   };
   watch = {
     isPlay (n) {
-      console.log(n)
       if (n) {
         this.videoContext.play()
       } else {
@@ -236,7 +235,6 @@ export default class Example extends wepy.page {
       this.videoContext.play()
     },
     bindClickVideo () {
-      console.log('showBtn')
       this.showBtn = true
       clearTimeout(this.setTimeOut)
       this.setTimeOut = setTimeout(() => {
@@ -297,7 +295,6 @@ export default class Example extends wepy.page {
           }, 1000)
         }
         if (data && data.anEnum === 2) {
-          console.log(2112121)
           this.correctAnswer = data.answer
           this.setAnswerStatus()
         }
@@ -315,7 +312,6 @@ export default class Example extends wepy.page {
       let arr = this.answerArr.filter(e => {
         return e.answer === 1
       })
-      console.log(arr)
       return arr
     },
     correctNum () {
@@ -356,7 +352,6 @@ export default class Example extends wepy.page {
         this.downTime()
       }, 1000)
     } else {
-      console.log('play')
       this.isPlay = true
       this.answerEnd = true
       this.answerArr[3].status = this.selectIndex !== -1 ? 1 : 2
@@ -383,7 +378,6 @@ export default class Example extends wepy.page {
   // 设置随机基数
   setRandomTime () {
     this.randomTime = parseInt(this.baseTime * (Math.random() * 0.2 + 0.6))
-    console.log(this.randomTime)
   }
   // 设置答题正确还是错误
   setAnswerStatus () {
@@ -398,7 +392,6 @@ export default class Example extends wepy.page {
     }
     if (this.selectIndex !== -1) {
       // eslint-disable-next-line eqeqeq
-      console.log(this.correctAnswer)
       this.answerArr[3].answer = this.selectIndex === this.correctAnswer ? 1 : 2
     } else {
       this.answerArr[3].answer = 3
@@ -406,7 +399,6 @@ export default class Example extends wepy.page {
     this.setAnswerStatusEnd = true
 
     setTimeout(() => {
-      console.log('palySound')
       playSound(audioContext, 5)
       this.showResult = true
       this.answerArr.forEach((e, i) => {
@@ -428,7 +420,6 @@ export default class Example extends wepy.page {
       }, 4000)
     }, 3000)
     this.$apply()
-    console.log(this.answerArr)
   }
   // 重制数据
   reset () {

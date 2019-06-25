@@ -95,8 +95,6 @@ export default class Index extends wepy.page {
       if (n >= titleScrollTopArr[3]) {
         this.level = 4
       }
-
-      console.log(this.level)
     }
   }
 
@@ -147,13 +145,11 @@ export default class Index extends wepy.page {
           return el
         })
       })
-      console.log(__data)
       this.catalogData = __data
       setTimeout(() => {
         this.getInfoHeight()
         this.catalogData.lessonInfos.forEach((e, i) => {
           let id = `#title${i + 1}`
-          console.log(id)
           this.getTitleScrollTop(id)
         })
         this.getTodayScrollTop()
@@ -169,7 +165,6 @@ export default class Index extends wepy.page {
     query.exec((res) => {
       if (res[0]) {
         this.todayScrollTop = res[0].top - this.height - this.infoHeight - 60
-        console.log(this.todayScrollTop)
         this.$apply()
       }
     })
@@ -180,10 +175,8 @@ export default class Index extends wepy.page {
     query.select(str).boundingClientRect()
     query.selectViewport().scrollOffset()
     query.exec((res) => {
-      console.log(this.infoHeight)
       this.titleScrollTopArr = [...this.titleScrollTopArr, res[0].top - this.height - this.infoHeight]
       this.$apply()
-      console.log(this.titleScrollTopArr)
     })
   }
 
@@ -193,7 +186,6 @@ export default class Index extends wepy.page {
     query.selectViewport().scrollOffset()
     query.exec((res) => {
       this.infoHeight = res[0].height
-      console.log(this.infoHeight)
       this.$apply()
     })
   }

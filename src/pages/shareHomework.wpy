@@ -172,7 +172,6 @@ export default class ShareHomework extends wepy.page {
       this.showKF = false
     },
     changeAudioStatus () {
-      console.log(11)
       if (this.isPlay) {
         this.isPlay = false
         this.myAudio.pause()

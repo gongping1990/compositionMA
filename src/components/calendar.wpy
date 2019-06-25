@@ -82,7 +82,6 @@ export default class Example extends wepy.component {
         return dayjs(new Date()).format('YYYY年MM月')
       } else {
         this.$emit('today', dayjs(new Date(year, month - 1)).format('YYYY年MM月'))
-        console.log(dayjs(new Date(year, month - 1)).format('YYYY年MM月'))
         return dayjs(new Date(year, month - 1)).format('YYYY年MM月')
       }
     },
@@ -126,7 +125,6 @@ export default class Example extends wepy.component {
 
     let lastDay = new Date(year, month, 0)
     let lastDate = lastDay.getDate()
-    console.log(lastDate, preMonthDayCount)
     for (var i = 0; i < lastDate + preMonthDayCount; i++) {
       var date = i + 1 - preMonthDayCount
       var showDate = date
@@ -176,7 +174,6 @@ export default class Example extends wepy.component {
     }
     this.monthDate = ret
     this.$apply()
-    console.log(ret)
   }
   onLoad () {
     this.init()

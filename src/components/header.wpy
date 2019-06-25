@@ -59,8 +59,6 @@ export default class Example extends wepy.component {
       default: true
     }
   };
-  data = {};
-  components = {};
   methods = {
     commonHead_left_back: function() {
       this.$emit('back')
@@ -74,16 +72,9 @@ export default class Example extends wepy.component {
       this.$emit('back')
     },
     commonHead_left_home: function() {
-      console.log('home')
       wx.reLaunch({
         url: '/pages/index/index'
       })
-    }
-  };
-  events = {};
-  watch = {
-    showBtn(n) {
-      console.log(n, 211212)
     }
   };
   computed = {
@@ -91,9 +82,6 @@ export default class Example extends wepy.component {
       this.$emit('height', this.commonHeadHeight.titleHeight + wepy.$instance.globalData.systemInfo.statusBarHeight)
       return this.commonHeadHeight.titleHeight + wepy.$instance.globalData.systemInfo.statusBarHeight
     }
-  };
-  onLoad () {
-    console.log(wepy.$instance.globalData)
   };
 }
 </script>

@@ -1,9 +1,8 @@
 import wepy from 'wepy'
+import { getStore } from 'wepy-redux'
 
+const store = getStore()
 export default class testMixin extends wepy.mixin {
-  data = {
-    remindData: {}
-  }
   methods = {
     onChangeTabbar(event) {
       switch (event.detail) {
@@ -25,7 +24,7 @@ export default class testMixin extends wepy.mixin {
   getUCRemindVOL() {
     let {api} = this.$parent.globalData
     api.study.getUCRemindVO().then(({data}) => {
-      this.remindData = data.resultData
+      store.dispatch({ type: 'UPDATE_TAB_REMIND', payload: data.resultData })
     })
   }
   onShow() {

@@ -136,7 +136,6 @@ export default class Example extends wepy.page {
         this.downTime()
       }, 1000)
     } else {
-      console.log('endtime')
       this.readyArr[3] = 1
       this.showDownTime = true
       this.$broadcast('startDownTime')
@@ -145,14 +144,12 @@ export default class Example extends wepy.page {
   }
 
   initAudio (src) {
-    console.log(src)
     let { audioContext } = this
     audioContext.src = src
     setTimeout(() => {
       audioContext.play()
     }, 500)
     audioContext.onEnded(() => {
-      console.log('end')
       this.isReady = true
       this.imitateReady()
       setTimeout(() => {
@@ -165,7 +162,6 @@ export default class Example extends wepy.page {
 
     })
     audioContext.onTimeUpdate(() => {
-      console.log(audioContext.currentTime)
       if (!this.currentTime) {
         this.duration = parseInt(audioContext.duration)
       }

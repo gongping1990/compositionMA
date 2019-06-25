@@ -123,6 +123,9 @@ import mHeader from '../components/header'
 @connect({
   userInfo (state) {
     return state.user.userInfo
+  },
+  remindData (state) {
+    return state.user.remindData
   }
 })
 export default class User extends wepy.page {

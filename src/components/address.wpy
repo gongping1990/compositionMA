@@ -63,7 +63,7 @@ export default class Example extends wepy.component {
   getList () {
     api.order.getRecipient()
       .then(({ data }) => {
-        if(data.resultData !== null) {
+        if (data.resultData !== null) {
           this.form = data.resultData
         }
         this.$apply()
@@ -86,7 +86,6 @@ export default class Example extends wepy.component {
         arr.push(e.name)
       })
       this.form.areas = arr.join('/')
-      console.log(this.form.areas)
       this.show = false
     },
     bindClickRegion () {

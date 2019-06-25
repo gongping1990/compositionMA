@@ -277,7 +277,6 @@ export default class Example extends wepy.page {
       arr.push(`${answerArr[3].mateName}，真棒，随堂测验你全部答对了。用时${this.anwserTimeText}。继续加油，保持优秀！`)
     }
     questionArr.forEach((e, i) => {
-      console.log(e)
       if (e.isRight === 2) {
         arr.push(`第${numText[i]}题答案：${e.answer} ${e.answerStr}`)
       }
@@ -288,7 +287,6 @@ export default class Example extends wepy.page {
 
   // 设置显示答题的索引
   setSummaryIndex () {
-    console.log(this.summaryArr)
     let { summaryIndex, summaryArr } = this
     if (summaryIndex !== summaryArr.length) {
       setTimeout(() => {
@@ -369,7 +367,6 @@ export default class Example extends wepy.page {
 
     this.setAnswerStatusEnd = true
     this.$apply()
-    console.log(this.answerArr)
   }
 
   randomImitateReady () {
@@ -400,7 +397,6 @@ export default class Example extends wepy.page {
         clearInterval(this.timer)
       } else {
         this.answerTime += 1
-        console.log(this.answerTime)
       }
       this.$apply()
     }, 1000)
@@ -413,11 +409,7 @@ export default class Example extends wepy.page {
     setTimeout(() => {
       audioContext.play()
     }, 500)
-    audioContext.onPlay(() => {
-      console.log('play')
-    })
     audioContext.onEnded(() => {
-      console.log('end')
       this.app.show(this, 'chartAnimate', 0)
       setTimeout(() => {
         this.initQuestion()
@@ -426,7 +418,6 @@ export default class Example extends wepy.page {
       this.$apply()
     })
     audioContext.onTimeUpdate(() => {
-      console.log(111)
       if (!this.currentTime) {
         this.duration = parseInt(audioContext.duration)
       }
@@ -526,10 +517,6 @@ export default class Example extends wepy.page {
     // eslint-disable-next-line no-undef
     this.app = this.$parent.globalData
   }
-
-  onReady () {
-    console.log('ready')
-  };
   onShow () {
     this.audioContext = wx.createInnerAudioContext()
     this.getClassInfo()

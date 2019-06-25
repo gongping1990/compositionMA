@@ -215,6 +215,7 @@ export default class CompletionOfWork extends wepy.page {
     this.myAudio.onEnded(() => {
       this.isPlay = false
       if (this.queryInfo.type === '1' && this.workDetail.evaluation === null) {
+        this.isShowImage = false
         this.isOpenPopup = true
       }
       this.$apply()

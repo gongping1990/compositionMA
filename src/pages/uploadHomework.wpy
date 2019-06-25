@@ -69,7 +69,7 @@ export default class UploadHomework extends wepy.page {
       })
 
       wx.uploadFile({
-        url: 'https://huoke.prod.k12.vip/common/uploadPublicFile',
+        url: 'https://huoke.prod.k12.vip/composition/common/uploadPublicFile',
         filePath: this.queryInfo.url,
         name: 'file',
         header: { 'Content-Type': 'multipart/form-data' },

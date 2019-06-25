@@ -130,7 +130,7 @@
                       value="{{stumsg}}"
                       bindinput="bindClickMessage"
                       placeholder="你想对点评老师说…"
-                      placeholder-style="font-size: 12px;" />
+                      placeholder-style="font-size: 15px;" />
             </view>
           <button class="-popup-btn" @tap="submitEvaluate">提交</button>
         </view>
@@ -726,7 +726,7 @@ export default class CompletionOfWork extends wepy.page {
 
     .-popup-input {
       .-input {
-        font-size: 20px;
+        font-size: 30px;
         text-align: left;
         margin: 0 auto;
         padding: 24px 32px;
@@ -779,7 +779,7 @@ export default class CompletionOfWork extends wepy.page {
       padding-top: 144px;
       width: 480px;
       height: 88px;
-      font-size: 32px;
+      font-size: 30px;
       font-weight: 500;
       color: rgba(70, 65, 60, 1);
       line-height: 44px;

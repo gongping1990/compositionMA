@@ -53,6 +53,7 @@ export default class UploadHomework extends wepy.page {
 
   data = {
     isOpenPopup: false,
+    isSending: false,
     queryInfo: ''
   };
 
@@ -63,6 +64,8 @@ export default class UploadHomework extends wepy.page {
     },
     uploadWork () {
       let _self = this
+      if(_self.isSending) return
+      _self.isSending = true
       wx.showToast({
         icon: 'loading',
         title: '正在上传'
@@ -85,9 +88,13 @@ export default class UploadHomework extends wepy.page {
             api.study.addHomework({
               lessonId: _self.queryInfo.id,
               workImg: parmas.resultData.url
-            }).then(() => {
+            }).then( res => {
+              _self.isSending = false
+              wx.hideToast()  // 隐藏Toast
               _self.isOpenPopup = true
               _self.$apply()
+            },()=>{
+              _self.isSending = false
             })
           }
         },
@@ -99,7 +106,7 @@ export default class UploadHomework extends wepy.page {
           })
         },
         complete: function () {
-          wx.hideToast()  // 隐藏Toast
+
         }
       })
     }

@@ -1,7 +1,7 @@
 <template>
   <van-popup show="{{ isShow }}"
              @close="onClose">
-    <view class="p-image">
+    <view class="p-image" @tap="onClose">
       <image class="p-image-content"
              mode="widthFix"
              src="{{imgUrl}}"></image>

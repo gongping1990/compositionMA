@@ -9,7 +9,7 @@
                src="{{userInfo.headimgurl}}" />
         <view class="header-right">
           <text class="subtitle">欢迎来到小语轻作文，</text>
-          <text class="title">赶快开始今天的学习吧</text>
+          <text class="title">{{!infoData.startStudy ? infoData.startTime + '记得来上课哦' : '赶快开始今天的学习吧'}}</text>
         </view>
       </view>
       <view class="no-swiper"
@@ -39,9 +39,10 @@
             <text class="swiper-subtitle-text"
                   wx:if="{{infoListData.expLesson}}">体验课</text>
           </view>
-          <button class="swiper-btn"
+          <button class="swiper-btn {{!infoData.startStudy && 'disabled'}}"
                   @tap="bindClickStudyStart()"
-                  wx:if="{{infoListData.studyStatus != 5}}">{{btnText}}</button>
+                  disabled="{{!infoData.startStudy}}"
+                  wx:if="{{infoListData.studyStatus != 5}}">{{!infoData.startStudy ? infoData.startTime + '开课' : btnText}}</button>
           <button class="swiper-btn line "
                   @tap="bindClickBtn({{3}})"
                   wx:if="{{infoListData.status == 2 }}">
@@ -149,7 +150,7 @@ import { connect } from 'wepy-redux'
 import testMixin from '../mixins/test'
 import mHeader from '@/components/header'
 import praiseModal from '../components/praiseModal'
-
+import dayjs from 'dayjs'
 @connect({
   userInfo (state) {
     return state.user.userInfo
@@ -173,7 +174,9 @@ export default class Home extends wepy.page {
     showKF: false,
     showHeader: true,
     showPraise: false,
-    infoData: {},
+    infoData: {
+      startTime: ''
+    },
     infoListData: {},
     broadcastList: [],
     gradeText: ['三年级', '四年级', '五年级', '六年级'],
@@ -289,11 +292,16 @@ export default class Home extends wepy.page {
 
   // 获取首页信息
   getHomePageInfo () {
+    wx.showLoading({
+      title: '加载中...'
+    })
     let { api } = this.$parent.globalData
     api.course.getHomePageInfo().then(({ data }) => {
+      wx.hideLoading()
       this.infoData = data.resultData
       this.infoListData = data.resultData.infoList[0]
       this.empty = !data.resultData.infoList.length
+      this.infoData.startTime = this.infoData.startTime ? dayjs(new Date(this.infoData.startTime)).format('MM月DD日') : ''
       if (!data.resultData.buyCourse) {
         wx.redirectTo({ url: '/pages/enroll' })
       }

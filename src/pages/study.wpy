@@ -18,7 +18,7 @@
              src="{{courseInfo.videoUrl}}"></video>
     </view>
     <view class="avatar-mask"
-            style="bottom:{{isIpx ? '68rpx' : '0'}}"
+          style="bottom:{{isIpx ? '68rpx' : '0'}}"
           wx:if="{{!controls}}">
       <view class="teacher-avatar">
         <view class="teacher-avatar-mask">
@@ -60,10 +60,14 @@
                 {{item.answer ? (item.answer ==1 ? '正确' : item.answer ==2 ? '错误' : '已放弃') : (item.status == 2 ? '已放弃' : item.status ? '已回答' : '答题中...')}}
               </view>
               <view class="popup-student-flower">
-                <flower :flower.sync="flowerOne" wx:if="{{index == 0}}"></flower>
-                <flower1 :flower.sync="flowerTwo" wx:if="{{index == 1}}"></flower1>
-                <flower2 :flower.sync="flowerThree" wx:if="{{index == 2}}"></flower2>
-                <flower3 :flower.sync="flowerFour" wx:if="{{index == 3}}"></flower3>
+                <flower :flower.sync="flowerOne"
+                        wx:if="{{index == 0}}"></flower>
+                <flower1 :flower.sync="flowerTwo"
+                         wx:if="{{index == 1}}"></flower1>
+                <flower2 :flower.sync="flowerThree"
+                         wx:if="{{index == 2}}"></flower2>
+                <flower3 :flower.sync="flowerFour"
+                         wx:if="{{index == 3}}"></flower3>
               </view>
             </view>
 
@@ -337,7 +341,7 @@ export default class Example extends wepy.page {
         return '00分00秒'
       }
     },
-    isIpx() {
+    isIpx () {
       return this.$parent.globalData.isIpx
     }
   };
@@ -536,20 +540,12 @@ export default class Example extends wepy.page {
     this.initPage()
   };
   onHide () {
-    if (this.isEnd) {
-      this.changeLearnStage(this.roomData.id, 2)
-    } else {
-      this.reset()
-      this.changeLearnStage(this.roomData.id, 1)
-    }
+    this.reset()
+    this.changeLearnStage(this.roomData.id, 1)
   }
   onUnload () {
-    if (this.isEnd) {
-      this.changeLearnStage(this.roomData.id, 2)
-    } else {
-      this.reset()
-      this.changeLearnStage(this.roomData.id, 1)
-    }
+    this.reset()
+    this.changeLearnStage(this.roomData.id, 1)
   }
   onShareAppMessage () {
     return {
@@ -639,7 +635,7 @@ export default class Example extends wepy.page {
       width: 100%;
       height: 234px;
       background-position-y: 100%;
-      transition: all .5s;
+      transition: all 0.5s;
       &-icon {
         @include bg('/sk/image2.png');
         width: 262px;
@@ -675,7 +671,7 @@ export default class Example extends wepy.page {
       left: 50%;
       width: 75px;
       height: 81px;
-      margin-left:  -(75px / 2);
+      margin-left: -(75px / 2);
       &.icon-1 {
         z-index: 1000;
       }
@@ -722,22 +718,22 @@ export default class Example extends wepy.page {
           width: 340px;
         }
         .icon-1 {
-          animation: icon-1 2s 1s backwards ;
+          animation: icon-1 2s 1s backwards;
         }
         .icon-2 {
-          animation: icon-2 1.4s 1.6s backwards ;
+          animation: icon-2 1.4s 1.6s backwards;
         }
         &.a3 {
           .icon-3 {
-            animation: icon-3 1.3s 1.7s backwards ;
+            animation: icon-3 1.3s 1.7s backwards;
           }
         }
         &.a4 {
           .icon-3 {
-            animation: icon-4 1.3s 1.7s backwards ;
+            animation: icon-4 1.3s 1.7s backwards;
           }
           .icon-4 {
-            animation: icon-5 1.2s 1.8s backwards ;
+            animation: icon-5 1.2s 1.8s backwards;
           }
         }
       }
@@ -809,7 +805,7 @@ export default class Example extends wepy.page {
         margin-top: 32px;
         padding: 0 60px;
         width: 100%;
-        height: 100px;
+        min-height: 100px;
         font-size: 32px;
         color: rgba($color: #58422b, $alpha: 0.5);
         border-radius: 54px;
@@ -1093,5 +1089,4 @@ export default class Example extends wepy.page {
     bottom: -(81px / 2);
   }
 }
-
 </style>

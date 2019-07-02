@@ -67,12 +67,15 @@ export default {
           }
           errorHandle(res.data.code, res.data.msg)
         },
-        error(e) {
+        fail(e) {
           reject(e)
           wx.hideLoading()
           wx.showToast({
             title: e // 提示的内容
           })
+          setTimeout(() => {
+            wx.request(option)
+          }, 3000)
         }
       }
       wx.request(option)

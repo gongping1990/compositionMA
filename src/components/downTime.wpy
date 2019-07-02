@@ -1,7 +1,6 @@
 <!--  -->
 <template>
   <view class="down-time {{show && 'show'}}">
-    {{num}}
     <image class="down-time-img one {{num == 1 && 'animation'}}"
            src="https://pub.file.k12.vip/tbzw/v2/time/1@3x.png" />
     <image class="down-time-img two {{num == 2 && 'animation'}}"

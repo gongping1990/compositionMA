@@ -15,6 +15,7 @@
           <view class="-top-right-time">{{workDetail.workTime}}</view>
           <image class="-top-right-work"
                  mode="widthFix"
+                 @tap="enlargeImage({{workDetail.workImg}})"
                  src="{{workDetail.workImg}}"></image>
         </view>
       </view>

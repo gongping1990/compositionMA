@@ -40,9 +40,12 @@
                   wx:if="{{infoListData.expLesson}}">体验课</text>
           </view>
           <button class="swiper-btn {{!infoData.startStudy && 'disabled'}}"
+                  @tap="bindClickCover"
+                  wx:if="{{infoListData.finished && infoListData.expLesson}}">升级课程</button>
+          <button class="swiper-btn {{!infoData.startStudy && 'disabled'}}"
                   @tap="bindClickStudyStart()"
                   disabled="{{!infoData.startStudy}}"
-                  wx:if="{{infoListData.studyStatus != 5}}">{{!infoData.startStudy ? infoData.startTime + '开课' : btnText}}</button>
+                  wx:elif="{{infoListData.studyStatus != 5}}">{{!infoData.startStudy ? infoData.startTime + '开课' : btnText}}</button>
           <button class="swiper-btn line "
                   @tap="bindClickBtn({{3}})"
                   wx:if="{{infoListData.status == 2 }}">
@@ -302,7 +305,7 @@ export default class Home extends wepy.page {
       this.infoListData = data.resultData.infoList[0]
       this.empty = !data.resultData.infoList.length
       this.infoData.startTime = this.infoData.startTime ? dayjs(new Date(this.infoData.startTime)).format('MM月DD日') : ''
-      if (!data.resultData.buyCourse) {
+      if (!data.resultData.buyCourse && !data.resultData.infoList[0].expLesson) {
         wx.redirectTo({ url: '/pages/enroll' })
       }
       this.showPraise = this.infoData.awardsPop

@@ -494,7 +494,7 @@ export default class Example extends wepy.page {
         if (this.lookback) {
           this.initQuestion()
         } else {
-          this.initAudio(this.courseInfo.guideAudio)
+          this.initAudio(this.courseInfo.voiceUrl)
         }
         this.$apply()
       }, 1000)

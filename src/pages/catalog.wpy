@@ -9,7 +9,7 @@
         </view>
         <view class="course-info-footer">
           <text class="course-info-subtitle">每天5-8分钟，学技巧积素材</text>
-          <text class="course-info-num">共{{catalogData.expLesson ? '7' : catalogData.lessonNum}} 节课 | 已学{{catalogData.studyNum}}节</text>
+          <text class="course-info-num">{{catalogData.lessonNum}}</text>
         </view>
         <view class="course-fixed-title van-hairline--top">Level {{level}}</view>
       </view>

@@ -27,7 +27,7 @@
             <view class="-right-zan">
               <view class="-right-num">{{shareInfo.likenum}}</view>
               <view class="-right-text">获得点赞</view>
-              <view class="-right-btn-two"
+              <view class="{{shareInfo.otherLike ? '-right-btn-two' : '-right-btn'}}"
                     @tap="addLike">给Ta点赞</view>
             </view>
           </view>
@@ -40,7 +40,7 @@
           </view>
           <image class="-content-down-img {{!shareInfo.replyTime ? '-content-down-colunm-img' : ''}}"
                  src="{{shareInfo.replyImg || shareInfo.workImg}}" @tap="enlargeImage({{shareInfo}})"></image>
-          <view class="-content-down-reply" wx:if="{{shareInfo.replyTime}}">
+          <view class="-content-down-reply" wx:if="{{shareInfo.replyAudio}}">
             <image class="-reply-img"
                    src="{{shareInfo.replyTeacherImg}}"></image>
             <view class="-reply-info">

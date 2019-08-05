@@ -46,7 +46,7 @@
 				{
 					"id": 0,
 					"name": "classroom",
-					"pathName": "pages/catalog",
+					"pathName": "pages/submitHomework",
 					"query": "id=1134359706941546498",
 					"scene": null
 				},
@@ -89,7 +89,7 @@
 					"id": 6,
 					"name": "作业分享",
 					"pathName": "pages/shareHomework",
-					"query": "id=1141886847825088514",
+					"query": "id=1155772425080360961",
 					"scene": null
 				},
 				{

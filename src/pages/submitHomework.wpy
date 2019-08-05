@@ -67,7 +67,7 @@
                    @tap="lookWorkDetail({{workDetail}})"></image>
             <view class="-right-tip"
                   wx:if="{{!workDetail.replyknow && workDetail.replyTime}}">
-              <view class="-tip-text">老师已点评， 敬请收听</view>
+              <view class="-tip-text">老师已点评</view>
             </view>
             <view class="-right-btn"
                   @tap="lookWorkDetail({{workDetail}})">查看作业详情</view>
@@ -87,8 +87,12 @@
         <view class="-text">{{cardDetail.todayCard ? '已打卡' : '点我打卡'}}</view>
       </view>
 
-      <view class="p-submitHomework-center "
-            wx:if="{{tabActive === '2'}}">
+
+      <scroll-view class="p-submitHomework-center p-submitHomework-list"
+                   @scrolltolower="bindLoadItem"
+                   scroll-y
+                   scroll-with-animation
+                   wx:if="{{tabActive === '2'}}">
         <repeat for="{{dataList}}"
                 wx:if="{{dataList.length && isSuccessWork}}"
                 key="index"
@@ -132,7 +136,7 @@
                  src="https://pub.file.k12.vip/tbzw/empty/zy.png"></image>
           <view class="-no-text">自己写完作业后，才能查看同伴作业哦～</view>
         </view>
-      </view>
+      </scroll-view>
 
     </view>
 
@@ -365,6 +369,12 @@ export default class SubmitHomework extends wepy.page {
     changeTab (num) {
       num === '2' && this.getOtherHomeWork()
       this.tabActive = num
+    },
+    bindLoadItem (data) {
+      if (this.page.current < Math.ceil(this.page.total / this.page.size)) {
+        this.page.current++
+        this.getOtherHomeWork()
+      }
     }
   };
 
@@ -628,10 +638,10 @@ export default class SubmitHomework extends wepy.page {
 
           .-tip-text {
             text-align: center;
-            margin-top: 40px;
-            margin-left: 40px;
+            margin-top: 52px;
+            margin-left: 36px;
             width: 120px;
-            height: 56px;
+            /*height: 56px;*/
             font-size: 20px;
             font-weight: 500;
             color: rgba(88, 66, 43, 1);
@@ -717,7 +727,7 @@ export default class SubmitHomework extends wepy.page {
     }
 
     .-center-other-no {
-      margin-top: 100px;
+      padding-top: 100px;
       text-align: center;
 
       .-no-icon {
@@ -734,6 +744,10 @@ export default class SubmitHomework extends wepy.page {
         line-height: 40px;
       }
     }
+  }
+
+  &-list {
+    height: 55vh;
   }
 
   &-footer {

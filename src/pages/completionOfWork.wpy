@@ -47,7 +47,7 @@
                 <text class="-name">{{workDetail.replyTeacher}}</text>
                 <text>{{workDetail.replyTime}}</text>
               </view>
-              <view class="-reply-info-wrap">
+              <view class="-reply-info-wrap" wx:if="{{workDetail.replyAudio}}">
                 <view class="-info-content voice"
                       @tap="changeAudioStatus">
                   <view class="icon"

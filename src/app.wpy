@@ -96,9 +96,21 @@ export default class extends wepy.app {
     let audioContext = wx.createInnerAudioContext()
     audioContext.volume = 0.3
     this.globalData.audioContext = audioContext
+    console.log('load start')
     wx.setKeepScreenOn({
       keepScreenOn: true
     })
+    wx.getSystemInfo({
+      success (res) {
+        that.globalData.systemInfo = res
+        that.globalData.headHeight = res.statusBarHeight + 46
+        if (res.model.indexOf('iPhone X') > -1) {
+          that.globalData.isIpx = true
+        }
+      }
+    })
+  }
+  onShow () {
     wepy.login().then(res => {
       let params = {
         code: res.code
@@ -114,15 +126,9 @@ export default class extends wepy.app {
         }
       })
     })
-    wx.getSystemInfo({
-      success (res) {
-        that.globalData.systemInfo = res
-        that.globalData.headHeight = res.statusBarHeight + 46
-        if (res.model.indexOf('iPhone X') > -1) {
-          that.globalData.isIpx = true
-        }
-      }
-    })
+  }
+  onHide() {
+    store.dispatch({ type: 'UPDATE_USERINFO', payload: {id: null} })
   }
 }
 </script>

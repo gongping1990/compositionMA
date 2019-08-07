@@ -7,11 +7,15 @@
       <view class="card-header">
         <view class="card-day">
           <view class="card-day-left">
+            <view class="card-day-time">你好，截止今天 ({{todayTime}})</view>
             <view class="card-day-num">
-              {{cardDetail.continuousdays||0}}
-              <text>天</text>
+              {{cardDetail.totaldays||0}}天
+              <text>累计打卡</text>
             </view>
-            <text>累计打卡</text>
+            <view class="card-day-num">
+              {{cardDetail.continuousdays||0}}天
+              <text>连续打卡</text>
+            </view>
           </view>
           <view class="card-day-right"></view>
         </view>
@@ -112,6 +116,7 @@
 import wepy from 'wepy'
 import {connect} from 'wepy-redux'
 import api from '../request/api'
+import dayjs from 'dayjs'
 import calendar from '../components/calendar'
 import mHeader from '../components/header'
 import testMixin from '../mixins/test'
@@ -193,6 +198,9 @@ export default class Example extends wepy.page {
   computed = {
     height () {
       return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+    },
+    todayTime() {
+      return dayjs(new Date()).format('MM月DD日')
     }
   };
 
@@ -287,6 +295,9 @@ export default class Example extends wepy.page {
   }
   &-btn {
     @include flex-center;
+    position: absolute;
+    bottom: 0;
+    right: 80px;
     margin-bottom: 66px;
     width: 320px;
     height: 72px;
@@ -306,19 +317,29 @@ export default class Example extends wepy.page {
   }
   &-day {
     display: flex;
-    align-items: flex-end;
     justify-content: space-between;
     margin-bottom: 40px;
+    &-time {
+      margin-bottom: 44px;
+      font-size: 32px;
+      font-weight: 600;
+      color: #3B3F3C;
+    }
     &-num {
-      font-size: 72px;
+      margin-bottom: 16px;
+      font-size: 36px;
       font-weight: bold;
+      line-height: 50px;
+      color: #FFD129;
       text {
         font-weight: normal;
-        font-size: 32px;
+        font-size: 22px;
+        color: #3B3F3C;
       }
     }
     &-right {
       @include bg('/card/icon-lock in.png');
+      margin-top: 10px;
       width: 108px;
       height: 116px;
     }
@@ -330,8 +351,10 @@ export default class Example extends wepy.page {
     }
   }
   &-header {
+    position: relative;
     padding: 0 96px;
     padding-top: 88px;
+    height: 320px;
   }
   &-popup {
     width:590px;

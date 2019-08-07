@@ -46,7 +46,7 @@
 				{
 					"id": 0,
 					"name": "classroom",
-					"pathName": "pages/submitHomework",
+					"pathName": "pages/card",
 					"query": "id=1134359706941546498",
 					"scene": null
 				},

@@ -1,0 +1,377 @@
+<template>
+  <view class="container">
+    <mHeader title="提交作业"></mHeader>
+    <view class="container-scroll p-uploadAudioWork" style="margin-top:{{height}}px">
+      <view class="p-uploadAudioWork-title">
+        诵读今日名家儒勒·凡尔纳在《八十天环游地球》中关于脸部描写的经典片段。
+      </view>
+      <view class="p-uploadAudioWork-content">
+        他的相貌非常讨人喜欢，脑袋圆圆的， 给人一种和蔼可亲的感觉；脸很胖，胖
+        得自己都能看到自己的颧骨；嘴唇微微 翘起，一双碧蓝色的眼睛嵌在那张红光
+        满面的脸膛上。
+      </view>
+
+      <view class="p-uploadAudioWork-sound">
+        <view class="-sound-wrap">
+          <view class="-sound-wrap-other" @tap="openModal" wx:if="{{nowStatus > 3}}">
+            <image class="-sound-wrap-img" src="https://pub.file.k12.vip/poem/1_2/hm-btn-remake@3x.png"></image>
+            <view class="-sound-wrap-text">重录</view>
+          </view>
+          <view class="-sound-wrap-center">
+            <view class="-center-text">{{textArray[nowStatus]}}</view>
+            <image class="-center-img" @tap="changeStatus" src="{{imgArray[nowStatus]}}"></image>
+          </view>
+          <view class="-sound-wrap-other" wx:if="{{nowStatus > 3}}" @tap="toSubmitAudio">
+            <image class="-sound-wrap-img" src="https://pub.file.k12.vip/poem/1_2/hm-btn-sure@3x.png"></image>
+            <view class="-sound-wrap-text">提交</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <van-popup show="{{isOpenPopup}}">
+      <view class="p-uploadAudioWork-popup">
+        <image class="-popup-icon"
+               src="https://pub.file.k12.vip/tbzw/jrxx/succes.png"></image>
+        <view class="-popup-title">作业上传成功</view>
+        <view class="-popup-text">老师随后为你点评，请留意微信通知!</view>
+        <button class="-popup-btn"
+                @tap="toWorkDetail">我知道了</button>
+      </view>
+    </van-popup>
+
+    <van-popup show="{{isOpenResultPopup}}">
+      <div class="p-uploadAudioWork-result">
+        <div class="p-uploadAudioWork-result-title">提示</div>
+        <div class="p-uploadAudioWork-result-text">您确认要重新录制诵读吗？</div>
+        <div class="p-uploadAudioWork-result-btn-wrap">
+          <div class="-btn-cancle" @click="isOpenResultPopup = false">取消</div>
+          <div class="-btn-ok" @click="sureResult">确认</div>
+        </div>
+      </div>
+    </van-popup>
+
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import api from '../request/api'
+  import mHeader from '../components/header'
+
+  export default class UploadAudioWork extends wepy.page {
+    config = {
+      navigationBarTitleText: '提交作业',
+      'usingComponents': {
+        'van-icon': '../vant/icon/index',
+        'van-popup': '../vant/popup/index'
+      }
+    };
+    components = {
+      mHeader
+    };
+    computed = {
+      height() {
+        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+      }
+    };
+
+    data = {
+      isOpenPopup: false,
+      isOpenResultPopup: false,
+      isSending: false,
+      queryInfo: '',
+      nowStatus: '1',
+      recorderManager: '',
+      innerAudioContext: '',
+      fileAudioUrl: '',
+      recorderOptions:{
+        sampleRate: 44100,
+        numberOfChannels: 1,
+        encodeBitRate: 192000,
+        format: 'mp3',
+        frameSize: 50
+      },
+      textArray: {
+        '1': '点我诵读',
+        '2': '你说我在听',
+        '3': '点我完成',
+        '4': '点击试听',
+        '5': '点击暂停',
+      },
+      imgArray: {
+        '1': 'https://pub.file.k12.vip/poem/1_2/tjzy_icon_record@3x.png',
+        '2': 'https://pub.file.k12.vip/poem/1_2/tjzy_icon_recording@3x.png',
+        '3': 'https://pub.file.k12.vip/poem/1_2/tjzy_icon_recording@3x.png',
+        '4': 'https://pub.file.k12.vip/poem/1_2/tjzy_icon_rplay@3x.png',
+        '5': 'https://pub.file.k12.vip/poem/1_2/tjzy_icon_stop@3x.png',
+      }
+    };
+
+    onShow () {
+      this.initRecorderAudio()
+    }
+
+    initPlayAudio (src) {
+      this.innerAudioContext = wx.createInnerAudioContext()
+      this.innerAudioContext.src = src
+
+      this.innerAudioContext.onPlay(()=>{
+        console.log('监听开始播放')
+      })
+
+      this.innerAudioContext.onPause(()=>{
+        console.log('监听开始暂停')
+      })
+    }
+
+    initRecorderAudio () {
+      this.recorderManager = wx.getRecorderManager()
+      this.recorderManager.onStart(() => {
+        console.log('监听开始录音')
+        this.nowStatus = 2
+        setTimeout(()=>{
+          this.nowStatus = 3
+          this.$apply()
+        }, 3000)
+        this.$apply()
+      })
+      this.recorderManager.onPause(() => {
+        console.log('监听暂停录音')
+      })
+      this.recorderManager.onStop((res) => {
+        this.nowStatus = 4
+        this.$apply()
+        this.initPlayAudio(res.tempFilePath)
+        this.fileAudioUrl = res.tempFilePath
+        console.log('监听结束事件', res)
+      })
+    }
+
+    methods = {
+      changeStatus (num) {
+        switch (+this.nowStatus) {
+          case 1:
+            this.recorderManager.start(this.recorderOptions)
+            break
+          case 3:
+            this.recorderManager.stop()
+            break
+          case 4:
+            this.innerAudioContext.play()
+            this.nowStatus = 5
+            break
+          case 5:
+            this.innerAudioContext.pause()
+            this.nowStatus = 4
+            break
+        }
+      },
+      openModal () {
+        this.isOpenResultPopup = true
+      },
+      sureResult () {
+        this.nowStatus = 1
+        this.isOpenResultPopup = false
+      },
+      toSubmitAudio () {
+        let _self = this
+        if(_self.isSending) return
+        _self.isSending = true
+        wx.showToast({
+          icon: 'loading',
+          title: '正在上传~'
+        })
+
+        wx.uploadFile({
+          url: 'https://huoke.prod.k12.vip/composition/common/uploadPublicFile',
+          filePath: _self.fileAudioUrl,
+          name: 'file',
+          header: { 'Content-Type': 'multipart/form-data' },
+          success: function (res) {
+            if (res.statusCode !== 200) {
+              wx.showModal({
+                title: '提示',
+                content: '上传失败',
+                showCancel: false
+              })
+            } else {
+              let parmas = JSON.parse(res.data)
+              api.study.addHomework({
+                lessonId: _self.queryInfo.id,
+                workImg: parmas.resultData.url
+              }).then( res => {
+                _self.isSending = false
+                wx.hideToast()  // 隐藏Toast
+                _self.isOpenPopup = true
+                _self.$apply()
+              },()=>{
+                _self.isSending = false
+              })
+            }
+          },
+          fail: function (e) {
+            wx.showModal({
+              title: '提示',
+              content: '上传失败',
+              showCancel: false
+            })
+          },
+          complete: function () {
+
+          }
+        })
+      },
+      toWorkDetail () {
+        this.isOpenPopup = false
+        wx.navigateTo({ url: `/pages/completionOfWork?type=1&id=${this.queryInfo.id}` })
+      }
+    };
+
+    events = {};
+
+    onLoad (query) {
+      this.queryInfo = query
+    }
+
+    onShareAppMessage () {
+      return {
+        title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
+        path: `/pages/index`,
+        imageUrl: 'https://pub.file.k12.vip/tbzw/v2/logo2.png'
+      }
+    }
+  }
+</script>
+<style lang="scss">
+  @import '../assets/style/mixin.scss';
+
+  .p-uploadAudioWork {
+    border-top: 1px solid transparent;
+
+    &-title {
+      margin: 32px 48px 48px;
+      padding: 32px;
+      background: rgba(255, 245, 209, 1);
+      border-radius: 16px;
+      font-size: 32px;
+      font-weight: 500;
+      color: rgba(209, 138, 59, 1);
+    }
+
+    &-content {
+      margin: 80px 70px 0;
+      max-height: 600px;
+      overflow-y: auto;
+      font-size:36px;
+      font-weight:600;
+      color:rgba(88,66,43,1);
+      line-height:100px;
+    }
+
+    &-sound {
+      position: fixed;
+      bottom: 48px;
+      width: 100%;
+      @include flex-center;
+
+      .-sound-wrap {
+        display: flex;
+        align-items: flex-end;
+
+        &-other {
+          text-align: center;
+        }
+
+        &-center {
+          margin: 0 96px;
+          text-align: center;
+
+          .-center-text {
+            font-size:24px;
+            font-weight:500;
+            color:rgba(209,138,59,1);
+            line-height:34px;
+          }
+
+          .-center-img {
+            margin-top: 24px;
+            width: 144px;
+            height: 144px;
+          }
+        }
+
+        &-img {
+          width: 80px;
+          height: 80px;
+        }
+
+        &-text {
+          height:34px;
+          font-size:24px;
+          font-weight:400;
+          color:rgba(88,66,43,1);
+          line-height:34px;
+        }
+      }
+    }
+
+    &-popup {
+      text-align: center;
+      margin: 0 auto;
+      width: 590px;
+      height: 460px;
+      background: rgba(255, 255, 255, 1);
+      border-radius: 32px;
+
+      .-popup-icon {
+        position: absolute;
+        top: -92px;
+        left: 210px;
+        width: 184px;
+        height: 184px;
+      }
+
+      .-popup-title {
+        padding-top: 124px;
+        height: 50px;
+        font-size: 36px;
+        font-weight: 500;
+        color: rgba(88, 66, 43, 1);
+        line-height: 50px;
+      }
+
+      .-popup-text {
+        margin: 16px 0 48px;
+        height: 40px;
+        font-size: 28px;
+        font-weight: 300;
+        color: rgba(88, 66, 43, 0.5);
+        line-height: 40px;
+      }
+
+      .-popup-btn {
+        text-align: center;
+        margin: 0 auto;
+        width: 470px;
+        height: 100px;
+        background: linear-gradient(
+            90deg,
+            rgba(249, 230, 11, 1) 0%,
+            rgba(253, 219, 85, 1) 100%
+        );
+        box-shadow: 0px 8px 16px 4px rgba(230, 194, 81, 0.4);
+        border-radius: 50px;
+        font-size: 32px;
+        font-weight: 500;
+        color: rgba(88, 66, 43, 1);
+        line-height: 100px;
+      }
+    }
+
+    &-result {
+
+    }
+  }
+
+</style>

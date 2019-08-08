@@ -41,7 +41,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 5,
+			"current": 4,
 			"list": [
 				{
 					"id": 0,
@@ -73,8 +73,8 @@
 				},
 				{
 					"id": 4,
-					"name": "交作业",
-					"pathName": "pages/submitHomework",
+					"name": "交作业(语音)",
+					"pathName": "pages/uploadAudioWork",
 					"query": "id=1138723411242659841",
 					"scene": null
 				},

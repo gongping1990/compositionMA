@@ -3,12 +3,15 @@
     <mHeader title="作业分享"></mHeader>
     <view class="container-scroll p-shareHomework"
           style="margin-top:{{height}}px">
-      <view class="p-shareHomework-header">
-        <view class="-header-title">小语轻作文</view>
-        <view class="-header-text">
-          北京师范大学特级名师1对4小班教学， 专业作文老师1对1点评
+      <view class="p-shareHomework-headerBg">
+        <view class="p-shareHomework-header">
+          <view class="-header-title">小语轻作文</view>
+          <view class="-header-text">
+            北京师范大学特级名师1对4小班教学， 专业作文老师1对1点评
+          </view>
         </view>
       </view>
+
       <view class="p-shareHomework-content">
         <view class="-content-top">
           <view class="-content-top-left">
@@ -36,30 +39,65 @@
         <view class="-content-down">
           <view class="-content-down-title">
             <view>我刚完成了今天的作业</view>
-            <view class="-title-small">以《{{shareInfo.homeworkTitle}}》写一篇作文</view>
           </view>
-          <image class="-content-down-img {{!shareInfo.replyTime ? '-content-down-colunm-img' : ''}}"
-                 src="{{shareInfo.replyImg || shareInfo.workImg}}" @tap="enlargeImage({{shareInfo}})"></image>
-          <view class="-content-down-reply" wx:if="{{shareInfo.replyAudio}}">
-            <image class="-reply-img"
-                   src="{{shareInfo.replyTeacherImg}}"></image>
-            <view class="-reply-info">
-              <view class="-info-name">{{shareInfo.replyTeacher}}</view>
-              <view class="-info-wrap">
-                <view class="-info-content voice"
-                      @tap="changeAudioStatus">
-                  <view class="icon" wx:if="{{!isPlay}}"></view>
-                  <view class="playIcon" wx:if="{{isPlay}}"></view>
+
+          <view class="-content-down-content">
+            <view class="-title">诵读今日名家儒勒·凡尔纳在“八十天环诵读今日名家儒勒·凡尔纳在“八十天环</view>
+            <view class="-wrap-img">
+              <image class="-content-down-img {{!shareInfo.replyTime ? '-content-down-colunm-img' : ''}}" wx:if="{{!true}}"
+                     src="{{shareInfo.replyImg || shareInfo.workImg}}" @tap="enlargeImage({{shareInfo}})"></image>
+              <view class="-content-down-audio" @tap="changeMyAudioStatus" wx:if="{{!false}}">
+                <view class="-reply-icon">
+                  <view class="icon"
+                        wx:if="{{!isMyPlay}}"></view>
+                  <view class="playIcon"
+                        wx:if="{{isMyPlay}}"></view>
                 </view>
-                <view class="-reply-time">{{durationTime}}</view>
+                <view class="-reply-time">{{durationMyTime}}</view>
               </view>
             </view>
           </view>
         </view>
+
+        <!--<view class="-content-footer">-->
+
+          <!--<view class="-content-down-reply" wx:if="{{shareInfo.replyTime}}">-->
+            <!--<view class="-down-reply-info">-->
+              <!--<image class="-reply-info-img"-->
+                     <!--src="{{shareInfo.replyTeacherImg}}"></image>-->
+              <!--<view class="-reply-info-user">-->
+                <!--<view class="-user-text">-->
+                  <!--<view class="-name">{{shareInfo.replyTeacher}}</view>-->
+                  <!--<view>{{shareInfo.replyTime}}</view>-->
+                <!--</view>-->
+              <!--</view>-->
+            <!--</view>-->
+
+            <!--<view class="-reply-info-text">小朋友读的很不错哦，要继续加油保持哦。加油！老师期待你下一次的表现！</view>-->
+
+            <!--<view class="-replay-info-audio" @tap="changeAudioStatus" wx:if="{{shareInfo.replyAudio}}">-->
+              <!--<view class="-reply-icon">-->
+                <!--<view class="icon"-->
+                      <!--wx:if="{{!isPlay}}"></view>-->
+                <!--<view class="playIcon"-->
+                      <!--wx:if="{{isPlay}}"></view>-->
+              <!--</view>-->
+              <!--<view class="-reply-time">{{durationTime}}</view>-->
+            <!--</view>-->
+
+            <!--<view class="-reply-info-img">-->
+              <!--<image class="-img" wx:for="{{workImgList}}" wx:key="{{item}}"-->
+                     <!--@tap="enlargeImage({{item}})"-->
+                     <!--src="{{item}}"></image>-->
+            <!--</view>-->
+          <!--</view>-->
+        <!--</view>-->
       </view>
+
       <view class="p-shareHomework-btn">
         <button class="-btn" @tap="openPopup"></button>
       </view>
+
       <van-popup show="{{ showKF }}"
                  position="bottom"
                  @close="onClose">
@@ -85,6 +123,7 @@
 import wepy from 'wepy'
 import {connect} from 'wepy-redux'
 import api from '../request/api'
+import dayjs from 'dayjs'
 import mHeader from '../components/header'
 import lookImage from '../components/lookImage'
 
@@ -119,6 +158,7 @@ export default class ShareHomework extends wepy.page {
   };
 
   data = {
+    workImgList: ['https://pub.file.k12.vip/2019/06/17/1140548810520395777.jpg','https://pub.file.k12.vip/2019/06/17/1140548810520395777.jpg','https://pub.file.k12.vip/2019/06/17/1140548810520395777.jpg'],
     isPlay: false,
     showKF: false,
     isShowImage: false,
@@ -149,6 +189,7 @@ export default class ShareHomework extends wepy.page {
       workId: this.workId
     }).then(res => {
       this.shareInfo = res.data.resultData
+      this.shareInfo.replyTime = dayjs(+this.shareInfo.replyTime).format('YYYY-MM-DD HH:mm');
       this.initAudio()
       this.$apply()
     })
@@ -168,7 +209,7 @@ export default class ShareHomework extends wepy.page {
       if (second < 10) {
         second = '0' + second
       }
-      result = `${minute} : ${second}`
+      result = `${minute} " ${second} "`
     }
     return result
   };
@@ -235,14 +276,22 @@ export default class ShareHomework extends wepy.page {
 @import '../assets/style/mixin.scss';
 
 .p-shareHomework {
-  @include bg('/v2/zyfx-background.png');
+  background-color: rgba(255,210,99,0.19);
   border-top: 1px solid transparent;
+
+  &-headerBg {
+    margin-top: 16px;
+    background: url("https://pub.file.k12.vip/poem/1_2/bg.png") no-repeat;
+    background-size: 94%;
+    background-position: 32px 0;
+    height: 192px;
+  }
 
   &-header {
     margin-left: 72px;
+    padding-top: 18px;
 
     .-header-title {
-      margin-top: 34px;
       margin-bottom: 4px;
       height:44px;
       font-size:32px;
@@ -262,9 +311,9 @@ export default class ShareHomework extends wepy.page {
   }
 
   &-content {
-    margin: 42px auto 26px;
+    margin: 0 auto 26px;
     width: 686px;
-    height: 850px;
+    /*height: 850px;*/
     background: rgba(255, 255, 255, 1);
     box-shadow: 0px 8px 16px 4px rgba(255, 246, 162, 0.5);
     border-radius: 32px;
@@ -353,8 +402,10 @@ export default class ShareHomework extends wepy.page {
     }
 
     .-content-down {
+      padding: 0 48px 46px;
+      border-bottom: 8px solid #F6F6F6;
+
       &-title {
-        margin-bottom: 20px;
         text-align: center;
         height: 84px;
         font-size: 36px;
@@ -367,12 +418,72 @@ export default class ShareHomework extends wepy.page {
         }
       }
 
+      &-content {
+        width:590px;
+
+        .-title {
+          @include text-overflow(528px);
+          margin: 0 auto;
+          background:rgba(255,245,209,1);
+          border-radius: 18px 18px 0 0;
+          padding: 20px 32px 16px;
+          font-size:28px;
+          font-weight:500;
+          color:rgba(209,138,59,1);
+          line-height: 56px;
+        }
+
+        .-wrap-img {
+          border-radius:0 0 16px 16px;
+          border:2px solid rgba(144,141,138,0.2);
+
+          .-content-down-img {
+            margin: 32px;
+            width:526px;
+            height:292px;
+            border-radius:8px;
+          }
+
+          .-content-down-audio {
+            @include flex-center;
+            justify-content: space-between;
+            margin: 44px 0 64px 32px;
+            padding: 20px 32px 18px;
+            width:464px;
+            background:rgba(255,245,209,1);
+            border-radius: 36px;
+            border:3px solid rgba(232,197,157,1);
+
+            .-reply-icon {
+              .icon {
+                @include bg('/sk/icon-audio.png');
+                width: 20px;
+                height: 37px;
+              }
+
+              .playIcon {
+                @include bg('/v2/audio-pay.gif');
+                width: 20px;
+                height: 37px;
+              }
+            }
+
+            .-reply-time {
+              height:26px;
+              font-size:19px;
+              font-weight:600;
+              color:rgba(209,138,59,1);
+              line-height:26px;
+            }
+          }
+        }
+
+      }
+
       &-img {
         display: block;
         margin: 0 auto;
-        width: 606px;
         height: 342px;
-        border-radius: 32px;
       }
 
       &-colunm-img {
@@ -383,87 +494,103 @@ export default class ShareHomework extends wepy.page {
       }
 
       &-reply {
-        display: flex;
-        margin-top: 32px;
-        margin-left: 34px;
+        padding: 32px 48px 48px;
 
-        .-reply-img {
-          margin-right: 16px;
-          min-width: 64px;
-          max-width: 64px;
-          height: 64px;
-          border-radius: 8px;
-          border: 4px solid rgba(232, 197, 157, 1);
-        }
-
-        .-reply-time {
-          margin: 0 36px 0 24px;
-          height: 32px;
-          font-size: 28px;
-          color: rgba(88, 66, 43, 1);
-          line-height: 34px;
-        }
-
-        .-info-wrap {
+        .-down-reply-info {
           display: flex;
           align-items: center;
+
+          .-reply-info-img {
+            margin-right: 16px;
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+          }
+
+          .-reply-info-user {
+            .-user-text {
+              font-size: 20px;
+              font-weight: 400;
+              color: #343230;
+
+              .-name {
+                height:40px;
+                font-size:28px;
+                font-weight:500;
+                color: #343230;
+                line-height:40px;
+              }
+            }
+          }
+
+        }
+
+        .-reply-info-text {
+          margin-top: 18px;
+          font-size:32px;
+          font-weight:400;
+          color:rgba(52,50,48,1);
+          line-height:44px;
+        }
+
+        .-replay-info-audio {
+          @include flex-center;
           justify-content: space-between;
-        }
 
-        .-info-content {
-          margin-left: 16px;
-          position: relative;
-          flex: 1;
-          width: 346px;
-          font-size: 28px;
-          line-height: 40px;
-          padding: 24px 32px;
-          background: rgba(255, 245, 209, 1);
-          border-radius: 16px;
-          border: 3px solid rgba(232, 197, 157, 1);
-          &::before {
-            @include bg('/icon.png');
-            content: '';
-            position: absolute;
-            left: -20px;
-            top: 12px;
-            width: 50px;
-            height: 30px;
-          }
-          &.voice .icon {
-            @include bg('/sk/icon-audio.png');
-            margin-left: 16px;
-            width: 26px;
-            height: 43px;
+          margin: 24px 0 26px;
+          padding: 16px 24px;
+          width:390px;
+          background:rgba(255,245,209,1);
+          border-radius: 39px;
+          border:2px solid rgba(232,197,157,1);
+
+          .-reply-icon {
+            .icon {
+              @include bg('/sk/icon-audio.png');
+              width: 26px;
+              height: 43px;
+            }
+
+            .playIcon {
+              @include bg('/v2/audio-pay.gif');
+              width: 26px;
+              height: 43px;
+            }
           }
 
-          &.voice .playIcon {
-            @include bg('/v2/audio-pay.gif');
-            margin-left: 16px;
-            width: 26px;
-            height: 43px;
+          .-reply-time {
+            height:26px;
+            font-size:19px;
+            font-weight:600;
+            color:rgba(209,138,59,1);
+            line-height:26px;
           }
         }
 
-        .-info-name {
-          height: 34px;
-          font-size: 24px;
-          font-weight: 500;
-          color: rgba(88, 66, 43, 0.4);
-          line-height: 34px;
-          margin-bottom: 8px;
+        .-reply-info-img {
+          display: flex;
+
+          .-img {
+            margin-right: 12px;
+            width: 198px;
+            height: 198px;
+          }
         }
       }
     }
   }
 
   &-btn {
+    position: fixed;
+    bottom:0;
+    background: url("https://pub.file.k12.vip/poem/1_2/banner@3x.png") no-repeat;
+    background-size: 100%;
     position: relative;
-    height: 280px;
+    height: 320px;
 
     .-btn {
       position: absolute;
-      top: 138px;
+      top: 188px;
       left: 70px;
       width: 220px;
       height: 75px;

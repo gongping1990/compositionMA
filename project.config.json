@@ -41,7 +41,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 6,
+			"current": 5,
 			"list": [
 				{
 					"id": 0,
@@ -72,17 +72,17 @@
 					"scene": null
 				},
 				{
-					"id": -1,
+					"id": 4,
 					"name": "交作业",
 					"pathName": "pages/submitHomework",
-					"query": "",
+					"query": "id=1138723411242659841",
 					"scene": null
 				},
 				{
-					"id": -1,
+					"id": 5,
 					"name": "上传作业",
-					"pathName": "pages/uploadHomework",
-					"query": "",
+					"pathName": "pages/uploadImgWork",
+					"query": "id=1138723411242659841",
 					"scene": null
 				},
 				{

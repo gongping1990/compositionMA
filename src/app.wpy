@@ -47,7 +47,8 @@ export default class extends wepy.app {
       'pages/address',
       'pages/subscribe',
       'pages/authorize',
-      'pages/enroll'
+      'pages/enroll',
+      'pages/uploadImgWork'
     ],
     window: {
       backgroundTextStyle: 'light',

@@ -280,8 +280,11 @@ export default class PraiseOfWorks extends wepy.page {
       console.log('监听开始播放')
     })
 
-    this.innerAudioContext.onPause(()=>{
-      console.log('监听开始暂停')
+    this.innerAudioContext.onEnded(()=>{
+      for (let data of this.dataList) {
+        data.isStuPlay = false
+        data.isTeaPlay = false
+      }
     })
   }
 

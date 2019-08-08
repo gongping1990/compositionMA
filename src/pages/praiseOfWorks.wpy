@@ -1,109 +1,176 @@
 <template>
-  <scroll-view class="item-scroll"
-               @scrolltolower="bindLoadItem"
-               scroll-y
-               scroll-with-animation>
-    <view class="container">
-      <mHeader flag="0" title="作品表彰"></mHeader>
-      <view class="container-scroll p-praiseOfWorks"
-            style="margin-top:{{height}}px">
-        <view class="p-praiseOfWorks-title">作品表彰</view>
+  <view class="container">
+    <mHeader flag="0" title="作品表彰"></mHeader>
+    <view class="container-scroll p-praiseOfWorks"
+          style="margin-top:{{height}}px">
+      <scroll-view class="item-scroll"
+                   @scrolltolower="bindLoadItem"
+                   scroll-y
+                   scroll-with-animation>
         <repeat for="{{dataList}}"
                 key="index"
                 index="index"
                 item="item">
           <view class="p-praiseOfWorks-item">
-            <view class="p-praiseOfWorks-item-top" @tap="toWorkDetail({{item}})">
+            <view class="p-praiseOfWorks-item-top" >
               <view class="-item-top">
-                <view class="-item-top-left">
-                  <image class="-left-img"
-                         src="{{item.stuImg}}"></image>
+                <view class="-item-top-info">
+                  <view class="-item-top-left">
+                    <image class="-left-img"
+                           src="{{item.stuImg}}"></image>
+                  </view>
+                  <view class="-item-top-right">
+                    <view class="-right-name">{{item.stuName}}</view>
+                    <view class="-right-time">{{item.worktime}}</view>
+                  </view>
                 </view>
-                <view class="-item-top-right">
-                  <view class="-right-name">{{item.stuName}}</view>
-                  <view class="-right-time">{{item.worktime}}</view>
-                  <image class="-right-work"
-                         src="{{item.workImg}}"></image>
+
+                <view class="-item-top-icon">
+                  <view class="-item-top-icon-num">
+                    {{item.learnDay}}次
+                  </view>
+                  <view class="-item-top-icon-text">被表扬</view>
                 </view>
               </view>
 
-              <view class="-item-icon">
-                <view class="-item-icon-num">
-                  {{item.learnDay}}天
+              <view class="-item-text">完成作业：摘抄今日名家儒勒·凡尔纳在《八十天环游地球》
+                中关于脸部描写的经典片段</view>
+
+              <view class="-item-down">
+                <image class="-item-down-img"  wx:for="{{workImgList}}" wx:key="{{item}}" wx:if="{{true}}"
+                       @tap="enlargeImage({{item}})"
+                       src="{{item}}"></image>
+
+                <view class="-item-down-audio" @tap="changeMyAudioStatus" wx:if="{{false}}">
+                  <view class="-reply-icon">
+                    <view class="icon"
+                          wx:if="{{!isMyPlay}}"></view>
+                    <view class="playIcon"
+                          wx:if="{{isMyPlay}}"></view>
+                  </view>
+                  <view class="-reply-time">{{durationMyTime}}</view>
                 </view>
-                <view class="-item-icon-text">坚持学习</view>
               </view>
-            </view>
-            <view class="p-praiseOfWorks-item-down">
-              <view class="-down-left">
-                <image class="-down-left-img"
-                       src="{{item.teacherImg}}"></image>
-                <view class="-down-left-name">被{{item.teacherName}}表扬</view>
-              </view>
-              <view class="-down-right"
-                    @tap="addMyLike({{item}})">
-                <view class="-texiao"
-                      wx:if="{{dataItem.workId === item.workId}}"
-                      style="background-position-y:-{{backgroundY}}rpx;">
-                </view>
-                <view class="-zan-left {{item.myLike ? '-zan-animation' : ''}}">
-                  <image class="-img {{dataItem.workId === item.workId ? '-icon-animation' : ''}}"
+
+              <view class="-item-footer">
+                <view class="-item-footer-wrap">
+                  <image class="-img"
                          wx:if="{{!item.myLike}}"
                          src="https://pub.file.k12.vip/tbzw/word-detail/icon-give-pre.png"></image>
                   <image class="-img"
                          wx:if="{{item.myLike}}"
                          src="https://pub.file.k12.vip/2019/06/06/1136572565700235266.png"></image>
+                  <text>{{item.like}}</text>
                 </view>
-                <view class="-zan-right {{item.myLike ? '-zan-animation' : ''}}">{{item.like}}</view>
+                <view class="-item-footer-wrap" @tap="toWorkDetail({{item}})">
+                  <image class="-img"
+                         wx:if="{{!item.myLike}}"
+                         src="https://pub.file.k12.vip/poem/1_2/zybz-icon-review@3x.png"></image>
+                  <text>看点评</text>
+                </view>
+              </view>
+            </view>
+            <!--<view class="p-praiseOfWorks-item-down">-->
+            <!--<view class="-down-left">-->
+            <!--<image class="-down-left-img"-->
+            <!--src="{{item.teacherImg}}"></image>-->
+            <!--<view class="-down-left-name">被{{item.teacherName}}表扬</view>-->
+            <!--</view>-->
+            <!--<view class="-down-right"-->
+            <!--@tap="addMyLike({{item}})">-->
+            <!--<view class="-texiao"-->
+            <!--wx:if="{{dataItem.workId === item.workId}}"-->
+            <!--style="background-position-y:-{{backgroundY}}rpx;">-->
+            <!--</view>-->
+            <!--<view class="-zan-left {{item.myLike ? '-zan-animation' : ''}}">-->
+            <!--<image class="-img {{dataItem.workId === item.workId ? '-icon-animation' : ''}}"-->
+            <!--wx:if="{{!item.myLike}}"-->
+            <!--src="https://pub.file.k12.vip/tbzw/word-detail/icon-give-pre.png"></image>-->
+            <!--<image class="-img"-->
+            <!--wx:if="{{item.myLike}}"-->
+            <!--src="https://pub.file.k12.vip/2019/06/06/1136572565700235266.png"></image>-->
+            <!--</view>-->
+            <!--<view class="-zan-right {{item.myLike ? '-zan-animation' : ''}}">{{item.like}}</view>-->
+            <!--</view>-->
+
+            <!--</view>-->
+            <view class="p-praiseOfWorks-item-teacher">
+              <view class="-teacher-title">
+                <image class="-img"
+                       wx:if="{{!item.myLike}}"
+                       src="https://pub.file.k12.vip/poem/1_2/Stroke 3@3x.png"></image>
+                <text class="-text">点评老师：{{item.teacherName}}</text>
+                <image class="-img"
+                       wx:if="{{!item.myLike}}"
+                       src="https://pub.file.k12.vip/poem/1_2/Stroke 3@3x.png"></image>
+              </view>
+              <view class="-teacher-content">小朋友读的很不错哦，要继续加油保持哦。加油！老师期待你下一次的表现！</view>
+
+              <view class="-teacher-audio" @tap="changeAudioStatus">
+                <view class="-reply-icon">
+                  <view class="icon"
+                        wx:if="{{!isPlay}}"></view>
+                  <view class="playIcon"
+                        wx:if="{{isPlay}}"></view>
+                </view>
+                <view class="-reply-time">{{durationTime}}</view>
+              </view>
+
+              <view class="-teacher-img">
+                <image class="-img" wx:for="{{workImgList}}" wx:key="{{item}}"
+                       @tap="enlargeImage({{item}})"
+                       src="{{item}}"></image>
               </view>
             </view>
           </view>
         </repeat>
-      </view>
-      <van-tabbar active="1"
-                  z-index="2"
-                  active-color="#58422B"
-                  bind:change="onChangeTabbar">
-        <van-tabbar-item>
-          <image slot="icon"
-                 src="../assets/image/icon-jrxx.png"
-                 mode="aspectFit" />
-          <image slot="icon-active"
-                 src="../assets/image/icon-jrxx1.png"
-                 mode="aspectFit" />
-          今日学习
-        </van-tabbar-item>
-        <van-tabbar-item>
-          <image slot="icon"
-                 src="../assets/image/icon-zpbz.png"
-                 mode="aspectFit" />
-          <image slot="icon-active"
-                 src="../assets/image/icon-zpbz1.png"
-                 mode="aspectFit" />
-          作品表彰
-        </van-tabbar-item>
-        <van-tabbar-item dot="{{remindData.todaycard}}">
-          <image slot="icon"
-                 src="../assets/image/icon-dkjl.png"
-                 mode="aspectFit" />
-          <image slot="icon-active"
-                 src="../assets/image/icon-dkjl1.png"
-                 mode="aspectFit" />
-          打卡记录
-        </van-tabbar-item>
-        <van-tabbar-item dot="{{remindData.uctip}}">
-          <image slot="icon"
-                 src="../assets/image/icon-grzx.png"
-                 mode="aspectFit" />
-          <image slot="icon-active"
-                 src="../assets/image/icon-grzx1.png"
-                 mode="aspectFit" />
-          个人中心
-        </van-tabbar-item>
-      </van-tabbar>
+      </scroll-view>
     </view>
-  </scroll-view>
 
+    <van-tabbar active="1"
+                z-index="2"
+                active-color="#58422B"
+                bind:change="onChangeTabbar">
+      <van-tabbar-item>
+        <image slot="icon"
+               src="../assets/image/icon-jrxx.png"
+               mode="aspectFit" />
+        <image slot="icon-active"
+               src="../assets/image/icon-jrxx1.png"
+               mode="aspectFit" />
+        今日学习
+      </van-tabbar-item>
+      <van-tabbar-item>
+        <image slot="icon"
+               src="../assets/image/icon-zpbz.png"
+               mode="aspectFit" />
+        <image slot="icon-active"
+               src="../assets/image/icon-zpbz1.png"
+               mode="aspectFit" />
+        作品表彰
+      </van-tabbar-item>
+      <van-tabbar-item dot="{{remindData.todaycard}}">
+        <image slot="icon"
+               src="../assets/image/icon-dkjl.png"
+               mode="aspectFit" />
+        <image slot="icon-active"
+               src="../assets/image/icon-dkjl1.png"
+               mode="aspectFit" />
+        打卡记录
+      </van-tabbar-item>
+      <van-tabbar-item dot="{{remindData.uctip}}">
+        <image slot="icon"
+               src="../assets/image/icon-grzx.png"
+               mode="aspectFit" />
+        <image slot="icon-active"
+               src="../assets/image/icon-grzx1.png"
+               mode="aspectFit" />
+        个人中心
+      </van-tabbar-item>
+    </van-tabbar>
+
+    <lookImage :isShow.sync="isShowImage" :imgUrl.sync="itemUrl"></lookImage>
+  </view>
 </template>
 
 <script>
@@ -113,6 +180,7 @@ import api from '../request/api'
 import dayjs from 'dayjs'
 import testMixin from '../mixins/test'
 import mHeader from '../components/header'
+import lookImage from '../components/lookImage';
 
 @connect({
   userInfo (state) {
@@ -127,11 +195,14 @@ export default class PraiseOfWorks extends wepy.page {
     navigationBarTitleText: '作品表彰',
     usingComponents: {
       'van-tabbar': '../vant/tabbar/index',
-      'van-tabbar-item': '../vant/tabbar-item/index'
+      'van-tabbar-item': '../vant/tabbar-item/index',
+      'van-icon': '../vant/icon/index',
+      'van-popup': '../vant/popup/index'
     }
   };
   components = {
-    mHeader
+    mHeader,
+    lookImage
   };
   computed = {
     height () {
@@ -147,7 +218,12 @@ export default class PraiseOfWorks extends wepy.page {
       size: 10,
       total: ''
     },
+    workImgList: ['https://pub.file.k12.vip/2019/06/17/1140548810520395777.jpg','https://pub.file.k12.vip/2019/06/17/1140548810520395777.jpg','https://pub.file.k12.vip/2019/06/17/1140548810520395777.jpg'],
+    isShowImage: false,
+    isPlay: false,
     dataItem: '',
+    itemUrl: '',
+    durationTime: '',
     backgroundY: 0,
     dataList: []
   };
@@ -191,7 +267,16 @@ export default class PraiseOfWorks extends wepy.page {
     }, time)
   }
 
+  events = {
+    changePopupStatus() {
+      this.isShowImage = false;
+    }
+  };
   methods = {
+    enlargeImage(url) {
+      this.itemUrl = url;
+      this.isShowImage = true;
+    },
     toWorkDetail (data) {
       wx.navigateTo({ url: `/pages/completionOfWork?type=2&id=${data.workId}` })
     },
@@ -240,42 +325,25 @@ export default class PraiseOfWorks extends wepy.page {
 </script>
 <style lang="scss">
 @import '../assets/style/mixin.scss';
-.item-scroll {
-  height: 100vh;
-}
-.p-praiseOfWorks {
-  @include bg('/v2/zpbz/zpbz-background.png');
-  background-color: #ffd262;
-  overflow: hidden;
-  margin-bottom: 100px;
 
-  &-title {
-    padding-top: 56px;
-    margin: 0 0 104px 168px;
-    width: 192px;
-    height: 66px;
-    font-size: 48px;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 1);
-    line-height: 66px;
+.p-praiseOfWorks {
+
+  .item-scroll {
+    height: 100vh;
   }
 
   &-item {
-    margin: 0 auto 32px;
-    width: 686px;
-    /*height: 508px;*/
-    background: rgba(255, 255, 255, 1);
-    box-shadow: 0px 8px 16px 4px rgba(228, 212, 20, 1);
-    border-radius: 32px;
 
     &-top {
-      display: flex;
-      justify-content: space-between;
-      padding: 28px 48px 24px 48px;
-      border-bottom: 2px solid #efefef;
 
       .-item-top {
         display: flex;
+        justify-content: space-between;
+        padding: 26px 32px 0;
+
+        &-info {
+          display: flex;
+        }
 
         &-left {
           .-left-img {
@@ -288,19 +356,19 @@ export default class PraiseOfWorks extends wepy.page {
 
         &-right {
           .-right-name {
-            height: 40px;
-            font-size: 28px;
-            font-weight: 500;
-            color: rgba(88, 66, 43, 1);
-            line-height: 40px;
+            height:40px;
+            font-size:28px;
+            font-weight:500;
+            color:rgba(88,66,43,1);
+            line-height:40px;
           }
 
           .-right-time {
-            height: 28px;
-            font-size: 20px;
-            font-weight: 400;
-            color: rgba(88, 66, 43, 0.5);
-            line-height: 28px;
+            height:28px;
+            font-size:20px;
+            font-weight:400;
+            color:rgba(88,66,43,0.5);
+            line-height:28px;
           }
 
           .-right-work {
@@ -342,33 +410,109 @@ export default class PraiseOfWorks extends wepy.page {
             line-height: 64px;
           }
         }
+
+        &-icon {
+          @include bg('/v2/zpbz/icon-xunzhang.png');
+          width: 128px;
+          height: 138px;
+          text-align: center;
+
+          &-num {
+            margin-top: 50px;
+            height: 40px;
+            font-size: 24px;
+            font-weight: 600;
+            color: rgba(213, 147, 15, 1);
+            line-height: 40px;
+            text-shadow: 0px 2px 2px rgba(155, 79, 15, 1);
+          }
+
+          &-text {
+            height: 23px;
+            font-size: 18px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 1);
+            line-height: 23px;
+          }
+        }
       }
 
-      .-item-icon {
-        @include bg('/v2/zpbz/icon-xunzhang.png');
-        width: 168px;
-        height: 162px;
-        text-align: center;
+      .-item-text {
+        padding: 0 32px;
+        margin: 0 0 24px;
+        height:88px;
+        font-size:32px;
+        font-weight:500;
+        color:rgba(59,63,60,1);
+        line-height:44px;
+      }
 
-        &-num {
-          margin-top: 70px;
-          height: 40px;
-          font-size: 28px;
-          font-weight: 600;
-          color: rgba(213, 147, 15, 1);
-          line-height: 40px;
-          text-shadow: 0px 2px 2px rgba(155, 79, 15, 1);
+      .-item-down {
+        display: flex;
+        padding: 24px 32px;
+        border-bottom: 2px solid #F8F8F8FF;
+
+        &-img {
+          margin-right: 12px;
+          width: 220px;
+          height: 220px;
         }
 
-        &-text {
-          margin-top: 6px;
-          height: 26px;
-          font-size: 18px;
-          font-weight: 600;
-          color: rgba(255, 255, 255, 1);
-          line-height: 26px;
+        &-audio {
+          @include flex-center;
+          justify-content: space-between;
+          padding: 20px 32px 18px;
+          width:488px;
+          background:rgba(255,245,209,1);
+          border-radius: 39px;
+          border:3px solid rgba(232,197,157,1);
+
+          .-reply-icon {
+            .icon {
+              @include bg('/sk/icon-audio.png');
+              width: 26px;
+              height: 43px;
+            }
+
+            .playIcon {
+              @include bg('/v2/audio-pay.gif');
+              width: 26px;
+              height: 43px;
+            }
+          }
+
+          .-reply-time {
+            height:26px;
+            font-size:19px;
+            font-weight:600;
+            color:rgba(209,138,59,1);
+            line-height:26px;
+          }
         }
       }
+
+      .-item-footer {
+        display: flex;
+        height: 66px;
+        line-height: 66px;
+        font-size:24px;
+        font-weight:600;
+        color:rgba(171,160,149,1);
+        line-height:32px;
+
+        &-wrap {
+          width: 50%;
+          @include flex-center;
+
+          .-img {
+            margin-right: 8px;
+            width: 40px;
+            height: 40px;
+          }
+        }
+
+      }
+
     }
 
     &-down {
@@ -458,12 +602,95 @@ export default class PraiseOfWorks extends wepy.page {
         }
       }
     }
+
+    &-teacher {
+      padding: 32px 0 24px;
+      width:100%;
+      background:rgba(255,252,243,1);
+      border-bottom: 15px solid #F8F8F8FF;
+
+      .-teacher-title{
+        @include flex-center;
+        width:328px;
+        height:52px;
+        background:rgba(255,245,209,1);
+        border-radius:0px 200px 200px 0px;
+        opacity:0.7;
+
+        .-text {
+          height:52px;
+          font-size:24px;
+          font-weight:500;
+          color:rgba(209,138,59,1);
+          line-height:52px;
+          margin: 0 8px;
+        }
+
+        .-img{
+          width: 16px;
+          height: 14px;
+        }
+      }
+
+      .-teacher-content {
+        padding: 0 32px;
+        margin:32px 0 24px;
+        height:88px;
+        font-size:28px;
+        font-weight:400;
+        color:rgba(59,63,60,1);
+        line-height:40px;
+      }
+
+      .-teacher-audio {
+        @include flex-center;
+        justify-content: space-between;
+
+        margin: 24px 32px 26px;
+        padding: 16px 24px 14px;
+        width:390px;
+        background:rgba(255,245,209,1);
+        border-radius: 29px;
+        border:2px solid rgba(232,197,157,1);
+
+        .-reply-icon {
+          .icon {
+            @include bg('/sk/icon-audio.png');
+            width: 18px;
+            height: 32px;
+          }
+
+          .playIcon {
+            @include bg('/v2/audio-pay.gif');
+            width: 18px;
+            height: 32px;
+          }
+        }
+
+        .-reply-time {
+          height:26px;
+          font-size:19px;
+          font-weight:600;
+          color:rgba(209,138,59,1);
+          line-height:26px;
+        }
+      }
+
+      .-teacher-img {
+        display: flex;
+        padding: 0 32px;
+
+        .-img {
+          margin-right: 12px;
+          width: 220px;
+          height: 220px;
+        }
+      }
+    }
   }
 
   &-item:last-child{
     margin-bottom: 190px;
   }
-
-
 }
 </style>

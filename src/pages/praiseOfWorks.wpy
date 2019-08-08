@@ -37,16 +37,16 @@
                 中关于脸部描写的经典片段</view>
 
               <view class="-item-down">
-                <image class="-item-down-img"  wx:for="{{workImgList}}" wx:key="{{item}}" wx:if="{{true}}"
+                <image class="-item-down-img"  wx:for="{{workImgList}}" wx:key="{{item}}" wx:if="{{!true}}"
                        @tap="enlargeImage({{item}})"
                        src="{{item}}"></image>
 
-                <view class="-item-down-audio" @tap="changeMyAudioStatus" wx:if="{{false}}">
+                <view class="-item-down-audio" @tap="changeAudioStatus({{item}},1)" wx:if="{{!false}}">
                   <view class="-reply-icon">
                     <view class="icon"
-                          wx:if="{{!isMyPlay}}"></view>
+                          wx:if="{{!item.isStuPlay}}"></view>
                     <view class="playIcon"
-                          wx:if="{{isMyPlay}}"></view>
+                          wx:if="{{item.isStuPlay}}"></view>
                   </view>
                   <view class="-reply-time">{{durationMyTime}}</view>
                 </view>
@@ -106,12 +106,12 @@
               </view>
               <view class="-teacher-content">小朋友读的很不错哦，要继续加油保持哦。加油！老师期待你下一次的表现！</view>
 
-              <view class="-teacher-audio" @tap="changeAudioStatus">
+              <view class="-teacher-audio" @tap="changeAudioStatus({{item}},2)">
                 <view class="-reply-icon">
                   <view class="icon"
-                        wx:if="{{!isPlay}}"></view>
+                        wx:if="{{!item.isTeaPlay}}"></view>
                   <view class="playIcon"
-                        wx:if="{{isPlay}}"></view>
+                        wx:if="{{item.isTeaPlay}}"></view>
                 </view>
                 <view class="-reply-time">{{durationTime}}</view>
               </view>
@@ -220,7 +220,6 @@ export default class PraiseOfWorks extends wepy.page {
     },
     workImgList: ['https://pub.file.k12.vip/2019/06/17/1140548810520395777.jpg','https://pub.file.k12.vip/2019/06/17/1140548810520395777.jpg','https://pub.file.k12.vip/2019/06/17/1140548810520395777.jpg'],
     isShowImage: false,
-    isPlay: false,
     dataItem: '',
     itemUrl: '',
     durationTime: '',
@@ -242,6 +241,10 @@ export default class PraiseOfWorks extends wepy.page {
 
         this.dataList.forEach(item => {
           item.worktime = dayjs(+item.worktime).format('YYYY-MM-DD HH:mm')
+          item.teacherReplayAudio = 'http://huoke-private-1254282420.cos.ap-chengdu.myqcloud.com/2019/08/08/8b7fa165-77a0-4c78-801c-7f5e6695a85e.mp3?sign=q-sign-algorithm%3Dsha1%26q-ak%3DAKIDCJG2e67TN6kR3mA5fDve2X0Ndnwz5mV8%26q-sign-time%3D1565257858%3B1565329858%26q-key-time%3D1565257858%3B1565329858%26q-header-list%3D%26q-url-param-list%3D%26q-signature%3Dbcecaf4669fe02d576af5a6acaf26a2d51ab8152'
+          item.stuReplayAudio = 'http://huoke-private-1254282420.cos.ap-chengdu.myqcloud.com/2019/08/08/60bc4dc9-c73e-4db3-87d1-94fcc7797710.mp3?sign=q-sign-algorithm%3Dsha1%26q-ak%3DAKIDCJG2e67TN6kR3mA5fDve2X0Ndnwz5mV8%26q-sign-time%3D1565257892%3B1565329892%26q-key-time%3D1565257892%3B1565329892%26q-header-list%3D%26q-url-param-list%3D%26q-signature%3Dad3b2c97a70f5bf62194416f2a773ba14362b4c7'
+          item.isStuPlay = false
+          item.isTeaPlay = false
         })
 
         this.page.total = data.resultData.total
@@ -267,12 +270,70 @@ export default class PraiseOfWorks extends wepy.page {
     }, time)
   }
 
+  initPlayAudio (src) {
+    this.innerAudioContext && this.innerAudioContext.destroy()
+    this.innerAudioContext = wx.createInnerAudioContext()
+    console.log(src,1)
+    this.innerAudioContext.src = src
+
+    this.innerAudioContext.onPlay(()=>{
+      console.log('监听开始播放')
+    })
+
+    this.innerAudioContext.onPause(()=>{
+      console.log('监听开始暂停')
+    })
+  }
+
   events = {
     changePopupStatus() {
       this.isShowImage = false;
     }
   };
   methods = {
+    changeAudioStatus (item, num) {
+      if (num == 1) {
+        for (let data of this.dataList) {
+          if (item.workId == data.workId) {
+            data.isStuPlay = !data.isStuPlay
+          } else {
+            data.isStuPlay = false
+          }
+          data.isTeaPlay = false
+        }
+
+        if (item.isStuPlay) {
+          item.isStuPlay = false
+          this.innerAudioContext.stop()
+        } else {
+          item.isStuPlay = true
+          this.initPlayAudio( num==1 ? item.stuReplayAudio : item.teacherReplayAudio)
+          this.innerAudioContext.play()
+        }
+
+      } else {
+        for (let data of this.dataList) {
+          if (item.workId == data.workId) {
+            data.isTeaPlay = true
+          } else {
+            data.isTeaPlay = false
+          }
+          data.isStuPlay = false
+        }
+
+        if (item.isTeaPlay) {
+          item.isTeaPlay = false
+          this.innerAudioContext.stop()
+        } else {
+          item.isTeaPlay = true
+          this.initPlayAudio( num==1 ? item.stuReplayAudio : item.teacherReplayAudio)
+          this.innerAudioContext.play()
+        }
+      }
+
+
+      this.$apply()
+    },
     enlargeImage(url) {
       this.itemUrl = url;
       this.isShowImage = true;

@@ -41,13 +41,13 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 4,
+			"current": 6,
 			"list": [
 				{
 					"id": 0,
 					"name": "classroom",
 					"pathName": "pages/submitHomework",
-					"query": "id=1138721381526679554",
+					"query": "id=1138723411242659841",
 					"scene": null
 				},
 				{
@@ -61,7 +61,7 @@
 					"id": 2,
 					"name": "作业详情（自己）",
 					"pathName": "pages/completionOfWork",
-					"query": "type=1&id=1139442398134145025",
+					"query": "type=1&id=1138723411242659841",
 					"scene": null
 				},
 				{
@@ -89,7 +89,7 @@
 					"id": 6,
 					"name": "作业分享",
 					"pathName": "pages/shareHomework",
-					"query": "id=1139470942603345922",
+					"query": "id=1159753557714153473",
 					"scene": null
 				},
 				{

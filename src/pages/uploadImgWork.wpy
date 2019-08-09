@@ -3,7 +3,7 @@
     <mHeader title="提交作业"></mHeader>
     <view class="container-scroll p-uploadImgWork" style="margin-top:{{height}}px">
       <view class="p-uploadImgWork-title">
-        诵读今日名家儒勒·凡尔纳在《八十天环游地球》中关于脸部描写的经典片段。
+        {{lessonDetail.homeworkClaim}}
       </view>
       <view class="p-uploadImgWork-content">
         <view class="-upload-wrap">
@@ -66,7 +66,17 @@
       isOpenPopup: false,
       isSending: false,
       queryInfo: '',
+      lessonDetail: '',
       workImgList: []
+    };
+
+    getLessonInfo() {
+      api.study.getLessonDetail({
+        lessonId: this.queryInfo.id
+      }).then(res => {
+        this.lessonDetail = res.data.resultData;
+        this.$apply();
+      });
     };
 
     uploadImgFn (fileUrl) {
@@ -167,6 +177,7 @@
 
     onLoad (query) {
       this.queryInfo = query
+      this.getLessonInfo()
     }
   }
 </script>

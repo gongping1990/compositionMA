@@ -17,18 +17,18 @@
               <view class="-top-right-time">{{workDetail.workTime}}</view>
             </view>
           </view>
-          <view wx:if="{{workDetail.self && !isReply}}" class="-top-wrap-right">重新提交</view>
+          <view wx:if="{{workDetail.self && !isReply}}" class="-top-wrap-right" @tap="resultHomework">重新提交</view>
         </view>
 
-        <view class="-center-text">摘抄今日名家儒勒·凡尔纳在《八十天环游地球》
-          中关于脸部描写的经典片段</view>
+        <view class="-center-text">{{workDetail.homeworkTitle}}</view>
 
         <view class="-down-wrap">
-          <image class="-down-wrap-img"  wx:for="{{workImgList}}" wx:key="{{item}}" wx:if="{{!true}}"
+          <image class="-down-wrap-img" wx:for="{{workDetail.workImgSrc}}" wx:key="{{item}}"
+                 wx:if="{{workDetail.homeworkType == 2}}"
                  @tap="enlargeImage({{item}})"
                  src="{{item}}"></image>
 
-          <view class="-down-wrap-audio" @tap="changeMyAudioStatus" wx:if="{{!false}}">
+          <view class="-down-wrap-audio" @tap="changeMyAudioStatus" wx:if="{{workDetail.homeworkType == 1}}">
             <view class="-reply-icon">
               <view class="icon"
                     wx:if="{{!isMyPlay}}"></view>
@@ -41,7 +41,7 @@
 
         <view class="-footer-zan">
           <image class="-footer-zan-img" src="https://pub.file.k12.vip/poem/1_2/index-icon-like-def@3x.png"></image>
-          <view class="-footer-zan-name">王佳欣，小林哥，小太阳，张晓明，最美的期待共380人点赞</view>
+          <view class="-footer-zan-name">{{workDetail.likeUNames}}共{{workDetail.likenum}}人点赞</view>
         </view>
       </view>
 
@@ -76,7 +76,7 @@
             </view>
           </view>
 
-          <view class="-reply-info-text">小朋友读的很不错哦，要继续加油保持哦。加油！老师期待你下一次的表现！</view>
+          <view class="-reply-info-text">{{workDetail.replyText}}</view>
 
           <view class="-replay-info-audio" @tap="changeAudioStatus" wx:if="{{workDetail.replyAudio}}">
             <view class="-reply-icon">
@@ -89,7 +89,7 @@
           </view>
 
           <view class="-reply-info-img">
-            <image class="-img" wx:for="{{workImgList}}" wx:key="{{item}}"
+            <image class="-img" wx:for="{{workDetail.replyImg}}" wx:key="{{item}}"
                    @tap="enlargeImage({{item}})"
                    src="{{item}}"></image>
           </view>
@@ -222,7 +222,7 @@
     };
 
     data = {
-      workImgList: ['https://pub.file.k12.vip/2019/06/17/1140548810520395777.jpg','https://pub.file.k12.vip/2019/06/17/1140548810520395777.jpg','https://pub.file.k12.vip/2019/06/17/1140548810520395777.jpg'],
+      workImgList: ['https://pub.file.k12.vip/2019/06/17/1140548810520395777.jpg', 'https://pub.file.k12.vip/2019/06/17/1140548810520395777.jpg', 'https://pub.file.k12.vip/2019/06/17/1140548810520395777.jpg'],
       isFetching: false,
       isOpenPopup: false,
       isCompliment: false,
@@ -244,7 +244,7 @@
     };
 
     initAudio(bool) {
-let url = 'http://huoke-private-1254282420.cos.ap-chengdu.myqcloud.com/2019/08/07/feb7bf00-fdcb-4570-b12d-fe64ccd04226.mp3?sign=q-sign-algorithm%3Dsha1%26q-ak%3DAKIDCJG2e67TN6kR3mA5fDve2X0Ndnwz5mV8%26q-sign-time%3D1565164309%3B1565236309%26q-key-time%3D1565164309%3B1565236309%26q-header-list%3D%26q-url-param-list%3D%26q-signature%3Defc1537b6271acdd1ebc5e19aa98ade125766a99'
+      let url = 'http://huoke-private-1254282420.cos.ap-chengdu.myqcloud.com/2019/08/07/feb7bf00-fdcb-4570-b12d-fe64ccd04226.mp3?sign=q-sign-algorithm%3Dsha1%26q-ak%3DAKIDCJG2e67TN6kR3mA5fDve2X0Ndnwz5mV8%26q-sign-time%3D1565164309%3B1565236309%26q-key-time%3D1565164309%3B1565236309%26q-header-list%3D%26q-url-param-list%3D%26q-signature%3Defc1537b6271acdd1ebc5e19aa98ade125766a99';
       this.myAudio = wx.createInnerAudioContext();
       this.myAudio.src = bool ? url : this.workDetail.replyAudioAuthorUrl;
 
@@ -297,6 +297,9 @@ let url = 'http://huoke-private-1254282420.cos.ap-chengdu.myqcloud.com/2019/08/0
       }).then(res => {
         this.workDetail = res.data.resultData;
         this.workDetail.workTime = dayjs(+this.workDetail.workTime).format('YYYY-MM-DD HH:mm');
+        this.workDetail.workImg = this.workDetail.workImg && this.workDetail.workImg.split(',');
+        this.workDetail.workImgSrc = this.workDetail.workImgSrc && this.workDetail.workImgSrc.split(',');
+        this.workDetail.replyImg = this.workDetail.replyImg && this.workDetail.replyImg.split(',');
         if (this.workDetail.replyTime) {
           this.workDetail.replyTime = dayjs(+this.workDetail.replyTime).format('YYYY-MM-DD HH:mm');
           this.isReply = true;
@@ -317,6 +320,9 @@ let url = 'http://huoke-private-1254282420.cos.ap-chengdu.myqcloud.com/2019/08/0
       }).then(res => {
         this.workDetail = res.data.resultData;
         this.workDetail.workTime = dayjs(+this.workDetail.workTime).format('YYYY-MM-DD HH:mm');
+        this.workDetail.workImg = this.workDetail.workImg && this.workDetail.workImg.split(',');
+        this.workDetail.workImgSrc = this.workDetail.workImgSrc && this.workDetail.workImgSrc.split(',');
+        this.workDetail.replyImg = this.workDetail.replyImg && this.workDetail.replyImg.split(',');
         if (this.workDetail.replyTime) {
           this.workDetail.replyTime = dayjs(+this.workDetail.replyTime).format('YYYY-MM-DD HH:mm');
           this.isReply = true;
@@ -339,9 +345,16 @@ let url = 'http://huoke-private-1254282420.cos.ap-chengdu.myqcloud.com/2019/08/0
       shareFriend() {
         this.getMyHomework();
       },
+      resultHomework() {
+        if (this.queryInfo.type == 1) {
+          wx.navigateTo({ url: `/pages/uploadAudioWork?id=${this.lessonId}` });
+        } else {
+          wx.navigateTo({ url: `/pages/uploadImgWork?id=${this.lessonId}` });
+        }
+      },
       changeAudioStatus() {
         this.isMyPlay = false;
-        this.myAudio.destroy()
+        this.myAudio.destroy();
         this.initAudio(false);
         if (this.isPlay) {
           this.isPlay = false;
@@ -353,7 +366,7 @@ let url = 'http://huoke-private-1254282420.cos.ap-chengdu.myqcloud.com/2019/08/0
       },
       changeMyAudioStatus() {
         this.isPlay = false;
-        this.myAudio.destroy()
+        this.myAudio.destroy();
         this.initAudio(true);
         if (this.isMyPlay) {
           this.isMyPlay = false;
@@ -533,11 +546,10 @@ let url = 'http://huoke-private-1254282420.cos.ap-chengdu.myqcloud.com/2019/08/0
 
       .-center-text {
         margin: 30px 0 24px;
-        height:88px;
-        font-size:32px;
-        font-weight:400;
-        color:rgba(55,60,56,1);
-        line-height:44px;
+        font-size: 32px;
+        font-weight: 400;
+        color: rgba(55, 60, 56, 1);
+        line-height: 44px;
       }
 
       .-down-wrap {
@@ -553,10 +565,10 @@ let url = 'http://huoke-private-1254282420.cos.ap-chengdu.myqcloud.com/2019/08/0
           @include flex-center;
           justify-content: space-between;
           padding: 20px 32px 18px;
-          width:488px;
-          background:rgba(255,245,209,1);
+          width: 488px;
+          background: rgba(255, 245, 209, 1);
           border-radius: 39px;
-          border:3px solid rgba(232,197,157,1);
+          border: 3px solid rgba(232, 197, 157, 1);
 
           .-reply-icon {
             .icon {
@@ -573,11 +585,11 @@ let url = 'http://huoke-private-1254282420.cos.ap-chengdu.myqcloud.com/2019/08/0
           }
 
           .-reply-time {
-            height:26px;
-            font-size:19px;
-            font-weight:600;
-            color:rgba(209,138,59,1);
-            line-height:26px;
+            height: 26px;
+            font-size: 19px;
+            font-weight: 600;
+            color: rgba(209, 138, 59, 1);
+            line-height: 26px;
           }
         }
       }
@@ -586,24 +598,22 @@ let url = 'http://huoke-private-1254282420.cos.ap-chengdu.myqcloud.com/2019/08/0
         margin-top: 40px;
         display: flex;
         padding: 24px;
-        background:rgba(242,242,242,1);
-        border-radius:16px;
+        background: rgba(242, 242, 242, 1);
+        border-radius: 16px;
 
         &-img {
           margin-right: 16px;
-          width:40px;
-          height:40px;
+          width: 40px;
+          height: 40px;
         }
 
-
         &-name {
-          width:582px;
-          height:80px;
-          font-size:28px;
-          font-family:PingFangSC-Regular;
-          font-weight:400;
-          color:rgba(164,153,142,1);
-          line-height:40px;
+          width: 582px;
+          font-size: 28px;
+          font-family: PingFangSC-Regular;
+          font-weight: 400;
+          color: rgba(164, 153, 142, 1);
+          line-height: 40px;
         }
       }
 
@@ -618,12 +628,12 @@ let url = 'http://huoke-private-1254282420.cos.ap-chengdu.myqcloud.com/2019/08/0
       .-down-tip {
         display: flex;
         align-items: center;
-        font-size:24px;
-        color:rgba(209,138,59,1);
-        width:200px;
-        height:52px;
-        background:rgba(255,245,209,1);
-        border-radius:0px 200px 200px 0px;
+        font-size: 24px;
+        color: rgba(209, 138, 59, 1);
+        width: 200px;
+        height: 52px;
+        background: rgba(255, 245, 209, 1);
+        border-radius: 0px 200px 200px 0px;
 
         &-img {
           margin: 0 8px 0 32px;
@@ -657,7 +667,7 @@ let url = 'http://huoke-private-1254282420.cos.ap-chengdu.myqcloud.com/2019/08/0
         &-text {
           margin: 24px 32px 32px;
           height: 52px;
-          font-size:28px;
+          font-size: 28px;
           font-weight: 400;
           color: rgba(88, 66, 43, 0.6);
           line-height: 40px;
@@ -686,11 +696,11 @@ let url = 'http://huoke-private-1254282420.cos.ap-chengdu.myqcloud.com/2019/08/0
               color: rgba(70, 65, 60, 0.4);
 
               .-name {
-                height:44px;
-                font-size:32px;
-                font-weight:500;
-                color:rgba(88,66,43,0.9);
-                line-height:44px;
+                height: 44px;
+                font-size: 32px;
+                font-weight: 500;
+                color: rgba(88, 66, 43, 0.9);
+                line-height: 44px;
               }
             }
           }
@@ -699,10 +709,10 @@ let url = 'http://huoke-private-1254282420.cos.ap-chengdu.myqcloud.com/2019/08/0
 
         .-reply-info-text {
           margin-top: 18px;
-          font-size:28px;
-          font-weight:400;
-          color:rgba(59,63,60,1);
-          line-height:40px;
+          font-size: 28px;
+          font-weight: 400;
+          color: rgba(59, 63, 60, 1);
+          line-height: 40px;
         }
 
         .-replay-info-audio {
@@ -711,13 +721,13 @@ let url = 'http://huoke-private-1254282420.cos.ap-chengdu.myqcloud.com/2019/08/0
 
           margin: 24px 0 26px;
           padding: 16px 24px;
-          width:390px;
-          background:rgba(255,245,209,1);
+          width: 390px;
+          background: rgba(255, 245, 209, 1);
           border-radius: 39px;
-          border:2px solid rgba(232,197,157,1);
+          border: 2px solid rgba(232, 197, 157, 1);
 
           .-reply-icon {
-           .icon {
+            .icon {
               @include bg('/sk/icon-audio.png');
               width: 26px;
               height: 43px;
@@ -731,11 +741,11 @@ let url = 'http://huoke-private-1254282420.cos.ap-chengdu.myqcloud.com/2019/08/0
           }
 
           .-reply-time {
-            height:26px;
-            font-size:19px;
-            font-weight:600;
-            color:rgba(209,138,59,1);
-            line-height:26px;
+            height: 26px;
+            font-size: 19px;
+            font-weight: 600;
+            color: rgba(209, 138, 59, 1);
+            line-height: 26px;
           }
         }
 
@@ -801,10 +811,10 @@ let url = 'http://huoke-private-1254282420.cos.ap-chengdu.myqcloud.com/2019/08/0
       }
 
       .-footer-btn-self {
-        width:622px;
-        height:84px;
-        border-radius:44px;
-        border:2px solid rgba(88,66,43,0.1);
+        width: 622px;
+        height: 84px;
+        border-radius: 44px;
+        border: 2px solid rgba(88, 66, 43, 0.1);
       }
 
       .-footer-tip {

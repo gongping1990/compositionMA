@@ -3,12 +3,10 @@
     <mHeader title="提交作业"></mHeader>
     <view class="container-scroll p-uploadAudioWork" style="margin-top:{{height}}px">
       <view class="p-uploadAudioWork-title">
-        诵读今日名家儒勒·凡尔纳在《八十天环游地球》中关于脸部描写的经典片段。
+        {{lessonDetail.homeworkTitle}}
       </view>
       <view class="p-uploadAudioWork-content">
-        他的相貌非常讨人喜欢，脑袋圆圆的， 给人一种和蔼可亲的感觉；脸很胖，胖
-        得自己都能看到自己的颧骨；嘴唇微微 翘起，一双碧蓝色的眼睛嵌在那张红光
-        满面的脸膛上。
+        {{lessonDetail.homeworkClaim}}
       </view>
 
       <view class="p-uploadAudioWork-sound">
@@ -41,14 +39,14 @@
     </van-popup>
 
     <van-popup show="{{isOpenResultPopup}}">
-      <div class="p-uploadAudioWork-result">
-        <div class="p-uploadAudioWork-result-title">提示</div>
-        <div class="p-uploadAudioWork-result-text">您确认要重新录制诵读吗？</div>
-        <div class="p-uploadAudioWork-result-btn-wrap">
-          <div class="-btn-cancle" @click="isOpenResultPopup = false">取消</div>
-          <div class="-btn-ok" @click="sureResult">确认</div>
-        </div>
-      </div>
+      <view class="p-uploadAudioWork-result">
+        <view class="p-uploadAudioWork-result-title">提示</view>
+        <view class="p-uploadAudioWork-result-text">您确认要重新录制诵读吗？</view>
+        <view class="p-uploadAudioWork-result-btn-wrap">
+          <view class="-btn-cancle" @tap="closeResult">取消</view>
+          <view class="-btn-ok" @tap="sureResult">确认</view>
+        </view>
+      </view>
     </van-popup>
 
   </view>
@@ -85,6 +83,7 @@
       recorderManager: '',
       innerAudioContext: '',
       fileAudioUrl: '',
+      lessonDetail: '',
       recorderOptions:{
         sampleRate: 44100,
         numberOfChannels: 1,
@@ -110,7 +109,17 @@
 
     onShow () {
       this.initRecorderAudio()
+      this.getLessonInfo()
     }
+
+    getLessonInfo() {
+      api.study.getLessonDetail({
+        lessonId: this.queryInfo.id
+      }).then(res => {
+        this.lessonDetail = res.data.resultData;
+        this.$apply();
+      });
+    };
 
     initPlayAudio (src) {
       this.innerAudioContext = wx.createInnerAudioContext()
@@ -149,6 +158,9 @@
     }
 
     methods = {
+      closeResult () {
+        this.isOpenResultPopup = false
+      },
       changeStatus (num) {
         switch (+this.nowStatus) {
           case 1:
@@ -370,7 +382,60 @@
     }
 
     &-result {
+      text-align: center;
+      width:590px;
+      height:368px;
+      background:rgba(255,255,255,1);
+      border-radius:32px;
 
+      &-title {
+        padding: 48px 48px 32px;
+        height:50px;
+        font-size:36px;
+        font-weight:500;
+        color:rgba(88,66,43,1);
+        line-height:50px;
+      }
+
+      &-text {
+        height:50px;
+        font-size:36px;
+        font-weight:500;
+        color:rgba(88,66,43,1);
+        line-height:50px;
+        margin-bottom: 48px;
+      }
+
+      &-btn-wrap {
+        @include flex-center;
+
+        .-btn-cancle {
+          text-align: center;
+          margin: 0 23px;
+          width:224px;
+          height:76px;
+          border-radius:40px;
+          border:2px solid rgba(88,66,43,0.1);
+          font-size:32px;
+          font-weight:400;
+          color:rgba(88,66,43,0.5);
+          line-height:76px;
+        }
+
+        .-btn-ok {
+          text-align: center;
+          margin: 0 23px;
+          width:224px;
+          height:76px;
+          background:linear-gradient(90deg,rgba(249,230,11,1) 0%,rgba(253,219,85,1) 100%);
+          box-shadow:0px 8px 16px 4px rgba(230,194,81,0.4);
+          border-radius:40px;
+          font-size:32px;
+          font-weight:500;
+          color:rgba(70,65,60,1);
+          line-height:76px;
+        }
+      }
     }
   }
 

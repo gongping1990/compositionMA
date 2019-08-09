@@ -53,24 +53,43 @@
                  src="https://pub.file.k12.vip/tbzw/khzy/success.png"></image>
         </view>
 
-        <view class="-center-work"
-              wx:if="{{isSuccessWork}}">
-          <view class="-center-work-left">
-            <image class="-left-img"
-                   src="{{userInfo.headimgurl}}"></image>
-          </view>
-          <view class="-center-work-right">
-            <view class="-right-name">{{workDetail.nickname}}</view>
-            <view class="-right-time">{{workDetail.workTime}}</view>
-            <image class="-right-work"
-                   src="{{workDetail.workImg}}"
-                   @tap="lookWorkDetail({{workDetail}})"></image>
-            <view class="-right-tip"
-                  wx:if="{{!workDetail.replyknow && workDetail.replyTime}}">
-              <view class="-tip-text">老师已点评</view>
+        <view class="-center-work" wx:if="{{isSuccessWork}}">
+          <view class="-center-work-top -center-work-my">
+            <view class="-top-left">
+              <image class="-top-left-img"
+                     src="{{workDetail.stuImg}}"></image>
             </view>
-            <view class="-right-btn"
-                  @tap="lookWorkDetail({{workDetail}})">查看作业详情</view>
+            <view class="-top-right">
+              <view class="-top-right-name">{{workDetail.nickname}}</view>
+              <view class="-top-right-time">{{workDetail.workTime}}</view>
+            </view>
+          </view>
+          <view class="-center-work-down">
+            <image class="-center-work-down-img"  wx:for="{{workImgList}}" wx:key="{{item}}" wx:if="{{true}}"
+                   @tap="enlargeImage({{item}})"
+                   src="{{item}}"></image>
+
+            <view class="-center-work-down-audio" @tap="changeMyAudioStatus" wx:if="{{false}}">
+              <view class="-reply-icon">
+                <view class="icon"
+                      wx:if="{{!isMyPlay}}"></view>
+                <view class="playIcon"
+                      wx:if="{{isMyPlay}}"></view>
+              </view>
+              <view class="-reply-time">{{durationMyTime}}</view>
+            </view>
+          </view>
+          <view class="-center-work-footer">
+            <view class="-center-work-footer-wrap">
+              <image class="-img"
+                     src="https://pub.file.k12.vip/tbzw/word-detail/icon-give-pre.png"></image>
+              <text>{{workDetail.likenum}}</text>
+            </view>
+            <view class="-center-work-footer-wrap" @tap="lookWorkDetail({{workDetail}})">
+              <image class="-img"
+                     src="https://pub.file.k12.vip/poem/1_2/zybz-icon-review@3x.png"></image>
+              <text>看点评</text>
+            </view>
           </view>
         </view>
       </view>
@@ -87,7 +106,6 @@
         <view class="-text">{{cardDetail.todayCard ? '已打卡' : '点我打卡'}}</view>
       </view>
 
-
       <scroll-view class="p-submitHomework-center p-submitHomework-list"
                    @scrolltolower="bindLoadItem"
                    scroll-y
@@ -99,35 +117,75 @@
                 index="index"
                 item="item">
           <view class="-center-work -center-other">
-            <view class="-center-work-left">
-              <image class="-left-img"
-                     src="{{item.stuImg}}"></image>
-            </view>
-            <view class="-center-work-right">
-              <view class="-right-name">{{item.nickname}}</view>
-              <view class="-right-time">{{item.workTime}}</view>
-              <image class="-right-work"
-                     src="{{item.workImg}}"
-                     @tap="lookWorkDetail({{item}})"></image>
-              <view class="-right-zan">
-                <view class="-texiao"
-                      wx:if="{{dataItem.id === item.id}}"
-                      style="background-position-y:-{{backgroundY}}rpx;"></view>
-
-                <view class="-zan-left {{item.otherLike ? '-zan-animation' : ''}}"
-                      @tap="addLike({{item}})">
-                  <image class="-img {{dataItem.id === item.id ? '-icon-animation' : ''}}"
-                         wx:if="{{!item.otherLike}}"
-                         src="https://pub.file.k12.vip/tbzw/word-detail/icon-give-pre.png"></image>
-                  <image class="-img"
-                         wx:if="{{item.otherLike}}"
-                         src="https://pub.file.k12.vip/2019/06/06/1136572565700235266.png"></image>
-                </view>
-                <view class="-zan-right {{item.otherLike ? '-zan-animation' : ''}}"
-                      @tap="addLike({{item}})">{{item.likenum}}
-                </view>
+            <view class="-center-work-top">
+              <view class="-top-left">
+                <image class="-top-left-img"
+                       src="{{item.stuImg}}"></image>
+              </view>
+              <view class="-top-right">
+                <view class="-top-right-name">{{item.nickname}}</view>
+                <view class="-top-right-time">{{item.workTime}}</view>
               </view>
             </view>
+
+            <view class="-center-work-down">
+              <image class="-center-work-down-img"  wx:for="{{workImgList}}" wx:key="{{item}}" wx:if="{{!true}}"
+                     @tap="enlargeImage({{item}})"
+                     src="{{item}}"></image>
+
+              <view class="-center-work-down-audio" @tap="changeMyAudioStatus" wx:if="{{!false}}">
+                <view class="-reply-icon">
+                  <view class="icon"
+                        wx:if="{{!isMyPlay}}"></view>
+                  <view class="playIcon"
+                        wx:if="{{isMyPlay}}"></view>
+                </view>
+                <view class="-reply-time">{{durationMyTime}}</view>
+              </view>
+            </view>
+
+            <view class="-center-work-footer">
+              <view class="-center-work-footer-wrap" @tap="addLike({{item}})">
+                <image class="-img"
+                       wx:if="{{!item.otherLike}}"
+                       src="https://pub.file.k12.vip/tbzw/word-detail/icon-give-pre.png"></image>
+                <image class="-img"
+                       wx:if="{{item.otherLike}}"
+                       src="https://pub.file.k12.vip/2019/06/06/1136572565700235266.png"></image>
+                <text>{{item.likenum}}</text>
+              </view>
+              <view class="-center-work-footer-wrap" @tap="lookWorkDetail({{item}})">
+                <image class="-img"
+                       src="https://pub.file.k12.vip/poem/1_2/zybz-icon-review@3x.png"></image>
+                <text>看点评</text>
+              </view>
+            </view>
+
+
+            <!--<view class="-center-work-right">-->
+
+              <!--<image class="-right-work"-->
+                     <!--src="{{item.workImg}}"-->
+                     <!--@tap="lookWorkDetail({{item}})"></image>-->
+              <!--<view class="-right-zan">-->
+                <!--<view class="-texiao"-->
+                      <!--wx:if="{{dataItem.id === item.id}}"-->
+                      <!--style="background-position-y:-{{backgroundY}}rpx;"></view>-->
+
+                <!--<view class="-zan-left {{item.otherLike ? '-zan-animation' : ''}}"-->
+                      <!--@tap="addLike({{item}})">-->
+                  <!--<image class="-img {{dataItem.id === item.id ? '-icon-animation' : ''}}"-->
+                         <!--wx:if="{{!item.otherLike}}"-->
+                         <!--src="https://pub.file.k12.vip/tbzw/word-detail/icon-give-pre.png"></image>-->
+                  <!--<image class="-img"-->
+                         <!--wx:if="{{item.otherLike}}"-->
+                         <!--src="https://pub.file.k12.vip/2019/06/06/1136572565700235266.png"></image>-->
+                <!--</view>-->
+                <!--<view class="-zan-right {{item.otherLike ? '-zan-animation' : ''}}"-->
+                      <!--@tap="addLike({{item}})">{{item.likenum}}-->
+                <!--</view>-->
+              <!--</view>-->
+            <!--</view>-->
           </view>
         </repeat>
         <view class="-center-other-no"
@@ -139,7 +197,7 @@
       </scroll-view>
 
     </view>
-
+    <lookImage :isShow.sync="isShowImage" :imgUrl.sync="itemUrl"></lookImage>
     <van-popup show="{{isOpenPopup}}">
       <view class="p-submitHomework-popup"
             wx:if="{{isCard}}">
@@ -184,6 +242,7 @@ import api from '../request/api'
 import dayjs from 'dayjs'
 import { connect } from 'wepy-redux'
 import mHeader from '../components/header'
+import lookImage from '../components/lookImage';
 
 @connect({
   userInfo (state) {
@@ -199,7 +258,8 @@ export default class SubmitHomework extends wepy.page {
     }
   };
   components = {
-    mHeader
+    mHeader,
+    lookImage
   };
   computed = {
     height () {
@@ -216,14 +276,18 @@ export default class SubmitHomework extends wepy.page {
     dataItem: '',
     backgroundY: 0,
     tabActive: '1',
+    itemUrl: '',
     isSuccessWork: false,
     isOpenPopup: false,
+    isShowImage: false,
     isCard: false,
     workDetail: '',
     lessonDetail: '',
     cardDetail: '',
     lessonId: '',
-    dataList: []
+    dataList: [],
+    workImgList: ['https://pub.file.k12.vip/2019/06/17/1140548810520395777.jpg','https://pub.file.k12.vip/2019/06/17/1140548810520395777.jpg','https://pub.file.k12.vip/2019/06/17/1140548810520395777.jpg'],
+
   };
 
   getLessonInfo () {
@@ -296,6 +360,10 @@ export default class SubmitHomework extends wepy.page {
   };
 
   methods = {
+    enlargeImage(url) {
+      this.itemUrl = url;
+      this.isShowImage = true;
+    },
     openUrl (num) {
       if (num === 1) {
         wx.navigateTo({ url: `/pages/study?id=${this.lessonId}&lookback=1` })
@@ -366,7 +434,11 @@ export default class SubmitHomework extends wepy.page {
     }
   };
 
-  events = {};
+  events = {
+    changePopupStatus() {
+      this.isShowImage = false;
+    }
+  };
 
   onLoad (query) {
     this.lessonId = query.id
@@ -578,84 +650,120 @@ export default class SubmitHomework extends wepy.page {
 
     .-center-work {
       position: relative;
-      display: flex;
       margin-top: 54px;
-      padding: 40px 0 64px 64px;
       border-top: 10px solid #f6f5f4;
 
-      &-left {
-        .-left-img {
-          margin-right: 24px;
-          width: 96px;
-          height: 96px;
-          border-radius: 50%;
-        }
+      &-my {
+        margin-top: 48px!important;
       }
 
-      &-right {
-        .-right-name {
-          height: 40px;
-          font-size: 28px;
-          font-weight: 500;
-          color: rgba(88, 66, 43, 1);
-          line-height: 40px;
-        }
+      &-top {
+        display: flex;
+        align-items: center;
+        padding-left:32px;
+        margin: 0 0 32px;
 
-        .-right-time {
-          margin-top: 8px;
-          height: 34px;
-          font-size: 24px;
-          font-weight: 400;
-          color: rgba(88, 66, 43, 0.5);
-          line-height: 34px;
-        }
+        .-top-left {
+          @include flex-center;
 
-        .-right-work {
-          margin-top: 30px;
-          width: 502px;
-          height: 610px;
-        }
-
-        .-right-tip {
-          position: absolute;
-          top: 180px;
-          right: 12px;
-          @include bg('/khzy/bubbles.png');
-          width: 166px;
-          height: 128px;
-
-          .-tip-text {
-            text-align: center;
-            margin-top: 52px;
-            margin-left: 36px;
-            width: 120px;
-            /*height: 56px;*/
-            font-size: 20px;
-            font-weight: 500;
-            color: rgba(88, 66, 43, 1);
+          &-img {
+            margin-right: 12px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
           }
         }
 
-        .-right-btn {
-          margin-top: 32px;
-          text-align: center;
-          width: 284px;
-          height: 64px;
-          border-radius: 50px;
-          border: 2px solid rgba(88, 66, 43, 0.2);
-          font-size: 28px;
-          font-weight: 500;
-          color: rgba(88, 66, 43, 1);
-          line-height: 64px;
+        .-top-right {
+          &-name {
+            height:40px;
+            font-size:28px;
+            font-weight:500;
+            color:rgba(88,66,43,1);
+            line-height:40px;
+          }
+
+          &-time {
+            height:28px;
+            font-size:20px;
+            font-weight:400;
+            color:rgba(88,66,43,0.5);
+            line-height:28px;
+          }
+        }
+      }
+
+      &-down {
+        display: flex;
+        padding-left:32px;
+        padding-bottom: 24px;
+        border-bottom: 4px solid #f6f5f4;
+
+        &-img {
+          margin-right: 12px;
+          width: 220px;
+          height: 220px;
+        }
+
+        &-audio {
+          @include flex-center;
+          justify-content: space-between;
+          padding: 20px 32px 18px;
+          width:488px;
+          background:rgba(255,245,209,1);
+          border-radius: 39px;
+          border:3px solid rgba(232,197,157,1);
+
+          .-reply-icon {
+            .icon {
+              @include bg('/sk/icon-audio.png');
+              width: 26px;
+              height: 43px;
+            }
+
+            .playIcon {
+              @include bg('/v2/audio-pay.gif');
+              width: 26px;
+              height: 43px;
+            }
+          }
+
+          .-reply-time {
+            height:26px;
+            font-size:19px;
+            font-weight:600;
+            color:rgba(209,138,59,1);
+            line-height:26px;
+          }
+        }
+      }
+
+      &-footer {
+        display: flex;
+        height: 66px;
+        line-height: 66px;
+        font-size:24px;
+        font-weight:600;
+        color:rgba(171,160,149,1);
+        line-height:32px;
+
+        &-wrap {
+          width: 50%;
+          @include flex-center;
+
+          .-img {
+            margin-right: 8px;
+            width: 40px;
+            height: 40px;
+          }
         }
       }
     }
 
     .-center-other {
-      margin-top: 0;
+      margin-top: 48px;
       border: none;
-      padding: 40px 0 24px 64px;
-      border-bottom: 4px solid #efedea;
+      border-bottom: 4px solid #f6f5f4;
 
       .-right-zan {
         position: relative;
@@ -708,10 +816,13 @@ export default class SubmitHomework extends wepy.page {
           @include texiao-icon;
         }
       }
-    }
 
-    .-center-other:last-child {
-      border: none;
+      &:first-child {
+        margin-top: 0;
+      }
+      &:last-child {
+        border: none;
+      }
     }
 
     .-center-other-no {

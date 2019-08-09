@@ -53,7 +53,7 @@
               </view>
 
               <view class="-item-footer">
-                <view class="-item-footer-wrap">
+                <view class="-item-footer-wrap" @tap="addMyLike({{item}})">
                   <image class="-img"
                          wx:if="{{!item.myLike}}"
                          src="https://pub.file.k12.vip/tbzw/word-detail/icon-give-pre.png"></image>
@@ -317,7 +317,7 @@ export default class PraiseOfWorks extends wepy.page {
       } else {
         for (let data of this.dataList) {
           if (item.workId == data.workId) {
-            data.isTeaPlay = true
+            data.isTeaPlay = !data.isTeaPlay
           } else {
             data.isTeaPlay = false
           }
@@ -525,7 +525,7 @@ export default class PraiseOfWorks extends wepy.page {
         &-audio {
           @include flex-center;
           justify-content: space-between;
-          padding: 20px 32px 18px;
+          padding: 20px 32px;
           width:488px;
           background:rgba(255,245,209,1);
           border-radius: 39px;

@@ -3,7 +3,7 @@
     <mHeader title="提交作业"></mHeader>
     <view class="container-scroll p-uploadAudioWork" style="margin-top:{{height}}px">
       <view class="p-uploadAudioWork-title">
-        {{lessonDetail.homeworkTitle}}
+        {{lessonDetail.homework}}
       </view>
       <view class="p-uploadAudioWork-content">
         {{lessonDetail.homeworkClaim}}

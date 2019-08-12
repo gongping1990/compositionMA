@@ -346,11 +346,9 @@
         this.getMyHomework();
       },
       resultHomework() {
-        if (this.queryInfo.type == 1) {
-          wx.navigateTo({ url: `/pages/uploadAudioWork?id=${this.lessonId}` });
-        } else {
-          wx.navigateTo({ url: `/pages/uploadImgWork?id=${this.lessonId}` });
-        }
+        wx.navigateTo({
+          url: `/pages/${this.workDetail.homeworkType == 1 ? 'uploadAudioWork' : 'uploadImgWork'}?id=${this.workDetail.lessonId}`
+        });
       },
       changeAudioStatus() {
         this.isMyPlay = false;
@@ -479,7 +477,7 @@
       return {
         title: this.queryInfo.type === '1' ? `我已坚持学习${this.workDetail.learnDay}天，刚完成今天的作业，请给我点个赞吧` : `快来给@${this.workDetail.nickname}点个赞，TA已坚持学习了${this.workDetail.learnDay}天`,
         path: this.queryInfo.type === '1' ? `/pages/shareHomework?id=${this.workDetail.id}` : `/pages/completionOfWork?type=2&id=${this.workDetail.id}`,
-        imageUrl: this.isOpenPopup ? this.workDetail.workImg : ''
+        imageUrl: this.isOpenPopup ? this.workDetail.workImg[0] : ''
       };
     }
   }

@@ -12,7 +12,7 @@
                 index="index"
                 item="item">
           <view class="p-praiseOfWorks-item">
-            <view class="p-praiseOfWorks-item-top" >
+            <view class="p-praiseOfWorks-item-top">
               <view class="-item-top">
                 <view class="-item-top-info">
                   <view class="-item-top-left">
@@ -27,28 +27,28 @@
 
                 <view class="-item-top-icon">
                   <view class="-item-top-icon-num">
-                    {{item.learnDay}}次
+                    {{item.praiseNum}}次
                   </view>
                   <view class="-item-top-icon-text">被表扬</view>
                 </view>
               </view>
 
-              <view class="-item-text">完成作业：摘抄今日名家儒勒·凡尔纳在《八十天环游地球》
-                中关于脸部描写的经典片段</view>
+              <view class="-item-text">{{item.homeworkTitle}}</view>
 
               <view class="-item-down">
-                <image class="-item-down-img"  wx:for="{{workImgList}}" wx:key="{{item}}" wx:if="{{!true}}"
+                <image class="-item-down-img" wx:for="{{item.workImgSrc}}" wx:key="{{item}}"
+                       wx:if="{{item.homeworkType==2}}"
                        @tap="enlargeImage({{item}})"
                        src="{{item}}"></image>
 
-                <view class="-item-down-audio" @tap="changeAudioStatus({{item}},1)" wx:if="{{!false}}">
+                <view class="-item-down-audio" @tap="changeAudioStatus({{item}},1)" wx:if="{{item.homeworkType==1}}">
                   <view class="-reply-icon">
                     <view class="icon"
                           wx:if="{{!item.isStuPlay}}"></view>
                     <view class="playIcon"
                           wx:if="{{item.isStuPlay}}"></view>
                   </view>
-                  <view class="-reply-time">{{durationMyTime}}</view>
+                  <view class="-reply-time">{{item.duration}}</view>
                 </view>
               </view>
 
@@ -104,20 +104,20 @@
                        wx:if="{{!item.myLike}}"
                        src="https://pub.file.k12.vip/poem/1_2/Stroke 3@3x.png"></image>
               </view>
-              <view class="-teacher-content">小朋友读的很不错哦，要继续加油保持哦。加油！老师期待你下一次的表现！</view>
+              <view class="-teacher-content" wx:if="{{item.replyText}}">{{item.replyText}}</view>
 
-              <view class="-teacher-audio" @tap="changeAudioStatus({{item}},2)">
+              <view class="-teacher-audio" @tap="changeAudioStatus({{item}},2)" wx:if="{{item.replyAudioAuthorUrl}}">
                 <view class="-reply-icon">
                   <view class="icon"
                         wx:if="{{!item.isTeaPlay}}"></view>
                   <view class="playIcon"
                         wx:if="{{item.isTeaPlay}}"></view>
                 </view>
-                <view class="-reply-time">{{durationTime}}</view>
+                <view class="-reply-time">{{item.replyDuration}}</view>
               </view>
 
               <view class="-teacher-img">
-                <image class="-img" wx:for="{{workImgList}}" wx:key="{{item}}"
+                <image class="-img" wx:for="{{item.replyImg}}" wx:key="{{item}}"
                        @tap="enlargeImage({{item}})"
                        src="{{item}}"></image>
               </view>
@@ -134,37 +134,37 @@
       <van-tabbar-item>
         <image slot="icon"
                src="../assets/image/icon-jrxx.png"
-               mode="aspectFit" />
+               mode="aspectFit"/>
         <image slot="icon-active"
                src="../assets/image/icon-jrxx1.png"
-               mode="aspectFit" />
+               mode="aspectFit"/>
         今日学习
       </van-tabbar-item>
       <van-tabbar-item>
         <image slot="icon"
                src="../assets/image/icon-zpbz.png"
-               mode="aspectFit" />
+               mode="aspectFit"/>
         <image slot="icon-active"
                src="../assets/image/icon-zpbz1.png"
-               mode="aspectFit" />
+               mode="aspectFit"/>
         作品表彰
       </van-tabbar-item>
       <van-tabbar-item dot="{{remindData.todaycard}}">
         <image slot="icon"
                src="../assets/image/icon-dkjl.png"
-               mode="aspectFit" />
+               mode="aspectFit"/>
         <image slot="icon-active"
                src="../assets/image/icon-dkjl1.png"
-               mode="aspectFit" />
+               mode="aspectFit"/>
         打卡记录
       </van-tabbar-item>
       <van-tabbar-item dot="{{remindData.uctip}}">
         <image slot="icon"
                src="../assets/image/icon-grzx.png"
-               mode="aspectFit" />
+               mode="aspectFit"/>
         <image slot="icon-active"
                src="../assets/image/icon-grzx1.png"
-               mode="aspectFit" />
+               mode="aspectFit"/>
         个人中心
       </van-tabbar-item>
     </van-tabbar>
@@ -174,587 +174,606 @@
 </template>
 
 <script>
-import wepy from 'wepy'
-import { connect } from 'wepy-redux'
-import api from '../request/api'
-import dayjs from 'dayjs'
-import testMixin from '../mixins/test'
-import mHeader from '../components/header'
-import lookImage from '../components/lookImage';
+  import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+  import api from '../request/api';
+  import dayjs from 'dayjs';
+  import testMixin from '../mixins/test';
+  import mHeader from '../components/header';
+  import lookImage from '../components/lookImage';
 
-@connect({
-  userInfo (state) {
-    return state.user.userInfo
-  },
-  remindData (state) {
-    return state.user.remindData
-  }
-})
-export default class PraiseOfWorks extends wepy.page {
-  config = {
-    navigationBarTitleText: '作品表彰',
-    usingComponents: {
-      'van-tabbar': '../vant/tabbar/index',
-      'van-tabbar-item': '../vant/tabbar-item/index',
-      'van-icon': '../vant/icon/index',
-      'van-popup': '../vant/popup/index'
-    }
-  };
-  components = {
-    mHeader,
-    lookImage
-  };
-  computed = {
-    height () {
-      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
-    }
-  };
-
-  mixins = [testMixin];
-
-  data = {
-    page: {
-      current: 1,
-      size: 10,
-      total: ''
+  @connect({
+    userInfo(state) {
+      return state.user.userInfo;
     },
-    workImgList: ['https://pub.file.k12.vip/2019/06/17/1140548810520395777.jpg','https://pub.file.k12.vip/2019/06/17/1140548810520395777.jpg','https://pub.file.k12.vip/2019/06/17/1140548810520395777.jpg'],
-    isShowImage: false,
-    dataItem: '',
-    itemUrl: '',
-    durationTime: '',
-    backgroundY: 0,
-    dataList: []
-  };
+    remindData(state) {
+      return state.user.remindData;
+    }
+  })
+  export default class PraiseOfWorks extends wepy.page {
+    config = {
+      navigationBarTitleText: '作品表彰',
+      usingComponents: {
+        'van-tabbar': '../vant/tabbar/index',
+        'van-tabbar-item': '../vant/tabbar-item/index',
+        'van-icon': '../vant/icon/index',
+        'van-popup': '../vant/popup/index'
+      }
+    };
+    components = {
+      mHeader,
+      lookImage
+    };
+    computed = {
+      height() {
+        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
+      }
+    };
 
-  getList () {
-    api.study.listWorkPraiseByPage({
-      current: this.page.current,
-      size: this.page.size
-    })
-      .then(({ data }) => {
-        if (this.page.current > 1) {
-          this.dataList = this.dataList.concat(data.resultData.records)
-        } else {
-          this.dataList = data.resultData.records
-        }
+    mixins = [testMixin];
 
-        this.dataList.forEach(item => {
-          item.worktime = dayjs(+item.worktime).format('YYYY-MM-DD HH:mm')
-          item.teacherReplayAudio = 'http://huoke-private-1254282420.cos.ap-chengdu.myqcloud.com/2019/08/08/8b7fa165-77a0-4c78-801c-7f5e6695a85e.mp3?sign=q-sign-algorithm%3Dsha1%26q-ak%3DAKIDCJG2e67TN6kR3mA5fDve2X0Ndnwz5mV8%26q-sign-time%3D1565257858%3B1565329858%26q-key-time%3D1565257858%3B1565329858%26q-header-list%3D%26q-url-param-list%3D%26q-signature%3Dbcecaf4669fe02d576af5a6acaf26a2d51ab8152'
-          item.stuReplayAudio = 'http://huoke-private-1254282420.cos.ap-chengdu.myqcloud.com/2019/08/08/60bc4dc9-c73e-4db3-87d1-94fcc7797710.mp3?sign=q-sign-algorithm%3Dsha1%26q-ak%3DAKIDCJG2e67TN6kR3mA5fDve2X0Ndnwz5mV8%26q-sign-time%3D1565257892%3B1565329892%26q-key-time%3D1565257892%3B1565329892%26q-header-list%3D%26q-url-param-list%3D%26q-signature%3Dad3b2c97a70f5bf62194416f2a773ba14362b4c7'
-          item.isStuPlay = false
-          item.isTeaPlay = false
-        })
+    data = {
+      page: {
+        current: 1,
+        size: 10,
+        total: ''
+      },
+      workImgList: ['https://pub.file.k12.vip/2019/06/17/1140548810520395777.jpg', 'https://pub.file.k12.vip/2019/06/17/1140548810520395777.jpg', 'https://pub.file.k12.vip/2019/06/17/1140548810520395777.jpg'],
+      isShowImage: false,
+      dataItem: '',
+      itemUrl: '',
+      durationTime: '',
+      backgroundY: 0,
+      dataList: []
+    };
 
-        this.page.total = data.resultData.total
-        this.$apply()
+    getList() {
+      api.study.listWorkPraiseByPage({
+        current: this.page.current,
+        size: this.page.size
       })
-  };
-
-  startLikeAnimation () {
-    const base = 270 / 414
-    const bgBase = 13865 / 414
-    const width = 276
-    let height = width * base
-    let time = (1000 * 0.75) / 51
-    let bgHeight = parseInt(width * bgBase)
-    setTimeout(() => {
-      if (this.backgroundY < bgHeight) {
-        this.backgroundY += height
-        this.startLikeAnimation()
-      } else {
-        this.backgroundY = 0
-      }
-      this.$apply()
-    }, time)
-  }
-
-  initPlayAudio (src) {
-    this.innerAudioContext && this.innerAudioContext.destroy()
-    this.innerAudioContext = wx.createInnerAudioContext()
-    console.log(src,1)
-    this.innerAudioContext.src = src
-
-    this.innerAudioContext.onPlay(()=>{
-      console.log('监听开始播放')
-    })
-
-    this.innerAudioContext.onEnded(()=>{
-      for (let data of this.dataList) {
-        data.isStuPlay = false
-        data.isTeaPlay = false
-      }
-    })
-  }
-
-  events = {
-    changePopupStatus() {
-      this.isShowImage = false;
-    }
-  };
-  methods = {
-    changeAudioStatus (item, num) {
-      if (num == 1) {
-        for (let data of this.dataList) {
-          if (item.workId == data.workId) {
-            data.isStuPlay = !data.isStuPlay
+        .then(({ data }) => {
+          if (this.page.current > 1) {
+            this.dataList = this.dataList.concat(data.resultData.records);
           } else {
-            data.isStuPlay = false
+            this.dataList = data.resultData.records;
           }
-          data.isTeaPlay = false
-        }
 
-        if (item.isStuPlay) {
-          item.isStuPlay = false
-          this.innerAudioContext.stop()
+          this.dataList.forEach(item => {
+            item.worktime = dayjs(+item.worktime).format('YYYY-MM-DD HH:mm');
+            item.replyDuration = this.timeToFormat(item.replyDuration);
+            item.duration = this.timeToFormat(item.duration);
+            item.workImg = item.workImg && item.workImg.split(',');
+            item.workImgSrc = item.workImgSrc && item.workImgSrc.split(',');
+            item.replyImg = item.replyImg && item.replyImg.split(',');
+            item.isStuPlay = false;
+            item.isTeaPlay = false;
+          });
+
+          this.page.total = data.resultData.total;
+          this.$apply();
+        });
+    };
+
+    startLikeAnimation() {
+      const base = 270 / 414;
+      const bgBase = 13865 / 414;
+      const width = 276;
+      let height = width * base;
+      let time = (1000 * 0.75) / 51;
+      let bgHeight = parseInt(width * bgBase);
+      setTimeout(() => {
+        if (this.backgroundY < bgHeight) {
+          this.backgroundY += height;
+          this.startLikeAnimation();
         } else {
-          item.isStuPlay = true
-          this.initPlayAudio( num==1 ? item.stuReplayAudio : item.teacherReplayAudio)
-          this.innerAudioContext.play()
+          this.backgroundY = 0;
         }
+        this.$apply();
+      }, time);
+    }
 
-      } else {
+    initPlayAudio(src) {
+      this.innerAudioContext && this.innerAudioContext.destroy();
+      this.innerAudioContext = wx.createInnerAudioContext();
+      this.innerAudioContext.src = src;
+
+      this.innerAudioContext.onPlay(() => {
+        console.log('监听开始播放');
+      });
+
+      this.innerAudioContext.onEnded(() => {
         for (let data of this.dataList) {
-          if (item.workId == data.workId) {
-            data.isTeaPlay = !data.isTeaPlay
-          } else {
-            data.isTeaPlay = false
+          data.isStuPlay = false;
+          data.isTeaPlay = false;
+        }
+      });
+    }
+
+    timeToFormat(times) {
+      var result = '00"00"';
+      var minute, second;
+      if (times > 0) {
+        minute = Math.floor(times / 60);
+        if (minute < 10) {
+          minute = '0' + minute;
+        }
+
+        second = Math.floor((times - 60 * minute) % 60);
+        if (second < 10) {
+          second = '0' + second;
+        }
+        result = `${minute}"${second}"`;
+      }
+      return result;
+    };
+
+    events = {
+      changePopupStatus() {
+        this.isShowImage = false;
+      }
+    };
+    methods = {
+      changeAudioStatus(item, num) {
+        if (num == 1) {
+          for (let data of this.dataList) {
+            if (item.workId == data.workId) {
+              data.isStuPlay = !data.isStuPlay;
+            } else {
+              data.isStuPlay = false;
+            }
+            data.isTeaPlay = false;
           }
-          data.isStuPlay = false
-        }
 
-        if (item.isTeaPlay) {
-          item.isTeaPlay = false
-          this.innerAudioContext.stop()
+          if (item.isStuPlay) {
+            item.isStuPlay = false;
+            this.innerAudioContext.stop();
+          } else {
+            item.isStuPlay = true;
+            this.initPlayAudio(item.workAudio);
+            this.innerAudioContext.play();
+          }
+
         } else {
-          item.isTeaPlay = true
-          this.initPlayAudio( num==1 ? item.stuReplayAudio : item.teacherReplayAudio)
-          this.innerAudioContext.play()
+          for (let data of this.dataList) {
+            if (item.workId == data.workId) {
+              data.isTeaPlay = !data.isTeaPlay;
+            } else {
+              data.isTeaPlay = false;
+            }
+            data.isStuPlay = false;
+          }
+
+          if (item.isTeaPlay) {
+            item.isTeaPlay = false;
+            this.innerAudioContext.stop();
+          } else {
+            item.isTeaPlay = true;
+            this.initPlayAudio(item.replyAudioAuthorUrl);
+            this.innerAudioContext.play();
+          }
+        }
+
+
+        this.$apply();
+      },
+      enlargeImage(url) {
+        this.itemUrl = url;
+        this.isShowImage = true;
+      },
+      toWorkDetail(data) {
+        wx.navigateTo({ url: `/pages/completionOfWork?type=2&id=${data.workId}` });
+      },
+      addMyLike(item) {
+        if (!item.myLike) {
+          api.study.addLike({
+            workId: item.workId
+          }).then(() => {
+            this.dataItem = item;
+            setTimeout(() => {
+              this.startLikeAnimation();
+            }, 500);
+
+            setTimeout(() => {
+              this.getList();
+              this.$apply();
+            }, 900);
+          });
+        } else {
+          wx.showToast({
+            icon: 'none',
+            title: '你已经点过赞啦~'
+          });
+        }
+      },
+      bindLoadItem(data) {
+        if (this.page.current < Math.ceil(this.page.total / this.page.size)) {
+          this.page.current++;
+          this.getList();
         }
       }
+    };
 
-
-      this.$apply()
-    },
-    enlargeImage(url) {
-      this.itemUrl = url;
-      this.isShowImage = true;
-    },
-    toWorkDetail (data) {
-      wx.navigateTo({ url: `/pages/completionOfWork?type=2&id=${data.workId}` })
-    },
-    addMyLike (item) {
-      if (!item.myLike) {
-        api.study.addLike({
-          workId: item.workId
-        }).then(() => {
-          this.dataItem = item
-          setTimeout(() => {
-            this.startLikeAnimation()
-          }, 500)
-
-          setTimeout(() => {
-            this.getList()
-            this.$apply()
-          }, 900)
-        })
-      } else {
-        wx.showToast({
-          icon: 'none',
-          title: '你已经点过赞啦~'
-        })
-      }
-    },
-    bindLoadItem (data) {
-      if (this.page.current < Math.ceil(this.page.total / this.page.size)) {
-        this.page.current++
-        this.getList()
-      }
+    onLoad() {
+      this.getList();
     }
-  };
 
-  onLoad () {
-    this.getList()
-  }
-
-  onShareAppMessage () {
-    return {
-      title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
-      path: `/pages/index`,
-      imageUrl: 'https://pub.file.k12.vip/tbzw/v2/logo2.png'
+    onShareAppMessage() {
+      return {
+        title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
+        path: `/pages/index`,
+        imageUrl: 'https://pub.file.k12.vip/tbzw/v2/logo2.png'
+      };
     }
   }
-}
 </script>
 <style lang="scss">
-@import '../assets/style/mixin.scss';
+  @import '../assets/style/mixin.scss';
 
-.p-praiseOfWorks {
+  .p-praiseOfWorks {
 
-  .item-scroll {
-    height: 100vh;
-  }
+    .item-scroll {
+      height: 100vh;
+    }
 
-  &-item {
+    &-item {
 
-    &-top {
+      &-top {
 
-      .-item-top {
-        display: flex;
-        justify-content: space-between;
-        padding: 26px 32px 0;
-
-        &-info {
+        .-item-top {
           display: flex;
-        }
+          justify-content: space-between;
+          padding: 26px 32px 0;
 
-        &-left {
-          .-left-img {
-            margin-right: 12px;
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-          }
-        }
-
-        &-right {
-          .-right-name {
-            height:40px;
-            font-size:28px;
-            font-weight:500;
-            color:rgba(88,66,43,1);
-            line-height:40px;
+          &-info {
+            display: flex;
           }
 
-          .-right-time {
-            height:28px;
-            font-size:20px;
-            font-weight:400;
-            color:rgba(88,66,43,0.5);
-            line-height:28px;
-          }
-
-          .-right-work {
-            margin-top: 16px;
-            width: 280px;
-            height: 280px;
-          }
-
-          .-right-tip {
-            position: absolute;
-            top: 180px;
-            right: 12px;
-            @include bg('/khzy/bubbles.png');
-            width: 166px;
-            height: 128px;
-
-            .-tip-text {
-              text-align: center;
-              margin-top: 40px;
-              margin-left: 40px;
-              width: 120px;
+          &-left {
+            .-left-img {
+              margin-right: 12px;
+              width: 56px;
               height: 56px;
-              font-size: 20px;
-              font-weight: 500;
-              color: rgba(88, 66, 43, 1);
+              border-radius: 50%;
             }
           }
 
-          .-right-btn {
-            margin-top: 32px;
+          &-right {
+            .-right-name {
+              height: 40px;
+              font-size: 28px;
+              font-weight: 500;
+              color: rgba(88, 66, 43, 1);
+              line-height: 40px;
+            }
+
+            .-right-time {
+              height: 28px;
+              font-size: 20px;
+              font-weight: 400;
+              color: rgba(88, 66, 43, 0.5);
+              line-height: 28px;
+            }
+
+            .-right-work {
+              margin-top: 16px;
+              width: 280px;
+              height: 280px;
+            }
+
+            .-right-tip {
+              position: absolute;
+              top: 180px;
+              right: 12px;
+              @include bg('/khzy/bubbles.png');
+              width: 166px;
+              height: 128px;
+
+              .-tip-text {
+                text-align: center;
+                margin-top: 40px;
+                margin-left: 40px;
+                width: 120px;
+                height: 56px;
+                font-size: 20px;
+                font-weight: 500;
+                color: rgba(88, 66, 43, 1);
+              }
+            }
+
+            .-right-btn {
+              margin-top: 32px;
+              text-align: center;
+              width: 284px;
+              height: 64px;
+              border-radius: 50px;
+              border: 2px solid rgba(88, 66, 43, 0.2);
+              font-size: 28px;
+              font-weight: 500;
+              color: rgba(88, 66, 43, 1);
+              line-height: 64px;
+            }
+          }
+
+          &-icon {
+            @include bg('/v2/zpbz/icon-xunzhang.png');
+            width: 128px;
+            height: 138px;
             text-align: center;
-            width: 284px;
-            height: 64px;
-            border-radius: 50px;
-            border: 2px solid rgba(88, 66, 43, 0.2);
-            font-size: 28px;
-            font-weight: 500;
-            color: rgba(88, 66, 43, 1);
-            line-height: 64px;
+
+            &-num {
+              margin-top: 50px;
+              height: 40px;
+              font-size: 24px;
+              font-weight: 600;
+              color: rgba(213, 147, 15, 1);
+              line-height: 40px;
+              text-shadow: 0px 2px 2px rgba(155, 79, 15, 1);
+            }
+
+            &-text {
+              height: 23px;
+              font-size: 18px;
+              font-weight: 600;
+              color: rgba(255, 255, 255, 1);
+              line-height: 23px;
+            }
           }
         }
 
-        &-icon {
-          @include bg('/v2/zpbz/icon-xunzhang.png');
-          width: 128px;
-          height: 138px;
-          text-align: center;
+        .-item-text {
+          padding: 0 32px;
+          margin: 0 0 24px;
+          font-size: 32px;
+          font-weight: 500;
+          color: rgba(59, 63, 60, 1);
+          line-height: 44px;
+        }
 
-          &-num {
-            margin-top: 50px;
-            height: 40px;
-            font-size: 24px;
-            font-weight: 600;
-            color: rgba(213, 147, 15, 1);
-            line-height: 40px;
-            text-shadow: 0px 2px 2px rgba(155, 79, 15, 1);
+        .-item-down {
+          display: flex;
+          padding: 24px 32px;
+          border-bottom: 2px solid #F8F8F8FF;
+
+          &-img {
+            margin-right: 12px;
+            width: 220px;
+            height: 220px;
           }
 
-          &-text {
-            height: 23px;
-            font-size: 18px;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 1);
-            line-height: 23px;
+          &-audio {
+            @include flex-center;
+            justify-content: space-between;
+            padding: 20px 32px;
+            width: 488px;
+            background: rgba(255, 245, 209, 1);
+            border-radius: 39px;
+            border: 3px solid rgba(232, 197, 157, 1);
+
+            .-reply-icon {
+              .icon {
+                @include bg('/sk/icon-audio.png');
+                width: 26px;
+                height: 43px;
+              }
+
+              .playIcon {
+                @include bg('/v2/audio-pay.gif');
+                width: 26px;
+                height: 43px;
+              }
+            }
+
+            .-reply-time {
+              height: 26px;
+              font-size: 19px;
+              font-weight: 600;
+              color: rgba(209, 138, 59, 1);
+              line-height: 26px;
+            }
           }
         }
+
+        .-item-footer {
+          display: flex;
+          height: 66px;
+          line-height: 66px;
+          font-size: 24px;
+          font-weight: 600;
+          color: rgba(171, 160, 149, 1);
+          line-height: 32px;
+
+          &-wrap {
+            width: 50%;
+            @include flex-center;
+
+            .-img {
+              margin-right: 8px;
+              width: 40px;
+              height: 40px;
+            }
+          }
+
+        }
+
       }
 
-      .-item-text {
-        padding: 0 32px;
-        margin: 0 0 24px;
-        height:88px;
-        font-size:32px;
-        font-weight:500;
-        color:rgba(59,63,60,1);
-        line-height:44px;
-      }
-
-      .-item-down {
+      &-down {
         display: flex;
-        padding: 24px 32px;
-        border-bottom: 2px solid #F8F8F8FF;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 28px;
+        margin: 18px 48px 0 44px;
 
-        &-img {
-          margin-right: 12px;
-          width: 220px;
-          height: 220px;
+        .-down-left {
+          display: flex;
+          align-items: center;
+
+          &-img {
+            z-index: 2;
+            width: 56px;
+            height: 56px;
+            box-shadow: 0px 4px 20px 0px rgba(235, 171, 5, 0.5);
+            border-radius: 32px;
+            border: 4px solid rgba(255, 255, 255, 1);
+          }
+
+          &-name {
+            transform: translateX(-50px);
+            padding-right: 28px;
+            text-align: right;
+            width: 234px;
+            background: #ffd263;
+            border-radius: 24px;
+            height: 48px;
+            font-size: 24px;
+            font-family: PingFangSC-Medium;
+            font-weight: 500;
+            color: rgba(88, 66, 43, 0.9);
+            line-height: 48px;
+          }
         }
 
-        &-audio {
+        .-down-right {
+          position: relative;
+          display: flex;
+          justify-content: flex-end;
+          align-items: center;
+
+          .-texiao {
+            @include texiao;
+            left: 0px;
+            bottom: 25px;
+          }
+
+          .-zan-left {
+            @include flex-center;
+            position: relative;
+            left: 55px;
+            width: 56px;
+            height: 56px;
+            background: rgba(255, 255, 255, 1);
+            border: 3px solid rgba(88, 66, 43, 0.1);
+            border-radius: 50%;
+
+            .-img {
+              width: 32px;
+              height: 26px;
+            }
+          }
+
+          .-zan-right {
+            text-align: right;
+            padding-right: 16px;
+            width: 104px;
+            height: 36px;
+            background: rgba(255, 255, 255, 1);
+            border-radius: 17px;
+            border: 2px solid rgba(88, 66, 43, 0.1);
+            font-size: 24px;
+            font-weight: 400;
+            color: rgba(88, 66, 43, 0.5);
+            line-height: 36px;
+          }
+
+          .-zan-animation {
+            @include texiao-bg
+          }
+
+          .-icon-animation {
+            @include texiao-icon
+          }
+        }
+      }
+
+      &-teacher {
+        padding: 32px 0 24px;
+        width: 100%;
+        background: rgba(255, 252, 243, 1);
+        border-bottom: 15px solid #F8F8F8FF;
+
+        .-teacher-title {
+          @include flex-center;
+          width: 328px;
+          height: 52px;
+          background: rgba(255, 245, 209, 1);
+          border-radius: 0px 200px 200px 0px;
+          opacity: 0.7;
+
+          .-text {
+            height: 52px;
+            font-size: 24px;
+            font-weight: 500;
+            color: rgba(209, 138, 59, 1);
+            line-height: 52px;
+            margin: 0 8px;
+          }
+
+          .-img {
+            width: 16px;
+            height: 14px;
+          }
+        }
+
+        .-teacher-content {
+          padding: 0 32px;
+          margin: 32px 0 24px;
+          height: 88px;
+          font-size: 28px;
+          font-weight: 400;
+          color: rgba(59, 63, 60, 1);
+          line-height: 40px;
+        }
+
+        .-teacher-audio {
           @include flex-center;
           justify-content: space-between;
-          padding: 20px 32px;
-          width:488px;
-          background:rgba(255,245,209,1);
-          border-radius: 39px;
-          border:3px solid rgba(232,197,157,1);
+
+          margin: 24px 32px 26px;
+          padding: 16px 24px 14px;
+          width: 390px;
+          background: rgba(255, 245, 209, 1);
+          border-radius: 29px;
+          border: 2px solid rgba(232, 197, 157, 1);
 
           .-reply-icon {
             .icon {
               @include bg('/sk/icon-audio.png');
-              width: 26px;
-              height: 43px;
+              width: 18px;
+              height: 32px;
             }
 
             .playIcon {
               @include bg('/v2/audio-pay.gif');
-              width: 26px;
-              height: 43px;
+              width: 18px;
+              height: 32px;
             }
           }
 
           .-reply-time {
-            height:26px;
-            font-size:19px;
-            font-weight:600;
-            color:rgba(209,138,59,1);
-            line-height:26px;
-          }
-        }
-      }
-
-      .-item-footer {
-        display: flex;
-        height: 66px;
-        line-height: 66px;
-        font-size:24px;
-        font-weight:600;
-        color:rgba(171,160,149,1);
-        line-height:32px;
-
-        &-wrap {
-          width: 50%;
-          @include flex-center;
-
-          .-img {
-            margin-right: 8px;
-            width: 40px;
-            height: 40px;
-          }
-        }
-
-      }
-
-    }
-
-    &-down {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-bottom: 28px;
-      margin: 18px 48px 0 44px;
-
-      .-down-left {
-        display: flex;
-        align-items: center;
-
-        &-img {
-          z-index: 2;
-          width: 56px;
-          height: 56px;
-          box-shadow: 0px 4px 20px 0px rgba(235, 171, 5, 0.5);
-          border-radius: 32px;
-          border: 4px solid rgba(255, 255, 255, 1);
-        }
-
-        &-name {
-          transform: translateX(-50px);
-          padding-right: 28px;
-          text-align: right;
-          width: 234px;
-          background: #ffd263;
-          border-radius: 24px;
-          height: 48px;
-          font-size: 24px;
-          font-family: PingFangSC-Medium;
-          font-weight: 500;
-          color: rgba(88, 66, 43, 0.9);
-          line-height: 48px;
-        }
-      }
-
-      .-down-right {
-        position: relative;
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-
-        .-texiao {
-         @include texiao;
-          left: 0px;
-          bottom: 25px;
-        }
-
-        .-zan-left {
-          @include flex-center;
-          position: relative;
-          left: 55px;
-          width: 56px;
-          height: 56px;
-          background: rgba(255, 255, 255, 1);
-          border: 3px solid rgba(88, 66, 43, 0.1);
-          border-radius: 50%;
-
-          .-img {
-            width: 32px;
             height: 26px;
+            font-size: 19px;
+            font-weight: 600;
+            color: rgba(209, 138, 59, 1);
+            line-height: 26px;
           }
         }
 
-        .-zan-right {
-          text-align: right;
-          padding-right: 16px;
-          width: 104px;
-          height: 36px;
-          background: rgba(255, 255, 255, 1);
-          border-radius: 17px;
-          border: 2px solid rgba(88, 66, 43, 0.1);
-          font-size: 24px;
-          font-weight: 400;
-          color: rgba(88, 66, 43, 0.5);
-          line-height: 36px;
-        }
+        .-teacher-img {
+          display: flex;
+          padding: 0 32px;
 
-        .-zan-animation {
-          @include texiao-bg
-        }
-
-        .-icon-animation {
-          @include texiao-icon
+          .-img {
+            margin-right: 12px;
+            width: 220px;
+            height: 220px;
+          }
         }
       }
     }
 
-    &-teacher {
-      padding: 32px 0 24px;
-      width:100%;
-      background:rgba(255,252,243,1);
-      border-bottom: 15px solid #F8F8F8FF;
-
-      .-teacher-title{
-        @include flex-center;
-        width:328px;
-        height:52px;
-        background:rgba(255,245,209,1);
-        border-radius:0px 200px 200px 0px;
-        opacity:0.7;
-
-        .-text {
-          height:52px;
-          font-size:24px;
-          font-weight:500;
-          color:rgba(209,138,59,1);
-          line-height:52px;
-          margin: 0 8px;
-        }
-
-        .-img{
-          width: 16px;
-          height: 14px;
-        }
-      }
-
-      .-teacher-content {
-        padding: 0 32px;
-        margin:32px 0 24px;
-        height:88px;
-        font-size:28px;
-        font-weight:400;
-        color:rgba(59,63,60,1);
-        line-height:40px;
-      }
-
-      .-teacher-audio {
-        @include flex-center;
-        justify-content: space-between;
-
-        margin: 24px 32px 26px;
-        padding: 16px 24px 14px;
-        width:390px;
-        background:rgba(255,245,209,1);
-        border-radius: 29px;
-        border:2px solid rgba(232,197,157,1);
-
-        .-reply-icon {
-          .icon {
-            @include bg('/sk/icon-audio.png');
-            width: 18px;
-            height: 32px;
-          }
-
-          .playIcon {
-            @include bg('/v2/audio-pay.gif');
-            width: 18px;
-            height: 32px;
-          }
-        }
-
-        .-reply-time {
-          height:26px;
-          font-size:19px;
-          font-weight:600;
-          color:rgba(209,138,59,1);
-          line-height:26px;
-        }
-      }
-
-      .-teacher-img {
-        display: flex;
-        padding: 0 32px;
-
-        .-img {
-          margin-right: 12px;
-          width: 220px;
-          height: 220px;
-        }
-      }
+    &-item:last-child {
+      margin-bottom: 190px;
     }
   }
-
-  &-item:last-child{
-    margin-bottom: 190px;
-  }
-}
 </style>

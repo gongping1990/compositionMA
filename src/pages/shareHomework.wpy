@@ -66,7 +66,7 @@
                   <view class="playIcon"
                         wx:if="{{isMyPlay}}"></view>
                 </view>
-                <view class="-reply-time">{{durationMyTime}}</view>
+                <view class="-reply-time">{{shareInfo.duration}}</view>
               </view>
             </view>
           </view>
@@ -98,7 +98,7 @@
                 <view class="playIcon"
                       wx:if="{{isPlay}}"></view>
               </view>
-              <view class="-reply-time">{{durationTime}}</view>
+              <view class="-reply-time">{{shareInfo.replyDuration}}</view>
             </view>
 
             <view class="-reply-info-img" wx:if="{{shareInfo.replyImg.length}}">
@@ -216,6 +216,8 @@
         this.shareInfo.workImg = this.shareInfo.workImg && this.shareInfo.workImg.split(',');
         this.shareInfo.workImgSrc = this.shareInfo.workImgSrc && this.shareInfo.workImgSrc.split(',');
         this.shareInfo.replyImg = this.shareInfo.replyImg && this.shareInfo.replyImg.split(',');
+        this.shareInfo.duration = this.timeToFormat(this.shareInfo.duration );
+        this.shareInfo.replyDuration = this.timeToFormat(this.shareInfo.replyDuration );
         this.initAudio();
         this.$apply();
       });

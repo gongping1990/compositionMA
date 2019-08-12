@@ -83,6 +83,7 @@
       recorderManager: '',
       innerAudioContext: '',
       fileAudioUrl: '',
+      duration: '',
       lessonDetail: '',
       recorderOptions:{
         sampleRate: 44100,
@@ -153,6 +154,7 @@
         this.$apply()
         this.initPlayAudio(res.tempFilePath)
         this.fileAudioUrl = res.tempFilePath
+        this.duration = res.duration
         console.log('监听结束事件', res)
       })
     }
@@ -211,6 +213,7 @@
               let parmas = JSON.parse(res.data)
               api.study.addHomework({
                 lessonId: _self.queryInfo.id,
+                duration: _self.duration,
                 workImg: parmas.resultData.url
               }).then( res => {
                 _self.isSending = false

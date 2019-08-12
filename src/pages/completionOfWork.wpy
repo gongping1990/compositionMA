@@ -35,7 +35,7 @@
               <view class="playIcon"
                     wx:if="{{isMyPlay}}"></view>
             </view>
-            <view class="-reply-time">{{durationMyTime}}</view>
+            <view class="-reply-time">{{workDetail.duration}}</view>
           </view>
         </view>
 
@@ -85,7 +85,7 @@
               <view class="playIcon"
                     wx:if="{{isPlay}}"></view>
             </view>
-            <view class="-reply-time">{{durationTime}}</view>
+            <view class="-reply-time">{{workDetail.replyDuration}}</view>
           </view>
 
           <view class="-reply-info-img">
@@ -236,15 +236,13 @@
       workDetail: '',
       queryInfo: '',
       myAudio: '',
-      durationTime: '',
-      durationMyTime: '',
       itemUrl: '',
       backgroundY: 0
     };
 
     initAudio(bool) {
       this.myAudio = wx.createInnerAudioContext();
-      this.myAudio.src = bool ? this.workDetail.workImgSrc[0] : this.workDetail.replyAudioAuthorUrl;
+      this.myAudio.src = bool ? this.workDetail.workAudio : this.workDetail.replyAudioAuthorUrl;
 
       this.myAudio.onEnded(() => {
         if (!bool) {
@@ -256,15 +254,6 @@
         if (this.queryInfo.type === '1' && this.workDetail.evaluation === null) {
           this.isShowImage = false;
           this.isOpenPopup = true;
-        }
-        this.$apply();
-      });
-
-      this.myAudio.onTimeUpdate(() => {
-        if (!bool) {
-          this.durationTime = this.timeToFormat(this.myAudio.duration);
-        } else {
-          this.durationMyTime = this.timeToFormat(this.myAudio.duration);
         }
         this.$apply();
       });
@@ -298,6 +287,8 @@
         this.workDetail.workImg = this.workDetail.workImg && this.workDetail.workImg.split(',');
         this.workDetail.workImgSrc = this.workDetail.workImgSrc && this.workDetail.workImgSrc.split(',');
         this.workDetail.replyImg = this.workDetail.replyImg && this.workDetail.replyImg.split(',');
+        this.workDetail.duration = this.timeToFormat(this.workDetail.duration );
+        this.workDetail.replyDuration = this.timeToFormat(this.workDetail.replyDuration );
         if (this.workDetail.replyTime) {
           this.workDetail.replyTime = dayjs(+this.workDetail.replyTime).format('YYYY-MM-DD HH:mm');
           this.isReply = true;
@@ -321,6 +312,8 @@
         this.workDetail.workImg = this.workDetail.workImg && this.workDetail.workImg.split(',');
         this.workDetail.workImgSrc = this.workDetail.workImgSrc && this.workDetail.workImgSrc.split(',');
         this.workDetail.replyImg = this.workDetail.replyImg && this.workDetail.replyImg.split(',');
+        this.workDetail.duration = this.timeToFormat(this.workDetail.duration );
+        this.workDetail.replyDuration = this.timeToFormat(this.workDetail.replyDuration);
         if (this.workDetail.replyTime) {
           this.workDetail.replyTime = dayjs(+this.workDetail.replyTime).format('YYYY-MM-DD HH:mm');
           this.isReply = true;

@@ -54,12 +54,12 @@
                 <block wx:for="{{shareInfo.workImg}}" wx:key="{{index}}">
                   <swiper-item>
                     <image class="-content-down-img"
-                           src="{{item}}" @tap="enlargeImage({{shareInfo}})"></image>
+                           src="{{item}}" @tap="enlargeImage({{item}})"></image>
                   </swiper-item>
                 </block>
               </swiper>
 
-              <view class="-content-down-audio" @tap="changeMyAudioStatus" wx:if="{{shareInfo.homeworkType == 1}}">
+              <view class="-content-down-audio" @tap="changeAudioStatus({{shareInfo.workAudio}},1)" wx:if="{{shareInfo.homeworkType == 1}}">
                 <view class="-reply-icon">
                   <view class="icon"
                         wx:if="{{!isMyPlay}}"></view>
@@ -91,7 +91,7 @@
 
             <view class="-reply-info-text" wx:if="{{shareInfo.replyText}}">{{shareInfo.replyText}}</view>
 
-            <view class="-replay-info-audio" @tap="changeAudioStatus" wx:if="{{shareInfo.replyAudio}}">
+            <view class="-replay-info-audio" @tap="changeAudioStatus({{shareInfo.replyAudioAuthorUrl}},2)" wx:if="{{shareInfo.replyAudio}}">
               <view class="-reply-icon">
                 <view class="icon"
                       wx:if="{{!isPlay}}"></view>
@@ -175,6 +175,7 @@
 
     data = {
       isPlay: false,
+      isMyPlay: false,
       showKF: false,
       isShowImage: false,
       isShow: false,
@@ -192,9 +193,9 @@
       }
     };
 
-    initAudio() {
+    initAudio(url) {
       this.myAudio = wx.createInnerAudioContext();
-      this.myAudio.src = this.shareInfo.replyAudioAuthorUrl;
+      this.myAudio.src = url;
 
       this.myAudio.onEnded(() => {
         this.isPlay = false;
@@ -202,10 +203,6 @@
         this.$apply();
       });
 
-      this.myAudio.onTimeUpdate(() => {
-        this.durationTime = this.timeToFormat(this.myAudio.duration);
-        this.$apply();
-      });
     }
 
     getOtherHomework() {
@@ -219,7 +216,6 @@
         this.shareInfo.replyImg = this.shareInfo.replyImg && this.shareInfo.replyImg.split(',');
         this.shareInfo.duration = this.timeToFormat(this.shareInfo.duration );
         this.shareInfo.replyDuration = this.timeToFormat(this.shareInfo.replyDuration );
-        this.initAudio();
         this.$apply();
       });
     };
@@ -248,7 +244,7 @@
         this.isShow = true;
       },
       enlargeImage(data) {
-        this.itemUrl = data.replyImg || data.workImg;
+        this.itemUrl = data;
         this.isShowImage = true;
       },
       openPopup() {
@@ -257,14 +253,30 @@
       onClose() {
         this.showKF = false;
       },
-      changeAudioStatus() {
-        if (this.isPlay) {
-          this.isPlay = false;
-          this.myAudio.pause();
+      changeAudioStatus(url,num) {
+        this.myAudio && this.myAudio.destroy();
+        this.initAudio(url);
+        if(num==1) {
+          this.isPlay = false
+          if (this.isMyPlay) {
+            this.isMyPlay = false;
+            this.myAudio.pause();
+          } else {
+            this.isMyPlay = true;
+            this.myAudio.play();
+          }
         } else {
-          this.isPlay = true;
-          this.myAudio.play();
+          this.isMyPlay = false
+          if (this.isPlay) {
+            this.isPlay = false;
+            this.myAudio.pause();
+          } else {
+            this.isPlay = true;
+            this.myAudio.play();
+          }
         }
+
+
       },
       addLike() {
         api.study.addLike({
@@ -481,7 +493,7 @@
             .-content-down-audio {
               @include flex-center;
               justify-content: space-between;
-              margin: 44px 0 64px 32px;
+              /*margin: 44px 0 64px 32px;*/
               padding: 20px 32px 18px;
               width: 464px;
               background: rgba(255, 245, 209, 1);
@@ -613,6 +625,7 @@
 
           .-reply-info-img {
             display: flex;
+            margin: 24px 0 26px;
 
             .-img {
               margin-right: 12px;

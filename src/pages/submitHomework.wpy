@@ -210,8 +210,8 @@
                src="https://pub.file.k12.vip/tbzw/jrxx/calendar.png"></image>
         <view class="-popup-title">今日已打卡成功</view>
         <view class="-popup-text">
-          <view>2019年8月4日</view>
-          <view>已累计打卡6天，连续打卡1天</view>
+          <view>{{cardDetail.timestamp}}</view>
+          <view>已累计打卡{{cardDetail.totaldays}}天，连续打卡{{cardDetail.continuousdays}}天</view>
         </view>
       </view>
 
@@ -452,7 +452,10 @@
       addMyCard() {
         if (this.cardDetail.todayCard) return;
         api.study.addCard()
-          .then(() => {
+          .then(res => {
+            this.cardDetail.continuousdays = res.resultData.continuousdays
+            this.cardDetail.totaldays = res.resultData.totaldays
+            this.cardDetail.timestamp = dayjs(+res.timestamp).format('YYYY-MM-DD')
             this.isCard = true;
             this.isOpenPopup = true;
             this.getMyHomework();

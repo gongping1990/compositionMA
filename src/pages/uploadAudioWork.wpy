@@ -5,7 +5,9 @@
       <view class="p-uploadAudioWork-title">
         {{lessonDetail.homeworkClaim}}
       </view>
-      <view class="p-uploadAudioWork-content" v-html="lessonDetail.readContent"></view>
+      <view class="p-uploadAudioWork-content">
+        <rich-text nodes="{{lessonDetail.readContent}}" ></rich-text>
+      </view>
 
       <view class="p-uploadAudioWork-sound">
         <view class="-sound-wrap">

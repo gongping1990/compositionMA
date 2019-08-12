@@ -47,6 +47,7 @@
             <view class="-wrap-img">
               <swiper wx:if="{{shareInfo.homeworkType == 2}}"
                       indicator-dots="{{swiperOptions.indicatorDots}}"
+                      indicator-active-color="{{swiperOptions.indicatorActiveColor}}"
                       autoplay="{{swiperOptions.autoplay}}"
                       interval="{{swiperOptions.interval}}"
                       duration="{{swiperOptions.duration}}">
@@ -183,7 +184,8 @@
       workId: '',
       itemUrl: '',
       swiperOptions: {
-        indicatorDots: false,
+        indicatorDots: true,
+        indicatorActiveColor: '#FFF172',
         autoplay: false,
         interval: 5000,
         duration: 1000

@@ -3,11 +3,9 @@
     <mHeader title="提交作业"></mHeader>
     <view class="container-scroll p-uploadAudioWork" style="margin-top:{{height}}px">
       <view class="p-uploadAudioWork-title">
-        {{lessonDetail.homework}}
-      </view>
-      <view class="p-uploadAudioWork-content">
         {{lessonDetail.homeworkClaim}}
       </view>
+      <view class="p-uploadAudioWork-content" v-html="lessonDetail.readContent"></view>
 
       <view class="p-uploadAudioWork-sound">
         <view class="-sound-wrap">
@@ -213,8 +211,8 @@
               let parmas = JSON.parse(res.data)
               api.study.addHomework({
                 lessonId: _self.queryInfo.id,
-                duration: _self.duration,
-                workImg: parmas.resultData.url
+                duration: _self.duration.toFixed(),
+                workAudio: parmas.resultData.url
               }).then( res => {
                 _self.isSending = false
                 wx.hideToast()  // 隐藏Toast
@@ -249,6 +247,10 @@
       this.queryInfo = query
     }
 
+    onUnload () {
+      this.recorderManager.stop()
+    }
+
     onShareAppMessage () {
       return {
         title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
@@ -278,10 +280,10 @@
       margin: 80px 70px 0;
       max-height: 600px;
       overflow-y: auto;
-      font-size:36px;
-      font-weight:600;
-      color:rgba(88,66,43,1);
-      line-height:100px;
+      /*font-size:36px;*/
+      /*font-weight:600;*/
+      /*color:rgba(88,66,43,1);*/
+      /*line-height:100px;*/
     }
 
     &-sound {

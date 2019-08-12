@@ -401,7 +401,7 @@
         if (second < 10) {
           second = '0' + second;
         }
-        result = `${minute}"${second}"`;
+        result = `${minute} : ${second}`;
       }
       return result;
     };
@@ -820,6 +820,7 @@
 
         &-footer {
           display: flex;
+          padding-bottom: 20px;
           height: 66px;
           line-height: 66px;
           font-size: 24px;

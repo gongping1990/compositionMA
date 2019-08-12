@@ -131,6 +131,11 @@
       this.innerAudioContext.onPause(()=>{
         console.log('监听开始暂停')
       })
+      this.innerAudioContext.onEnded(()=>{
+        console.log('监听结束')
+        this.nowStatus = 4
+        this.$apply()
+      })
     }
 
     initRecorderAudio () {

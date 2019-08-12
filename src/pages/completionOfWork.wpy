@@ -20,7 +20,7 @@
           <view wx:if="{{workDetail.self && !isReply}}" class="-top-wrap-right" @tap="resultHomework">重新提交</view>
         </view>
 
-        <view class="-center-text">{{workDetail.homeworkTitle}}</view>
+        <view class="-center-text">{{workDetail.homeworkClaim}}</view>
 
         <view class="-down-wrap">
           <image class="-down-wrap-img" wx:for="{{workDetail.workImgSrc}}" wx:key="{{item}}"

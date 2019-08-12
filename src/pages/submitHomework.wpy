@@ -384,7 +384,11 @@
       });
 
       this.innerAudioContext.onEnded(() => {
+        this.dataList.forEach(item=> {
+          item.isPlay = false
+        })
         this.isPlay = false;
+        this.$apply()
       });
     }
 

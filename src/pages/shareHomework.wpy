@@ -45,9 +45,19 @@
           <view class="-content-down-content">
             <view class="-title">{{shareInfo.homeworkTitle}}</view>
             <view class="-wrap-img">
-              <image class="-content-down-img {{!shareInfo.replyTime ? '-content-down-colunm-img' : ''}}"
-                     wx:if="{{shareInfo.homeworkType == 2}}"
-                     src="{{shareInfo.replyImg || shareInfo.workImg}}" @tap="enlargeImage({{shareInfo}})"></image>
+              <swiper wx:if="{{shareInfo.homeworkType == 2}}"
+                      indicator-dots="{{swiperOptions.indicatorDots}}"
+                      autoplay="{{swiperOptions.autoplay}}"
+                      interval="{{swiperOptions.interval}}"
+                      duration="{{swiperOptions.duration}}">
+                <block wx:for="{{shareInfo.workImg}}" wx:key="{{index}}">
+                  <swiper-item>
+                    <image class="-content-down-img"
+                           src="{{item}}" @tap="enlargeImage({{shareInfo}})"></image>
+                  </swiper-item>
+                </block>
+              </swiper>
+
               <view class="-content-down-audio" @tap="changeMyAudioStatus" wx:if="{{shareInfo.homeworkType == 1}}">
                 <view class="-reply-icon">
                   <view class="icon"
@@ -171,7 +181,13 @@
       durationTime: '',
       shareInfo: '',
       workId: '',
-      itemUrl: ''
+      itemUrl: '',
+      swiperOptions: {
+        indicatorDots: false,
+        autoplay: false,
+        interval: 5000,
+        duration: 1000
+      }
     };
 
     initAudio() {
@@ -446,11 +462,12 @@
           }
 
           .-wrap-img {
+            padding: 32px;
             border-radius: 0 0 16px 16px;
             border: 2px solid rgba(144, 141, 138, 0.2);
 
             .-content-down-img {
-              margin: 32px;
+
               width: 526px;
               height: 292px;
               border-radius: 8px;
@@ -495,11 +512,11 @@
         &-text {
           text-align: center;
           margin: 32px 0 0 0;
-          height:40px;
-          font-size:28px;
-          font-weight:400;
-          color:rgba(70,65,60,0.6);
-          line-height:40px;
+          height: 40px;
+          font-size: 28px;
+          font-weight: 400;
+          color: rgba(70, 65, 60, 0.6);
+          line-height: 40px;
         }
 
         &-img {

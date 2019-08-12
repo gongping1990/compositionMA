@@ -3,7 +3,7 @@
     <mHeader title="提交作业"></mHeader>
     <view class="container-scroll p-uploadImgWork" style="margin-top:{{height}}px">
       <view class="p-uploadImgWork-title">
-        {{lessonDetail.homework}}
+        {{lessonDetail.homeworkClaim}}
       </view>
       <view class="p-uploadImgWork-content">
         <view class="-upload-wrap">

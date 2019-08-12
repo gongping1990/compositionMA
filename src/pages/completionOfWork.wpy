@@ -17,7 +17,7 @@
               <view class="-top-right-time">{{workDetail.workTime}}</view>
             </view>
           </view>
-          <view wx:if="{{workDetail.self && !isReply}}" class="-top-wrap-right" @tap="resultHomework">重新提交</view>
+          <view wx:if="{{(workDetail.self && !isReply) || workDetail.status==1}}" class="-top-wrap-right" @tap="resultHomework">重新提交</view>
         </view>
 
         <view class="-center-text">{{workDetail.homeworkClaim}}</view>
@@ -251,10 +251,10 @@
           this.isMyPlay = false;
         }
 
-        if (this.queryInfo.type === '1' && this.workDetail.evaluation === null) {
-          this.isShowImage = false;
-          this.isOpenPopup = true;
-        }
+        // if (this.queryInfo.type === '1' && this.workDetail.evaluation === null) {
+        //   this.isShowImage = false;
+        //   this.isOpenPopup = true;
+        // }
         this.$apply();
       });
     };

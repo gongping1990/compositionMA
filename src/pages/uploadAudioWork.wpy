@@ -211,7 +211,7 @@
               let parmas = JSON.parse(res.data)
               api.study.addHomework({
                 lessonId: _self.queryInfo.id,
-                duration: _self.duration.toFixed(),
+                duration: (_self.duration/1000).toFixed(),
                 workAudio: parmas.resultData.url
               }).then( res => {
                 _self.isSending = false

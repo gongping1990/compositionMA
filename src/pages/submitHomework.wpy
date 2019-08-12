@@ -388,8 +388,7 @@
 
     methods = {
       changeMyAudioStatus(item, num) {
-        let url = '';
-        url = 'http://huoke-private-1254282420.cos.ap-chengdu.myqcloud.com/2019/08/08/8b7fa165-77a0-4c78-801c-7f5e6695a85e.mp3?sign=q-sign-algorithm%3Dsha1%26q-ak%3DAKIDCJG2e67TN6kR3mA5fDve2X0Ndnwz5mV8%26q-sign-time%3D1565257858%3B1565329858%26q-key-time%3D1565257858%3B1565329858%26q-header-list%3D%26q-url-param-list%3D%26q-signature%3Dbcecaf4669fe02d576af5a6acaf26a2d51ab8152';
+        let url = item.workImgSrc[0];
         this.initPlayAudio(url);
         if (num == 1) {
 

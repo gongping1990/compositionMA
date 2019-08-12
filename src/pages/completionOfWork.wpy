@@ -76,7 +76,7 @@
             </view>
           </view>
 
-          <view class="-reply-info-text">{{workDetail.replyText}}</view>
+          <view class="-reply-info-text" wx:if="{{workDetail.replyText}}">{{workDetail.replyText}}</view>
 
           <view class="-replay-info-audio" @tap="changeAudioStatus" wx:if="{{workDetail.replyAudio}}">
             <view class="-reply-icon">
@@ -222,7 +222,6 @@
     };
 
     data = {
-      workImgList: ['https://pub.file.k12.vip/2019/06/17/1140548810520395777.jpg', 'https://pub.file.k12.vip/2019/06/17/1140548810520395777.jpg', 'https://pub.file.k12.vip/2019/06/17/1140548810520395777.jpg'],
       isFetching: false,
       isOpenPopup: false,
       isCompliment: false,
@@ -244,9 +243,8 @@
     };
 
     initAudio(bool) {
-      let url = 'http://huoke-private-1254282420.cos.ap-chengdu.myqcloud.com/2019/08/07/feb7bf00-fdcb-4570-b12d-fe64ccd04226.mp3?sign=q-sign-algorithm%3Dsha1%26q-ak%3DAKIDCJG2e67TN6kR3mA5fDve2X0Ndnwz5mV8%26q-sign-time%3D1565164309%3B1565236309%26q-key-time%3D1565164309%3B1565236309%26q-header-list%3D%26q-url-param-list%3D%26q-signature%3Defc1537b6271acdd1ebc5e19aa98ade125766a99';
       this.myAudio = wx.createInnerAudioContext();
-      this.myAudio.src = bool ? url : this.workDetail.replyAudioAuthorUrl;
+      this.myAudio.src = bool ? this.workDetail.workImgSrc[0] : this.workDetail.replyAudioAuthorUrl;
 
       this.myAudio.onEnded(() => {
         if (!bool) {

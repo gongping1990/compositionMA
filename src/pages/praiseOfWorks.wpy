@@ -1,12 +1,12 @@
 <template>
-  <view class="container">
-    <mHeader flag="0" title="作品表彰"></mHeader>
-    <view class="container-scroll p-praiseOfWorks"
-          style="margin-top:{{height}}px">
-      <scroll-view class="item-scroll"
-                   @scrolltolower="bindLoadItem"
-                   scroll-y
-                   scroll-with-animation>
+  <scroll-view class="item-scroll"
+               @scrolltolower="bindLoadItem"
+               scroll-y
+               scroll-with-animation>
+    <view class="container">
+      <mHeader flag="0" title="作品表彰"></mHeader>
+      <view class="container-scroll p-praiseOfWorks"
+            style="margin-top:{{height}}px">
         <repeat for="{{dataList}}"
                 key="index"
                 index="index"
@@ -33,13 +33,14 @@
                 </view>
               </view>
 
-              <view class="-item-text">{{item.homeworkTitle}}</view>
+              <!--<view class="-item-text" wx:if="{{item.homeworkTitle}}">{{item.homeworkTitle}}</view>-->
 
               <view class="-item-down">
-                <image class="-item-down-img" wx:for="{{item.workImgSrc}}" wx:key="{{item}}"
-                       wx:if="{{item.homeworkType==2}}"
-                       @tap="enlargeImage({{item}})"
-                       src="{{item}}"></image>
+                <view wx:if="{{item.homeworkType == 2}}">
+                  <image class="-item-down-img" wx:for="{{item.workImgSrc}}" wx:key="{{item}}"
+                         @tap="enlargeImage({{item}})"
+                         src="{{item}}"></image>
+                </view>
 
                 <view class="-item-down-audio" @tap="changeAudioStatus({{item}},1)" wx:if="{{item.homeworkType==1}}">
                   <view class="-reply-icon">
@@ -55,8 +56,8 @@
               <view class="-item-footer">
                 <view class="-item-footer-wrap" @tap="addMyLike({{item}})">
                   <view class="-texiao"
-                    wx:if="{{dataItem.workId === item.workId}}"
-                    style="background-position-y:-{{backgroundY}}rpx;">
+                        wx:if="{{dataItem.workId === item.workId}}"
+                        style="background-position-y:-{{backgroundY}}rpx;">
                   </view>
                   <image class="-img {{dataItem.workId === item.workId ? '-icon-animation' : ''}}"
                          wx:if="{{!item.myLike}}"
@@ -105,53 +106,54 @@
             </view>
           </view>
         </repeat>
-      </scroll-view>
+      </view>
+
+      <van-tabbar active="1"
+                  z-index="2"
+                  active-color="#58422B"
+                  bind:change="onChangeTabbar">
+        <van-tabbar-item>
+          <image slot="icon"
+                 src="../assets/image/icon-jrxx.png"
+                 mode="aspectFit"/>
+          <image slot="icon-active"
+                 src="../assets/image/icon-jrxx1.png"
+                 mode="aspectFit"/>
+          今日学习
+        </van-tabbar-item>
+        <van-tabbar-item>
+          <image slot="icon"
+                 src="../assets/image/icon-zpbz.png"
+                 mode="aspectFit"/>
+          <image slot="icon-active"
+                 src="../assets/image/icon-zpbz1.png"
+                 mode="aspectFit"/>
+          作品表彰
+        </van-tabbar-item>
+        <van-tabbar-item dot="{{remindData.todaycard}}">
+          <image slot="icon"
+                 src="../assets/image/icon-dkjl.png"
+                 mode="aspectFit"/>
+          <image slot="icon-active"
+                 src="../assets/image/icon-dkjl1.png"
+                 mode="aspectFit"/>
+          打卡记录
+        </van-tabbar-item>
+        <van-tabbar-item dot="{{remindData.uctip}}">
+          <image slot="icon"
+                 src="../assets/image/icon-grzx.png"
+                 mode="aspectFit"/>
+          <image slot="icon-active"
+                 src="../assets/image/icon-grzx1.png"
+                 mode="aspectFit"/>
+          个人中心
+        </van-tabbar-item>
+      </van-tabbar>
+
+      <lookImage :isShow.sync="isShowImage" :imgUrl.sync="itemUrl"></lookImage>
     </view>
+  </scroll-view>
 
-    <van-tabbar active="1"
-                z-index="2"
-                active-color="#58422B"
-                bind:change="onChangeTabbar">
-      <van-tabbar-item>
-        <image slot="icon"
-               src="../assets/image/icon-jrxx.png"
-               mode="aspectFit"/>
-        <image slot="icon-active"
-               src="../assets/image/icon-jrxx1.png"
-               mode="aspectFit"/>
-        今日学习
-      </van-tabbar-item>
-      <van-tabbar-item>
-        <image slot="icon"
-               src="../assets/image/icon-zpbz.png"
-               mode="aspectFit"/>
-        <image slot="icon-active"
-               src="../assets/image/icon-zpbz1.png"
-               mode="aspectFit"/>
-        作品表彰
-      </van-tabbar-item>
-      <van-tabbar-item dot="{{remindData.todaycard}}">
-        <image slot="icon"
-               src="../assets/image/icon-dkjl.png"
-               mode="aspectFit"/>
-        <image slot="icon-active"
-               src="../assets/image/icon-dkjl1.png"
-               mode="aspectFit"/>
-        打卡记录
-      </van-tabbar-item>
-      <van-tabbar-item dot="{{remindData.uctip}}">
-        <image slot="icon"
-               src="../assets/image/icon-grzx.png"
-               mode="aspectFit"/>
-        <image slot="icon-active"
-               src="../assets/image/icon-grzx1.png"
-               mode="aspectFit"/>
-        个人中心
-      </van-tabbar-item>
-    </van-tabbar>
-
-    <lookImage :isShow.sync="isShowImage" :imgUrl.sync="itemUrl"></lookImage>
-  </view>
 </template>
 
 <script>
@@ -213,6 +215,14 @@
         size: this.page.size
       })
         .then(({ data }) => {
+          let arraySt = data.resultData.records
+
+          arraySt.forEach(item => {
+            item.workImg = item.workImg && item.workImg.split(',');
+            item.workImgSrc = item.workImgSrc && item.workImgSrc.split(',');
+            item.replyImg = item.replyImg && item.replyImg.split(',');
+          })
+
           if (this.page.current > 1) {
             this.dataList = this.dataList.concat(data.resultData.records);
           } else {
@@ -223,9 +233,6 @@
             item.worktime = dayjs(+item.worktime).format('YYYY-MM-DD HH:mm');
             item.replyDuration = this.timeToFormat(item.replyDuration);
             item.duration = this.timeToFormat(item.duration);
-            item.workImg = item.workImg && item.workImg.split(',');
-            item.workImgSrc = item.workImgSrc && item.workImgSrc.split(',');
-            item.replyImg = item.replyImg && item.replyImg.split(',');
             item.isStuPlay = false;
             item.isTeaPlay = false;
           });
@@ -389,12 +396,11 @@
 </script>
 <style lang="scss">
   @import '../assets/style/mixin.scss';
+  .item-scroll {
+    height: 100vh;
+  }
 
   .p-praiseOfWorks {
-
-    .item-scroll {
-      height: 100vh;
-    }
 
     &-item {
 
@@ -512,7 +518,7 @@
 
         .-item-down {
           display: flex;
-          padding: 24px 32px;
+          padding: 0 32px 24px;
           border-bottom: 2px solid #F8F8F8FF;
 
           &-img {

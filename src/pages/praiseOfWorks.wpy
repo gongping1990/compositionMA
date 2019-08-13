@@ -36,7 +36,7 @@
               <!--<view class="-item-text" wx:if="{{item.homeworkTitle}}">{{item.homeworkTitle}}</view>-->
 
               <view class="-item-down">
-                <view wx:if="{{item.homeworkType == 2}}">
+                <view class="-item-down-wrap" wx:if="{{item.homeworkType == 2}}">
                   <image class="-item-down-img" wx:for="{{item.workImgSrc}}" wx:key="{{item}}"
                          @tap="enlargeImage({{item}})"
                          src="{{item}}"></image>
@@ -520,6 +520,10 @@
           display: flex;
           padding: 0 32px 24px;
           border-bottom: 2px solid #F8F8F8FF;
+
+          &-wrap {
+            display: flex;
+          }
 
           &-img {
             margin-right: 12px;

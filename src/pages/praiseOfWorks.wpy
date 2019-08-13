@@ -1,159 +1,161 @@
 <template>
-  <scroll-view class="item-scroll"
-               @scrolltolower="bindLoadItem"
-               scroll-y
-               scroll-with-animation>
-    <view class="container">
-      <mHeader flag="0" title="作品表彰"></mHeader>
-      <view class="container-scroll p-praiseOfWorks"
-            style="margin-top:{{height}}px">
-        <repeat for="{{dataList}}"
-                key="index"
-                index="index"
-                item="item">
-          <view class="p-praiseOfWorks-item">
-            <view class="p-praiseOfWorks-item-top">
-              <view class="-item-top">
-                <view class="-item-top-info">
-                  <view class="-item-top-left">
-                    <image class="-left-img"
-                           src="{{item.stuImg}}"></image>
+  <view>
+    <scroll-view class="item-scroll"
+                 @scrolltolower="bindLoadItem"
+                 scroll-y
+                 scroll-with-animation>
+      <view class="container">
+        <mHeader flag="0" title="作品表彰"></mHeader>
+        <view class="container-scroll p-praiseOfWorks"
+              style="margin-top:{{height}}px">
+          <repeat for="{{dataList}}"
+                  key="index"
+                  index="index"
+                  item="item">
+            <view class="p-praiseOfWorks-item">
+              <view class="p-praiseOfWorks-item-top">
+                <view class="-item-top">
+                  <view class="-item-top-info">
+                    <view class="-item-top-left">
+                      <image class="-left-img"
+                             src="{{item.stuImg}}"></image>
+                    </view>
+                    <view class="-item-top-right">
+                      <view class="-right-name">{{item.stuName}}</view>
+                      <view class="-right-time">{{item.worktime}}</view>
+                    </view>
                   </view>
-                  <view class="-item-top-right">
-                    <view class="-right-name">{{item.stuName}}</view>
-                    <view class="-right-time">{{item.worktime}}</view>
+
+                  <view class="-item-top-icon">
+                    <view class="-item-top-icon-num">
+                      {{item.praiseNum}}次
+                    </view>
+                    <view class="-item-top-icon-text">被表扬</view>
                   </view>
                 </view>
 
-                <view class="-item-top-icon">
-                  <view class="-item-top-icon-num">
-                    {{item.praiseNum}}次
+                <!--<view class="-item-text" wx:if="{{item.homeworkTitle}}">{{item.homeworkTitle}}</view>-->
+
+                <view class="-item-down">
+                  <view class="-item-down-wrap" wx:if="{{item.homeworkType == 2}}">
+                    <image class="-item-down-img" wx:for="{{item.workImgSrc}}" wx:key="{{item}}"
+                           @tap="enlargeImage({{item}})"
+                           src="{{item}}"></image>
                   </view>
-                  <view class="-item-top-icon-text">被表扬</view>
+
+                  <view class="-item-down-audio" @tap="changeAudioStatus({{item}},1)" wx:if="{{item.homeworkType==1}}">
+                    <view class="-reply-icon">
+                      <view class="icon"
+                            wx:if="{{!item.isStuPlay}}"></view>
+                      <view class="playIcon"
+                            wx:if="{{item.isStuPlay}}"></view>
+                    </view>
+                    <view class="-reply-time">{{item.duration}}</view>
+                  </view>
+                </view>
+
+                <view class="-item-footer">
+                  <view class="-item-footer-wrap" @tap="addMyLike({{item}})">
+                    <view class="-texiao"
+                          wx:if="{{dataItem.workId === item.workId}}"
+                          style="background-position-y:-{{backgroundY}}rpx;">
+                    </view>
+                    <image class="-img {{dataItem.workId === item.workId ? '-icon-animation' : ''}}"
+                           wx:if="{{!item.myLike}}"
+                           src="https://pub.file.k12.vip/tbzw/word-detail/icon-give-pre.png"></image>
+                    <image class="-img"
+                           wx:if="{{item.myLike}}"
+                           src="https://pub.file.k12.vip/2019/06/06/1136572565700235266.png"></image>
+                    <text>{{item.like}}</text>
+                  </view>
+                  <view class="-item-footer-wrap" @tap="toWorkDetail({{item}})">
+                    <image class="-img"
+                           wx:if="{{!item.myLike}}"
+                           src="https://pub.file.k12.vip/poem/1_2/zybz-icon-review@3x.png"></image>
+                    <text>看点评</text>
+                  </view>
                 </view>
               </view>
 
-              <!--<view class="-item-text" wx:if="{{item.homeworkTitle}}">{{item.homeworkTitle}}</view>-->
+              <view class="p-praiseOfWorks-item-teacher">
+                <view class="-teacher-title">
+                  <image class="-img"
+                         wx:if="{{!item.myLike}}"
+                         src="https://pub.file.k12.vip/poem/1_2/Stroke 3@3x.png"></image>
+                  <text class="-text">点评老师：{{item.teacherName}}</text>
+                  <image class="-img"
+                         wx:if="{{!item.myLike}}"
+                         src="https://pub.file.k12.vip/poem/1_2/Stroke 3@3x.png"></image>
+                </view>
+                <view class="-teacher-content" wx:if="{{item.replyText}}">{{item.replyText}}</view>
 
-              <view class="-item-down">
-                <view class="-item-down-wrap" wx:if="{{item.homeworkType == 2}}">
-                  <image class="-item-down-img" wx:for="{{item.workImgSrc}}" wx:key="{{item}}"
+                <view class="-teacher-audio" @tap="changeAudioStatus({{item}},2)" wx:if="{{item.replyAudioAuthorUrl}}">
+                  <view class="-reply-icon">
+                    <view class="icon"
+                          wx:if="{{!item.isTeaPlay}}"></view>
+                    <view class="playIcon"
+                          wx:if="{{item.isTeaPlay}}"></view>
+                  </view>
+                  <view class="-reply-time">{{item.replyDuration}}</view>
+                </view>
+
+                <view class="-teacher-img">
+                  <image class="-img" wx:for="{{item.replyImg}}" wx:key="{{item}}"
                          @tap="enlargeImage({{item}})"
                          src="{{item}}"></image>
                 </view>
-
-                <view class="-item-down-audio" @tap="changeAudioStatus({{item}},1)" wx:if="{{item.homeworkType==1}}">
-                  <view class="-reply-icon">
-                    <view class="icon"
-                          wx:if="{{!item.isStuPlay}}"></view>
-                    <view class="playIcon"
-                          wx:if="{{item.isStuPlay}}"></view>
-                  </view>
-                  <view class="-reply-time">{{item.duration}}</view>
-                </view>
-              </view>
-
-              <view class="-item-footer">
-                <view class="-item-footer-wrap" @tap="addMyLike({{item}})">
-                  <view class="-texiao"
-                        wx:if="{{dataItem.workId === item.workId}}"
-                        style="background-position-y:-{{backgroundY}}rpx;">
-                  </view>
-                  <image class="-img {{dataItem.workId === item.workId ? '-icon-animation' : ''}}"
-                         wx:if="{{!item.myLike}}"
-                         src="https://pub.file.k12.vip/tbzw/word-detail/icon-give-pre.png"></image>
-                  <image class="-img"
-                         wx:if="{{item.myLike}}"
-                         src="https://pub.file.k12.vip/2019/06/06/1136572565700235266.png"></image>
-                  <text>{{item.like}}</text>
-                </view>
-                <view class="-item-footer-wrap" @tap="toWorkDetail({{item}})">
-                  <image class="-img"
-                         wx:if="{{!item.myLike}}"
-                         src="https://pub.file.k12.vip/poem/1_2/zybz-icon-review@3x.png"></image>
-                  <text>看点评</text>
-                </view>
               </view>
             </view>
+          </repeat>
+        </view>
 
-            <view class="p-praiseOfWorks-item-teacher">
-              <view class="-teacher-title">
-                <image class="-img"
-                       wx:if="{{!item.myLike}}"
-                       src="https://pub.file.k12.vip/poem/1_2/Stroke 3@3x.png"></image>
-                <text class="-text">点评老师：{{item.teacherName}}</text>
-                <image class="-img"
-                       wx:if="{{!item.myLike}}"
-                       src="https://pub.file.k12.vip/poem/1_2/Stroke 3@3x.png"></image>
-              </view>
-              <view class="-teacher-content" wx:if="{{item.replyText}}">{{item.replyText}}</view>
-
-              <view class="-teacher-audio" @tap="changeAudioStatus({{item}},2)" wx:if="{{item.replyAudioAuthorUrl}}">
-                <view class="-reply-icon">
-                  <view class="icon"
-                        wx:if="{{!item.isTeaPlay}}"></view>
-                  <view class="playIcon"
-                        wx:if="{{item.isTeaPlay}}"></view>
-                </view>
-                <view class="-reply-time">{{item.replyDuration}}</view>
-              </view>
-
-              <view class="-teacher-img">
-                <image class="-img" wx:for="{{item.replyImg}}" wx:key="{{item}}"
-                       @tap="enlargeImage({{item}})"
-                       src="{{item}}"></image>
-              </view>
-            </view>
-          </view>
-        </repeat>
+        <lookImage :isShow.sync="isShowImage" :imgUrl.sync="itemUrl"></lookImage>
       </view>
 
-      <van-tabbar active="1"
-                  z-index="2"
-                  active-color="#58422B"
-                  bind:change="onChangeTabbar">
-        <van-tabbar-item>
-          <image slot="icon"
-                 src="../assets/image/icon-jrxx.png"
-                 mode="aspectFit"/>
-          <image slot="icon-active"
-                 src="../assets/image/icon-jrxx1.png"
-                 mode="aspectFit"/>
-          今日学习
-        </van-tabbar-item>
-        <van-tabbar-item>
-          <image slot="icon"
-                 src="../assets/image/icon-zpbz.png"
-                 mode="aspectFit"/>
-          <image slot="icon-active"
-                 src="../assets/image/icon-zpbz1.png"
-                 mode="aspectFit"/>
-          作品表彰
-        </van-tabbar-item>
-        <van-tabbar-item dot="{{remindData.todaycard}}">
-          <image slot="icon"
-                 src="../assets/image/icon-dkjl.png"
-                 mode="aspectFit"/>
-          <image slot="icon-active"
-                 src="../assets/image/icon-dkjl1.png"
-                 mode="aspectFit"/>
-          打卡记录
-        </van-tabbar-item>
-        <van-tabbar-item dot="{{remindData.uctip}}">
-          <image slot="icon"
-                 src="../assets/image/icon-grzx.png"
-                 mode="aspectFit"/>
-          <image slot="icon-active"
-                 src="../assets/image/icon-grzx1.png"
-                 mode="aspectFit"/>
-          个人中心
-        </van-tabbar-item>
-      </van-tabbar>
 
-      <lookImage :isShow.sync="isShowImage" :imgUrl.sync="itemUrl"></lookImage>
-    </view>
-  </scroll-view>
-
+    </scroll-view>
+    <van-tabbar active="1"
+                z-index="999"
+                active-color="#58422B"
+                bind:change="onChangeTabbar">
+      <van-tabbar-item>
+        <image slot="icon"
+               src="../assets/image/icon-jrxx.png"
+               mode="aspectFit"/>
+        <image slot="icon-active"
+               src="../assets/image/icon-jrxx1.png"
+               mode="aspectFit"/>
+        今日学习
+      </van-tabbar-item>
+      <van-tabbar-item>
+        <image slot="icon"
+               src="../assets/image/icon-zpbz.png"
+               mode="aspectFit"/>
+        <image slot="icon-active"
+               src="../assets/image/icon-zpbz1.png"
+               mode="aspectFit"/>
+        作品表彰
+      </van-tabbar-item>
+      <van-tabbar-item dot="{{remindData.todaycard}}">
+        <image slot="icon"
+               src="../assets/image/icon-dkjl.png"
+               mode="aspectFit"/>
+        <image slot="icon-active"
+               src="../assets/image/icon-dkjl1.png"
+               mode="aspectFit"/>
+        打卡记录
+      </van-tabbar-item>
+      <van-tabbar-item dot="{{remindData.uctip}}">
+        <image slot="icon"
+               src="../assets/image/icon-grzx.png"
+               mode="aspectFit"/>
+        <image slot="icon-active"
+               src="../assets/image/icon-grzx1.png"
+               mode="aspectFit"/>
+        个人中心
+      </van-tabbar-item>
+    </van-tabbar>
+  </view>
 </template>
 
 <script>
@@ -397,7 +399,7 @@
 <style lang="scss">
   @import '../assets/style/mixin.scss';
   .item-scroll {
-    height: 100vh;
+    height: calc(100vh - 100px);
   }
 
   .p-praiseOfWorks {
@@ -519,7 +521,7 @@
         .-item-down {
           display: flex;
           padding: 0 32px 24px;
-          border-bottom: 2px solid #F8F8F8FF;
+          border-bottom: 2px solid #F8F8F8;
 
           &-wrap {
             display: flex;
@@ -603,7 +605,7 @@
         padding: 32px 0 24px;
         width: 100%;
         background: rgba(255, 252, 243, 1);
-        border-bottom: 15px solid #F8F8F8FF;
+        border-bottom: 15px solid #F8F8F8;
 
         .-teacher-title {
           @include flex-center;
@@ -683,10 +685,6 @@
           }
         }
       }
-    }
-
-    &-item:last-child {
-      margin-bottom: 190px;
     }
   }
 </style>

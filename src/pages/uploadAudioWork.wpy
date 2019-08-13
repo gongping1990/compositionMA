@@ -101,8 +101,8 @@
       },
       imgArray: {
         '1': 'https://pub.file.k12.vip/poem/1_2/tjzy_icon_record@3x.png',
-        '2': 'https://pub.file.k12.vip/poem/1_2/tjzy_icon_recording@3x.png',
-        '3': 'https://pub.file.k12.vip/poem/1_2/tjzy_icon_recording@3x.png',
+        '2': 'https://pub.file.k12.vip/gif/read-playing.gif',
+        '3': 'https://pub.file.k12.vip/gif/read-playing.gif',
         '4': 'https://pub.file.k12.vip/poem/1_2/tjzy_icon_rplay@3x.png',
         '5': 'https://pub.file.k12.vip/poem/1_2/tjzy_icon_stop@3x.png',
       }

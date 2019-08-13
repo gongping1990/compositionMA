@@ -151,7 +151,11 @@
 
             <view class="-center-work-footer">
               <view class="-center-work-footer-wrap" @tap="addLike({{item}})">
-                <image class="-img"
+                <view class="-texiao"
+                      wx:if="{{dataItem.id === item.id}}"
+                      style="background-position-y:-{{backgroundY}}rpx;">
+                </view>
+                <image class="-img {{dataItem.id === item.id ? '-icon-animation' : ''}}"
                        wx:if="{{!item.otherLike}}"
                        src="https://pub.file.k12.vip/tbzw/word-detail/icon-give-pre.png"></image>
                 <image class="-img"
@@ -165,32 +169,6 @@
                 <text>看点评</text>
               </view>
             </view>
-
-
-            <!--<view class="-center-work-right">-->
-
-            <!--<image class="-right-work"-->
-            <!--src="{{item.workImg}}"-->
-            <!--@tap="lookWorkDetail({{item}})"></image>-->
-            <!--<view class="-right-zan">-->
-            <!--<view class="-texiao"-->
-            <!--wx:if="{{dataItem.id === item.id}}"-->
-            <!--style="background-position-y:-{{backgroundY}}rpx;"></view>-->
-
-            <!--<view class="-zan-left {{item.otherLike ? '-zan-animation' : ''}}"-->
-            <!--@tap="addLike({{item}})">-->
-            <!--<image class="-img {{dataItem.id === item.id ? '-icon-animation' : ''}}"-->
-            <!--wx:if="{{!item.otherLike}}"-->
-            <!--src="https://pub.file.k12.vip/tbzw/word-detail/icon-give-pre.png"></image>-->
-            <!--<image class="-img"-->
-            <!--wx:if="{{item.otherLike}}"-->
-            <!--src="https://pub.file.k12.vip/2019/06/06/1136572565700235266.png"></image>-->
-            <!--</view>-->
-            <!--<view class="-zan-right {{item.otherLike ? '-zan-animation' : ''}}"-->
-            <!--@tap="addLike({{item}})">{{item.likenum}}-->
-            <!--</view>-->
-            <!--</view>-->
-            <!--</view>-->
           </view>
         </repeat>
         <view class="-center-other-no"
@@ -823,6 +801,7 @@
         }
 
         &-footer {
+          position: relative;
           display: flex;
           padding-bottom: 20px;
           height: 66px;
@@ -835,6 +814,16 @@
           &-wrap {
             width: 50%;
             @include flex-center;
+
+            .-texiao {
+              @include texiao;
+              left: 40px;
+              bottom: 25px;
+            }
+
+            .-icon-animation {
+              @include texiao-icon
+            }
 
             .-img {
               margin-right: 8px;
@@ -887,11 +876,7 @@
             line-height: 36px;
           }
 
-          .-texiao {
-            @include texiao;
-            left: 290px;
-            bottom: 25px;
-          }
+
 
           .-zan-animation {
             @include texiao-bg;

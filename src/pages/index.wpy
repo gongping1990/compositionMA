@@ -305,8 +305,10 @@ export default class Home extends wepy.page {
       this.infoListData = data.resultData.infoList[0]
       this.empty = !data.resultData.infoList.length
       this.infoData.startTime = this.infoData.startTime ? dayjs(new Date(this.infoData.startTime)).format('MM月DD日') : ''
-      if (!data.resultData.buyCourse && !data.resultData.infoList[0].expLesson) {
-        wx.redirectTo({ url: '/pages/enroll' })
+      if (!data.resultData.buyCourse) {
+        if (this.empty || !data.resultData.infoList[0].expLesson) {
+          wx.redirectTo({ url: '/pages/enroll' })
+        }
       }
       this.showPraise = this.infoData.awardsPop
       this.awardsInfo = this.infoData.awardsInfo

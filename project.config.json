@@ -41,55 +41,55 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 0,
+			"current": 1,
 			"list": [
 				{
 					"id": 0,
 					"name": "classroom",
-					"pathName": "pages/card",
-					"query": "id=1134359706941546498",
+					"pathName": "pages/submitHomework",
+					"query": "id=1138723411242659841",
 					"scene": null
 				},
 				{
-					"id": -1,
-					"name": "个人中心",
-					"pathName": "pages/user",
-					"query": "",
+					"id": 1,
+					"name": "作业详情（他人）",
+					"pathName": "pages/completionOfWork",
+					"query": "type=2&id=1160873652339605506",
+					"scene": null
+				},
+				{
+					"id": 2,
+					"name": "作业详情（自己）",
+					"pathName": "pages/completionOfWork",
+					"query": "type=1&id=1138723411242659841",
 					"scene": null
 				},
 				{
 					"id": 3,
-					"name": "点赞",
-					"pathName": "pages/pointNotice",
-					"query": "",
+					"name": "作业详情",
+					"pathName": "pages/completionOfWork",
+					"query": "type=1&id=1138721381526679554",
 					"scene": null
 				},
 				{
 					"id": 4,
-					"name": "课后作业",
-					"pathName": "pages/completionOfWork",
-					"query": "",
+					"name": "交作业(语音)",
+					"pathName": "pages/uploadAudioWork",
+					"query": "id=1138723411242659841",
 					"scene": null
 				},
 				{
-					"id": -1,
-					"name": "交作业",
-					"pathName": "pages/submitHomework",
-					"query": "",
-					"scene": null
-				},
-				{
-					"id": -1,
+					"id": 5,
 					"name": "上传作业",
-					"pathName": "pages/uploadHomework",
-					"query": "",
+					"pathName": "pages/uploadImgWork",
+					"query": "id=1138723411242659841",
 					"scene": null
 				},
 				{
 					"id": 6,
 					"name": "作业分享",
 					"pathName": "pages/shareHomework",
-					"query": "id=1155772425080360961",
+					"query": "id=1160876061472325633",
 					"scene": null
 				},
 				{

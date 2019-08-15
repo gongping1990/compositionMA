@@ -40,14 +40,15 @@ export default class extends wepy.app {
       'pages/myWorkAll',
       'pages/completionOfWork',
       'pages/submitHomework',
-      'pages/uploadHomework',
       'pages/shareHomework',
       'pages/pointNotice',
       'pages/recognitionNotice',
       'pages/address',
       'pages/subscribe',
       'pages/authorize',
-      'pages/enroll'
+      'pages/enroll',
+      'pages/uploadImgWork',
+      'pages/uploadAudioWork'
     ],
     window: {
       backgroundTextStyle: 'light',

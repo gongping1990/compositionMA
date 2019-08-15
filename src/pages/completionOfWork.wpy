@@ -6,25 +6,50 @@
           style="margin-top:{{height}}px"
           wx:if="{{isFetching}}">
       <view class="p-completionOfWork-top">
-        <view class="-top-left">
-          <image class="-top-left-img"
-                 src="{{workDetail.stuImg}}"></image>
+        <view class="-top-wrap">
+          <view class="-top-wrap-left">
+            <view class="-top-left">
+              <image class="-top-left-img"
+                     src="{{workDetail.stuImg}}"></image>
+            </view>
+            <view class="-top-right">
+              <view class="-top-right-name">{{workDetail.nickname}}</view>
+              <view class="-top-right-time">{{workDetail.workTime}}</view>
+            </view>
+          </view>
+          <view wx:if="{{(workDetail.self && !isReply) || workDetail.status==1}}" class="-top-wrap-right" @tap="resultHomework">重新提交</view>
         </view>
-        <view class="-top-right">
-          <view class="-top-right-name">{{workDetail.nickname}}</view>
-          <view class="-top-right-time">{{workDetail.workTime}}</view>
-          <image class="-top-right-work"
-                 mode="widthFix"
-                 @tap="enlargeImage({{workDetail.workImg}})"
-                 src="{{workDetail.workImg}}"></image>
+
+        <view class="-center-text">{{workDetail.homeworkClaim}}</view>
+
+        <view class="-down-wrap">
+          <image class="-down-wrap-img" wx:for="{{workDetail.workImgSrc}}" wx:key="{{item}}"
+                 wx:if="{{workDetail.homeworkType == 2}}"
+                 @tap="enlargeImage({{item}})"
+                 src="{{item}}"></image>
+
+          <view class="-down-wrap-audio" @tap="changeMyAudioStatus" wx:if="{{workDetail.homeworkType == 1}}">
+            <view class="-reply-icon">
+              <view class="icon"
+                    wx:if="{{!isMyPlay}}"></view>
+              <view class="playIcon"
+                    wx:if="{{isMyPlay}}"></view>
+            </view>
+            <view class="-reply-time">{{workDetail.duration}}</view>
+          </view>
+        </view>
+
+        <view class="-footer-zan">
+          <image class="-footer-zan-img" src="https://pub.file.k12.vip/poem/1_2/index-icon-like-def@3x.png"></image>
+          <view class="-footer-zan-name">{{workDetail.likeUNames}}共{{workDetail.likenum}}人点赞</view>
         </view>
       </view>
 
-      <view class="p-completionOfWork-down">
-        <view class="-down-left"
-              wx:if="{{!isReply && queryInfo.type === '1'}}">
-          <image class="-down-left-img"
-                 src="https://pub.file.k12.vip/tbzw/word-detail/icon-notice.png"></image>
+      <view class="p-completionOfWork-down" wx:if="{{workDetail.self || isReply}}">
+        <view class="-down-tip" wx:if="{{queryInfo.type === '1'}}">
+          <image class="-down-tip-img"
+                 src="https://pub.file.k12.vip/poem/1_2/zyxq-icon-review@3x.png"></image>
+          老师点评
         </view>
         <view class="-down-right"
               wx:if="{{!isReply && queryInfo.type === '1'}}">
@@ -37,6 +62,7 @@
             老师随后为你点评，请留意微信通知！
           </view>
         </view>
+
         <view class="-down-reply"
               wx:if="{{isReply}}">
           <view class="-down-reply-info">
@@ -44,51 +70,29 @@
                    src="{{workDetail.replyTeacherImg}}"></image>
             <view class="-reply-info-user">
               <view class="-user-text">
-                <text class="-name">{{workDetail.replyTeacher}}</text>
-                <text>{{workDetail.replyTime}}</text>
-              </view>
-              <view class="-reply-info-wrap" wx:if="{{workDetail.replyAudio}}">
-                <view class="-info-content voice"
-                      @tap="changeAudioStatus">
-                  <view class="icon"
-                        wx:if="{{!isPlay}}"></view>
-                  <view class="playIcon"
-                        wx:if="{{isPlay}}"></view>
-                </view>
-                <view class="-reply-time">{{durationTime}}</view>
+                <view class="-name">{{workDetail.replyTeacher}}</view>
+                <view>{{workDetail.replyTime}}</view>
               </view>
             </view>
           </view>
-          <image class="-down-reply-img"
-                 @tap="enlargeImage({{workDetail.replyImg}})"
-                 src="{{workDetail.replyImg}}"></image>
-        </view>
-      </view>
 
-      <view class="p-completionOfWork-footer {{isReply ? 'p-completionOfWork-footer-reply' : ''}}">
-        <view class="-footer-texiao"
-              style="background-position-y:-{{backgroundY}}rpx;">
-        </view>
-        <view class="-footer-wrap">
-          <button class="-footer-btn {{isCompliment ? '-footer-btn-zan' : ''}}"
-                  @tap="addLike">
-            <image class="-footer-btn-icon {{isZan ? '-footer-animation' : ''}}"
-                   wx:if="{{!isCompliment}}"
-                   src="https://pub.file.k12.vip/tbzw/word-detail/icon-give-pre.png"></image>
-            <image class="-footer-btn-icon"
-                   wx:if="{{isCompliment}}"
-                   src="https://pub.file.k12.vip/tbzw/word-detail/icon-givea-def.png"></image>
-            {{workDetail.likenum || 0}}
-          </button>
-          <button class="-footer-btn"
-                  open-type="share">
-            <image class="-footer-btn-icon"
-                   src="https://pub.file.k12.vip/tbzw/word-detail/icon-share.png"></image>
-            分享
-          </button>
-          <image class="-footer-tip"
-                 wx:if="{{workDetail.evaluation === 1 || workDetail.evaluation === 2}}"
-                 src="https://pub.file.k12.vip/2019/06/05/1136201296525938689.png"></image>
+          <view class="-reply-info-text" wx:if="{{workDetail.replyText}}">{{workDetail.replyText}}</view>
+
+          <view class="-replay-info-audio" @tap="changeAudioStatus" wx:if="{{workDetail.replyAudio}}">
+            <view class="-reply-icon">
+              <view class="icon"
+                    wx:if="{{!isPlay}}"></view>
+              <view class="playIcon"
+                    wx:if="{{isPlay}}"></view>
+            </view>
+            <view class="-reply-time">{{workDetail.replyDuration}}</view>
+          </view>
+
+          <view class="-reply-info-img">
+            <image class="-img" wx:for="{{workDetail.replyImg}}" wx:key="{{item}}"
+                   @tap="enlargeImage({{item}})"
+                   src="{{item}}"></image>
+          </view>
         </view>
       </view>
 
@@ -131,8 +135,8 @@
                       value="{{stumsg}}"
                       bindinput="bindClickMessage"
                       placeholder="你想对点评老师说…"
-                      placeholder-style="font-size: 15px;" />
-            </view>
+                      placeholder-style="font-size: 15px;"/>
+          </view>
           <button class="-popup-btn" @tap="submitEvaluate">提交</button>
         </view>
 
@@ -160,677 +164,846 @@
                   size="36px"
                   @click="changePopup"/>
       </van-popup>
+
     </view>
+
+    <view class="p-completionOfWork-footer">
+      <view class="-footer-texiao"
+            style="background-position-y:-{{backgroundY}}rpx;">
+      </view>
+      <view class="-footer-wrap">
+        <button class="-footer-btn {{isCompliment ? '-footer-btn-zan' : ''}}"
+                @tap="addLike" wx:if="{{!workDetail.self}}">
+          <image class="-footer-btn-icon {{isZan ? '-footer-animation' : ''}}"
+                 wx:if="{{!isCompliment}}"
+                 src="https://pub.file.k12.vip/tbzw/word-detail/icon-give-pre.png"></image>
+          <image class="-footer-btn-icon"
+                 wx:if="{{isCompliment}}"
+                 src="https://pub.file.k12.vip/tbzw/word-detail/icon-givea-def.png"></image>
+          {{workDetail.likenum || 0}}
+        </button>
+        <button class="-footer-btn {{workDetail.self ? '-footer-btn-self' : ''}}"
+                open-type="share">
+          <image class="-footer-btn-icon"
+                 src="https://pub.file.k12.vip/tbzw/word-detail/icon-share.png"></image>
+          分享
+        </button>
+        <image class="-footer-tip"
+               wx:if="{{workDetail.evaluation === 1 || workDetail.evaluation === 2}}"
+               src="https://pub.file.k12.vip/2019/06/05/1136201296525938689.png"></image>
+      </view>
+    </view>
+
     <lookImage :isShow.sync="isShowImage" :imgUrl.sync="itemUrl"></lookImage>
   </view>
 </template>
 
 <script>
-import wepy from 'wepy'
-import api from '../request/api'
-import dayjs from 'dayjs'
-import mHeader from '../components/header'
-import lookImage from '../components/lookImage'
+  import wepy from 'wepy';
+  import api from '../request/api';
+  import dayjs from 'dayjs';
+  import mHeader from '../components/header';
+  import lookImage from '../components/lookImage';
 
-export default class CompletionOfWork extends wepy.page {
-  config = {
-    navigationBarTitleText: '作业详情',
-    'usingComponents': {
-      'van-icon': '../vant/icon/index',
-      'van-popup': '../vant/popup/index'
-    }
-  };
-  components = {
-    mHeader,
-    lookImage
-  };
-  computed = {
-    height () {
-      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
-    }
-  };
-
-  data = {
-    isFetching: false,
-    isOpenPopup: false,
-    isCompliment: false,
-    isReply: true,
-    isEvaluate: false,
-    isPlay: false,
-    isZan: false,
-    isShowImage: false,
-    isActive: '',
-    stumsg: '',
-    workDetail: '',
-    queryInfo: '',
-    myAudio: '',
-    durationTime: '',
-    itemUrl: '',
-    backgroundY: 0
-  };
-
-  initAudio () {
-    this.myAudio = wx.createInnerAudioContext()
-    this.myAudio.src = this.workDetail.replyAudioAuthorUrl
-
-    this.myAudio.onEnded(() => {
-      this.isPlay = false
-      if (this.queryInfo.type === '1' && this.workDetail.evaluation === null) {
-        this.isShowImage = false
-        this.isOpenPopup = true
+  export default class CompletionOfWork extends wepy.page {
+    config = {
+      navigationBarTitleText: '作业详情',
+      'usingComponents': {
+        'van-icon': '../vant/icon/index',
+        'van-popup': '../vant/popup/index'
       }
-      this.$apply()
-    })
-
-    this.myAudio.onTimeUpdate(() => {
-      this.durationTime = this.timeToFormat(this.myAudio.duration)
-      this.$apply()
-    })
-  };
-
-  timeToFormat (times) {
-    var result = '00:00'
-    var minute, second
-    if (times > 0) {
-      minute = Math.floor(times / 60)
-      if (minute < 10) {
-        minute = '0' + minute
+    };
+    components = {
+      mHeader,
+      lookImage
+    };
+    computed = {
+      height() {
+        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
       }
+    };
 
-      second = Math.floor((times - 60 * minute) % 60)
-      if (second < 10) {
-        second = '0' + second
-      }
-      result = `${minute} : ${second}`
-    }
-    return result
-  };
+    data = {
+      isFetching: false,
+      isOpenPopup: false,
+      isCompliment: false,
+      isReply: true,
+      isEvaluate: false,
+      isPlay: false,
+      isMyPlay: false,
+      isZan: false,
+      isShowImage: false,
+      isActive: '',
+      stumsg: '',
+      workDetail: '',
+      queryInfo: '',
+      myAudio: '',
+      itemUrl: '',
+      backgroundY: 0
+    };
 
-  getMyHomework () {
-    this.isFetching = true
-    api.study.viewMyHomework({
-      lessonId: this.queryInfo.id
-    }).then(res => {
-      this.workDetail = res.data.resultData
-      this.workDetail.workTime = dayjs(+this.workDetail.workTime).format('YYYY-MM-DD HH:mm')
-      if (this.workDetail.replyTime) {
-        this.workDetail.replyTime = dayjs(+this.workDetail.replyTime).format('YYYY-MM-DD HH:mm')
-        this.isReply = true
-      } else {
-        this.isReply = false
-      }
-      this.initAudio()
-      this.$apply()
-    }, () => {
-      this.isFetching = false
-    })
-  };
+    initAudio(bool) {
+      this.myAudio = wx.createInnerAudioContext();
+      this.myAudio.src = bool ? this.workDetail.workAudio : this.workDetail.replyAudioAuthorUrl;
 
-  getOtherHomework () {
-    this.isFetching = true
-    api.study.viewHomework({
-      workId: this.queryInfo.id
-    }).then(res => {
-      this.workDetail = res.data.resultData
-      this.workDetail.workTime = dayjs(+this.workDetail.workTime).format('YYYY-MM-DD HH:mm')
-      if (this.workDetail.replyTime) {
-        this.workDetail.replyTime = dayjs(+this.workDetail.replyTime).format('YYYY-MM-DD HH:mm')
-        this.isReply = true
-      } else {
-        this.isReply = false
-      }
-      this.isCompliment = this.workDetail.otherLike
-      this.initAudio()
-      this.$apply()
-    }, () => {
-      this.isFetching = false
-    })
-  };
+      this.myAudio.onEnded(() => {
+        if (!bool) {
+          this.isPlay = false;
+        } else {
+          this.isMyPlay = false;
+        }
 
-  methods = {
-    enlargeImage (url) {
-      this.itemUrl = url
-      this.isShowImage = true
-    },
-    shareFriend () {
-      this.getMyHomework()
-    },
-    changeAudioStatus () {
-      if (this.isPlay) {
-        this.isPlay = false
-        this.myAudio.pause()
-      } else {
-        this.isPlay = true
-        this.myAudio.play()
+        // if (this.queryInfo.type === '1' && this.workDetail.evaluation === null) {
+        //   this.isShowImage = false;
+        //   this.isOpenPopup = true;
+        // }
+        this.$apply();
+      });
+    };
+
+    timeToFormat(times) {
+      var result = '00 : 00';
+      var minute, second;
+      if (times > 0) {
+        minute = Math.floor(times / 60);
+        if (minute < 10) {
+          minute = '0' + minute;
+        }
+
+        second = Math.floor((times - 60 * minute) % 60);
+        if (second < 10) {
+          second = '0' + second;
+        }
+        result = `${minute} : ${second}`;
       }
-    },
-    addLike () {
-      if (this.queryInfo.type === '1') {
-        wx.showToast({
-          icon: 'none',
-          title: '不能给自己点赞哟~'
-        })
-      } else {
-        if (this.workDetail.otherLike) {
+      return result;
+    };
+
+    getMyHomework() {
+      this.isFetching = true;
+      api.study.viewMyHomework({
+        lessonId: this.queryInfo.id
+      }).then(res => {
+        this.workDetail = res.data.resultData;
+        this.workDetail.workTime = dayjs(+this.workDetail.workTime).format('YYYY-MM-DD HH:mm');
+        this.workDetail.workImg = this.workDetail.workImg && this.workDetail.workImg.split(',');
+        this.workDetail.workImgSrc = this.workDetail.workImgSrc && this.workDetail.workImgSrc.split(',');
+        this.workDetail.replyImg = this.workDetail.replyImg && this.workDetail.replyImg.split(',');
+        this.workDetail.duration = this.timeToFormat(this.workDetail.duration );
+        this.workDetail.replyDuration = this.timeToFormat(this.workDetail.replyDuration );
+        if (this.workDetail.replyTime) {
+          this.workDetail.replyTime = dayjs(+this.workDetail.replyTime).format('YYYY-MM-DD HH:mm');
+          this.isReply = true;
+        } else {
+          this.isReply = false;
+        }
+        this.initAudio(false);
+        this.$apply();
+      }, () => {
+        this.isFetching = false;
+      });
+    };
+
+    getOtherHomework() {
+      this.isFetching = true;
+      api.study.viewHomework({
+        workId: this.queryInfo.id
+      }).then(res => {
+        this.workDetail = res.data.resultData;
+        this.workDetail.workTime = dayjs(+this.workDetail.workTime).format('YYYY-MM-DD HH:mm');
+        this.workDetail.workImg = this.workDetail.workImg && this.workDetail.workImg.split(',');
+        this.workDetail.workImgSrc = this.workDetail.workImgSrc && this.workDetail.workImgSrc.split(',');
+        this.workDetail.replyImg = this.workDetail.replyImg && this.workDetail.replyImg.split(',');
+        this.workDetail.duration = this.timeToFormat(this.workDetail.duration );
+        this.workDetail.replyDuration = this.timeToFormat(this.workDetail.replyDuration);
+        if (this.workDetail.replyTime) {
+          this.workDetail.replyTime = dayjs(+this.workDetail.replyTime).format('YYYY-MM-DD HH:mm');
+          this.isReply = true;
+        } else {
+          this.isReply = false;
+        }
+        this.isCompliment = this.workDetail.otherLike;
+        this.initAudio(false);
+        this.$apply();
+      }, () => {
+        this.isFetching = false;
+      });
+    };
+
+    methods = {
+      enlargeImage(url) {
+        this.itemUrl = url;
+        this.isShowImage = true;
+      },
+      shareFriend() {
+        this.getMyHomework();
+      },
+      resultHomework() {
+        wx.navigateTo({
+          url: `/pages/${this.workDetail.homeworkType == 1 ? 'uploadAudioWork' : 'uploadImgWork'}?id=${this.workDetail.lessonId}`
+        });
+      },
+      changeAudioStatus() {
+        this.isMyPlay = false;
+        this.myAudio.destroy();
+        this.initAudio(false);
+        if (this.isPlay) {
+          this.isPlay = false;
+          this.myAudio.pause();
+        } else {
+          this.isPlay = true;
+          this.myAudio.play();
+        }
+      },
+      changeMyAudioStatus() {
+        this.isPlay = false;
+        this.myAudio.destroy();
+        this.initAudio(true);
+        if (this.isMyPlay) {
+          this.isMyPlay = false;
+          this.myAudio.pause();
+        } else {
+          this.isMyPlay = true;
+          this.myAudio.play();
+        }
+      },
+      addLike() {
+        if (this.queryInfo.type === '1') {
+          wx.showToast({
+            icon: 'none',
+            title: '不能给自己点赞哟~'
+          });
+        } else {
+          if (this.workDetail.otherLike) {
+            return wx.showToast({
+              icon: 'none',
+              title: '已经点过赞啦~'
+            });
+          }
+          api.study.addLike({
+            workId: this.queryInfo.id
+          })
+            .then(() => {
+              this.isZan = true;
+              setTimeout(() => {
+                this.startLikeAnimation();
+              }, 500);
+
+              setTimeout(() => {
+                this.getOtherHomework();
+                this.$apply();
+              }, 900);
+            });
+        }
+      },
+      bindClickMessage(e) {
+        this.stumsg = e.detail.value;
+      },
+      submitEvaluate() {
+        if (!this.isActive) {
           return wx.showToast({
             icon: 'none',
-            title: '已经点过赞啦~'
-          })
+            title: '请选择对老师评价的标签哦~'
+          });
         }
-        api.study.addLike({
-          workId: this.queryInfo.id
-        })
-          .then(() => {
-            this.isZan = true
-            setTimeout(() => {
-              this.startLikeAnimation()
-            }, 500)
+        api.study.evaluationToTeacher({
+          id: this.workDetail.id,
+          evaluation: this.isActive,
+          stumsg: this.stumsg
+        }).then(() => {
+          this.isEvaluate = true;
+          this.$apply();
+        });
+      },
+      choiceTab(num) {
+        this.isActive = num;
+      },
+      changePopup() {
+        if (this.queryInfo.type === '1' && this.isOpenPopup) {
+          this.getMyHomework();
+        } else {
+          this.getOtherHomework();
+        }
+        this.isOpenPopup = !this.isOpenPopup;
+      }
+    };
 
-            setTimeout(() => {
-              this.getOtherHomework()
-              this.$apply()
-            }, 900)
-          })
+    events = {
+      changePopupStatus() {
+        this.isShowImage = false;
       }
-    },
-    bindClickMessage (e) {
-      this.stumsg = e.detail.value
-    },
-    submitEvaluate () {
-      if (!this.isActive) {
-        return wx.showToast({
-          icon: 'none',
-          title: '请选择对老师评价的标签哦~'
-        })
-      }
-      api.study.evaluationToTeacher({
-        id: this.workDetail.id,
-        evaluation: this.isActive,
-        stumsg: this.stumsg
-      }).then(() => {
-        this.isEvaluate = true
-        this.$apply()
-      })
-    },
-    choiceTab (num) {
-      this.isActive = num
-    },
-    changePopup () {
-      if (this.queryInfo.type === '1' && this.isOpenPopup) {
-        this.getMyHomework()
+    };
+
+    startLikeAnimation() {
+      const base = 270 / 414;
+      const bgBase = 13865 / 414;
+      const width = 276;
+      let height = width * base;
+      let time = (1000 * 0.75) / 51;
+      let bgHeight = parseInt(width * bgBase);
+      setTimeout(() => {
+        if (this.backgroundY < bgHeight) {
+          this.backgroundY += height;
+          this.startLikeAnimation();
+        } else {
+          this.backgroundY = 0;
+        }
+        this.$apply();
+      }, time);
+    }
+
+    onLoad(query) {
+      this.queryInfo = query;
+      if (query.type === '1') {
+        this.getMyHomework();
       } else {
-        this.getOtherHomework()
+        this.getOtherHomework();
       }
-      this.isOpenPopup = !this.isOpenPopup
+      this.$apply();
     }
-  };
 
-  events = {
-    changePopupStatus () {
-      this.isShowImage = false
+    onUnload() {
+      this.myAudio.destroy();
     }
-  };
 
-  startLikeAnimation () {
-    const base = 270 / 414
-    const bgBase = 13865 / 414
-    const width = 276
-    let height = width * base
-    let time = (1000 * 0.75) / 51
-    let bgHeight = parseInt(width * bgBase)
-    setTimeout(() => {
-      if (this.backgroundY < bgHeight) {
-        this.backgroundY += height
-        this.startLikeAnimation()
-      } else {
-        this.backgroundY = 0
-      }
-      this.$apply()
-    }, time)
-  }
-
-  onLoad (query) {
-    this.queryInfo = query
-    if (query.type === '1') {
-      this.getMyHomework()
-    } else {
-      this.getOtherHomework()
-    }
-    this.$apply()
-  }
-
-  onUnload () {
-    this.myAudio.destroy()
-  }
-
-  onShareAppMessage () {
-    return {
-      title: this.queryInfo.type === '1' ? `我已坚持学习${this.workDetail.learnDay}天，刚完成今天的作业，请给我点个赞吧` : `快来给@${this.workDetail.nickname}点个赞，TA已坚持学习了${this.workDetail.learnDay}天`,
-      path: this.queryInfo.type === '1' ? `/pages/shareHomework?id=${this.workDetail.id}` : `/pages/completionOfWork?type=2&id=${this.workDetail.id}`,
-      imageUrl: this.isOpenPopup ? this.workDetail.workImg : ''
+    onShareAppMessage() {
+      return {
+        title: this.queryInfo.type === '1' ? `我已坚持学习${this.workDetail.learnDay}天，刚完成今天的作业，请给我点个赞吧` : `快来给@${this.workDetail.nickname}点个赞，TA已坚持学习了${this.workDetail.learnDay}天`,
+        path: this.queryInfo.type === '1' ? `/pages/shareHomework?id=${this.workDetail.id}` : `/pages/completionOfWork?type=2&id=${this.workDetail.id}`,
+        imageUrl: this.isOpenPopup ? this.workDetail.workImg[0] : ''
+      };
     }
   }
-}
 </script>
 
 <style lang="scss">
-@import '../assets/style/mixin.scss';
+  @import '../assets/style/mixin.scss';
 
-.p-completionOfWork {
-  .-height-wrap {
-    height: calc(100vh - 150px);
-  }
-
-  &-top {
-    display: flex;
-    padding: 40px 0 0 64px;
-
-    .-top-left {
-      &-img {
-        margin-right: 24px;
-        width: 96px;
-        height: 96px;
-        border-radius: 50%;
-      }
+  .p-completionOfWork {
+    overflow: hidden;
+    .-height-wrap {
+      height: calc(100vh - 280px);
+      overflow-y: auto;
     }
 
-    .-top-right {
-      &-name {
-        height: 40px;
-        font-size: 28px;
-        font-weight: 500;
-        color: rgba(88, 66, 43, 1);
-        line-height: 40px;
-      }
+    &-top {
+      padding: 34px 32px 24px;
 
-      &-time {
-        margin-top: 8px;
-        height: 34px;
-        font-size: 24px;
-        font-weight: 400;
-        color: rgba(88, 66, 43, 0.5);
-        line-height: 34px;
-      }
+      .-top-wrap {
+        @include flex-center;
+        justify-content: space-between;
 
-      &-work {
-        margin-top: 30px;
-        width: 502px;
-        max-height: 610px;
-      }
-    }
-  }
+        &-left {
+          display: flex;
+          align-items: center;
 
-  &-down {
-    display: flex;
-    margin: 66px 0 138px 64px;
+          .-top-left {
+            @include flex-center;
 
-    .-down-left {
-      &-img {
-        margin-right: 44px;
-        width: 70px;
-        height: 54px;
-      }
-    }
+            &-img {
+              margin-right: 16px;
+              width: 64px;
+              height: 64px;
+              border-radius: 50%;
+            }
+          }
 
-    .-down-right {
-      &-info {
-        @include flex-y-center;
+          .-top-right {
+            &-name {
+              height: 44px;
+              font-size: 32px;
+              font-weight: 500;
+              color: rgba(55, 60, 56, 0.9);
+              line-height: 44px;
+            }
 
-        .-info-img {
-          width: 56px;
-          height: 56px;
-          border-radius: 50%;
-          border: 2px solid rgba(255, 255, 255, 1);
-          margin-right: 18px;
-        }
-
-        .-info-name {
-          height: 50px;
-          font-size: 36px;
-          font-weight: 500;
-          color: rgba(88, 66, 43, 1);
-          line-height: 50px;
-        }
-      }
-
-      &-text {
-        margin-top: 8px;
-        height: 36px;
-        font-size: 26px;
-        font-weight: 400;
-        color: rgba(88, 66, 43, 0.5);
-        line-height: 36px;
-      }
-    }
-
-    .-down-reply {
-      margin-left: 124px;
-
-      .-down-reply-info {
-        display: flex;
-
-        .-reply-info-img {
-          margin-right: 16px;
-          width: 56px;
-          height: 56px;
-          border-radius: 50%;
-        }
-
-        .-reply-info-user {
-          .-user-text {
-            height: 28px;
-            font-size: 20px;
-            font-weight: 400;
-            color: rgba(70, 65, 60, 0.4);
-            line-height: 28px;
-
-            .-name {
-              margin-right: 40px;
+            &-time {
+              margin-top: 4px;
+              height: 34px;
               font-size: 24px;
+              font-weight: 400;
+              color: rgba(88, 66, 43, 0.5);
+              line-height: 34px;
             }
           }
         }
 
-        .-reply-info-wrap {
-          margin-top: 14px;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
+        &-right {
+          height: 32px;
+          font-size: 24px;
+          font-weight: 600;
+          color: rgba(209, 138, 59, 1);
+          line-height: 32px;
+        }
+      }
 
-          .-info-content {
-            margin-left: 16px;
-            position: relative;
-            flex: 1;
-            width: 246px;
-            font-size: 28px;
-            line-height: 40px;
-            padding: 24px 32px;
-            background: rgba(255, 245, 209, 1);
-            border-radius: 16px;
-            border: 3px solid rgba(232, 197, 157, 1);
-            &::before {
-              @include bg('/icon.png');
-              content: '';
-              position: absolute;
-              left: -20px;
-              top: 12px;
-              width: 50px;
-              height: 30px;
-            }
-            &.voice .icon {
+      .-center-text {
+        margin: 30px 0 24px;
+        font-size: 32px;
+        font-weight: 400;
+        color: rgba(55, 60, 56, 1);
+        line-height: 44px;
+      }
+
+      .-down-wrap {
+        display: flex;
+
+        &-img {
+          margin-right: 12px;
+          width: 220px;
+          height: 220px;
+        }
+
+        &-audio {
+          @include flex-center;
+          justify-content: space-between;
+          padding: 20px 32px 18px;
+          width: 488px;
+          background: rgba(255, 245, 209, 1);
+          border-radius: 39px;
+          border: 3px solid rgba(232, 197, 157, 1);
+
+          .-reply-icon {
+            .icon {
               @include bg('/sk/icon-audio.png');
-              margin-left: 16px;
               width: 26px;
               height: 43px;
             }
 
-            &.voice .playIcon {
+            .playIcon {
               @include bg('/v2/audio-pay.gif');
-              margin-left: 16px;
               width: 26px;
               height: 43px;
             }
           }
 
           .-reply-time {
-            margin: 0 36px 0 24px;
-            height: 32px;
-            font-size: 28px;
-            color: rgba(88, 66, 43, 1);
-            line-height: 34px;
+            height: 26px;
+            font-size: 19px;
+            font-weight: 600;
+            color: rgba(209, 138, 59, 1);
+            line-height: 26px;
           }
         }
       }
 
-      .-down-reply-img {
+      .-footer-zan {
+        margin-top: 40px;
+        display: flex;
+        padding: 24px;
+        background: rgba(242, 242, 242, 1);
+        border-radius: 16px;
+
+        &-img {
+          margin-right: 16px;
+          width: 40px;
+          height: 40px;
+        }
+
+        &-name {
+          width: 582px;
+          font-size: 28px;
+          font-family: PingFangSC-Regular;
+          font-weight: 400;
+          color: rgba(164, 153, 142, 1);
+          line-height: 40px;
+        }
+      }
+
+    }
+
+    &-down {
+      padding: 32px 0;
+      background: rgba(255, 252, 243, 1);
+      border-radius: 16px;
+      margin: 24px 32px;
+
+      .-down-tip {
+        display: flex;
+        align-items: center;
+        font-size: 24px;
+        color: rgba(209, 138, 59, 1);
+        width: 200px;
+        height: 52px;
+        background: rgba(255, 245, 209, 1);
+        border-radius: 0px 200px 200px 0px;
+
+        &-img {
+          margin: 0 8px 0 32px;
+          width: 32px;
+          height: 32px;
+        }
+      }
+
+      .-down-right {
         margin-top: 32px;
-        width: 500px;
-        height: 282px;
-        /*border: 2px solid rgba(151, 151, 151, 1);*/
+        &-info {
+          @include flex-y-center;
+
+          .-info-img {
+            margin: 0 18px 0 32px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 1);
+          }
+
+          .-info-name {
+            height: 50px;
+            font-size: 36px;
+            font-weight: 500;
+            color: rgba(88, 66, 43, 1);
+            line-height: 50px;
+          }
+        }
+
+        &-text {
+          margin: 24px 32px 32px;
+          height: 52px;
+          font-size: 28px;
+          font-weight: 400;
+          color: rgba(88, 66, 43, 0.6);
+          line-height: 40px;
+        }
+      }
+
+      .-down-reply {
+        margin-top: 32px;
+        padding: 0 32px;
+
+        .-down-reply-info {
+          display: flex;
+          align-items: center;
+          margin-bottom: 18px;
+
+          .-reply-info-img {
+            margin-right: 18px;
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+          }
+
+          .-reply-info-user {
+            .-user-text {
+              font-size: 24px;
+              font-weight: 400;
+              color: rgba(70, 65, 60, 0.4);
+
+              .-name {
+                height: 44px;
+                font-size: 32px;
+                font-weight: 500;
+                color: rgba(88, 66, 43, 0.9);
+                line-height: 44px;
+              }
+            }
+          }
+
+        }
+
+        .-reply-info-text {
+          font-size: 28px;
+          font-weight: 400;
+          color: rgba(59, 63, 60, 1);
+          line-height: 40px;
+          margin-bottom: 24px;
+        }
+
+        .-replay-info-audio {
+          @include flex-center;
+          justify-content: space-between;
+
+          margin: 24px 0 26px;
+          padding: 16px 24px;
+          width: 390px;
+          background: rgba(255, 245, 209, 1);
+          border-radius: 39px;
+          border: 2px solid rgba(232, 197, 157, 1);
+
+          .-reply-icon {
+            .icon {
+              @include bg('/sk/icon-audio.png');
+              width: 26px;
+              height: 43px;
+            }
+
+            .playIcon {
+              @include bg('/v2/audio-pay.gif');
+              width: 26px;
+              height: 43px;
+            }
+          }
+
+          .-reply-time {
+            height: 26px;
+            font-size: 19px;
+            font-weight: 600;
+            color: rgba(209, 138, 59, 1);
+            line-height: 26px;
+          }
+        }
+
+        .-reply-info-img {
+          display: flex;
+
+          .-img {
+            margin-right: 12px;
+            width: 198px;
+            height: 198px;
+          }
+        }
       }
     }
-  }
 
-  &-footer {
-    position: absolute;
-    bottom: 20px;
-    width: 100%;
+    &-footer {
+      position: absolute;
+      padding-top: 20px;
+      bottom: 0;
+      width: 100%;
 
-    .-footer-texiao {
-      @include bg('/v2/like.png');
-      box-sizing: border-box;
-      background-size: 100%;
+      .-footer-texiao {
+        @include bg('/v2/like.png');
+        box-sizing: border-box;
+        background-size: 100%;
+        text-align: center;
+        position: absolute;
+        left: 70px;
+        bottom: 54px;
+
+        width: 276px;
+        height: 177px;
+      }
+
+      .-footer-wrap {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 64px 24px;
+      }
+
+      .-footer-btn {
+        @include flex-center;
+        z-index: 4;
+        background-color: #ffffff;
+        margin: 0;
+        width: 276px;
+        height: 82px;
+        border-radius: 44px;
+        border: 2px solid rgba(88, 66, 43, 0.1);
+        font-size: 32px;
+        font-weight: 500;
+        color: rgba(88, 66, 43, 0.5);
+
+        &-icon {
+          margin-right: 24px;
+          width: 40px;
+          height: 40px;
+        }
+      }
+
+      .-footer-btn-zan {
+        animation: myBack 0.7s;
+        animation-fill-mode: forwards;
+      }
+
+      .-footer-btn-self {
+        width: 622px;
+        height: 84px;
+        border-radius: 44px;
+        border: 2px solid rgba(88, 66, 43, 0.1);
+      }
+
+      .-footer-tip {
+        position: absolute;
+        width: 456px;
+        height: 96px;
+        top: -100px;
+        right: 90px;
+      }
+
+      .-footer-animation {
+        animation: myZan 1s;
+      }
+
+      @keyframes myBack {
+        100% {
+          border: none;
+          background: linear-gradient(90deg, #f9e60b 0%, #fddb55 100%);
+          color: #58422b;
+        }
+      }
+
+      @keyframes myZan {
+        50% {
+          transform: scale(1.2);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+    }
+
+    /*&-footer-reply {*/
+      /*position: relative;*/
+      /*margin-top: 120px;*/
+    /*}*/
+
+    &-popup-dp {
       text-align: center;
-      position: absolute;
-      left: 22px;
-      bottom: 54px;
-      width: 276px;
-      height: 177px;
-    }
+      width: 590px;
+      height: 668px;
+      background: rgba(255, 255, 255, 1);
+      border-radius: 32px;
 
-    .-footer-wrap {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 64px 24px;
-    }
-
-    .-footer-btn {
-      @include flex-center;
-      z-index: 4;
-      background-color: #ffffff;
-      margin: 0;
-      width: 276px;
-      height: 82px;
-      border-radius: 44px;
-      border: 2px solid rgba(88, 66, 43, 0.1);
-      font-size: 32px;
-      font-weight: 500;
-      color: rgba(88, 66, 43, 0.5);
-
-      &-icon {
-        margin-right: 24px;
-        width: 40px;
-        height: 40px;
-      }
-    }
-
-    .-footer-btn-zan {
-      animation: myBack 0.7s;
-      animation-fill-mode: forwards;
-    }
-
-    .-footer-tip {
-      position: absolute;
-      width: 456px;
-      height: 96px;
-      top: -100px;
-      right: 90px;
-    }
-
-    .-footer-animation {
-      animation: myZan 1s;
-    }
-
-    @keyframes myBack {
-      100% {
-        border: none;
-        background: linear-gradient(90deg, #f9e60b 0%, #fddb55 100%);
-        color: #58422b;
-      }
-    }
-
-    @keyframes myZan {
-      50% {
-        transform: scale(1.2);
-      }
-      100% {
-        transform: scale(1);
-      }
-    }
-  }
-
-  &-footer-reply {
-    position: relative;
-    margin-top: 120px;
-  }
-
-  &-popup-dp {
-    text-align: center;
-    width: 590px;
-    height: 668px;
-    background: rgba(255, 255, 255, 1);
-    border-radius: 32px;
-
-    .-popup-title {
-      padding-top: 32px;
-      height: 50px;
-      font-size: 36px;
-      font-weight: 500;
-      color: rgba(70, 65, 60, 1);
-      line-height: 50px;
-    }
-
-    .-popup-text {
-      margin-top: 12px;
-      height: 34px;
-      font-size: 24px;
-      font-weight: 300;
-      color: rgba(70, 65, 60, 0.5);
-      line-height: 34px;
-    }
-
-    .-popup-list {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 38px 64px 40px;
-
-      .-list-img {
-        width: 100px;
-        height: 100px;
+      .-popup-title {
+        padding-top: 32px;
+        height: 50px;
+        font-size: 36px;
+        font-weight: 500;
+        color: rgba(70, 65, 60, 1);
+        line-height: 50px;
       }
 
-      .-list-text {
-        margin-top: 14px;
+      .-popup-text {
+        margin-top: 12px;
         height: 34px;
         font-size: 24px;
-        font-weight: 500;
+        font-weight: 300;
         color: rgba(70, 65, 60, 0.5);
         line-height: 34px;
       }
 
-      .-active-text {
+      .-popup-list {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 38px 64px 40px;
+
+        .-list-img {
+          width: 100px;
+          height: 100px;
+        }
+
+        .-list-text {
+          margin-top: 14px;
+          height: 34px;
+          font-size: 24px;
+          font-weight: 500;
+          color: rgba(70, 65, 60, 0.5);
+          line-height: 34px;
+        }
+
+        .-active-text {
+          color: rgba(70, 65, 60, 1);
+        }
+      }
+
+      .-popup-input {
+        .-input {
+          font-size: 30px;
+          text-align: left;
+          margin: 0 auto;
+          padding: 24px 32px;
+          width: 446px;
+          height: 130px;
+          background: rgba(255, 255, 255, 1);
+          border-radius: 32px;
+          border: 2px solid rgba(88, 66, 43, 0.3);
+        }
+      }
+
+      .-popup-btn {
+        text-align: center;
+        margin: 32px auto 30px;
+        width: 354px;
+        height: 76px;
+        background: linear-gradient(
+            90deg,
+            rgba(249, 230, 11, 1) 0%,
+            rgba(253, 219, 85, 1) 100%
+        );
+        border-radius: 40px;
+        font-size: 32px;
+        font-weight: 500;
         color: rgba(70, 65, 60, 1);
+        line-height: 76px;
       }
     }
 
-    .-popup-input {
-      .-input {
-        font-size: 30px;
-        text-align: left;
+    &-popup-jg {
+      position: relative;
+      text-align: center;
+      margin: 0 auto;
+      width: 590px;
+      height: 384px;
+      background: rgba(255, 255, 255, 1);
+      border-radius: 32px;
+
+      .-popup-jg-img {
         margin: 0 auto;
-        padding: 24px 32px;
-        width: 446px;
-        height: 130px;
-        background: rgba(255, 255, 255, 1);
-        border-radius: 32px;
-        border: 2px solid rgba(88, 66, 43, 0.3);
+        position: absolute;
+        top: -92px;
+        width: 184px;
+        height: 184px;
+        left: 210px;
+      }
+
+      .-popup-jg-text {
+        margin: 0 auto;
+        padding-top: 144px;
+        width: 480px;
+        height: 88px;
+        font-size: 30px;
+        font-weight: 500;
+        color: rgba(70, 65, 60, 1);
+        line-height: 44px;
+      }
+
+      .-popup-jd-text-two {
+        margin: 12px auto 48px;
+        width: 308px;
+        height: 80px;
+        font-size: 28px;
+        font-family: PingFangSC-Light;
+        font-weight: 300;
+        color: rgba(70, 65, 60, 0.5);
+        line-height: 40px;
+      }
+
+      .-popup-jg-btn {
+        text-align: center;
+        width: 354px;
+        height: 76px;
+        background: linear-gradient(
+            90deg,
+            rgba(249, 230, 11, 1) 0%,
+            rgba(253, 219, 85, 1) 100%
+        );
+        border-radius: 40px;
+        font-size: 32px;
+        font-weight: 500;
+        color: rgba(70, 65, 60, 1);
+        line-height: 76px;
+      }
+
+      .-one {
+        margin-top: 28px;
       }
     }
 
-    .-popup-btn {
-      text-align: center;
-      margin: 32px auto 30px;
-      width: 354px;
-      height: 76px;
-      background: linear-gradient(
-        90deg,
-        rgba(249, 230, 11, 1) 0%,
-        rgba(253, 219, 85, 1) 100%
-      );
-      border-radius: 40px;
-      font-size: 32px;
-      font-weight: 500;
-      color: rgba(70, 65, 60, 1);
-      line-height: 76px;
+    &-popup-height {
+      height: 452px;
+
+      .-popup-jg-text {
+        width: 512px;
+        height: 44px;
+      }
     }
-  }
 
-  &-popup-jg {
-    position: relative;
-    text-align: center;
-    margin: 0 auto;
-    width: 590px;
-    height: 384px;
-    background: rgba(255, 255, 255, 1);
-    border-radius: 32px;
-
-    .-popup-jg-img {
-      margin: 0 auto;
+    &-popup-close {
       position: absolute;
-      top: -92px;
-      width: 184px;
-      height: 184px;
-      left: 210px;
-    }
-
-    .-popup-jg-text {
-      margin: 0 auto;
-      padding-top: 144px;
-      width: 480px;
-      height: 88px;
-      font-size: 30px;
-      font-weight: 500;
-      color: rgba(70, 65, 60, 1);
-      line-height: 44px;
-    }
-
-    .-popup-jd-text-two {
-      margin: 12px auto 48px;
-      width: 308px;
-      height: 80px;
-      font-size: 28px;
-      font-family: PingFangSC-Light;
-      font-weight: 300;
-      color: rgba(70, 65, 60, 0.5);
-      line-height: 40px;
-    }
-
-    .-popup-jg-btn {
-      text-align: center;
-      width: 354px;
-      height: 76px;
-      background: linear-gradient(
-        90deg,
-        rgba(249, 230, 11, 1) 0%,
-        rgba(253, 219, 85, 1) 100%
-      );
-      border-radius: 40px;
-      font-size: 32px;
-      font-weight: 500;
-      color: rgba(70, 65, 60, 1);
-      line-height: 76px;
-    }
-
-    .-one {
-      margin-top: 28px;
+      top: -200px;
+      right: -40px;
     }
   }
-
-  &-popup-height {
-    height: 452px;
-
-    .-popup-jg-text {
-      width: 512px;
-      height: 44px;
-    }
-  }
-
-  &-popup-close {
-    position: absolute;
-    top: -200px;
-    right: -40px;
-  }
-}
 </style>

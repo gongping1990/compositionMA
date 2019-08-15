@@ -31,9 +31,6 @@ export default class LookImage extends wepy.component {
   };
 
   methods = {
-    toHomeWork () {
-      wx.navigateTo({ url: `/pages/completionOfWork?type=1&id=${this.dataInfo.lessonId}` })
-    },
     onClose () {
       this.$emit('changePopupStatus')
     }

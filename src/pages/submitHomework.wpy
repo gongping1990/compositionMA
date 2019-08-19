@@ -188,7 +188,7 @@
                src="https://pub.file.k12.vip/tbzw/jrxx/calendar.png"></image>
         <view class="-popup-title">今日已打卡成功</view>
         <view class="-popup-text">
-          <view>{{cardDetail.timestamp}}</view>
+          <view>{{cardDetail.time}}</view>
           <view>已累计打卡{{cardDetail.totaldays}}天，连续打卡{{cardDetail.continuousdays}}天</view>
         </view>
       </view>
@@ -286,6 +286,7 @@
       api.study.countCard()
         .then(res => {
           this.cardDetail = res.data.resultData;
+          this.cardDetail.time = dayjs(+res.data.timestamp).format('YYYY-MM-DD')
           this.$apply();
         });
     };
@@ -303,7 +304,6 @@
           this.workDetail.duration = this.timeToFormat(this.workDetail.duration );
         }
         this.$apply();
-        console.log(this.workDetail, 111);
       });
     };
 
@@ -452,13 +452,12 @@
       addMyCard() {
         if (this.cardDetail.todayCard) return;
         api.study.addCard()
-          .then(res => {
-            this.cardDetail.continuousdays = res.resultData.continuousdays
-            this.cardDetail.totaldays = res.resultData.totaldays
-            this.cardDetail.timestamp = dayjs(+res.timestamp).format('YYYY-MM-DD')
+          .then(({ data }) => {
+            this.cardDetail.continuousdays = data.resultData.continuousdays
+            this.cardDetail.totaldays = data.resultData.totaldays
             this.isCard = true;
             this.isOpenPopup = true;
-            this.getMyHomework();
+            this.getCardInfo();
             this.$apply();
           });
       },

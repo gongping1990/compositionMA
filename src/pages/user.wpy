@@ -59,7 +59,7 @@
                @close="onClose">
       <view class="p-user-kf-pop">
         <text class="p-user-kf-pop-title">添加老师微信</text>
-        <image src="https://pub.file.k12.vip/tbzw/v2/yindao.gif"
+        <image src="https://pub.file.k12.vip/gif/donghua_2.gif"
                class="p-user-kf-pop-img" />
         <text class="p-user-kf-pop-text">点击下方按钮</text>
         <text class="p-user-kf-pop-text red">回复“2”即可添加老师微信</text>
@@ -245,14 +245,13 @@ export default class User extends wepy.page {
   margin-bottom: 120px;
 
   &-header {
-    @include bg('/course/background.png');
 
     position: relative;
-    padding: 32px;
     width: 100vw;
-    height: 326px;
+    /*height: 326px;*/
 
     .-header-top {
+      padding: 31px 0 0 31px;
       @include flex-y-center;
 
       .-header-img {
@@ -260,7 +259,7 @@ export default class User extends wepy.page {
         margin-right: 24px;
         width: 72px;
         height: 72px;
-        box-shadow: 0px 0px 40px 0px rgba(235, 171, 5, 1);
+        /*box-shadow: 0px 0px 40px 0px rgba(235, 171, 5, 1);*/
         border: 4px solid rgba(255, 255, 255, 1);
         border-radius: 50%;
 
@@ -279,24 +278,24 @@ export default class User extends wepy.page {
     }
 
     .-header-down {
-      @include bg('/v2/tc.png');
-
-      margin-top: 12px;
-      width: 686px;
-      height: 360px;
+      background: url('https://pub.file.k12.vip//gif/my_card.png') no-repeat;
+      background-size: 100%;
+      margin: 0 auto;
+      width: 734px;
+      height: 386px;
 
       &-btn {
+        background-color: red;
         display: inline-block;
-        margin: 236px 0 0 242px;
-        width: 238px;
-        height: 60px;
+        margin: 236px 0 0 298px;
+        width: 300px;
+        height: 76px;
         background: transparent;
       }
     }
   }
 
   &-content {
-    margin-top: 100px;
 
     .-content-item {
       display: flex;

@@ -30,7 +30,7 @@
         </view>
       </view>
       <view class="content"
-            style="height:calc(100vh - 254rpx - {{height * 2}}rpx)">
+            style="height:calc(100vh - 254rpx - {{(height + 13) * 2}}rpx)">
         <view class="question"
               wx:if="{{showQuestion}}"
               animation="{{questionAnimate}}">
@@ -59,6 +59,21 @@
                     wx:key="{{index}}"
                     @tap="bindClickInput({{item.mark}})">
                 {{item.problem}}
+              </view>
+            </view>
+            <view class="chart-item"
+                  wx:if="{{showNextBtn}}">
+              <image class="chart-avatar"
+                     src="{{courseInfo.teacherHeadImage}}" />
+              <view class="chart-right">
+                <text class="chart-title">{{courseInfo.teacherName}}</text>
+                <view class="chart-content-wrap">
+
+                  <view class="chart-content voice" @tap="bindClickVoice">
+                    <view class="icon {{paused && 'paused'}}"></view>
+                  </view>
+                  <view class="chart-time">{{timeText}}</view>
+                </view>
               </view>
             </view>
           </view>
@@ -102,8 +117,11 @@
         <view class="question-btn-wrap"
               wx:if="{{showQuestion}}">
           <view class="question-btn"
-                wx:if="{{!isSummary}}"
-                @tap="clickStudy">{{stepIndex != questionArr.length - 1 ? '下一题' : '完成答题'}}</view>
+                wx:if="{{!isSummary && !showNextBtn}}"
+                @tap="clickStudy">确定</view>
+          <view class="question-btn"
+                wx:if="{{!isSummary && showNextBtn}}"
+                @tap="clickNext">{{stepIndex != questionArr.length - 1 ? '下一题' : '完成答题'}}</view>
           <view class="question-btn"
                 wx:if="{{setSummaryEnd}}"
                 @tap="clickLinkHomeWork">去完成课后作业</view>
@@ -167,7 +185,8 @@ export default class Example extends wepy.page {
     lookback: false,
     setSummaryEnd: false,
     flower: 0,
-    paused: false
+    paused: false,
+    showNextBtn: false
   };
   components = {
     mHeader,
@@ -210,6 +229,22 @@ export default class Example extends wepy.page {
       let { audioContext, playSound } = this.$parent.globalData
       playSound(audioContext, 1)
       this.selectIndex = i
+    },
+    clickNext () {
+      this.stop()
+      if (this.stepIndex === this.questionArr.length - 1) {
+        let { audioContext, playSound } = this.$parent.globalData
+        playSound(audioContext, 6)
+        this.changeLearnStage(3)
+        this.setSummary()
+        this.answerArr[3].status = 1
+        this.publishEnd = true
+        this.isSummary = true
+        this.setSummaryIndex()
+      } else {
+        this.changeQuestion()
+      }
+      this.showNextBtn = false
     }
   };
   events = {
@@ -308,18 +343,9 @@ export default class Example extends wepy.page {
     this.showAlert = true
     setTimeout(() => {
       this.showAlert = false
-      if (this.stepIndex === this.questionArr.length - 1) {
-        let { audioContext, playSound } = this.$parent.globalData
-        playSound(audioContext, 6)
-        this.changeLearnStage(3)
-        this.setSummary()
-        this.answerArr[3].status = 1
-        this.publishEnd = true
-        this.isSummary = true
-        this.setSummaryIndex()
-      } else {
-        this.changeQuestion()
-      }
+      this.showNextBtn = true
+      this.playAnalysis()
+      console.log(this.stepIndex)
       this.$apply()
     }, 2000)
   }
@@ -389,6 +415,7 @@ export default class Example extends wepy.page {
   }
 
   initQuestion () {
+    console.log(111)
     this.showQuestion = true
     this.correctAnswer = this.questionArr[0].answer
     this.app.show(this, 'questionAnimate', 1)
@@ -409,24 +436,14 @@ export default class Example extends wepy.page {
     setTimeout(() => {
       audioContext.play()
     }, 500)
-    audioContext.onEnded(() => {
-      this.app.show(this, 'chartAnimate', 0)
-      setTimeout(() => {
-        this.initQuestion()
-      }, 500)
-      // this.showQuestion = true
-      this.$apply()
-    })
-    audioContext.onTimeUpdate(() => {
-      if (!this.currentTime) {
-        this.duration = parseInt(audioContext.duration)
-      }
-      if (this.currentTime !== audioContext.currentTime) {
-        this.formatTimeText()
-        this.currentTime = parseInt(audioContext.currentTime)
-      }
-      this.$apply()
-    })
+  }
+
+  playAnalysis() {
+    let { audioContext } = this
+    audioContext.src = 'http://huoke-private-1254282420.cos.ap-chengdu.myqcloud.com/2019/07/11/32f9b3f8-92d7-471c-8f2f-544faaa4926b.mp3?sign=q-sign-algorithm%3Dsha1%26q-ak%3DAKIDCJG2e67TN6kR3mA5fDve2X0Ndnwz5mV8%26q-sign-time%3D1566375961%3B1566447961%26q-key-time%3D1566375961%3B1566447961%26q-header-list%3D%26q-url-param-list%3D%26q-signature%3D1f6e71dfea012d9e6d27cf16486875e6c7f67443'
+    setTimeout(() => {
+      audioContext.play()
+    }, 500)
   }
 
   reset () {
@@ -512,19 +529,38 @@ export default class Example extends wepy.page {
   }
 
   onLoad (option) {
+    console.log(111)
     this.lessonId = option.id
     this.lookback = option.lookback
     // eslint-disable-next-line no-undef
     this.app = this.$parent.globalData
+    this.audioContext = wx.createInnerAudioContext()
+    this.audioContext.onEnded(() => {
+      if (this.showQuestion) return
+      this.app.show(this, 'chartAnimate', 0)
+      setTimeout(() => {
+        this.initQuestion()
+      }, 500)
+      // this.showQuestion = true
+      this.$apply()
+    })
+    this.audioContext.onTimeUpdate(() => {
+      if (!this.currentTime) {
+        this.duration = parseInt(this.audioContext.duration)
+      }
+      if (this.currentTime !== this.audioContext.currentTime) {
+        this.formatTimeText()
+        this.currentTime = parseInt(this.audioContext.currentTime)
+      }
+      this.$apply()
+    })
   }
   onShow () {
-    this.audioContext = wx.createInnerAudioContext()
     this.getClassInfo()
     this.getLessonRoom()
   }
   onHide () {
     this.audioContext.stop()
-    this.audioContext.destroy()
     clearInterval(this.timer)
   }
   onUnload () {
@@ -857,7 +893,7 @@ export default class Example extends wepy.page {
     flex-direction: column;
     justify-content: flex-end;
     margin-top: 28px;
-    max-height: 52vh;
+    max-height: 50vh;
     overflow-y: auto;
     &-item {
       opacity: 0;

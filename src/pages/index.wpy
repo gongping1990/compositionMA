@@ -252,7 +252,7 @@ export default class Home extends wepy.page {
   };
   watch = {
     userInfo (n) {
-      if (n.id) {
+      if (n.id || n.userId) {
         this.initPage()
         if (this.getUCRemindVOL) {
           this.getUCRemindVOL()
@@ -307,7 +307,8 @@ export default class Home extends wepy.page {
       this.infoData.startTime = this.infoData.startTime ? dayjs(new Date(this.infoData.startTime)).format('MM月DD日') : ''
       if (!data.resultData.buyCourse) {
         if (this.empty || !data.resultData.infoList[0].expLesson) {
-          wx.redirectTo({ url: '/pages/enroll' })
+          api.user.loginOut()
+          wx.redirectTo({ url: '/pages/login' })
         }
       }
       this.showPraise = this.infoData.awardsPop
@@ -335,7 +336,7 @@ export default class Home extends wepy.page {
   }
 
   onShow () {
-    if (this.userInfo.id) {
+    if (this.userInfo.id || this.userInfo.userId) {
       this.initPage()
     }
   };

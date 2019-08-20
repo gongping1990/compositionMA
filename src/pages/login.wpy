@@ -1,0 +1,300 @@
+<!--  -->
+<template>
+  <view class='container login'>
+    <mHeader flag="0"
+             bgColor="#FAFAFA"></mHeader>
+    <view class="container-scroll login-scroll"
+          style="margin-top:{{height}}px">
+      <view class="login-logo">
+        <image src="https://pub.file.k12.vip/composition/login/logo@3x.png"
+               class="login-logo-img" />
+        <view class="login-logo-content">
+          <text class="login-logo-title">小语轻作文</text>
+          <text class="login-logo-text">学<text></text>技<text></text>巧<text></text>积<text></text>素</text>
+        </view>
+      </view>
+      <view class="login-input">
+        <input value="{{form.phone}}"
+               bindinput="bindInputChange('phone')"
+               type="text"
+               placeholder-class="placeholder"
+               placeholder="清输入手机号码" />
+        <view class="send-code-btn {{codeTime ? 'isSend' : ''}}"
+              @tap="clickSendCode"
+              wx:if="{{type}}"> {{codeTime ? codeTime + 's' : '获取验证码'}}</view>
+      </view>
+      <view class="login-input">
+        <input value="{{form.password}}"
+               bindinput="bindInputChange('password')"
+               type="text"
+               password="{{!type}}"
+               placeholder-class="placeholder"
+               placeholder="{{type ? '清输入验证码' : '请输入密码'}}" />
+      </view>
+      <view class="login-submit-btn" @tap="clickLogin" >登录</view>
+      <view class="login-change-btn"
+            @tap="changeLoginType">{{type ? '账号密码登录' : '短信验证码登录'}}</view>
+      <view class="login-reset-password"
+            wx:if="{{!type}}" @tap="clickReset">忘记密码？</view>
+      <view class="login-message">
+        <view class="login-message-icon"></view>
+        <text class="login-message-text">购买课程后，账号密码将通过短信发送给您；如果未收到短信，可使用“短信验证码登录”。</text>
+      </view>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import {connect} from 'wepy-redux'
+import mHeader from '@/components/header'
+import {updateUserInfo} from '../store/actions/index.js'
+@connect({}, {
+  updateUserInfo
+})
+export default class Example extends wepy.page {
+  config = {
+    navigationBarTitleText: ''
+  };
+  data = {
+    type: 0,
+    codeTime: 0,
+    form: {
+      phone: '',
+      password: ''
+    }
+  };
+  components = {
+    mHeader
+  };
+  methods = {
+    clickReset() {
+      wx.navigateTo({ url: '/pages/resetPwd' })
+    },
+    bindInputChange (name, event) {
+      console.log(event, name)
+      this.form[name] = event.detail.value
+      console.log(this.form)
+    },
+    clickSendCode () {
+      let {phone} = this.form
+      if (this.codeTime) return
+      if (!this.isPhoneVailable(phone)) {
+        wx.showToast({
+          title: '请输入正确的手机号', // 提示的内容,
+          icon: 'none', // 图标,
+          duration: 2000 // 延迟时间
+        })
+        return
+      }
+      this.codeTime = 60
+      let { api } = this.$parent.globalData
+      api.user.sendCode({
+        phone
+      }).then(() => {
+        this.downTime()
+      })
+    },
+    changeLoginType () {
+      this.form.password = ''
+      this.type = this.type ? 0 : 1
+    },
+    clickLogin () {
+      let { phone, password } = this.form
+      let { type, isPhoneVailable } = this
+      let { api } = this.$parent.globalData
+      let params = {
+        phone
+      }
+      let loginFunc = type ? api.user.loginWithPhone : api.user.loginWithPassword
+      if (!isPhoneVailable(phone)) {
+        wx.showToast({
+          title: '请输入正确的手机号', // 提示的内容,
+          icon: 'none' // 图标,
+        })
+        return
+      }
+      if (!password) {
+        wx.showToast({
+          title: type ? '请输入验证码' : '请输入密码', // 提示的内容,
+          icon: 'none' // 图标,
+        })
+        return
+      }
+      params[type ? 'code' : 'password'] = password
+
+      loginFunc(params).then(({data}) => {
+        this.methods.updateUserInfo(data.resultData)
+        wx.redirectTo({ url: '/pages/index' })
+      })
+    }
+  };
+  downTime () {
+    if (this.codeTime <= 1) {
+      this.codeTime = 0
+    } else {
+      this.codeTime -= 1
+      setTimeout(() => {
+        this.downTime()
+        this.$apply()
+      }, 1000)
+    }
+  }
+  isPhoneVailable (phone) {
+    var myreg = /^[1][0-9]{10}$/
+    console.log(myreg.test(phone))
+    if (!myreg.test(phone)) {
+      return false
+    } else {
+      return true
+    }
+  }
+  events = {};
+  watch = {};
+  computed = {
+    height () {
+      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+    }
+  };
+  onLoad () { };
+  onShow () { };
+}
+</script>
+<style lang='scss'>
+@import '../assets/style/mixin.scss';
+.login {
+  &-scroll {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .send-code-btn {
+    @include flex-center;
+    position: absolute;
+    right: 28px;
+    top: 50%;
+    width: 208px;
+    height: 72px;
+    font-size: 28px;
+    font-weight: 500;
+    color: rgba($color: #58422b, $alpha: 0.6);
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0px 4px 8px 0px rgba(127, 125, 117, 0.08);
+    border-radius: 36px;
+    transform: translateY(-50%);
+    z-index: 1000;
+    &.isSend {
+      color: rgba($color: #58422b, $alpha: 0.5);
+      background-color: #ededea;
+    }
+  }
+  &-reset-password {
+    position: absolute;
+    right: 96px;
+    bottom: 164px;
+    color: #58422b;
+    font-size: 28px;
+  }
+  &-message {
+    display: flex;
+    position: fixed;
+    bottom: 64px;
+    left: 50%;
+    transform: translateX(-50%);
+    &-icon {
+      margin-top: 6px;
+      margin-right: 12px;
+      width: 24px;
+      height: 24px;
+      background: url('https://pub.file.k12.vip/composition/login/login-icon-lock prompt@3x.png')
+        no-repeat;
+      background-size: 100%;
+    }
+    &-text {
+      width: 480px;
+      color: rgba($color: #343230, $alpha: 0.3);
+      font-size: 24px;
+      line-height: 34px;
+    }
+  }
+  &-submit-btn,
+  &-change-btn {
+    @include flex-center;
+    box-sizing: border-box;
+    margin-top: 12px;
+    width: 558px;
+    height: 100px;
+    color: #58422b;
+    font-size: 32px;
+    font-weight: 500;
+    background: linear-gradient(
+      90deg,
+      rgba(249, 230, 11, 1) 0%,
+      rgba(253, 219, 85, 1) 100%
+    );
+    border-radius: 50px;
+  }
+  &-change-btn {
+    margin-top: 128px;
+    color: rgba($color: #58422b, $alpha: 0.7);
+    background: #fff;
+    border: 2px solid rgba(88, 66, 43, 0.3);
+  }
+  &-logo {
+    display: flex;
+    padding-top: 80px;
+    margin-bottom: 64px;
+    &-img {
+      margin-right: 20px;
+      width: 112px;
+      height: 112px;
+    }
+    &-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    &-title {
+      font-size: 48px;
+      line-height: 66px;
+      color: #58422b;
+      font-weight: 600;
+    }
+    &-text {
+      font-size: 28px;
+      line-height: 40px;
+      color: rgba($color: #58422b, $alpha: 0.6);
+      text {
+        margin: 0 13px;
+      }
+    }
+  }
+  &-input {
+    @include flex-center;
+    position: relative;
+    box-sizing: border-box;
+    padding-left: 48px;
+    margin: 0 48px;
+    margin-bottom: 32px;
+    width: 558px;
+    height: 96px;
+    background: #f8f8f6;
+    border-radius: 48px;
+    input,
+    &-text {
+      width: 100%;
+      height: 96px;
+      font-size: 34px;
+      color: #58422b;
+    }
+    &-text {
+      display: flex;
+      align-items: center;
+    }
+  }
+}
+.placeholder {
+  width: 100%;
+  font-size: 28px;
+  color: rgba($color: #343230, $alpha: 0.4);
+}
+</style>

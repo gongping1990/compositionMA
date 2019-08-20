@@ -51,6 +51,13 @@ export default class Example extends wepy.component {
     this.audioContext.volume = 0
     this.audioContext.autoplay = true
   }
+  onHide () {
+    this.audioContext.stop()
+  }
+  onUnload () {
+    this.audioContext.stop()
+    this.audioContext.destroy()
+  }
 }
 </script>
 <style lang='scss'>

@@ -61,7 +61,7 @@ export default class Example extends wepy.page {
   };
   data = {
     lessonId: 0,
-    aduioContext: null,
+    audioContext: null,
     readyArr: [0, 0, 0, 0],
     roomData: {},
     courseInfo: {},
@@ -145,32 +145,11 @@ export default class Example extends wepy.page {
 
   initAudio (src) {
     let { audioContext } = this
+    console.log(audioContext)
     audioContext.src = src
     setTimeout(() => {
       audioContext.play()
     }, 500)
-    audioContext.onEnded(() => {
-      this.isReady = true
-      this.imitateReady()
-      setTimeout(() => {
-        this.downTime()
-      }, 1500)
-      // this.randomImitateReady()
-      this.$apply()
-    })
-    audioContext.onPlay(() => {
-
-    })
-    audioContext.onTimeUpdate(() => {
-      if (!this.currentTime) {
-        this.duration = parseInt(audioContext.duration)
-      }
-      if (this.currentTime !== audioContext.currentTime) {
-        this.currentTime = parseInt(audioContext.currentTime)
-      }
-      this.formatTimeText()
-      this.$apply()
-    })
   }
 
   formatTimeText () {
@@ -218,16 +197,37 @@ export default class Example extends wepy.page {
   }
 
   onLoad (option) {
+    this.audioContext = wx.createInnerAudioContext()
     this.lessonId = option.id
+    this.audioContext.onEnded(() => {
+      this.isReady = true
+      this.imitateReady()
+      setTimeout(() => {
+        this.downTime()
+      }, 1500)
+      // this.randomImitateReady()
+      this.$apply()
+    })
+    this.audioContext.onPlay(() => {
+
+    })
+    this.audioContext.onTimeUpdate(() => {
+      if (!this.currentTime) {
+        this.duration = parseInt(this.audioContext.duration)
+      }
+      if (this.currentTime !== this.audioContext.currentTime) {
+        this.currentTime = parseInt(this.audioContext.currentTime)
+      }
+      this.formatTimeText()
+      this.$apply()
+    })
   }
   onShow () {
-    this.audioContext = wx.createInnerAudioContext()
     this.initPage()
   }
   onHide () {
     this.$parent.globalData.audioContext.stop()
     this.audioContext.stop()
-    this.audioContext.destroy()
   }
   onUnload () {
     this.$parent.globalData.audioContext.stop()

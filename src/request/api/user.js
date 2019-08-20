@@ -2,6 +2,18 @@ import request from '../index'
 
 const user = {
   // 微信登录
+  loginWithPhone(params) {
+    return request.post('/user/loginWithPhone', params)
+  },
+  loginWithPassword(params) {
+    return request.post('/user/loginWithPassword', params)
+  },
+  loginOut() {
+    return request.get('/user/loginOut')
+  },
+  changePassword(params) {
+    return request.post('/user/changePassword', params)
+  },
   wxUserLogin(params) {
     return request.post('/user/loginWithWxMa', params)
   },
@@ -23,8 +35,11 @@ const user = {
   listCollect(params) {
     return request.get('/user/listCollect', params)
   },
-  uploadFormId (params) {
+  uploadFormId(params) {
     return request.post('/user/uploadFormId', params)
+  },
+  sendCode(params) {
+    return request.get('/common/sendCode', params)
   }
 }
 

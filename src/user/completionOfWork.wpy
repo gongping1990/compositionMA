@@ -209,6 +209,10 @@
     </view>
 
     <lookImage :isShow.sync="isShowImage" :imgUrl.sync="itemUrl"></lookImage>
+
+    <ConfirmModal :isShow.sync="isShowConfirm"
+                  contentText="重新提交作业成功后，将会覆盖上次的内容，确定提交？"
+                  okText="确认覆盖"></ConfirmModal>
   </view>
 </template>
 
@@ -218,6 +222,7 @@ import api from '../request/api'
 import dayjs from 'dayjs'
 import mHeader from '../components/header'
 import lookImage from '../components/lookImage'
+import ConfirmModal from '../components/confirmModal'
 
 export default class CompletionOfWork extends wepy.page {
   config = {
@@ -229,7 +234,8 @@ export default class CompletionOfWork extends wepy.page {
   };
   components = {
     mHeader,
-    lookImage
+    lookImage,
+    ConfirmModal
   };
   computed = {
     height () {
@@ -247,6 +253,7 @@ export default class CompletionOfWork extends wepy.page {
     isMyPlay: false,
     isZan: false,
     isShowImage: false,
+    isShowConfirm: false,
     isActive: '',
     stumsg: '',
     workDetail: '',
@@ -353,9 +360,7 @@ export default class CompletionOfWork extends wepy.page {
       this.getMyHomework()
     },
     resultHomework () {
-      wx.navigateTo({
-        url: `/user/${this.workDetail.homeworkType == 1 ? 'uploadAudioWork' : 'uploadImgWork'}?id=${this.workDetail.lessonId}`
-      })
+      this.isShowConfirm = true
     },
     changeAudioStatus () {
       this.isMyPlay = false
@@ -445,6 +450,15 @@ export default class CompletionOfWork extends wepy.page {
   events = {
     changePopupStatus () {
       this.isShowImage = false
+    },
+    changeOkStatus (bool) {
+      this.isShowConfirm = false
+
+      if (bool === 'true') {
+        wx.navigateTo({
+          url: `/user/${this.workDetail.homeworkType == 1 ? 'uploadAudioWork' : 'uploadImgWork'}?id=${this.workDetail.lessonId}`
+        })
+      }
     }
   };
 

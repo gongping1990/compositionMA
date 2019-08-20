@@ -1,0 +1,126 @@
+<template>
+  <van-popup show="{{isShow}}" class="p-confirm">
+    <view class="p-confirm-result">
+      <view class="p-confirm-result-title" wx:if="{{titleText}}">{{titleText}}</view>
+      <view class="p-confirm-result-text {{ titleText ? '' : 'p-confirm-result-noTitle' }}">{{contentText}}</view>
+      <view class="p-confirm-result-btn-wrap">
+        <view class="-btn-cancle" @tap="sureResult(false)">{{cancelText}}</view>
+        <view class="-btn-ok" @tap="sureResult(true)">{{okText}}</view>
+      </view>
+    </view>
+  </van-popup>
+</template>
+
+<script>
+  import wepy from 'wepy';
+
+  export default class ConfirmModal extends wepy.component {
+    props = {
+      isShow: {
+        type: Boolean,
+        default: false
+      },
+      titleText: {
+        type: String,
+        default: ''
+      },
+      contentText: {
+        type: String,
+        default: ''
+      },
+      cancelText: {
+        type: String,
+        default: '取消'
+      },
+      okText: {
+        type: String,
+        default: '确认'
+      }
+    };
+
+    computed = {};
+
+    data = {
+    };
+
+    watch = {};
+
+    methods = {
+      sureResult(bool) {
+        this.$emit('changeOkStatus', bool);
+      }
+    };
+
+    events = {};
+
+    onLoad() {
+    }
+  }
+</script>
+<style lang="scss">
+  @import '../assets/style/mixin.scss';
+
+  .p-confirm {
+
+    &-result {
+      text-align: center;
+      width: 590px;
+      height: 368px;
+      background: rgba(255, 255, 255, 1);
+      border-radius: 32px;
+
+      &-title {
+        padding: 48px 48px 32px;
+        height: 50px;
+        font-size: 36px;
+        font-weight: 500;
+        color: rgba(88, 66, 43, 1);
+        line-height: 50px;
+      }
+
+      &-noTitle {
+        padding-top: 72px;
+      }
+
+      &-text {
+        margin: 0 48px;
+        font-size: 36px;
+        font-weight: 500;
+        color: rgba(88, 66, 43, 1);
+        line-height: 50px;
+        margin-bottom: 48px;
+      }
+
+      &-btn-wrap {
+        @include flex-center;
+
+        .-btn-cancle {
+          text-align: center;
+          margin: 0 23px;
+          width: 224px;
+          height: 76px;
+          border-radius: 40px;
+          border: 2px solid rgba(88, 66, 43, 0.1);
+          font-size: 32px;
+          font-weight: 400;
+          color: rgba(88, 66, 43, 0.5);
+          line-height: 76px;
+        }
+
+        .-btn-ok {
+          text-align: center;
+          margin: 0 23px;
+          width: 224px;
+          height: 76px;
+          background: linear-gradient(90deg, rgba(249, 230, 11, 1) 0%, rgba(253, 219, 85, 1) 100%);
+          box-shadow: 0px 8px 16px 4px rgba(230, 194, 81, 0.4);
+          border-radius: 40px;
+          font-size: 32px;
+          font-weight: 500;
+          color: rgba(70, 65, 60, 1);
+          line-height: 76px;
+        }
+      }
+    }
+  }
+</style>

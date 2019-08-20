@@ -1,6 +1,6 @@
 <template>
   <view class="container p-notice">
-    <mHeader title="表扬通知"></mHeader>
+    <mHeader title="点赞通知"></mHeader>
     <view class="container-scroll"
           style="margin-top:{{height}}px">
       <scroll-view class="item-scroll"
@@ -12,19 +12,19 @@
                 key="index"
                 index="index"
                 item="item">
-          <view class="p-notice-item" @tap="openPopup({{item}})">
+          <view class="p-notice-item" @tap="toWorkDetail({{item}})">
             <view class="-item-left">
               <image class="-img"
-                     src="{{item.teacherHeadImage}}"></image>
+                     src="{{item.userImg}}"></image>
             </view>
             <view class="-item-right">
               <view class="-item-right-top">
-                <view class="-name">{{item.teacherName}}</view>
+                <view class="-name">{{item.userName}}</view>
                 <view class="-icon"
                       wx:if="{{!item.know}}"></view>
               </view>
               <view class="-item-right-down">
-                <view>表扬了你的作品</view>
+                <view>点赞了你的作品</view>
                 <view>{{item.datetime}}</view>
               </view>
             </view>
@@ -35,8 +35,6 @@
         <emptyState :emptyInfo="emptyOption"></emptyState>
       </view>
     </view>
-
-    <praiseModal :isShow.sync="isShowPopup" typeProps="2" :dataInfo.sync="dataItem"></praiseModal>
   </view>
 </template>
 
@@ -46,20 +44,14 @@ import api from '../request/api'
 import dayjs from 'dayjs'
 import mHeader from '../components/header'
 import emptyState from '../components/emptyState'
-import praiseModal from '../components/praiseModal'
 
-export default class RecognitionNotice extends wepy.page {
+export default class Notice extends wepy.page {
   config = {
-    navigationBarTitleText: '表扬通知',
-    usingComponents: {
-      'van-icon': '../vant/icon/index',
-      'van-popup': '../vant/popup/index'
-    }
+    navigationBarTitleText: '点赞通知'
   };
   components = {
     mHeader,
-    emptyState,
-    praiseModal
+    emptyState
   };
   computed = {
     height () {
@@ -68,22 +60,20 @@ export default class RecognitionNotice extends wepy.page {
   };
 
   data = {
-    isShowPopup: false,
     page: {
       current: 1,
       size: 10,
       total: ''
     },
     emptyOption: {
-      url: 'https://pub.file.k12.vip/tbzw/v2/empty/by.png',
-      text: '暂时没有收到老师的表扬，要坚持每天认真完成作业，老师一定会表扬你的！'
+      url: 'https://pub.file.k12.vip/tbzw/v2/empty/dz.png',
+      text: '暂时没有人给你点赞， 交作业后记得分享给熟悉的小伙伴哦！'
     },
-    dataList: [],
-    dataItem: ''
+    dataList: []
   };
 
   getList () {
-    api.study.listPraiseByPage({
+    api.study.listLikeByPage({
       current: this.page.current,
       size: this.page.size
     })
@@ -104,9 +94,8 @@ export default class RecognitionNotice extends wepy.page {
   };
 
   methods = {
-    openPopup(item) {
-      this.isShowPopup = true
-      this.dataItem = item
+    toWorkDetail (data) {
+      wx.navigateTo({ url: `/user/completionOfWork?type=2&id=${data.workId}` })
     },
     bindLoadItem (data) {
       if (this.page.current < Math.ceil(this.page.total / this.page.size)) {
@@ -116,20 +105,14 @@ export default class RecognitionNotice extends wepy.page {
     }
   };
 
-  events = {
-    changePopupStatus () {
-      this.isShowPopup = false
-    }
-  }
-
   onLoad () {
     this.getList()
   }
 
   onShareAppMessage () {
     return {
-      title: `我的作业受到${this.dataItem.teacherName}的表扬，快来给我点个赞吧`,
-      path: `/pages/completionOfWork?type=2&id=${this.dataItem.workId}`,
+      title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
+      path: `/pages/index`,
       imageUrl: 'https://pub.file.k12.vip/tbzw/v2/logo2.png'
     }
   }

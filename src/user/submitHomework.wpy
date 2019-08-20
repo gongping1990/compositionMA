@@ -1,0 +1,1048 @@
+<template>
+  <view class="container">
+    <mHeader title="课后作业"></mHeader>
+    <view class="container-scroll p-submitHomework"
+          style="margin-top:{{height}}px">
+      <view class="p-submitHomework-header">
+        <view class="p-submitHomework-header-top">
+          <view class="-top-left">
+            <image class="-left-img"
+                   src="{{lessonDetail.coverphoto}}"></image>
+          </view>
+          <view class="-top-right">
+            <view>
+              <view class="-title">{{lessonDetail.name}}</view>
+              <view class="-text">《小语轻作文》</view>
+            </view>
+
+            <view class="-right-down">
+              <view class="-num">{{lessonDetail.uv || 0}}人已学</view>
+              <view class="-btn"
+                    @tap="changePopup({{'1'}})">
+                <image class="-icon"
+                       src="https://pub.file.k12.vip/2019/06/06/1136518673440460801.png"></image>
+                课程回看
+              </view>
+            </view>
+          </view>
+        </view>
+
+        <view class="p-submitHomework-header-down">
+          <view class="-down-text {{tabActive === '1' ? '-active' : ''}}"
+                @tap="changeTab({{'1'}})">
+            <view class="-text">我的作业</view>
+          </view>
+          <view class="-down-text {{tabActive === '2' ? '-active' : ''}}"
+                @tap="changeTab({{'2'}})">
+            <view class="-text">同学作业</view>
+          </view>
+        </view>
+      </view>
+
+      <view class="p-submitHomework-center"
+            wx:if="{{tabActive === '1'}}">
+        <view class="-center-blackboard">
+          <view class="-center-blackboard-title">课后作业</view>
+          <view class="-center-blackboard-name">{{lessonDetail.homework}}</view>
+          <view class="-center-blackboard-content">{{lessonDetail.homeworkClaim}}</view>
+        </view>
+
+        <view class="-center-mask"
+              wx:if="{{isSuccessWork}}">
+          <image class="-mask-img"
+                 src="https://pub.file.k12.vip/tbzw/khzy/success.png"></image>
+        </view>
+
+        <view class="-center-work"
+              wx:if="{{isSuccessWork}}">
+          <view class="-center-work-top -center-work-my">
+            <view class="-top-left">
+              <image class="-top-left-img"
+                     src="{{workDetail.stuImg}}"></image>
+            </view>
+            <view class="-top-right">
+              <view class="-top-right-name">{{workDetail.nickname}}</view>
+              <view class="-top-right-time">{{workDetail.workTime}}</view>
+            </view>
+          </view>
+          <view class="-center-work-down">
+            <image class="-center-work-down-img"
+                   wx:for="{{workDetail.workImgSrc}}"
+                   wx:key="{{item}}"
+                   wx:if="{{lessonDetail.homeworkType == 2}}"
+                   @tap="enlargeImage({{item}},index)"
+                   src="{{item}}"></image>
+
+            <view class="-center-work-down-audio"
+                  @tap="changeMyAudioStatus({{workDetail}},1)"
+                  wx:if="{{lessonDetail.homeworkType == 1}}">
+              <view class="-reply-icon">
+                <view class="icon"
+                      wx:if="{{!isPlay}}"></view>
+                <view class="playIcon"
+                      wx:if="{{isPlay}}"></view>
+              </view>
+              <view class="-reply-time">{{workDetail.duration}}</view>
+            </view>
+          </view>
+          <view class="-center-work-footer">
+            <view class="-center-work-footer-wrap">
+              <image class="-img"
+                     src="https://pub.file.k12.vip/tbzw/word-detail/icon-give-pre.png"></image>
+              <text>{{workDetail.likenum}}</text>
+            </view>
+            <view class="-center-work-footer-wrap"
+                  @tap="lookWorkDetail({{workDetail}})">
+              <image class="-img"
+                     src="https://pub.file.k12.vip/poem/1_2/zybz-icon-review@3x.png"></image>
+              <text>看点评</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="p-submitHomework-footer"
+            wx:if="{{!isSuccessWork && tabActive === '1'}}">
+        <button class="-footer-btn"
+                @tap="submitWork">上交作业
+        </button>
+      </view>
+
+      <view class="p-submitHomework-card"
+            wx:if="{{tabActive === '1' && cardDetail.todayLearned}}"
+            @tap="addMyCard">
+        <view class="-text">{{cardDetail.todayCard ? '已打卡' : '点我打卡'}}</view>
+      </view>
+
+      <scroll-view class="p-submitHomework-center p-submitHomework-list"
+                   @scrolltolower="bindLoadItem"
+                   scroll-y
+                   scroll-with-animation
+                   wx:if="{{tabActive === '2'}}">
+        <repeat for="{{dataList}}"
+                wx:if="{{dataList.length && isSuccessWork}}"
+                key="index"
+                index="index"
+                item="item">
+          <view class="-center-work -center-other">
+            <view class="-center-work-top">
+              <view class="-top-left">
+                <image class="-top-left-img"
+                       src="{{item.stuImg}}"></image>
+              </view>
+              <view class="-top-right">
+                <view class="-top-right-name">{{item.nickname}}</view>
+                <view class="-top-right-time">{{item.workTime}}</view>
+              </view>
+            </view>
+
+            <view class="-center-work-down">
+              <image class="-center-work-down-img"
+                     wx:for="{{item.workImgSrc}}"
+                     wx:key="{{item}}"
+                     wx:if="{{lessonDetail.homeworkType == 2}}"
+                     @tap="enlargeImage({{item}}, index)"
+                     src="{{item}}"></image>
+
+              <view class="-center-work-down-audio"
+                    @tap="changeMyAudioStatus({{item}})"
+                    wx:if="{{lessonDetail.homeworkType == 1}}">
+                <view class="-reply-icon">
+                  <view class="icon"
+                        wx:if="{{!item.isPlay}}"></view>
+                  <view class="playIcon"
+                        wx:if="{{item.isPlay}}"></view>
+                </view>
+                <view class="-reply-time">{{item.duration}}</view>
+              </view>
+            </view>
+
+            <view class="-center-work-footer">
+              <view class="-center-work-footer-wrap"
+                    @tap="addLike({{item}})">
+                <view class="-texiao"
+                      wx:if="{{dataItem.id === item.id}}"
+                      style="background-position-y:-{{backgroundY}}rpx;">
+                </view>
+                <image class="-img {{dataItem.id === item.id ? '-icon-animation' : ''}}"
+                       wx:if="{{!item.otherLike}}"
+                       src="https://pub.file.k12.vip/tbzw/word-detail/icon-give-pre.png"></image>
+                <image class="-img"
+                       wx:if="{{item.otherLike}}"
+                       src="https://pub.file.k12.vip/2019/06/06/1136572565700235266.png"></image>
+                <text>{{item.likenum}}</text>
+              </view>
+              <view class="-center-work-footer-wrap"
+                    @tap="lookWorkDetail({{item}})">
+                <image class="-img"
+                       src="https://pub.file.k12.vip/poem/1_2/zybz-icon-review@3x.png"></image>
+                <text>看点评</text>
+              </view>
+            </view>
+          </view>
+        </repeat>
+        <view class="-center-other-no"
+              wx:if="{{(!dataList.length && isSuccessWork) || !isSuccessWork }}">
+          <image class="-no-icon"
+                 src="https://pub.file.k12.vip/tbzw/empty/zy.png"></image>
+          <view class="-no-text">自己写完作业后，才能查看同伴作业哦～</view>
+        </view>
+      </scroll-view>
+
+    </view>
+    <lookImage :isShow.sync="isShowImage"
+               :imgUrl.sync="itemUrl"></lookImage>
+    <van-popup show="{{isOpenPopup}}">
+      <view class="p-submitHomework-popup"
+            wx:if="{{isCard}}">
+        <image class="-popup-icon"
+               src="https://pub.file.k12.vip/tbzw/jrxx/calendar.png"></image>
+        <view class="-popup-title">今日已打卡成功</view>
+        <view class="-popup-text">
+          <view>{{cardDetail.time}}</view>
+          <view>已累计打卡{{cardDetail.totaldays}}天，连续打卡{{cardDetail.continuousdays}}天</view>
+        </view>
+      </view>
+
+      <view class="p-submitHomework-popup-look"
+            wx:if="{{!isCard}}">
+        <view class="-popup-look-title">请选择要学习的内容</view>
+        <view class="-popup-look-content">
+          <view @tap="openUrl({{1}})">
+            <image class="-popup-look-img"
+                   src="https://pub.file.k12.vip/2019/06/06/1136558111751163906.png"></image>
+            <view>回看课程</view>
+          </view>
+          <view @tap="openUrl({{2}})">
+            <image class="-popup-look-img"
+                   src="https://pub.file.k12.vip/2019/06/06/1136558295600091137.png"></image>
+            <view>随堂检测</view>
+          </view>
+        </view>
+      </view>
+
+      <van-icon name="close"
+                class="p-submitHomework-close"
+                color="#fff"
+                size="36px"
+                @click="changePopup" />
+    </van-popup>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import api from '../request/api'
+import dayjs from 'dayjs'
+import { connect } from 'wepy-redux'
+import mHeader from '../components/header'
+import lookImage from '../components/lookImage'
+
+@connect({
+  userInfo (state) {
+    return state.user.userInfo
+  }
+})
+export default class SubmitHomework extends wepy.page {
+  config = {
+    navigationBarTitleText: '课后作业',
+    'usingComponents': {
+      'van-icon': '../vant/icon/index',
+      'van-popup': '../vant/popup/index'
+    }
+  };
+  components = {
+    mHeader,
+    lookImage
+  };
+  computed = {
+    height () {
+      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+    }
+  };
+
+  data = {
+    page: {
+      current: 1,
+      size: 10,
+      total: ''
+    },
+    dataItem: '',
+    backgroundY: 0,
+    tabActive: '1',
+    itemUrl: '',
+    isSuccessWork: false,
+    isOpenPopup: false,
+    isShowImage: false,
+    isCard: false,
+    isPlay: false,
+    workDetail: '',
+    lessonDetail: '',
+    cardDetail: '',
+    lessonId: '',
+    innerAudioContext: '',
+    dataList: []
+  };
+
+  getLessonInfo () {
+    api.study.getLessonDetail({
+      lessonId: this.lessonId
+    }).then(res => {
+      this.lessonDetail = res.data.resultData
+      this.$apply()
+    })
+  };
+
+  getCardInfo () {
+    api.study.countCard()
+      .then(res => {
+        this.cardDetail = res.data.resultData
+        this.cardDetail.time = dayjs(+res.data.timestamp).format('YYYY-MM-DD')
+        this.$apply()
+      })
+  };
+
+  getMyHomework () {
+    api.study.viewMyHomework({
+      lessonId: this.lessonId
+    }).then(res => {
+      this.workDetail = res.data.resultData
+      if (this.workDetail) {
+        this.isSuccessWork = true
+        this.workDetail.workTime = dayjs(+this.workDetail.workTime).format('YYYY-MM-DD HH:mm')
+        this.workDetail.workImg = this.workDetail.workImg && this.workDetail.workImg.split(',')
+        this.workDetail.workImgSrc = this.workDetail.workImgSrc && this.workDetail.workImgSrc.split(',')
+        this.workDetail.duration = this.timeToFormat(this.workDetail.duration)
+      }
+      this.$apply()
+    })
+  };
+
+  getOtherHomeWork () {
+    api.study.listHomeworkByLesson({
+      current: this.page.current,
+      size: this.page.size,
+      lessonId: this.lessonId
+    }).then(({ data }) => {
+      if (this.page.current > 1) {
+        this.dataList = this.dataList.concat(data.resultData.records)
+      } else {
+        this.dataList = data.resultData.records
+      }
+
+      this.dataList.forEach(item => {
+        item.workTime = dayjs(+item.workTime).format('YYYY-MM-DD HH:mm')
+        item.workImg = item.workImg && item.workImg.split(',')
+        item.workImgSrc = item.workImgSrc && item.workImgSrc.split(',')
+        item.replyImg = item.replyImg && item.replyImg.split(',')
+        item.duration = this.timeToFormat(item.duration)
+        item.isPlay = false
+      })
+
+      this.page.total = data.resultData.total
+      this.$apply()
+    })
+  };
+
+  startLikeAnimation () {
+    const base = 270 / 414
+    const bgBase = 13865 / 414
+    const width = 276
+    let height = width * base
+    let time = (1000 * 0.75) / 51
+    let bgHeight = parseInt(width * bgBase)
+    setTimeout(() => {
+      if (this.backgroundY < bgHeight) {
+        this.backgroundY += height
+        this.startLikeAnimation()
+      } else {
+        this.backgroundY = 0
+      }
+      this.$apply()
+    }, time)
+  };
+
+  initPlayAudio (src) {
+    this.innerAudioContext && this.innerAudioContext.destroy()
+    this.innerAudioContext = wx.createInnerAudioContext()
+
+    this.innerAudioContext.src = src
+
+    this.innerAudioContext.onPlay(() => {
+      console.log('监听开始播放')
+    })
+
+    this.innerAudioContext.onEnded(() => {
+      this.dataList.forEach(item => {
+        item.isPlay = false
+      })
+      this.isPlay = false
+      this.$apply()
+    })
+  }
+
+  timeToFormat (times) {
+    var result = '00 : 00'
+    var minute, second
+    if (times > 0) {
+      minute = Math.floor(times / 60)
+      if (minute < 10) {
+        minute = '0' + minute
+      }
+
+      second = Math.floor((times - 60 * minute) % 60)
+      if (second < 10) {
+        second = '0' + second
+      }
+      result = `${minute} : ${second}`
+    }
+    return result
+  };
+  methods = {
+    changeMyAudioStatus (item, num) {
+      let url = item.workAudio
+      this.initPlayAudio(url)
+      if (num == 1) {
+        for (let item of this.dataList) {
+          item.isPlay = false
+        }
+
+        if (this.isPlay) {
+          this.isPlay = false
+          this.innerAudioContext.stop()
+        } else {
+          this.isPlay = true
+          this.innerAudioContext.play()
+        }
+      } else {
+        for (let data of this.dataList) {
+          if (data.id == item.id) {
+            data.isPlay = !data.isPlay
+          } else {
+            data.isPlay = false
+          }
+        }
+        this.isPlay = false
+      }
+    },
+    enlargeImage (url, index) {
+      this.itemUrl = url
+      this.isShowImage = true
+    },
+    openUrl (num) {
+      if (num === 1) {
+        wx.navigateTo({ url: `/pages/study?id=${this.lessonId}&lookback=1` })
+      } else {
+        wx.navigateTo({ url: `/pages/test?id=${this.lessonId}&lookback=1` })
+      }
+    },
+    addLike (item) {
+      if (!item.otherLike) {
+        api.study.addLike({
+          workId: item.id
+        }).then(() => {
+          this.dataItem = item
+          setTimeout(() => {
+            this.startLikeAnimation()
+          }, 500)
+
+          setTimeout(() => {
+            this.getOtherHomeWork()
+            this.$apply()
+          }, 900)
+        })
+      } else {
+        wx.showToast({
+          icon: 'none',
+          title: '你已经点过赞啦~'
+        })
+      }
+    },
+    addMyCard () {
+      if (this.cardDetail.todayCard) return
+      api.study.addCard()
+        .then(({ data }) => {
+          this.cardDetail.continuousdays = data.resultData.continuousdays
+          this.cardDetail.totaldays = data.resultData.totaldays
+          this.isCard = true
+          this.isOpenPopup = true
+          this.getCardInfo()
+          this.$apply()
+        })
+    },
+    changePopup (num) {
+      if (num === '1') {
+        this.isCard = false
+      } else if (num === '2') {
+        this.isCard = true
+      }
+      this.isOpenPopup = !this.isOpenPopup
+    },
+    submitWork () {
+      wx.navigateTo({
+        url: `/user/${this.lessonDetail.homeworkType == 1 ? 'uploadAudioWork' : 'uploadImgWork'}?id=${this.lessonId}`
+      })
+    },
+    lookWorkDetail (data) {
+      if (data.self && data.replyTime) {
+        api.study.knowReply({
+          id: data.id
+        })
+      }
+      wx.navigateTo({ url: `/user/completionOfWork?type=${data.self ? 1 : 2}&id=${data.self ? data.lessonId : data.id}` })
+    },
+    changeTab (num) {
+      num === '2' && this.getOtherHomeWork()
+      this.tabActive = num
+      this.innerAudioContext && this.innerAudioContext.destroy()
+      this.isPlay = false
+    },
+    bindLoadItem (data) {
+      if (this.page.current < Math.ceil(this.page.total / this.page.size)) {
+        this.page.current++
+        this.getOtherHomeWork()
+      }
+    }
+  };
+
+  events = {
+    changePopupStatus () {
+      this.isShowImage = false
+    }
+  };
+
+  onLoad (query) {
+    this.lessonId = query.id
+  }
+
+  onShow () {
+    this.getLessonInfo()
+    this.getCardInfo()
+
+    if (this.tabActive === '1') {
+      this.getMyHomework()
+    } else {
+      this.getOtherHomeWork()
+    }
+  }
+
+  onShareAppMessage () {
+    return {
+      title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
+      path: `/pages/index`,
+      imageUrl: 'https://pub.file.k12.vip/tbzw/v2/logo2.png'
+    }
+  }
+}
+</script>
+
+<style lang="scss">
+@import '../assets/style/mixin.scss';
+
+.p-submitHomework {
+  height: calc(100vh - 166px);
+
+  &-header {
+    background: url('https://pub.file.k12.vip/2019/06/06/1136480784090419202.png')
+      no-repeat;
+    background-size: 100%;
+    width: 100%;
+    height: 502px;
+
+    &-top {
+      display: flex;
+      padding: 40px 32px 0;
+
+      .-top-left {
+        overflow: hidden;
+        min-width: 180px;
+        height: 240px;
+        box-shadow: 0px 0px 24px 0px rgba(236, 194, 96, 0.24);
+        border-radius: 16px;
+        margin-right: 32px;
+
+        .-left-img {
+          width: 100%;
+          height: 100%;
+        }
+      }
+
+      .-top-right {
+        display: flex;
+        justify-content: space-between;
+        flex-direction: column;
+        width: 100%;
+
+        .-right-down {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+
+        .-title {
+          /*height: 50px;*/
+          font-size: 36px;
+          font-weight: 500;
+          color: rgba(88, 66, 43, 1);
+          line-height: 50px;
+        }
+
+        .-text {
+          margin-top: 8px;
+          height: 40px;
+          font-size: 28px;
+          font-weight: 300;
+          color: rgba(88, 66, 43, 0.5);
+          line-height: 40px;
+        }
+
+        .-num {
+          width: 160px;
+          height: 36px;
+          font-size: 26px;
+          font-weight: 500;
+          color: rgba(88, 66, 43, 1);
+          line-height: 36px;
+        }
+
+        .-btn {
+          @include flex-center;
+          width: 160px;
+          height: 46px;
+          background: rgba(34, 234, 171, 1);
+          border-radius: 22px;
+          font-size: 24px;
+          font-family: PingFangSC-Medium;
+          font-weight: 500;
+          color: rgba(255, 255, 255, 1);
+          line-height: 34px;
+        }
+
+        .-icon {
+          margin-right: 4px;
+          width: 24px;
+          height: 24px;
+        }
+      }
+    }
+
+    &-down {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 230px;
+      border-bottom: 1px solid #f5f5f5;
+
+      .-down-text {
+        padding: 34px 0 24px 0;
+        height: 40px;
+        font-size: 28px;
+        font-weight: 400;
+        color: rgba(88, 66, 43, 0.3);
+        border-bottom: 8px solid transparent;
+        width: 64px;
+
+        .-text {
+          transform: translateX(-20px);
+          width: 120px;
+        }
+      }
+
+      .-active {
+        font-weight: 500;
+        color: rgba(88, 66, 43, 1);
+        border-bottom: 8px solid rgba(249, 230, 11, 1);
+      }
+    }
+  }
+
+  &-center {
+    position: relative;
+    top: -70px;
+
+    .-center-blackboard {
+      @include bg('/khzy/hb.png');
+      margin: 0 auto;
+      width: 622px;
+      height: 368px;
+
+      &-title {
+        @include flex-center;
+        padding-top: 56px;
+        height: 50px;
+        font-size: 36px;
+        font-family: PingFangSC-Semibold;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.9);
+        line-height: 50px;
+      }
+
+      &-name {
+        margin-top: 8px;
+        margin-left: 62px;
+        height: 34px;
+        font-size: 24px;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.9);
+        line-height: 34px;
+      }
+
+      &-content {
+        width: 500px;
+        margin-top: 12px;
+        margin-left: 62px;
+        font-size: 24px;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.9);
+        line-height: 34px;
+        height: 135px;
+        overflow: hidden;
+      }
+    }
+
+    .-center-mask {
+      position: absolute;
+      top: 40px;
+      left: 100px;
+      margin: 0 auto;
+      width: 550px;
+      height: 290px;
+      background-color: rgba(0, 0, 0, 0.4);
+      border-radius: 20px;
+      text-align: right;
+
+      .-mask-img {
+        margin-top: 36px;
+        margin-right: 40px;
+        width: 218px;
+        height: 218px;
+      }
+    }
+
+    .-center-work {
+      position: relative;
+      margin-top: 54px;
+      border-top: 10px solid #f6f5f4;
+
+      &-my {
+        margin-top: 48px !important;
+      }
+
+      &-top {
+        display: flex;
+        align-items: center;
+        padding-left: 32px;
+        margin: 0 0 32px;
+
+        .-top-left {
+          @include flex-center;
+
+          &-img {
+            margin-right: 12px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+          }
+        }
+
+        .-top-right {
+          &-name {
+            height: 40px;
+            font-size: 28px;
+            font-weight: 500;
+            color: rgba(88, 66, 43, 1);
+            line-height: 40px;
+          }
+
+          &-time {
+            height: 28px;
+            font-size: 20px;
+            font-weight: 400;
+            color: rgba(88, 66, 43, 0.5);
+            line-height: 28px;
+          }
+        }
+      }
+
+      &-down {
+        display: flex;
+        padding-left: 32px;
+        padding-bottom: 24px;
+        border-bottom: 3px solid #f6f5f4;
+
+        &-img {
+          margin-right: 12px;
+          width: 220px;
+          height: 220px;
+        }
+
+        &-audio {
+          @include flex-center;
+          justify-content: space-between;
+          padding: 20px 32px 18px;
+          width: 488px;
+          background: rgba(255, 245, 209, 1);
+          border-radius: 39px;
+          border: 3px solid rgba(232, 197, 157, 1);
+
+          .-reply-icon {
+            .icon {
+              @include bg('/sk/icon-audio.png');
+              width: 26px;
+              height: 43px;
+            }
+
+            .playIcon {
+              @include bg('/v2/audio-pay.gif');
+              width: 26px;
+              height: 43px;
+            }
+          }
+
+          .-reply-time {
+            height: 26px;
+            font-size: 19px;
+            font-weight: 600;
+            color: rgba(209, 138, 59, 1);
+            line-height: 26px;
+          }
+        }
+      }
+
+      &-footer {
+        position: relative;
+        display: flex;
+        padding-bottom: 20px;
+        height: 66px;
+        line-height: 66px;
+        font-size: 24px;
+        font-weight: 600;
+        color: rgba(171, 160, 149, 1);
+        line-height: 32px;
+
+        &-wrap {
+          width: 50%;
+          @include flex-center;
+
+          .-texiao {
+            @include texiao;
+            left: 40px;
+            bottom: 25px;
+          }
+
+          .-icon-animation {
+            @include texiao-icon;
+          }
+
+          .-img {
+            margin-right: 8px;
+            width: 40px;
+            height: 40px;
+          }
+        }
+      }
+    }
+
+    .-center-other {
+      margin-top: 48px;
+      border: none;
+      border-bottom: 3px solid #f6f5f4;
+
+      .-right-zan {
+        position: relative;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        margin-top: 16px;
+
+        .-zan-left {
+          @include flex-center;
+          position: relative;
+          left: 55px;
+          width: 56px;
+          height: 56px;
+          background: rgba(255, 255, 255, 1);
+          border: 3px solid rgba(88, 66, 43, 0.1);
+          border-radius: 50%;
+
+          .-img {
+            width: 32px;
+            height: 26px;
+          }
+        }
+
+        .-zan-right {
+          text-align: right;
+          padding-right: 16px;
+          width: 104px;
+          height: 36px;
+          background: rgba(255, 255, 255, 1);
+          border-radius: 17px;
+          border: 2px solid rgba(88, 66, 43, 0.1);
+          font-size: 24px;
+          font-weight: 400;
+          color: rgba(88, 66, 43, 0.5);
+          line-height: 36px;
+        }
+
+        .-zan-animation {
+          @include texiao-bg;
+        }
+
+        .-icon-animation {
+          @include texiao-icon;
+        }
+      }
+
+      &:first-child {
+        margin-top: 0;
+      }
+      &:last-child {
+        border: none;
+      }
+    }
+
+    .-center-other-no {
+      padding-top: 100px;
+      text-align: center;
+
+      .-no-icon {
+        margin-bottom: 24px;
+        width: 254px;
+        height: 252px;
+      }
+
+      .-no-text {
+        height: 40px;
+        font-size: 28px;
+        font-weight: 400;
+        color: rgba(88, 66, 43, 0.5);
+        line-height: 40px;
+      }
+    }
+  }
+
+  &-list {
+    height: 55vh;
+  }
+
+  &-footer {
+    position: absolute;
+    bottom: 42px;
+    width: 100%;
+
+    .-footer-btn {
+      margin: 0 auto;
+      text-align: center;
+      width: 470px;
+      height: 100px;
+      background: linear-gradient(
+        90deg,
+        rgba(249, 230, 11, 1) 0%,
+        rgba(253, 219, 85, 1) 100%
+      );
+      box-shadow: 0px 8px 16px 4px rgba(230, 194, 81, 0.4);
+      border-radius: 50px;
+      font-size: 32px;
+      font-weight: 500;
+      color: rgba(88, 66, 43, 1);
+      line-height: 100px;
+    }
+  }
+
+  &-card {
+    background: url('https://pub.file.k12.vip/poem/1_2/clock in.png');
+    background-size: 100%;
+    position: fixed;
+    bottom: 200px;
+    right: 0;
+    width: 140px;
+    height: 140px;
+
+    .-text {
+      text-align: center;
+      padding-top: 90px;
+      height: 34px;
+      font-size: 24px;
+      font-weight: 400;
+      color: #58422b;
+      line-height: 34px;
+    }
+  }
+
+  &-popup {
+    text-align: center;
+    margin: 0 auto;
+    width: 590px;
+    height: 352px;
+    background: rgba(255, 255, 255, 1);
+    border-radius: 32px;
+
+    .-popup-icon {
+      position: absolute;
+      top: -82px;
+      left: 210px;
+      width: 184px;
+      height: 184px;
+    }
+
+    .-popup-title {
+      padding-top: 134px;
+      height: 50px;
+      font-size: 36px;
+      font-weight: 500;
+      color: #58422b;
+      line-height: 50px;
+    }
+
+    .-popup-text {
+      margin-top: 8px;
+      height: 80px;
+      font-size: 28px;
+      font-weight: 300;
+      color: rgba(88, 66, 43, 0.5);
+      line-height: 40px;
+    }
+  }
+
+  &-popup-look {
+    width: 590px;
+    height: 366px;
+    background: rgba(255, 255, 255, 1);
+    border-radius: 32px;
+    text-align: center;
+
+    .-popup-look-title {
+      padding-top: 32px;
+      margin-bottom: 46px;
+      height: 50px;
+      font-size: 36px;
+      font-weight: 500;
+      color: rgba(88, 66, 43, 1);
+      line-height: 50px;
+    }
+
+    .-popup-look-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 110px;
+      font-size: 24px;
+      font-weight: 500;
+      color: rgba(88, 66, 43, 1);
+    }
+
+    .-popup-look-img {
+      margin-bottom: 16px;
+      width: 128px;
+      height: 128px;
+    }
+  }
+
+  &-close {
+    position: absolute;
+    top: -280px;
+    right: -40px;
+  }
+}
+</style>

@@ -298,7 +298,7 @@ export default class Subscribe extends wepy.page {
           break
         case 3:
           if (this.lessonDetail.stage === 3) {
-            wx.navigateTo({ url: `/pages/submitHomework?id=${this.lessonDetail.lessonId}` })
+            wx.navigateTo({ url: `/user/submitHomework?id=${this.lessonDetail.lessonId}` })
           } else {
             wx.navigateTo({ url: `/pages/test?id=${this.lessonDetail.lessonId}` })
           }
@@ -306,7 +306,7 @@ export default class Subscribe extends wepy.page {
         case 4:
           break
         case 5:
-          wx.navigateTo({ url: `/pages/submitHomework?id=${this.lessonDetail.lessonId}` })
+          wx.navigateTo({ url: `/user/submitHomework?id=${this.lessonDetail.lessonId}` })
           break
         case 6:
           this.show = true

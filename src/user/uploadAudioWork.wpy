@@ -85,7 +85,7 @@
       fileAudioUrl: '',
       duration: '',
       lessonDetail: '',
-      recorderOptions:{
+      recorderOptions: {
         sampleRate: 44100,
         numberOfChannels: 1,
         encodeBitRate: 192000,
@@ -97,14 +97,14 @@
         '2': '你说我在听',
         '3': '点我完成',
         '4': '点击试听',
-        '5': '点击暂停',
+        '5': '点击暂停'
       },
       imgArray: {
         '1': 'https://pub.file.k12.vip/poem/1_2/tjzy_icon_record@3x.png',
         '2': 'https://pub.file.k12.vip/gif/read-playing.gif',
         '3': 'https://pub.file.k12.vip/gif/read-playing.gif',
         '4': 'https://pub.file.k12.vip/poem/1_2/tjzy_icon_rplay@3x.png',
-        '5': 'https://pub.file.k12.vip/poem/1_2/tjzy_icon_stop@3x.png',
+        '5': 'https://pub.file.k12.vip/poem/1_2/tjzy_icon_stop@3x.png'
       }
     };
 
@@ -117,23 +117,23 @@
       api.study.getLessonDetail({
         lessonId: this.queryInfo.id
       }).then(res => {
-        this.lessonDetail = res.data.resultData;
-        this.$apply();
-      });
-    };
+        this.lessonDetail = res.data.resultData
+      this.$apply()
+    })
+  };
 
     initPlayAudio (src) {
       this.innerAudioContext = wx.createInnerAudioContext()
       this.innerAudioContext.src = src
 
-      this.innerAudioContext.onPlay(()=>{
+      this.innerAudioContext.onPlay(() => {
         console.log('监听开始播放')
       })
 
-      this.innerAudioContext.onPause(()=>{
+      this.innerAudioContext.onPause(() => {
         console.log('监听开始暂停')
       })
-      this.innerAudioContext.onEnded(()=>{
+      this.innerAudioContext.onEnded(() => {
         console.log('监听结束')
         this.nowStatus = 4
         this.$apply()
@@ -145,7 +145,7 @@
       this.recorderManager.onStart(() => {
         console.log('监听开始录音')
         this.nowStatus = 2
-        setTimeout(()=>{
+        setTimeout(() => {
           this.nowStatus = 3
           this.$apply()
         }, 3000)
@@ -195,7 +195,7 @@
       },
       toSubmitAudio () {
         let _self = this
-        if(_self.isSending) return
+        if (_self.isSending) return
         _self.isSending = true
         wx.showToast({
           icon: 'loading',
@@ -218,14 +218,14 @@
               let parmas = JSON.parse(res.data)
               api.study.addHomework({
                 lessonId: _self.queryInfo.id,
-                duration: (_self.duration/1000).toFixed(),
+                duration: (_self.duration / 1000).toFixed(),
                 workAudio: parmas.resultData.url
-              }).then( res => {
+              }).then(res => {
                 _self.isSending = false
                 wx.hideToast()  // 隐藏Toast
                 _self.isOpenPopup = true
                 _self.$apply()
-              },()=>{
+              }, () => {
                 _self.isSending = false
               })
             }
@@ -244,7 +244,7 @@
       },
       toWorkDetail () {
         this.isOpenPopup = false
-        wx.navigateTo({ url: `/pages/completionOfWork?type=1&id=${this.queryInfo.id}` })
+        wx.navigateTo({ url: `/user/completionOfWork?type=1&id=${this.queryInfo.id}` })
       }
     };
 

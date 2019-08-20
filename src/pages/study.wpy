@@ -274,7 +274,7 @@ export default class Example extends wepy.page {
         this.changeLearnStage(this.roomData.id, 2)
         wx.redirectTo({ url: '/pages/test?id=' + this.lessonId })
       } else {
-        wx.redirectTo({ url: '/pages/submitHomework?id=' + this.lessonId })
+        wx.redirectTo({ url: '/user/submitHomework?id=' + this.lessonId })
       }
     },
     bindtimeupdate (event) {

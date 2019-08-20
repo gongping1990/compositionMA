@@ -67,7 +67,7 @@ export default class PariseModal extends wepy.component {
 
   methods = {
     toHomeWork () {
-      wx.navigateTo({ url: `/pages/completionOfWork?type=1&id=${this.dataInfo.lessonId}` })
+      wx.navigateTo({ url: `/user/completionOfWork?type=1&id=${this.dataInfo.lessonId}` })
     },
     onClose () {
       this.$emit('changePopupStatus')

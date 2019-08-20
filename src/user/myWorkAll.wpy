@@ -73,9 +73,9 @@ export default class Notice extends wepy.page {
   methods = {
     workDetail (item) {
       if (this.detailInfo.type === '1') {
-        wx.navigateTo({ url: `/pages/submitHomework?id=${item.lessonId}` })
+        wx.navigateTo({ url: `/user/submitHomework?id=${item.lessonId}` })
       } else {
-        wx.navigateTo({ url: `/pages/completionOfWork?type=1&id=${item.lessonId}` })
+        wx.navigateTo({ url: `/user/completionOfWork?type=1&id=${item.lessonId}` })
       }
     }
   };

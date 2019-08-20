@@ -176,7 +176,7 @@ export default class Example extends wepy.page {
   };
   methods = {
     clickLinkHomeWork () {
-      wx.redirectTo({ url: '/pages/submitHomework?id=' + this.lessonId })
+      wx.redirectTo({ url: '/user/submitHomework?id=' + this.lessonId })
     },
     clickStudy () {
       if (this.answerEnd) {

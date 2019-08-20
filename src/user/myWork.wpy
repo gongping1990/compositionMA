@@ -110,13 +110,13 @@ export default class MyWork extends wepy.page {
       this.getList()
     },
     toDetail (params) {
-      wx.navigateTo({ url: `/pages/myWorkAll?type=${this.tabActive}&name=${params.gradeText}&grade=${params.grade}` })
+      wx.navigateTo({ url: `/user/myWorkAll?type=${this.tabActive}&name=${params.gradeText}&grade=${params.grade}` })
     },
     workDetail (item) {
       if (this.tabActive === '1') {
-        wx.navigateTo({ url: `/pages/submitHomework?id=${item.lessonId}` })
+        wx.navigateTo({ url: `/user/submitHomework?id=${item.lessonId}` })
       } else {
-        wx.navigateTo({ url: `/pages/completionOfWork?type=1&id=${item.lessonId}` })
+        wx.navigateTo({ url: `/user/completionOfWork?type=1&id=${item.lessonId}` })
       }
     }
   };

@@ -36,19 +36,26 @@ export default class extends wepy.app {
       'pages/test',
       'pages/user',
       'pages/praiseOfWorks',
-      'pages/myWork',
-      'pages/myWorkAll',
-      'pages/completionOfWork',
-      'pages/submitHomework',
       'pages/shareHomework',
-      'pages/pointNotice',
-      'pages/recognitionNotice',
-      'pages/address',
       'pages/subscribe',
       'pages/authorize',
-      'pages/enroll',
-      'pages/uploadImgWork',
-      'pages/uploadAudioWork'
+      'pages/enroll'
+    ],
+    subPackages: [
+      {
+        root: 'user',
+        pages: [
+          'address',
+          'myWork',
+          'pointNotice',
+          'recognitionNotice',
+          'myWorkAll',
+          'submitHomework',
+          'completionOfWork',
+          'uploadAudioWork',
+          'uploadImgWork'
+        ]
+      }
     ],
     window: {
       backgroundTextStyle: 'light',

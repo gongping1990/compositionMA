@@ -116,7 +116,7 @@ export default class Index extends wepy.page {
       } else if (lesson.stage === 2) {
         wx.navigateTo({url: '/pages/test?id=' + lesson.lessonId})
       } else {
-        wx.navigateTo({ url: '/pages/submitHomework?id=' + lesson.lessonId })
+        wx.navigateTo({ url: '/user/submitHomework?id=' + lesson.lessonId })
       }
     },
     bindScroll (event) {

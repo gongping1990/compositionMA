@@ -214,7 +214,7 @@ export default class Home extends wepy.page {
       } else if (infoListData.stage === 2) {
         wx.navigateTo({ url: '/pages/test?id=' + infoListData.id })
       } else {
-        wx.navigateTo({ url: '/pages/submitHomework?id=' + infoListData.id })
+        wx.navigateTo({ url: '/user/submitHomework?id=' + infoListData.id })
       }
     },
     bindClickBtn (type) {
@@ -343,7 +343,7 @@ export default class Home extends wepy.page {
   onShareAppMessage () {
     return {
       title: this.showPraise ? `我的作业受到${this.awardsInfo.teacherName}的表扬，快来给我点个赞吧` : '每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。',
-      path: this.showPraise ? `/pages/completionOfWork?type=2&id=${this.awardsInfo.homeworkId}` : '/pages/index',
+      path: this.showPraise ? `/user/completionOfWork?type=2&id=${this.awardsInfo.homeworkId}` : '/pages/index',
       imageUrl: ''
     }
   }

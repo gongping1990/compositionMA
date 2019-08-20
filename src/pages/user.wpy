@@ -194,16 +194,16 @@ export default class User extends wepy.page {
     toJump (data) {
       switch (+data) {
         case 2:
-          wx.navigateTo({ url: '/pages/myWork' })
+          wx.navigateTo({ url: '/user/myWork' })
           break
         case 3:
-          wx.navigateTo({ url: '/pages/pointNotice' })
+          wx.navigateTo({ url: '/user/pointNotice' })
           break
         case 4:
-          wx.navigateTo({ url: '/pages/recognitionNotice' })
+          wx.navigateTo({ url: '/user/recognitionNotice' })
           break
         case 5:
-          wx.navigateTo({ url: '/pages/address' })
+          wx.navigateTo({ url: '/user/address' })
           break
         case 6:
           if (this.noticeInfo.finishcourse === 0) {

@@ -145,7 +145,7 @@ export default class Example extends wepy.page {
 
   initAudio (src) {
     let { audioContext } = this
-    console.log(audioContext)
+    audioContext.obeyMuteSwitch = false
     audioContext.src = src
     setTimeout(() => {
       audioContext.play()

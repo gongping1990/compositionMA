@@ -49,6 +49,7 @@ export default class Example extends wepy.component {
     this.audioContext = wx.createInnerAudioContext()
     this.audioContext.src = 'https://pub.file.k12.vip/tbzw/v2/sound/sound_7.mp3'
     this.audioContext.volume = 0
+    this.audioContext.obeyMuteSwitch = false
     this.audioContext.autoplay = true
   }
   onHide () {

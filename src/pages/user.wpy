@@ -6,12 +6,19 @@
           style="margin-top:{{height}}px">
       <view class="p-user-header">
         <view class="-header-top">
-          <view class="-header-img">
-            <image class="-img"
-                   mode="widthFix"
-                   src="{{userInfo.headimgurl}}"></image>
+          <view class="-header-top-left">
+            <view class="-header-img">
+              <image class="-img"
+                     mode="widthFix"
+                     src="{{userInfo.headimgurl}}"></image>
+            </view>
+            <view class="-header-text">{{userInfo.nickname}}</view>
           </view>
-          <view class="-header-text">{{userInfo.nickname}}</view>
+          <view class="-header-top-right" @tap="changeAccount">
+            <image class="-header-right-icon"
+                   src="https://pub.file.k12.vip/2019/08/20/1163708860587581442.png"></image>
+            <view class="-header-right-text">切换账号</view>
+          </view>
         </view>
         <view class="-header-down">
           <button class="-header-down-btn"
@@ -25,7 +32,7 @@
                 index="index"
                 item="item">
           <div class="-content-item"
-               @tap="toJump({{item.id}})">
+               @tap="toJump({{item.id}})" wx:if="{{item.isBuy}}">
             <view class="-content-item-left">
               <image class="-left-img"
                      src="{{item.url}}"
@@ -161,24 +168,28 @@ export default class User extends wepy.page {
           {
             id: 2,
             num: this.noticeInfo.nowork,
+            isBuy: true,
             name: '我的作业',
             url: 'https://pub.file.k12.vip/tbzw/course/my-icon- homework.png'
           },
           {
             id: 3,
             num: this.noticeInfo.like,
+            isBuy: true,
             name: '点赞通知',
             url: 'https://pub.file.k12.vip/tbzw/course/my-icon-give a like.png'
           },
           {
             id: 4,
             num: this.noticeInfo.praise,
+            isBuy: true,
             name: '表扬通知',
             url: 'https://pub.file.k12.vip/tbzw/course/my-icon-praise.png'
           },
           {
             id: 5,
-            name: '我的收货地址',
+            name: '我的礼包',
+            isBuy: this.noticeInfo.finishcourse !== 1,
             url: 'https://pub.file.k12.vip/tbzw/course/my-icon-address.png'
           }
         ]
@@ -187,6 +198,9 @@ export default class User extends wepy.page {
   }
 
   methods = {
+    changeAccount () {
+
+    },
     onClose () {
       this.showKF = !this.showKF
       this.$apply()
@@ -251,30 +265,50 @@ export default class User extends wepy.page {
     /*height: 326px;*/
 
     .-header-top {
-      padding: 31px 0 0 31px;
+      padding: 32px 32px 0;
       @include flex-y-center;
+      justify-content: space-between;
 
-      .-header-img {
-        overflow: hidden;
-        margin-right: 24px;
-        width: 72px;
-        height: 72px;
-        /*box-shadow: 0px 0px 40px 0px rgba(235, 171, 5, 1);*/
-        border: 4px solid rgba(255, 255, 255, 1);
-        border-radius: 50%;
+      .-header-top-left {
+        @include flex-y-center;
+        .-header-img {
+          overflow: hidden;
+          margin-right: 24px;
+          width: 72px;
+          height: 72px;
+          /*box-shadow: 0px 0px 40px 0px rgba(235, 171, 5, 1);*/
+          border: 4px solid rgba(255, 255, 255, 1);
+          border-radius: 50%;
 
-        .-img {
-          width: 100%;
+          .-img {
+            width: 100%;
+          }
+        }
+
+        .-header-text {
+          height: 40px;
+          font-size: 28px;
+          font-weight: 500;
+          color: rgba(88, 66, 43, 1);
+          line-height: 40px;
         }
       }
 
-      .-header-text {
-        height: 40px;
-        font-size: 28px;
-        font-weight: 500;
-        color: rgba(88, 66, 43, 1);
-        line-height: 40px;
+      .-header-top-right {
+        @include flex-y-center;
+        .-header-right-icon {
+          width: 30px;
+          height: 28px;
+        }
+        .-header-right-text {
+          font-size:24px;
+          font-weight:600;
+          color:rgba(209,138,59,1);
+          line-height:32px;
+          margin-left: 8px;
+        }
       }
+
     }
 
     .-header-down {

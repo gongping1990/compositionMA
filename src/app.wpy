@@ -106,6 +106,7 @@ export default class extends wepy.app {
     const that = this
     let audioContext = wx.createInnerAudioContext()
     audioContext.volume = 0.3
+    audioContext.obeyMuteSwitch = false
     this.globalData.audioContext = audioContext
     console.log('load start')
     wx.setKeepScreenOn({

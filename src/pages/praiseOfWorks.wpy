@@ -41,9 +41,10 @@
                   <view class="-item-down-wrap"
                         wx:if="{{item.homeworkType == 2}}">
                     <image class="-item-down-img"
-                           wx:for="{{item.workImgSrc}}"
+                           wx:for="{{item.workImg}}"
                            wx:key="{{item}}"
-                           @tap="enlargeImage({{item}})"
+                           wx:for-index="idx"
+                           @tap="enlargeImage(1, {{index}}, {{idx}})"
                            src="{{item}}"></image>
                   </view>
 
@@ -114,7 +115,8 @@
                   <image class="-img"
                          wx:for="{{item.replyImg}}"
                          wx:key="{{item}}"
-                         @tap="enlargeImage({{item}})"
+                         wx:for-index="idx"
+                         @tap="enlargeImage(2, {{index}}, {{idx}})"
                          src="{{item}}"></image>
                 </view>
               </view>
@@ -236,6 +238,7 @@ export default class PraiseOfWorks extends wepy.page {
           item.workImg = item.workImg && item.workImg.split(',')
           item.workImgSrc = item.workImgSrc && item.workImgSrc.split(',')
           item.replyImg = item.replyImg && item.replyImg.split(',')
+          item.replyImgSrc = item.replyImg && item.replyImgSrc.split(',')
         })
 
         if (this.page.current > 1) {
@@ -357,8 +360,14 @@ export default class PraiseOfWorks extends wepy.page {
 
       this.$apply()
     },
-    enlargeImage (url) {
-      this.itemUrl = url
+    enlargeImage (type, index, num) {
+
+      if (type === '1') {
+        this.itemUrl = this.dataList[index].workImgSrc[num]
+      } else {
+        this.itemUrl = this.dataList[index].replyImgSrc[num]
+      }
+
       this.isShowImage = true
     },
     toWorkDetail (data) {

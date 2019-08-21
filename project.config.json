@@ -60,8 +60,8 @@
 				{
 					"id": 2,
 					"name": "作业详情（自己）",
-					"pathName": "pages/completionOfWork",
-					"query": "type=1&id=1138723411242659841",
+					"pathName": "user/completionOfWork",
+					"query": "type=1&id=1139442473879080962",
 					"scene": null
 				},
 				{

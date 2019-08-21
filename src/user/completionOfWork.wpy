@@ -110,6 +110,13 @@
         </view>
       </view>
 
+      <view class="p-completionOfWork-tip" @tap="praiseTeacher">
+        <image class="-tip-icon"
+               src="https://pub.file.k12.vip/composition/1.2/ckzyxq-icon-review@3x.png"></image>
+        看完点评，请点击这里给老师一个评价吧！
+        <image class="-tip-icon-two"
+               src="https://pub.file.k12.vip/composition/1.2/ckzyxq-icon-arrow@3x.png"></image>
+      </view>
       <van-popup show="{{isOpenPopup}}">
         <view class="p-completionOfWork-popup-dp"
               wx:if="{{!isEvaluate}}">
@@ -209,6 +216,10 @@
     </view>
 
     <lookImage :isShow.sync="isShowImage" :imgUrl.sync="itemUrl"></lookImage>
+
+    <ConfirmModal :isShow.sync="isShowConfirm"
+                  contentText="重新提交作业成功后，将会覆盖上次的内容，确定提交？"
+                  okText="确认覆盖"></ConfirmModal>
   </view>
 </template>
 
@@ -218,6 +229,7 @@ import api from '../request/api'
 import dayjs from 'dayjs'
 import mHeader from '../components/header'
 import lookImage from '../components/lookImage'
+import ConfirmModal from '../components/confirmModal'
 
 export default class CompletionOfWork extends wepy.page {
   config = {
@@ -229,7 +241,8 @@ export default class CompletionOfWork extends wepy.page {
   };
   components = {
     mHeader,
-    lookImage
+    lookImage,
+    ConfirmModal
   };
   computed = {
     height () {
@@ -247,6 +260,7 @@ export default class CompletionOfWork extends wepy.page {
     isMyPlay: false,
     isZan: false,
     isShowImage: false,
+    isShowConfirm: false,
     isActive: '',
     stumsg: '',
     workDetail: '',
@@ -266,11 +280,6 @@ export default class CompletionOfWork extends wepy.page {
       } else {
         this.isMyPlay = false
       }
-
-      // if (this.queryInfo.type === '1' && this.workDetail.evaluation === null) {
-      //   this.isShowImage = false;
-      //   this.isOpenPopup = true;
-      // }
       this.$apply()
     })
   };
@@ -345,6 +354,10 @@ export default class CompletionOfWork extends wepy.page {
   };
 
   methods = {
+    praiseTeacher () {
+        this.isShowImage = false;
+        this.isOpenPopup = true;
+    },
     enlargeImage (url) {
       this.itemUrl = url
       this.isShowImage = true
@@ -353,9 +366,7 @@ export default class CompletionOfWork extends wepy.page {
       this.getMyHomework()
     },
     resultHomework () {
-      wx.navigateTo({
-        url: `/user/${this.workDetail.homeworkType == 1 ? 'uploadAudioWork' : 'uploadImgWork'}?id=${this.workDetail.lessonId}`
-      })
+      this.isShowConfirm = true
     },
     changeAudioStatus () {
       this.isMyPlay = false
@@ -445,6 +456,15 @@ export default class CompletionOfWork extends wepy.page {
   events = {
     changePopupStatus () {
       this.isShowImage = false
+    },
+    changeOkStatus (bool) {
+      this.isShowConfirm = false
+
+      if (bool === 'true') {
+        wx.navigateTo({
+          url: `/user/${this.workDetail.homeworkType == 1 ? 'uploadAudioWork' : 'uploadImgWork'}?id=${this.workDetail.lessonId}`
+        })
+      }
     }
   };
 
@@ -496,7 +516,7 @@ export default class CompletionOfWork extends wepy.page {
 .p-completionOfWork {
   overflow: hidden;
   .-height-wrap {
-    height: calc(100vh - 280px);
+    height: calc(100vh - 310px);
     overflow-y: auto;
   }
 
@@ -767,6 +787,31 @@ export default class CompletionOfWork extends wepy.page {
     }
   }
 
+  &-tip {
+    display: flex;
+    align-items: center;
+    margin: 48px 64px 0;
+    padding: 18px 32px;
+    background:rgba(255,231,127,.5);
+    border-radius:16px;
+    font-size:24px;
+    font-weight:500;
+    color:rgba(88,66,43,0.8);
+    line-height:34px;
+
+    .-tip-icon {
+      width: 48px;
+      height: 48px;
+      margin-right: 12px;
+    }
+
+    .-tip-icon-two {
+      width: 12px;
+      height: 22px;
+      margin-left: 14px;
+    }
+  }
+
   &-footer {
     position: absolute;
     padding-top: 20px;
@@ -829,7 +874,7 @@ export default class CompletionOfWork extends wepy.page {
       position: absolute;
       width: 456px;
       height: 96px;
-      top: -100px;
+      top: -85px;
       right: 90px;
     }
 

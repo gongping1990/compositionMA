@@ -42,40 +42,45 @@
           <view animation="{{itemAnimate}}"
                 wx:for="{{questionArr}}"
                 wx:key="{{index}}"
-                wx:if="{{index == stepIndex && !isSummary}}">
-            <view class="chart-item">
-              <image class="chart-avatar"
-                     src="{{courseInfo.teacherHeadImage}}" />
-              <view class="chart-right">
-                <text class="chart-title">{{courseInfo.teacherName}}</text>
-                <view class="chart-content-wrap">
-                  <view class="chart-content">{{item.name}}</view>
-                </view>
-              </view>
-            </view>
-            <view class="input-list">
-              <view class="input-item {{selectIndex == item.mark && 'select'}} {{(setAnswerStatusEnd && (correctAnswer == item.mark)) && 'success'}} {{setAnswerStatusEnd && ((selectIndex == item.mark) && (correctAnswer != item.mark)) && 'error'}}"
-                    wx:for="{{item.optionList}}"
-                    wx:key="{{index}}"
-                    @tap="bindClickInput({{item.mark}})">
-                {{item.problem}}
-              </view>
-            </view>
-            <view class="chart-item"
-                  wx:if="{{showNextBtn}}">
-              <image class="chart-avatar"
-                     src="{{courseInfo.teacherHeadImage}}" />
-              <view class="chart-right">
-                <text class="chart-title">{{courseInfo.teacherName}}</text>
-                <view class="chart-content-wrap">
-
-                  <view class="chart-content voice" @tap="bindClickVoice">
-                    <view class="icon {{paused && 'paused'}}"></view>
+                wx:if="{{index == stepIndex && !isSummary}}"
+                class="question-content">
+            <scroll-view scroll-y class="question-scroll" scroll-top="{{scrollTop}}">
+              <view class="chart-item">
+                <image class="chart-avatar"
+                       src="{{courseInfo.teacherHeadImage}}" />
+                <view class="chart-right">
+                  <text class="chart-title">{{courseInfo.teacherName}}</text>
+                  <view class="chart-content-wrap">
+                    <view class="chart-content">{{item.name}}</view>
                   </view>
-                  <view class="chart-time">{{timeText}}</view>
                 </view>
               </view>
-            </view>
+              <view class="input-list">
+                <view class="input-item {{selectIndex == item.mark && 'select'}} {{(setAnswerStatusEnd && (correctAnswer == item.mark)) && 'success'}} {{setAnswerStatusEnd && ((selectIndex == item.mark) && (correctAnswer != item.mark)) && 'error'}}"
+                      wx:for="{{item.optionList}}"
+                      wx:key="{{index}}"
+                      @tap="bindClickInput({{item.mark}})">
+                  {{item.problem}}
+                </view>
+              </view>
+              <view class="chart-item"
+                    wx:if="{{showNextBtn}}">
+                <image class="chart-avatar"
+                       src="{{courseInfo.teacherHeadImage}}" />
+                <view class="chart-right">
+                  <text class="chart-title">{{courseInfo.teacherName}}</text>
+                  <view class="chart-content-wrap">
+
+                    <view class="chart-content voice"
+                          @tap="bindClickVoice">
+                      <view class="icon {{paused && 'paused'}}"></view>
+                    </view>
+                    <view class="chart-time">{{timeText}}</view>
+                  </view>
+                </view>
+              </view>
+            </scroll-view>
+
           </view>
           <view class="summary"
                 wx:if="{{isSummary}}">
@@ -153,6 +158,7 @@ export default class Example extends wepy.page {
   };
   data = {
     loading: true,
+    scrollTop: 0,
     lessonId: 0,
     summaryIndex: 0,
     summaryAnimateIndex: 0,
@@ -244,6 +250,7 @@ export default class Example extends wepy.page {
       } else {
         this.changeQuestion()
       }
+      this.scrollTop = 0
       this.showNextBtn = false
     }
   };
@@ -344,7 +351,7 @@ export default class Example extends wepy.page {
     setTimeout(() => {
       this.showAlert = false
       this.showNextBtn = true
-      this.playAnalysis()
+      this.playAudio()
       console.log(this.stepIndex)
       this.$apply()
     }, 2000)
@@ -439,10 +446,12 @@ export default class Example extends wepy.page {
     }, 500)
   }
 
-  playAnalysis() {
-    let { audioContext } = this
-    audioContext.src = 'http://huoke-private-1254282420.cos.ap-chengdu.myqcloud.com/2019/07/11/32f9b3f8-92d7-471c-8f2f-544faaa4926b.mp3?sign=q-sign-algorithm%3Dsha1%26q-ak%3DAKIDCJG2e67TN6kR3mA5fDve2X0Ndnwz5mV8%26q-sign-time%3D1566375961%3B1566447961%26q-key-time%3D1566375961%3B1566447961%26q-header-list%3D%26q-url-param-list%3D%26q-signature%3D1f6e71dfea012d9e6d27cf16486875e6c7f67443'
+  playAudio (type) {
+    let { audioContext, isSuccess, questionArr, stepIndex } = this
+    console.log(questionArr[stepIndex])
+    audioContext.src = questionArr[stepIndex][isSuccess ? 'rightAudio' : 'errorAudio']
     setTimeout(() => {
+      this.scrollTop = 1000
       audioContext.play()
     }, 500)
   }
@@ -683,6 +692,9 @@ export default class Example extends wepy.page {
     display: block;
     opacity: 0;
     padding-top: 1px;
+    &-scroll {
+      height: 51vh;
+    }
     &-btn-wrap {
       position: absolute;
       bottom: 48px;

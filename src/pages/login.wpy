@@ -1,7 +1,7 @@
 <!--  -->
 <template>
   <view class='container login'>
-    <mHeader flag="0"
+    <mHeader flag="4"
              bgColor="#FAFAFA"></mHeader>
     <view class="container-scroll login-scroll"
           style="margin-top:{{height}}px">
@@ -31,11 +31,13 @@
                placeholder-class="placeholder"
                placeholder="{{type ? '清输入验证码' : '请输入密码'}}" />
       </view>
-      <view class="login-submit-btn" @tap="clickLogin" >登录</view>
+      <view class="login-submit-btn"
+            @tap="clickLogin">登录</view>
       <view class="login-change-btn"
             @tap="changeLoginType">{{type ? '账号密码登录' : '短信验证码登录'}}</view>
       <view class="login-reset-password"
-            wx:if="{{!type}}" @tap="clickReset">忘记密码？</view>
+            wx:if="{{!type}}"
+            @tap="clickReset">忘记密码？</view>
       <view class="login-message">
         <view class="login-message-icon"></view>
         <text class="login-message-text">购买课程后，账号密码将通过短信发送给您；如果未收到短信，可使用“短信验证码登录”。</text>
@@ -45,9 +47,9 @@
 </template>
 <script>
 import wepy from 'wepy'
-import {connect} from 'wepy-redux'
+import { connect } from 'wepy-redux'
 import mHeader from '@/components/header'
-import {updateUserInfo} from '../store/actions/index.js'
+import { updateUserInfo } from '../store/actions/index.js'
 @connect({}, {
   updateUserInfo
 })
@@ -67,7 +69,7 @@ export default class Example extends wepy.page {
     mHeader
   };
   methods = {
-    clickReset() {
+    clickReset () {
       wx.navigateTo({ url: '/pages/resetPwd' })
     },
     bindInputChange (name, event) {
@@ -76,7 +78,7 @@ export default class Example extends wepy.page {
       console.log(this.form)
     },
     clickSendCode () {
-      let {phone} = this.form
+      let { phone } = this.form
       if (this.codeTime) return
       if (!this.isPhoneVailable(phone)) {
         wx.showToast({
@@ -121,10 +123,11 @@ export default class Example extends wepy.page {
         return
       }
       params[type ? 'code' : 'password'] = password
-
-      loginFunc(params).then(({data}) => {
-        this.methods.updateUserInfo(data.resultData)
-        wx.redirectTo({ url: '/pages/index' })
+      api.user.loginOut().then(() => {
+        loginFunc(params).then(({ data }) => {
+          this.methods.updateUserInfo(data.resultData)
+          wx.redirectTo({ url: '/pages/index' })
+        })
       })
     }
   };
@@ -148,7 +151,11 @@ export default class Example extends wepy.page {
       return true
     }
   }
-  events = {};
+  events = {
+    back() {
+      wx.redirectTo({ url: '/pages/index' })
+    }
+  };
   watch = {};
   computed = {
     height () {

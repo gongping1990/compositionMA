@@ -307,7 +307,6 @@ export default class Home extends wepy.page {
       this.infoData.startTime = this.infoData.startTime ? dayjs(new Date(this.infoData.startTime)).format('MM月DD日') : ''
       if (!data.resultData.buyCourse) {
         if (this.empty || !data.resultData.infoList[0].expLesson) {
-          api.user.loginOut()
           wx.redirectTo({ url: '/pages/login' })
         }
       }

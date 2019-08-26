@@ -48,7 +48,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 20,
+			"current": 6,
 			"list": [
 				{
 					"id": 0,
@@ -96,7 +96,7 @@
 					"id": 6,
 					"name": "作业分享",
 					"pathName": "pages/shareHomework",
-					"query": "id=1160876061472325633",
+					"query": "id=1165886597642280962",
 					"scene": null
 				},
 				{

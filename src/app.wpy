@@ -42,7 +42,8 @@ export default class extends wepy.app {
       'pages/shareHomework',
       'pages/subscribe',
       'pages/authorize',
-      'pages/enroll'
+      'pages/enroll',
+      'pages/sharePoster'
     ],
     subPackages: [
       {

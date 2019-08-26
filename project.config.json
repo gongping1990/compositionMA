@@ -4,13 +4,20 @@
 		"ignore": []
 	},
 	"setting": {
-		"urlCheck": true,
+		"urlCheck": false,
 		"es6": false,
 		"postcss": false,
 		"minified": false,
 		"newFeature": true,
 		"autoAudits": false,
-		"checkInvalidKey": true
+		"checkInvalidKey": true,
+		"checkSiteMap": true,
+		"uploadWithSourceMap": true,
+		"babelSetting": {
+			"ignore": [],
+			"disablePlugins": [],
+			"outputPath": ""
+		}
 	},
 	"compileType": "miniprogram",
 	"libVersion": "2.8.0",
@@ -41,7 +48,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 16,
+			"current": 20,
 			"list": [
 				{
 					"id": 0,
@@ -61,7 +68,7 @@
 					"id": 2,
 					"name": "作业详情（自己）",
 					"pathName": "user/completionOfWork",
-					"query": "type=1&id=1139442473879080962",
+					"query": "type=1&id=1138721381526679554",
 					"scene": null
 				},
 				{
@@ -181,6 +188,13 @@
 					"name": "reset",
 					"pathName": "pages/login",
 					"query": "",
+					"scene": null
+				},
+				{
+					"id": 20,
+					"name": "pages/sharePoster",
+					"pathName": "pages/sharePoster",
+					"query": "id=1165886597642280962",
 					"scene": null
 				}
 			]

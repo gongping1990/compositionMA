@@ -189,7 +189,7 @@ export default class User extends wepy.page {
           {
             id: 5,
             name: '我的礼包',
-            isBuy: this.noticeInfo.finishcourse !== 1,
+            isBuy: this.noticeInfo.finishcourse !== 1 || this.noticeInfo.buyStatus === 2 || this.noticeInfo.buyStatus === 4,
             url: 'https://pub.file.k12.vip/tbzw/course/my-icon-address.png'
           }
         ]

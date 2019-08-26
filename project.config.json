@@ -41,13 +41,13 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 16,
+			"current": 0,
 			"list": [
 				{
 					"id": 0,
 					"name": "classroom",
-					"pathName": "pages/submitHomework",
-					"query": "id=1138723411242659841",
+					"pathName": "pages/test",
+					"query": "id=1138721381526679554&lookback=1",
 					"scene": null
 				},
 				{

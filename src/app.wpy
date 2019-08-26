@@ -139,7 +139,7 @@ export default class extends wepy.app {
       let params = {
         code: res.code
       }
-
+      console.log(11)
       api.user.wxUserLogin(params).then(({ data }) => {
         let { resultData } = data
         this.globalData.userInfo = resultData

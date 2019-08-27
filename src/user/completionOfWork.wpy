@@ -112,7 +112,8 @@
         </view>
       </view>
 
-      <view class="p-completionOfWork-tip" @tap="praiseTeacher" wx:if="{{isReply && workDetail.status!==1}}">
+      <view class="p-completionOfWork-tip" @tap="praiseTeacher"
+            wx:if="{{isReply && workDetail.status!==1 && workDetail.evaluation==null}}">
         <image class="-tip-icon"
                src="https://pub.file.k12.vip/composition/1.2/ckzyxq-icon-review@3x.png"></image>
         看完点评，请点击这里给老师一个评价吧！
@@ -247,7 +248,7 @@
                 class="-share-close"
                 color="#fff"
                 size="36px"
-                @click="openShareModal" />
+                @click="openShareModal"/>
     </van-popup>
 
   </view>
@@ -388,7 +389,7 @@
       openShareModal() {
         this.isOpenShareModal = !this.isOpenShareModal;
       },
-      openPoster () {
+      openPoster() {
         wx.navigateTo({
           url: `/pages/sharePoster?id=${this.workDetail.id}`
         });
@@ -476,6 +477,11 @@
           stumsg: this.stumsg
         }).then(() => {
           this.isEvaluate = true;
+          if (this.queryInfo.type === '1') {
+            this.getMyHomework();
+          } else {
+            this.getOtherHomework();
+          }
           this.$apply();
         });
       },

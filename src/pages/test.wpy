@@ -56,15 +56,16 @@
                 </view>
               </view>
               <view class="input-list">
-                <view class="input-item {{selectIndex == item.mark && 'select'}} {{(setAnswerStatusEnd && (correctAnswer == item.mark)) && 'success'}} {{setAnswerStatusEnd && ((selectIndex == item.mark) && (correctAnswer != item.mark)) && 'error'}}"
+                <view class="input-item {{selectIndex == optionItem.mark && 'select'}} {{(setAnswerStatusEnd && (correctAnswer == optionItem.mark)) && 'success'}} {{setAnswerStatusEnd && ((selectIndex == optionItem.mark) && (correctAnswer != optionItem.mark)) && 'error'}}"
                       wx:for="{{item.optionList}}"
                       wx:key="{{index}}"
-                      @tap="bindClickInput({{item.mark}})">
-                  {{item.problem}}
+                      wx:for-item="optionItem"
+                      @tap="bindClickInput({{optionItem.mark}})">
+                  {{optionItem.problem}}
                 </view>
               </view>
               <view class="chart-item"
-                    wx:if="{{showNextBtn}}">
+                    wx:if="{{showNextBtn && (isSuccess ? item.rightAudio : item.errorAudio )}}">
                 <image class="chart-avatar"
                        src="{{courseInfo.teacherHeadImage}}" />
                 <view class="chart-right">
@@ -82,7 +83,7 @@
             </scroll-view>
 
           </view>
-          <view class="summary"
+          <scroll-view scroll-y scroll-top="{{summaryScrollTop}}" class="summary"
                 wx:if="{{isSummary}}">
             <view class="summary-list">
               <view class="chart-item summary-item {{summaryIndex >= index && summaryAnimateIndex >= index && 'show'}}"
@@ -100,7 +101,7 @@
               </view>
             </view>
 
-          </view>
+          </scroll-view>
         </view>
         <view class="chart-item"
               wx:if="{{!showQuestion}}"
@@ -158,6 +159,7 @@ export default class Example extends wepy.page {
   };
   data = {
     loading: true,
+    summaryScrollTop: 0,
     scrollTop: 0,
     lessonId: 0,
     summaryIndex: 0,
@@ -232,6 +234,9 @@ export default class Example extends wepy.page {
       this.$apply()
     },
     bindClickInput (i) {
+      if (this.showNextBtn) {
+        return
+      }
       let { audioContext, playSound } = this.$parent.globalData
       playSound(audioContext, 1)
       this.selectIndex = i
@@ -343,16 +348,23 @@ export default class Example extends wepy.page {
     } else {
       this.setSummaryEnd = true
     }
+    setTimeout(() => {
+      this.summaryScrollTop = 10000 + this.summaryIndex
+      this.$apply()
+    }, 500)
   }
 
   // 弹窗结束后切换题目
   changeAlertVisible () {
+    let {isSuccess, questionArr, stepIndex} = this
     this.showAlert = true
     setTimeout(() => {
+      let url = isSuccess ? questionArr[stepIndex].rightAudio : questionArr[stepIndex].errorAudio
       this.showAlert = false
       this.showNextBtn = true
-      this.playAudio()
-      console.log(this.stepIndex)
+      if (url) {
+        this.playAudio()
+      }
       this.$apply()
     }, 2000)
   }
@@ -422,7 +434,6 @@ export default class Example extends wepy.page {
   }
 
   initQuestion () {
-    console.log(111)
     this.showQuestion = true
     this.correctAnswer = this.questionArr[0].answer
     this.app.show(this, 'questionAnimate', 1)
@@ -448,7 +459,7 @@ export default class Example extends wepy.page {
 
   playAudio (type) {
     let { audioContext, isSuccess, questionArr, stepIndex } = this
-    console.log(questionArr[stepIndex])
+    this.paused = false
     audioContext.src = questionArr[stepIndex][isSuccess ? 'rightAudio' : 'errorAudio']
     setTimeout(() => {
       this.scrollTop = 1000
@@ -539,13 +550,13 @@ export default class Example extends wepy.page {
   }
 
   onLoad (option) {
-    console.log(111)
     this.lessonId = option.id
     this.lookback = option.lookback
     // eslint-disable-next-line no-undef
     this.app = this.$parent.globalData
     this.audioContext = wx.createInnerAudioContext()
     this.audioContext.onEnded(() => {
+      this.paused = true
       if (this.showQuestion) return
       this.app.show(this, 'chartAnimate', 0)
       setTimeout(() => {
@@ -902,12 +913,8 @@ export default class Example extends wepy.page {
     overflow-y: auto;
   }
   .summary {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
     margin-top: 28px;
-    max-height: 50vh;
-    overflow-y: auto;
+    height: 50vh;
     &-item {
       opacity: 0;
       transition: all 0.5s;

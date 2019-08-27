@@ -1,13 +1,14 @@
 <template>
-  <view class="container">
+  <view class="container p-shareHomework">
     <mHeader title="作业分享"></mHeader>
-    <view class="container-scroll p-shareHomework"
+    <view class="container-scroll "
           style="margin-top:{{height}}px">
       <view class="p-shareHomework-headerBg">
         <view class="p-shareHomework-header">
-          <view class="-header-title">小语轻作文</view>
+          <view class="-header-title"></view>
           <view class="-header-text">
-            北京师范大学特级名师1对4小班教学， 专业作文老师1对1点评
+            北师大特级名师主讲作业
+            <text class="-bload">1对1点评</text>
           </view>
         </view>
       </view>
@@ -39,7 +40,7 @@
 
         <view class="-content-down">
           <view class="-content-down-title">
-            <view>我刚完成了今天的作业</view>
+            为我坚持学习点个赞吧！
           </view>
 
           <view class="-content-down-content">
@@ -59,7 +60,8 @@
                 </block>
               </swiper>
 
-              <view class="-content-down-audio" @tap="changeAudioStatus({{shareInfo.workAudio}},1)" wx:if="{{shareInfo.homeworkType == 1}}">
+              <view class="-content-down-audio" @tap="changeAudioStatus({{shareInfo.workAudio}},1)"
+                    wx:if="{{shareInfo.homeworkType == 1}}">
                 <view class="-reply-icon">
                   <view class="icon"
                         wx:if="{{!isMyPlay}}"></view>
@@ -91,7 +93,8 @@
 
             <view class="-reply-info-text" wx:if="{{shareInfo.replyText}}">{{shareInfo.replyText}}</view>
 
-            <view class="-replay-info-audio" @tap="changeAudioStatus({{shareInfo.replyAudioAuthorUrl}},2)" wx:if="{{shareInfo.replyAudio}}">
+            <view class="-replay-info-audio" @tap="changeAudioStatus({{shareInfo.replyAudioAuthorUrl}},2)"
+                  wx:if="{{shareInfo.replyAudio}}">
               <view class="-reply-icon">
                 <view class="icon"
                       wx:if="{{!isPlay}}"></view>
@@ -101,12 +104,16 @@
               <view class="-reply-time">{{shareInfo.replyDuration}}</view>
             </view>
 
-            <view class="-reply-info-img" wx:if="{{shareInfo.replyImg.length}}">
+            <view class="-reply-info-img -footer-img" wx:if="{{shareInfo.replyImg.length}}">
               <image class="-img" wx:for="{{shareInfo.replyImg}}" wx:key="{{item}}"
                      @tap="enlargeImage({{item}})"
                      src="{{item}}"></image>
             </view>
           </view>
+        </view>
+
+        <view class="-content-end">
+          <view class="-content-end-btn" @tap="openPopup">我也想报名</view>
         </view>
       </view>
 
@@ -186,7 +193,7 @@
       itemUrl: '',
       swiperOptions: {
         indicatorDots: true,
-        indicatorActiveColor: '#FFF172',
+        indicatorActiveColor: '#FFDBA9',
         autoplay: false,
         interval: 5000,
         duration: 1000
@@ -214,8 +221,8 @@
         this.shareInfo.workImg = this.shareInfo.workImg && this.shareInfo.workImg.split(',');
         this.shareInfo.workImgSrc = this.shareInfo.workImgSrc && this.shareInfo.workImgSrc.split(',');
         this.shareInfo.replyImg = this.shareInfo.replyImg && this.shareInfo.replyImg.split(',');
-        this.shareInfo.duration = this.timeToFormat(this.shareInfo.duration );
-        this.shareInfo.replyDuration = this.timeToFormat(this.shareInfo.replyDuration );
+        this.shareInfo.duration = this.timeToFormat(this.shareInfo.duration);
+        this.shareInfo.replyDuration = this.timeToFormat(this.shareInfo.replyDuration);
         this.$apply();
       });
     };
@@ -253,11 +260,11 @@
       onClose() {
         this.showKF = false;
       },
-      changeAudioStatus(url,num) {
+      changeAudioStatus(url, num) {
         this.myAudio && this.myAudio.destroy();
         this.initAudio(url);
-        if(num==1) {
-          this.isPlay = false
+        if (num == 1) {
+          this.isPlay = false;
           if (this.isMyPlay) {
             this.isMyPlay = false;
             this.myAudio.pause();
@@ -266,7 +273,7 @@
             this.myAudio.play();
           }
         } else {
-          this.isMyPlay = false
+          this.isMyPlay = false;
           if (this.isPlay) {
             this.isPlay = false;
             this.myAudio.pause();
@@ -321,48 +328,47 @@
   @import '../assets/style/mixin.scss';
 
   .p-shareHomework {
-    background-color: rgba(255, 210, 99, 0.19);
+    background: rgba(255, 233, 178, 0.19);
     border-top: 1px solid transparent;
-    height: 100vh;
+    padding-top: 30px;
 
     &-headerBg {
-      margin-top: 16px;
-      background: url("https://pub.file.k12.vip/poem/1_2/bg.png") no-repeat;
+      /*margin-top: 30px;*/
+      background: url("https://pub.file.k12.vip/2019/08/26/1165914236214009858.png") no-repeat;
       background-size: 94%;
       background-position: 32px 0;
-      height: 192px;
+      height: 122px;
     }
 
     &-header {
       margin-left: 72px;
-      padding-top: 18px;
-
-      .-header-title {
-        margin-bottom: 4px;
-        height: 44px;
-        font-size: 32px;
-        font-weight: 600;
-        color: rgba(160, 84, 12, 0.6);
-        line-height: 44px;
-      }
+      /*padding-top: 18px;*/
 
       .-header-text {
         width: 410px;
-        height: 68px;
+        height: 74px;
         font-size: 24px;
         font-weight: 500;
         color: rgba(160, 84, 12, 0.6);
-        line-height: 34px;
+        line-height: 74px;
+
+        .-bload {
+          font-size: 32px;
+          font-weight: 600;
+          color: rgba(160, 84, 12, 0.6);
+        }
       }
     }
 
     &-content {
+      position: relative;
       margin: 0 auto 26px;
       width: 686px;
       /*height: 850px;*/
       background: rgba(255, 255, 255, 1);
       box-shadow: 0px 8px 16px 4px rgba(255, 246, 162, 0.5);
       border-radius: 32px;
+      z-index: 2;
 
       .-content-top {
         display: flex;
@@ -448,20 +454,17 @@
       }
 
       .-content-down {
-        padding: 0 48px 46px;
+        padding: 0 48px 32px;
         border-bottom: 8px solid #F6F6F6;
 
         &-title {
+          margin-bottom: 32px;
           text-align: center;
-          height: 84px;
+          height: 50px;
           font-size: 36px;
           font-weight: 500;
           color: rgba(52, 50, 48, 1);
           line-height: 50px;
-
-          .-title-small {
-            font-size: 24px;
-          }
         }
 
         &-content {
@@ -551,7 +554,7 @@
         }
 
         &-reply {
-          padding: 32px 48px 48px;
+          padding: 0 48px 48px;
 
           .-down-reply-info {
             display: flex;
@@ -583,7 +586,7 @@
           }
 
           .-reply-info-text {
-            margin-top: 18px;
+            /*margin-top: 18px;*/
             font-size: 32px;
             font-weight: 400;
             color: rgba(52, 50, 48, 1);
@@ -634,26 +637,45 @@
               height: 198px;
             }
           }
+
+          .-footer-img {
+            margin-bottom: 0;
+          }
+        }
+      }
+
+      .-content-end {
+        background: url("https://pub.file.k12.vip/2019/08/26/1165916885399330817.png");
+        background-size: 100%;
+        width: 686px;
+        height: 278px;
+        border-radius: 0px 0px 32px 32px;
+        display: inline-block;
+
+        &-btn {
+          margin: 172px auto 0;
+          text-align: center;
+          width: 296px;
+          height: 74px;
+          background: linear-gradient(180deg, rgba(255, 243, 92, 1) 0%, rgba(252, 194, 23, 1) 100%);
+          box-shadow: 0px 4px 8px 0px rgba(234, 151, 23, 0.73);
+          border-radius: 37px;
+          font-size: 32px;
+          font-weight: 500;
+          color: rgba(131, 79, 24, 1);
+          line-height: 74px;
         }
       }
     }
 
     &-btn {
-      position: fixed;
-      bottom: 0;
-      background: url("https://pub.file.k12.vip/poem/1_2/banner@3x.png") no-repeat;
+      position: absolute;
+      bottom: -80px;
+      background: url("https://pub.file.k12.vip/2019/08/26/1165921939006787585.png") no-repeat;
       background-size: 100%;
-      position: relative;
-      height: 320px;
-
-      .-btn {
-        position: absolute;
-        top: 188px;
-        left: 70px;
-        width: 220px;
-        height: 75px;
-        background-color: transparent;
-      }
+      /*position: relative;*/
+      width: 100%;
+      height: 252px;
     }
 
     .kf-pop {

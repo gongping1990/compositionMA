@@ -36,7 +36,7 @@
                type="text"
                password='{{true}}'
                placeholder-class="placeholder"
-               placeholder="请确认验证码" />
+               placeholder="请确认新密码" />
       </view>
       <view class="resetPwd-submit-btn" @tap="clickReset" >确认修改</view>
       <view class="resetPwd-reset-password" @tap="clickBack" >返回首页</view>

@@ -362,7 +362,7 @@
 
     &-content {
       position: relative;
-      margin: 0 auto 26px;
+      margin: 0 auto;
       width: 686px;
       /*height: 850px;*/
       background: rgba(255, 255, 255, 1);
@@ -670,7 +670,6 @@
 
     &-btn {
       position: absolute;
-      bottom: -80px;
       background: url("https://pub.file.k12.vip/2019/08/26/1165921939006787585.png") no-repeat;
       background-size: 100%;
       /*position: relative;*/

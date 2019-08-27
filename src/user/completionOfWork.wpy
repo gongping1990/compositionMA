@@ -179,7 +179,12 @@
             如果觉得老师点评的好， 记得分享给好友哦～
           </view>
           <button class="-popup-jg-btn -one" wx:if="{{isActive === '0'}}" @tap="changePopup">好的，我知道了</button>
-          <button class="-popup-jg-btn" open-type="share" wx:if="{{isActive !== '0'}}" @tap="shareFriend">分享给好友</button>
+          <button class="-popup-jg-btn" open-type="share" wx:if="{{isActive !== '0' && workDetail.homeworkType === 1}}"
+                  @tap="shareFriend">分享给好友
+          </button>
+          <button class="-popup-jg-btn" wx:if="{{isActive !== '0' && workDetail.homeworkType === 2}}"
+                  @tap="openShareModal">分享
+          </button>
         </view>
 
         <van-icon name="close"
@@ -387,6 +392,7 @@
 
     methods = {
       openShareModal() {
+        this.isOpenPopup = false
         this.isOpenShareModal = !this.isOpenShareModal;
       },
       openPoster() {

@@ -208,6 +208,14 @@ export default class Example extends wepy.page {
     this.getCardInfo()
   };
 
+  onUnload() {
+    this.showNoLearn = false
+  }
+
+  onHide() {
+    this.showNoLearn = false
+  }
+
   onShareAppMessage () {
     return {
       title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,

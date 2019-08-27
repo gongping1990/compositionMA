@@ -291,7 +291,7 @@
       isZan: false,
       isShowImage: false,
       isShowConfirm: false,
-      isOpenShareModal: true,
+      isOpenShareModal: false,
       isActive: '',
       stumsg: '',
       workDetail: '',

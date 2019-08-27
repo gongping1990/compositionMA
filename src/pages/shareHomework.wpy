@@ -1,13 +1,14 @@
 <template>
-  <view class="container">
+  <view class="container p-shareHomework">
     <mHeader title="作业分享"></mHeader>
-    <view class="container-scroll p-shareHomework"
+    <view class="container-scroll "
           style="margin-top:{{height}}px">
       <view class="p-shareHomework-headerBg">
         <view class="p-shareHomework-header">
           <view class="-header-title"></view>
           <view class="-header-text">
-            北师大特级名师主讲作业<text class="-bload">1对1点评</text>
+            北师大特级名师主讲作业
+            <text class="-bload">1对1点评</text>
           </view>
         </view>
       </view>
@@ -59,7 +60,8 @@
                 </block>
               </swiper>
 
-              <view class="-content-down-audio" @tap="changeAudioStatus({{shareInfo.workAudio}},1)" wx:if="{{shareInfo.homeworkType == 1}}">
+              <view class="-content-down-audio" @tap="changeAudioStatus({{shareInfo.workAudio}},1)"
+                    wx:if="{{shareInfo.homeworkType == 1}}">
                 <view class="-reply-icon">
                   <view class="icon"
                         wx:if="{{!isMyPlay}}"></view>
@@ -91,7 +93,8 @@
 
             <view class="-reply-info-text" wx:if="{{shareInfo.replyText}}">{{shareInfo.replyText}}</view>
 
-            <view class="-replay-info-audio" @tap="changeAudioStatus({{shareInfo.replyAudioAuthorUrl}},2)" wx:if="{{shareInfo.replyAudio}}">
+            <view class="-replay-info-audio" @tap="changeAudioStatus({{shareInfo.replyAudioAuthorUrl}},2)"
+                  wx:if="{{shareInfo.replyAudio}}">
               <view class="-reply-icon">
                 <view class="icon"
                       wx:if="{{!isPlay}}"></view>
@@ -218,8 +221,8 @@
         this.shareInfo.workImg = this.shareInfo.workImg && this.shareInfo.workImg.split(',');
         this.shareInfo.workImgSrc = this.shareInfo.workImgSrc && this.shareInfo.workImgSrc.split(',');
         this.shareInfo.replyImg = this.shareInfo.replyImg && this.shareInfo.replyImg.split(',');
-        this.shareInfo.duration = this.timeToFormat(this.shareInfo.duration );
-        this.shareInfo.replyDuration = this.timeToFormat(this.shareInfo.replyDuration );
+        this.shareInfo.duration = this.timeToFormat(this.shareInfo.duration);
+        this.shareInfo.replyDuration = this.timeToFormat(this.shareInfo.replyDuration);
         this.$apply();
       });
     };
@@ -257,11 +260,11 @@
       onClose() {
         this.showKF = false;
       },
-      changeAudioStatus(url,num) {
+      changeAudioStatus(url, num) {
         this.myAudio && this.myAudio.destroy();
         this.initAudio(url);
-        if(num==1) {
-          this.isPlay = false
+        if (num == 1) {
+          this.isPlay = false;
           if (this.isMyPlay) {
             this.isMyPlay = false;
             this.myAudio.pause();
@@ -270,7 +273,7 @@
             this.myAudio.play();
           }
         } else {
-          this.isMyPlay = false
+          this.isMyPlay = false;
           if (this.isPlay) {
             this.isPlay = false;
             this.myAudio.pause();
@@ -325,11 +328,12 @@
   @import '../assets/style/mixin.scss';
 
   .p-shareHomework {
-    background:rgba(255,233,178,0.19);
+    background: rgba(255, 233, 178, 0.19);
     border-top: 1px solid transparent;
+    padding-top: 30px;
 
     &-headerBg {
-      margin-top: 30px;
+      /*margin-top: 30px;*/
       background: url("https://pub.file.k12.vip/2019/08/26/1165914236214009858.png") no-repeat;
       background-size: 94%;
       background-position: 32px 0;
@@ -456,11 +460,11 @@
         &-title {
           margin-bottom: 32px;
           text-align: center;
-          height:50px;
-          font-size:36px;
-          font-weight:500;
-          color:rgba(52,50,48,1);
-          line-height:50px;
+          height: 50px;
+          font-size: 36px;
+          font-weight: 500;
+          color: rgba(52, 50, 48, 1);
+          line-height: 50px;
         }
 
         &-content {
@@ -643,23 +647,23 @@
       .-content-end {
         background: url("https://pub.file.k12.vip/2019/08/26/1165916885399330817.png");
         background-size: 100%;
-        width:686px;
-        height:278px;
-        border-radius:0px 0px 32px 32px;
+        width: 686px;
+        height: 278px;
+        border-radius: 0px 0px 32px 32px;
         display: inline-block;
 
         &-btn {
           margin: 172px auto 0;
           text-align: center;
-          width:296px;
-          height:74px;
-          background:linear-gradient(180deg,rgba(255,243,92,1) 0%,rgba(252,194,23,1) 100%);
-          box-shadow:0px 4px 8px 0px rgba(234,151,23,0.73);
-          border-radius:37px;
-          font-size:32px;
-          font-weight:500;
-          color:rgba(131,79,24,1);
-          line-height:74px;
+          width: 296px;
+          height: 74px;
+          background: linear-gradient(180deg, rgba(255, 243, 92, 1) 0%, rgba(252, 194, 23, 1) 100%);
+          box-shadow: 0px 4px 8px 0px rgba(234, 151, 23, 0.73);
+          border-radius: 37px;
+          font-size: 32px;
+          font-weight: 500;
+          color: rgba(131, 79, 24, 1);
+          line-height: 74px;
         }
       }
     }

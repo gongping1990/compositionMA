@@ -112,7 +112,7 @@
         </view>
       </view>
 
-      <view class="p-completionOfWork-tip" @tap="praiseTeacher" wx:if="{{isReply}}">
+      <view class="p-completionOfWork-tip" @tap="praiseTeacher" wx:if="{{isReply && workDetail.status!==1}}">
         <image class="-tip-icon"
                src="https://pub.file.k12.vip/composition/1.2/ckzyxq-icon-review@3x.png"></image>
         看完点评，请点击这里给老师一个评价吧！
@@ -539,11 +539,11 @@
       this.myAudio.destroy();
     }
 
-    onShareAppMessage() {
+    onShareAppMessage(type) {
       return {
         title: this.queryInfo.type === '1' ? `我已坚持学习${this.workDetail.learnDay}天，刚完成今天的作业，请给我点个赞吧` : `快来给@${this.workDetail.nickname}点个赞，TA已坚持学习了${this.workDetail.learnDay}天`,
         path: this.queryInfo.type === '1' ? `/pages/shareHomework?id=${this.workDetail.id}` : `/pages/completionOfWork?type=2&id=${this.workDetail.id}`,
-        imageUrl: this.workDetail.workImg[0]
+        imageUrl: this.workDetail.homeworkType === 1 ? '' : this.workDetail.workImg[0]
       };
     }
   }

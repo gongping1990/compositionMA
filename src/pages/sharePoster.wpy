@@ -23,7 +23,7 @@
         <view class="-share-content-content">
           {{copyText}}
         </view>
-        <view class="-share-content-tip">复制文案可提高邀请成功率！</view>
+        <view class="-share-content-tip">复制文案可获得更多点赞哦~</view>
         <view class="-share-content-btn" @tap="copyTextFn">
           复制文案去发朋友圈
         </view>
@@ -212,14 +212,36 @@
         }
 
         //绘制作业图片
-        ctx.drawImage(workUrl01, width * 0.11, height * 0.47, width * 0.24, height * 0.23);
+        let displacementWidth01 = ''
+        let jobWidth01 = ''
+        let displacementWidth02 = ''
+        let jobWidth02 = ''
+        let displacementWidth03 = ''
+
+        if (workUrl01 && !workUrl02 && !workUrl03 ) {
+          displacementWidth01 = width * 0.37
+          jobWidth01 = width * 0.28
+        } else if (workUrl01 && workUrl02 && !workUrl03) {
+          displacementWidth01 = width * 0.16
+          displacementWidth02 = width * 0.56
+          jobWidth01 = width * 0.28
+          jobWidth02 = width * 0.28
+        } else if (workUrl01 && workUrl02 && workUrl03) {
+          displacementWidth01 = width * 0.11
+          displacementWidth02 = width * 0.38
+          displacementWidth03 = width * 0.65
+          jobWidth01 = width * 0.24
+          jobWidth02 = width * 0.24
+        }
+
+        ctx.drawImage(workUrl01, displacementWidth01, height * 0.47, jobWidth01, height * 0.23);
 
         if (workUrl02) {
-          ctx.drawImage(workUrl02, width * 0.38, height * 0.47, width * 0.24, height * 0.23);
+          ctx.drawImage(workUrl02, displacementWidth02, height * 0.47, jobWidth02, height * 0.23);
         }
 
         if (workUrl03) {
-          ctx.drawImage(workUrl03, width * 0.65, height * 0.47, width * 0.24, height * 0.23);
+          ctx.drawImage(workUrl03, displacementWidth03, height * 0.47, width * 0.24, height * 0.23);
         }
 
         function canvasWorkBreak(maxWidth, fontSize, text) {
@@ -380,7 +402,7 @@
           margin: 0 32px;
 
           .canvas-wrap {
-            width: 100%;
+            width: 465px;
             height: 740px;
             background-color: #fff;
           }

@@ -193,11 +193,12 @@
         ctx.restore();
 
         // 昵称
-        const contentArray = canvasWorkBreak(140, 14, that.shareDetail.nickname);
+        const nickname = that.shareDetail.nickname.length > 4 ? that.shareDetail.nickname.substring(0, 4) : that.shareDetail.nickname;
+
+        const contentArray = canvasWorkBreak(140, 14, nickname);
         ctx.setTextAlign('left');
         ctx.setFillStyle('#000');
         ctx.setFontSize(12);
-        let contentHh = 16 * 1;
         for (let m = 0; m < contentArray.length; m++) {
           ctx.fillText(contentArray[m], 32, 20);
         }
@@ -212,26 +213,26 @@
         }
 
         //绘制作业图片
-        let displacementWidth01 = ''
-        let jobWidth01 = ''
-        let displacementWidth02 = ''
-        let jobWidth02 = ''
-        let displacementWidth03 = ''
+        let displacementWidth01 = '';
+        let jobWidth01 = '';
+        let displacementWidth02 = '';
+        let jobWidth02 = '';
+        let displacementWidth03 = '';
 
-        if (workUrl01 && !workUrl02 && !workUrl03 ) {
-          displacementWidth01 = width * 0.37
-          jobWidth01 = width * 0.28
+        if (workUrl01 && !workUrl02 && !workUrl03) {
+          displacementWidth01 = width * 0.37;
+          jobWidth01 = width * 0.28;
         } else if (workUrl01 && workUrl02 && !workUrl03) {
-          displacementWidth01 = width * 0.16
-          displacementWidth02 = width * 0.56
-          jobWidth01 = width * 0.28
-          jobWidth02 = width * 0.28
+          displacementWidth01 = width * 0.16;
+          displacementWidth02 = width * 0.56;
+          jobWidth01 = width * 0.28;
+          jobWidth02 = width * 0.28;
         } else if (workUrl01 && workUrl02 && workUrl03) {
-          displacementWidth01 = width * 0.11
-          displacementWidth02 = width * 0.38
-          displacementWidth03 = width * 0.65
-          jobWidth01 = width * 0.24
-          jobWidth02 = width * 0.24
+          displacementWidth01 = width * 0.11;
+          displacementWidth02 = width * 0.38;
+          displacementWidth03 = width * 0.65;
+          jobWidth01 = width * 0.24;
+          jobWidth02 = width * 0.24;
         }
 
         ctx.drawImage(workUrl01, displacementWidth01, height * 0.47, jobWidth01, height * 0.23);

@@ -48,7 +48,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 0,
+			"current": 20,
 			"list": [
 				{
 					"id": 0,
@@ -194,7 +194,7 @@
 					"id": 20,
 					"name": "pages/sharePoster",
 					"pathName": "pages/sharePoster",
-					"query": "id=1165886597642280962",
+					"query": "id=1166287247922851842",
 					"scene": null
 				},
 				{

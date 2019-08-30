@@ -113,7 +113,7 @@
       </view>
 
       <view class="p-completionOfWork-tip" @tap="praiseTeacher"
-            wx:if="{{isReply && workDetail.status!==1 && workDetail.evaluation==null}}">
+            wx:if="{{isReply && workDetail.status!==1 && workDetail.evaluation==null && workDetail.self}}">
         <image class="-tip-icon"
                src="https://pub.file.k12.vip/composition/1.2/ckzyxq-icon-review@3x.png"></image>
         看完点评，请点击这里给老师一个评价吧！

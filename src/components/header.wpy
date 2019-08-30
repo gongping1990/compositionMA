@@ -1,28 +1,28 @@
 <!--  -->
 <template>
   <view class="flex commonHead component"
-          style="color:{{color}};background-color:{{bgColor}};height:{{titleHeight}}px;">
-      <view class="commonHead-wrap flex">
-        <!-- 0:无返回；1：返回上一级；2：home -->
-        <view class="commonHead_left {{!showBtn && 'hide'}}">
-          <view wx:if="{{flag==1}}"
-                class="commonHead_left_back"
-                bindtap="commonHead_left_back"></view>
-          <view wx:if="{{flag==2}}"
-                class="commonHead_left_home"
-                bindtap="commonHead_left_home"></view>
-          <view wx:if="{{flag==3}}"
-                class="commonHead_left_back_s"
-                bindtap="commonHead_left_back_s"></view>
-          <view wx:if="{{flag==4}}"
-                class="commonHead_left_back"
-                bindtap="commonHead_left_back_s"></view>
-        </view>
-        <view class="commonHead_right flex">
-          <view class="commonHead_right_text line1">{{title}}</view>
-        </view>
+        style="color:{{color}};background-color:{{bgColor}};height:{{titleHeight}}px;">
+    <view class="commonHead-wrap flex">
+      <!-- 0:无返回；1：返回上一级；2：home -->
+      <view class="commonHead_left {{!showBtn && 'hide'}}">
+        <view wx:if="{{flag==1}}"
+              class="commonHead_left_back"
+              bindtap="commonHead_left_back"></view>
+        <view wx:if="{{flag==2}}"
+              class="commonHead_left_home"
+              bindtap="commonHead_left_home"></view>
+        <view wx:if="{{flag==3}}"
+              class="commonHead_left_back_s"
+              bindtap="commonHead_left_back_s"></view>
+        <view wx:if="{{flag==4}}"
+              class="commonHead_left_back"
+              bindtap="commonHead_left_back_s"></view>
+      </view>
+      <view class="commonHead_right flex">
+        <view class="commonHead_right_text line1">{{title}}</view>
       </view>
     </view>
+  </view>
 </template>
 <script>
 import wepy from 'wepy'
@@ -60,7 +60,7 @@ export default class Example extends wepy.component {
     }
   };
   methods = {
-    commonHead_left_back: function() {
+    commonHead_left_back: function () {
       this.$emit('back')
       if (this.path === '') {
         wx.navigateBack()
@@ -68,17 +68,17 @@ export default class Example extends wepy.component {
         wx.redirectTo({ url: this.path })
       }
     },
-    commonHead_left_back_s: function() {
+    commonHead_left_back_s: function () {
       this.$emit('back')
     },
-    commonHead_left_home: function() {
+    commonHead_left_home: function () {
       wx.reLaunch({
         url: '/pages/index/index'
       })
     }
   };
   computed = {
-    titleHeight() {
+    titleHeight () {
       this.$emit('height', this.commonHeadHeight.titleHeight + wepy.$instance.globalData.systemInfo.statusBarHeight)
       return this.commonHeadHeight.titleHeight + wepy.$instance.globalData.systemInfo.statusBarHeight
     }
@@ -86,7 +86,7 @@ export default class Example extends wepy.component {
 }
 </script>
 <style lang="scss">
-@import "../assets/style/mixin.scss";
+@import '../assets/style/mixin.scss';
 /*弹性布局*/
 
 .flex {
@@ -220,7 +220,7 @@ export default class Example extends wepy.component {
   left: 0;
   top: 0;
   opacity: 1;
-  transition: all .5s;
+  transition: all 0.5s;
 }
 
 .commonHead_left.hide {
@@ -236,7 +236,7 @@ export default class Example extends wepy.component {
   background-position: center;
 }
 .commonHead_left_back_s {
-  @include bg("/sk/icon-retrun.png");
+  @include bg('/sk/icon-retrun.png');
   margin-left: 30px;
   width: 100%;
   height: 100%;
@@ -261,13 +261,29 @@ export default class Example extends wepy.component {
   text-align: center;
   font-size: 30rpx;
   overflow: hidden;
-  justify-content:flex-end;
+  justify-content: flex-end;
 }
 
 .commonHead_right_text {
   /* width: 450rpx; */
   width: 280rpx;
   margin: 0 auto;
+}
 
+@media screen and (min-width: 700px) {
+  .commonHead-wrap {
+    height: 49px;
+  }
+  .commonHead_right {
+    /* width: 450rpx; */
+    line-height: 44rpx;
+    font-size: 15rpx;
+  }
+  .commonHead_left {
+    width: 50px;
+  }
+  .commonHead_left_back {
+    background-size: 20rpx 20rpx;
+  }
 }
 </style>

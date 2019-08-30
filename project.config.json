@@ -53,7 +53,7 @@
 				{
 					"id": 0,
 					"name": "classroom",
-					"pathName": "pages/test",
+					"pathName": "pages/login",
 					"query": "id=1138721381526679554&lookback=1",
 					"scene": null
 				},
@@ -194,7 +194,7 @@
 					"id": 20,
 					"name": "pages/sharePoster",
 					"pathName": "pages/sharePoster",
-					"query": "id=1165886597642280962",
+					"query": "id=1166287247922851842",
 					"scene": null
 				},
 				{

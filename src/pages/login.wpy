@@ -150,7 +150,7 @@ export default class Example extends wepy.page {
     }
   }
   events = {
-    back() {
+    back () {
       wx.redirectTo({ url: '/pages/index' })
     }
   };
@@ -301,5 +301,61 @@ export default class Example extends wepy.page {
   width: 100%;
   font-size: 28px;
   color: rgba($color: #343230, $alpha: 0.4);
+}
+
+@media screen and (min-width: 700px) {
+  .login-logo {
+    padding-top: 40px;
+    margin-bottom: 32px;
+    &-img {
+      margin-right: 10px;
+      width: 80px;
+      height: 80px;
+    }
+    &-title {
+      font-size: 30px;
+      line-height: 50px;
+    }
+    &-text {
+      font-size: 17px;
+      line-height: 32px;
+    }
+  }
+  .login-input {
+    padding-left: 20px;
+    width: 500px;
+    height: 60px;
+    margin-bottom: 30px;
+    input {
+      font-size: 16px;
+      height: 60px;
+    }
+  }
+  .placeholder {
+    font-size: 16px;
+  }
+  .login-submit-btn,
+  .login-change-btn {
+    width: 500px;
+    height: 60px;
+    font-size: 16px;
+  }
+  .login-change-btn {
+    margin-top: 64px;
+  }
+  .login-reset-password {
+    bottom: 82px;
+    font-size: 14px;
+    right: 120px;
+  }
+  .login .send-code-btn {
+    right: 14px;
+    width: 104px;
+    height: 40px;
+    font-size: 14px;
+  }
+  .login-message-text {
+    font-size: 18px;
+  }
 }
 </style>

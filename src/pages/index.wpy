@@ -177,9 +177,7 @@ export default class Home extends wepy.page {
     showKF: false,
     showHeader: true,
     showPraise: false,
-    infoData: {
-      startTime: ''
-    },
+    infoData: {},
     infoListData: {},
     broadcastList: [],
     gradeText: ['三年级', '四年级', '五年级', '六年级'],
@@ -280,9 +278,15 @@ export default class Home extends wepy.page {
   };
 
   initPage () {
-    this.getHomePageInfo()
-    this.getBroadcastList()
-    this.checkPopByRecipient()
+    console.log(JSON.stringify(this.userInfo))
+    if (JSON.stringify(this.userInfo) != '{}') {
+      clearTimeout(this.timer)
+      this.getHomePageInfo()
+    } else {
+      this.timer = setTimeout(() => {
+        this.initPage()
+      }, 3000)
+    }
   }
   // 开始今日学习
   startLessonStudy () {
@@ -335,9 +339,7 @@ export default class Home extends wepy.page {
   }
 
   onShow () {
-    if (this.userInfo.id || this.userInfo.userId) {
-      this.initPage()
-    }
+    this.initPage()
   };
 
   onShareAppMessage () {

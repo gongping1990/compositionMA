@@ -132,6 +132,7 @@
     init(item) {
       let _self = this;
       _self.isFetching = true;
+      _self.localArray = []
       wx.showLoading({ title: '海报生成中...', mask: true });
       wx.downloadFile({
         url: item.url,
@@ -157,6 +158,7 @@
 
     sharePosterCanvas(data) {
       let [headimgurl, shareUrl, workUrl01, workUrl02, workUrl03] = data;
+      console.log(data ,'链接')
       for (let item of data) {
         if (item.id == '1') {
           headimgurl = item.url;

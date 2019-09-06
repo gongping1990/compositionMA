@@ -29,7 +29,7 @@
                type="text"
                password="{{!type}}"
                placeholder-class="placeholder"
-               placeholder="{{type ? '清输入验证码' : '请输入密码'}}" />
+               placeholder="{{type ? '请输入验证码' : '请输入密码'}}" />
       </view>
       <view class="login-submit-btn"
             @tap="clickLogin">登录</view>

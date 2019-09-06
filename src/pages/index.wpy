@@ -280,9 +280,15 @@ export default class Home extends wepy.page {
   };
 
   initPage () {
-    this.getHomePageInfo()
-    this.getBroadcastList()
-    this.checkPopByRecipient()
+    let userInfoToObg = JSON.stringify(this.userInfo)
+    if (userInfoToObg != '{}') {
+      clearTimeout(this.timer)
+      this.getHomePageInfo()
+    } else {
+      this.timer = setTimeout(() => {
+        this.initPage()
+      }, 3000)
+    }
   }
   // 开始今日学习
   startLessonStudy () {
@@ -301,6 +307,8 @@ export default class Home extends wepy.page {
     let { api } = this.$parent.globalData
     api.course.getHomePageInfo().then(({ data }) => {
       wx.hideLoading()
+      this.getBroadcastList()
+      this.checkPopByRecipient()
       this.infoData = data.resultData
       this.infoListData = data.resultData.infoList[0]
       this.empty = !data.resultData.infoList.length
@@ -335,9 +343,7 @@ export default class Home extends wepy.page {
   }
 
   onShow () {
-    if (this.userInfo.id || this.userInfo.userId) {
-      this.initPage()
-    }
+    this.initPage()
   };
 
   onShareAppMessage () {

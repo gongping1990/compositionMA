@@ -8,7 +8,7 @@
         <image class="avatar"
                src="{{userInfo.headimgurl}}" />
         <view class="header-right">
-          <text class="subtitle">欢迎来到小语轻作文，</text>
+          <text class="subtitle">欢迎来到小语轻作文,</text>
           <text class="title">{{!infoData.startStudy ? infoData.startTime + '记得来上课哦' : '赶快开始今天的学习吧'}}</text>
         </view>
       </view>
@@ -23,35 +23,34 @@
       </view>
       <view class="swiper"
             wx:if="{{!empty}}">
-        <view class="swiper-item active"
-              wx:if="{{infoListData.id}}">
-          <view class="swiper-cover {{infoListData.type == 2 && 'sc'}}"
+        <view class="swiper-item active">
+          <view class="swiper-cover {{courseDate.type == 2 && 'sc'}}"
                 @tap="bindClickCover">
             <view class="swiper-cover-tag">小班课</view>
             <view class="swiper-cover-popup"
-                  wx:if="{{infoListData.expLesson}}"></view>
-            <image src="{{infoListData.coverphoto}}"
+                  wx:if="{{courseDate.expLesson}}"></view>
+            <image src="{{courseDate.coverphoto}}"
                    class="swiper-cover-image" />
           </view>
-          <view class="swiper-title">{{infoListData.lessonSort + '.' + infoListData.name}}</view>
+          <view class="swiper-title">{{courseDate.lessonSort + '.' + courseDate.name}}</view>
           <view class="swiper-subtitle">
-            小语轻作文 Level {{infoListData.grade - 2}}
+            小语轻作文 Level {{courseDate.grade - 2}}
             <text class="swiper-subtitle-text"
-                  wx:if="{{infoListData.expLesson}}">体验课</text>
+                  wx:if="{{courseDate.expLesson}}">体验课</text>
           </view>
           <button class="swiper-btn {{!infoData.startStudy && 'disabled'}}"
                   @tap="bindClickCover"
-                  wx:if="{{infoListData.finished && infoListData.expLesson}}">升级课程</button>
+                  wx:if="{{courseDate.finished && courseDate.expLesson}}">升级课程</button>
           <button class="swiper-btn {{!infoData.startStudy && 'disabled'}}"
                   @tap="bindClickStudyStart()"
                   disabled="{{!infoData.startStudy}}"
-                  wx:elif="{{infoListData.studyStatus != 5}}">{{!infoData.startStudy ? infoData.startTime + '开课' : btnText}}</button>
+                  wx:elif="{{courseDate.studyStatus != 5}}">{{!infoData.startStudy ? infoData.startTime + '开课' : btnText}}</button>
           <button class="swiper-btn line "
                   @tap="bindClickBtn({{3}})"
-                  wx:if="{{infoListData.status == 2 }}">
+                  wx:if="{{courseDate.status == 2 }}">
             课程回看
             <text class="swiper-btn-tag"
-                  wx:if="{{infoListData.studyStatus != 5}}">{{tagText}}</text>
+                  wx:if="{{courseDate.studyStatus != 5}}">{{tagText}}</text>
           </button>
         </view>
       </view>
@@ -180,7 +179,7 @@ export default class Home extends wepy.page {
     infoData: {
       startTime: ''
     },
-    infoListData: {},
+    courseDate: {},
     broadcastList: [],
     gradeText: ['三年级', '四年级', '五年级', '六年级'],
     swiperActive: 0,
@@ -198,23 +197,23 @@ export default class Home extends wepy.page {
       wx.navigateTo({ url: '/pages/catalog' })
     },
     bindClickCover () {
-      if (this.infoListData.expLesson) {
+      if (this.courseDate.expLesson) {
         this.showKF = true
       }
     },
     bindClickStudyStart () {
-      let { infoListData } = this
-      if (!infoListData.stage) {
-        if (infoListData.status !== 2) {
+      let { courseDate } = this
+      if (!courseDate.stage) {
+        if (courseDate.status !== 2) {
           this.startLessonStudy()
         }
-        wx.navigateTo({ url: '/pages/classroom?id=' + infoListData.id })
-      } else if (infoListData.stage === 1) {
-        wx.navigateTo({ url: '/pages/study?id=' + infoListData.id })
-      } else if (infoListData.stage === 2) {
-        wx.navigateTo({ url: '/pages/test?id=' + infoListData.id })
+        wx.navigateTo({ url: '/pages/classroom?id=' + courseDate.id })
+      } else if (courseDate.stage === 1) {
+        wx.navigateTo({ url: '/pages/study?id=' + courseDate.id })
+      } else if (courseDate.stage === 2) {
+        wx.navigateTo({ url: '/pages/test?id=' + courseDate.id })
       } else {
-        wx.navigateTo({ url: '/user/submitHomework?id=' + infoListData.id })
+        wx.navigateTo({ url: '/user/submitHomework?id=' + courseDate.id })
       }
     },
     bindClickBtn (type) {
@@ -252,7 +251,8 @@ export default class Home extends wepy.page {
   };
   watch = {
     userInfo (n) {
-      if (n.id || n.userId) {
+      let userInfoToObg = JSON.stringify(n)
+      if (userInfoToObg != '{}') {
         this.initPage()
         if (this.getUCRemindVOL) {
           this.getUCRemindVOL()
@@ -265,29 +265,35 @@ export default class Home extends wepy.page {
       return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
     },
     tagText () {
-      let { infoListData } = this
-      if (!infoListData) {
+      let { courseDate } = this
+      if (!courseDate) {
         return ''
       }
-      return infoListData.studyStatus < 3 ? '未上完课' : (infoListData.studyStatus === 3) && '未交作业'
+      return courseDate.studyStatus < 3 ? '未上完课' : (courseDate.studyStatus === 3) && '未交作业'
     },
     btnText () {
-      if (!this.infoListData.studyStatus) {
+      if (!this.courseDate.studyStatus) {
         return '开始今日学习'
       }
-      return this.infoListData.studyStatus <= 2 ? '开始今日学习' : '交作业'
+      return this.courseDate.studyStatus <= 2 ? '开始今日学习' : '交作业'
     }
   };
 
   initPage () {
-    this.getHomePageInfo()
-    this.getBroadcastList()
-    this.checkPopByRecipient()
+    let userInfoToObg = JSON.stringify(this.userInfo)
+    if (userInfoToObg != '{}') {
+      clearTimeout(this.timer)
+      this.getHomePageInfo()
+    } else {
+      this.timer = setTimeout(() => {
+        this.initPage()
+      }, 3000)
+    }
   }
   // 开始今日学习
   startLessonStudy () {
     let { api } = this.$parent.globalData
-    let { id } = this.infoListData
+    let { id } = this.courseDate
     api.operate.startLessonStudy({
       lessonId: id
     })
@@ -301,10 +307,14 @@ export default class Home extends wepy.page {
     let { api } = this.$parent.globalData
     api.course.getHomePageInfo().then(({ data }) => {
       wx.hideLoading()
+      this.getBroadcastList()
+      this.checkPopByRecipient()
       this.infoData = data.resultData
-      this.infoListData = data.resultData.infoList[0]
       this.empty = !data.resultData.infoList.length
       this.infoData.startTime = this.infoData.startTime ? dayjs(new Date(this.infoData.startTime)).format('MM月DD日') : ''
+      if (data.resultData.infoList[0]) {
+        this.courseDate = data.resultData.infoList[0]
+      }
       if (!data.resultData.buyCourse) {
         if (this.empty || !data.resultData.infoList[0].expLesson) {
           wx.redirectTo({ url: '/pages/login' })
@@ -312,6 +322,7 @@ export default class Home extends wepy.page {
       }
       this.showPraise = this.infoData.awardsPop
       this.awardsInfo = this.infoData.awardsInfo
+      console.log(this.courseDate)
       this.$apply()
     })
   }
@@ -335,9 +346,7 @@ export default class Home extends wepy.page {
   }
 
   onShow () {
-    if (this.userInfo.id || this.userInfo.userId) {
-      this.initPage()
-    }
+    this.initPage()
   };
 
   onShareAppMessage () {

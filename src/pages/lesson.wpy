@@ -1,0 +1,522 @@
+<template>
+  <view class="container lesson">
+    <mHeader title="我的课程"
+             flag="0"></mHeader>
+    <view class="container-scroll"
+          style="margin-top:{{height}}px;height: calc(100vh - {{height}}px)">
+      <view class="empty"
+            wx:if="{{isBuy}}">
+        <text class="empty-title">你还没有报名课程哦~</text>
+        <text class="empty-text">我们为你推荐了其他小朋友都在学的动画课程</text>
+        <button class="empty-btn"></button>
+        <button class="empty-btn"></button>
+      </view>
+      <view>
+        <view class="lesson-header">
+          <view class="lesson-tab">
+            <view class="lesson-tab-item active">
+              本周上课
+            </view>
+            <view class="lesson-tab-item">
+              上周上课
+            </view>
+          </view>
+          <view class="lesson-all">全部课程<view class="lesson-all-icon"></view>
+          </view>
+        </view>
+        <scroll-view class="lesson-scroll"
+                     style="height: calc(100vh - {{height * 2 + 150 }}rpx)"
+                     scroll-y
+                     scroll-with-animation
+                     scroll-top="{{todayScrollTop}}"
+                     @scroll="bindScroll">
+          <view class="lesson-scroll-empty">
+            <image class="lesson-scroll-empty-img"
+                   src="https://pub.file.k12.vip/tbzw/1.3/lion.png" />
+            <text class="lesson-scroll-empty-text">本周没有要学习的课程</text>
+            <view class="lesson-scroll-empty-btn-wrap">
+              <view class="lesson-scroll-empty-btn">查看我的课程</view>
+              <view class="lesson-scroll-empty-btn sub">报名更多课程</view>
+            </view>
+          </view>
+          <view class="lesson-scroll-wrap">
+            <view class="lesson-content">
+              <view class="lesson-time">
+                <text class="lesson-time-title">今日</text>
+                <text class="lesson-time-text">08月28日</text>
+              </view>
+              <view class="lesson-list">
+                <view class="lesson-item">
+                  <image class="lesson-cover" />
+                  <view class="lesson-info">
+                    <text class="lesson-title">日记里的爱与愁</text>
+                    <view class="lesson-footer">
+                      <text class="lesson-num">233人已学</text>
+                      <view class="lesson-btn">开始学习</view>
+                    </view>
+                  </view>
+                </view>
+                <view class="lesson-item">
+                  <image class="lesson-cover" />
+                  <view class="lesson-info">
+                    <text class="lesson-title">日记里的爱与愁</text>
+                    <view class="lesson-footer">
+                      <text class="lesson-num">233人已学</text>
+                      <view class="lesson-btn">开始学习</view>
+                    </view>
+                  </view>
+                </view>
+              </view>
+            </view>
+            <view class="lesson-content">
+              <view class="lesson-time">
+                <text class="lesson-time-title">今日</text>
+                <text class="lesson-time-text">08月28日</text>
+              </view>
+              <view class="lesson-list">
+                <view class="lesson-item">
+                  <image class="lesson-cover" />
+                  <view class="lesson-info">
+                    <text class="lesson-title">日记里的爱与愁</text>
+                    <view class="lesson-footer">
+                      <text class="lesson-num">233人已学</text>
+                      <view class="lesson-btn">开始学习</view>
+                    </view>
+                  </view>
+                </view>
+                <view class="lesson-item">
+                  <image class="lesson-cover" />
+                  <view class="lesson-info">
+                    <text class="lesson-title">日记里的爱与愁</text>
+                    <view class="lesson-footer">
+                      <text class="lesson-num">233人已学</text>
+                      <view class="lesson-btn">开始学习</view>
+                    </view>
+                  </view>
+                </view>
+              </view>
+            </view>
+          </view>
+        </scroll-view>
+      </view>
+
+    </view>
+    <van-tabbar active="1"
+                active-color="#58422B"
+                bind:change="onChangeTabbar">
+      <van-tabbar-item>
+        <image slot="icon"
+               src="../assets/image/home-def.png"
+               mode="aspectFit" />
+        <image slot="icon-active"
+               src="../assets/image/home-pre.png"
+               mode="aspectFit" />
+        首页
+      </van-tabbar-item>
+      <van-tabbar-item>
+        <image slot="icon"
+               src="../assets/image/sk-def.png"
+               mode="aspectFit" />
+        <image slot="icon-active"
+               src="../assets/image/sk-pre.png"
+               mode="aspectFit" />
+        上课
+      </van-tabbar-item>
+      <van-tabbar-item>
+        <image slot="icon"
+               src="../assets/image/serve-def.png"
+               mode="aspectFit" />
+        <image slot="icon-active"
+               src="../assets/image/serve-pre.png"
+               mode="aspectFit" />
+        服务
+      </van-tabbar-item>
+      <van-tabbar-item>
+        <image slot="icon"
+               src="../assets/image/my-def.png"
+               mode="aspectFit" />
+        <image slot="icon-active"
+               src="../assets/image/my-pre.png"
+               mode="aspectFit" />
+        我的
+      </van-tabbar-item>
+    </van-tabbar>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import dayjs from 'dayjs'
+import CourseItem from '../components/courseItem'
+import mHeader from '../components/header'
+
+export default class Index extends wepy.page {
+  config = {
+    navigationBarTitleText: '我的课程',
+    usingComponents: {
+      'van-tabbar': '../vant/tabbar/index',
+      'van-tabbar-item': '../vant/tabbar-item/index'
+    }
+  }
+
+  components = {
+    CourseItem,
+    mHeader
+  }
+
+  data = {
+    isBuy: false,
+    query: null,
+    level: 1,
+    scrollTop: 0,
+    todayScrollTop: 0,
+    catalogData: {},
+    titleScrollTopArr: []
+  }
+
+  computed = {
+    height () {
+      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+    },
+    today () {
+      return dayjs(new Date()).format('MM月DD日')
+    }
+  };
+
+  watch = {
+    scrollTop (n) {
+      let { titleScrollTopArr } = this
+      if (n === titleScrollTopArr[0] || n < titleScrollTopArr[1]) {
+        this.level = 1
+      }
+      if (n >= titleScrollTopArr[1] && n < titleScrollTopArr[2]) {
+        this.level = 2
+      }
+      if (n >= titleScrollTopArr[2] && n < titleScrollTopArr[3]) {
+        this.level = 3
+      }
+      if (n >= titleScrollTopArr[3]) {
+        this.level = 4
+      }
+    }
+  }
+
+  methods = {
+    bindClickBtn (lesson) {
+      if (!lesson.stage) {
+        if (lesson.studyStatus !== 4) {
+          wx.navigateTo({ url: '/pages/classroom?id=' + lesson.lessonId })
+        } else {
+          wx.showToast({
+            title: '课程尚未开始，先看看其他课程吧！', // 提示的内容,
+            icon: 'none', // 图标,
+            duration: 2000, // 延迟时间,
+            mask: true
+          })
+        }
+      } else if (lesson.stage === 1) {
+        wx.navigateTo({ url: '/pages/study?id=' + lesson.lessonId })
+      } else if (lesson.stage === 2) {
+        wx.navigateTo({ url: '/pages/test?id=' + lesson.lessonId })
+      } else {
+        wx.navigateTo({ url: '/user/submitHomework?id=' + lesson.lessonId })
+      }
+    },
+    bindScroll (event) {
+      let { scrollTop } = event.detail
+      this.scrollTop = scrollTop
+    }
+  }
+
+  events = {
+    'tap-btn' (num) {
+      wx.navigateTo({ url: '/pages/classroom' })
+    },
+    back () {
+      wx.redirectTo({ url: '/pages/index' })
+    }
+  }
+  // 获取课程目录
+  getCourseCatalog () {
+    let { api } = this.$parent.globalData
+    api.course.getCourseCatalog().then(({ data }) => {
+      let __data = data.resultData
+      __data.lessonInfos.forEach((e, i) => {
+        e.lessonInfoList = e.lessonInfoList.map(el => {
+          el.statusText = el.studyStatus === 1 ? '去补课' : el.studyStatus === 2 ? '去上课' : el.studyStatus === 3 ? '交作业' : el.studyStatus === 4 ? '待开课' : '回看'
+          el.schedulingTime = dayjs(new Date(el.schedulingTime)).format('MM月DD日')
+          return el
+        })
+      })
+      this.catalogData = __data
+      setTimeout(() => {
+        this.getInfoHeight()
+        this.catalogData.lessonInfos.forEach((e, i) => {
+          let id = `#title${i + 1}`
+          this.getTitleScrollTop(id)
+        })
+        this.getTodayScrollTop()
+      }, 500)
+      this.$apply()
+    })
+  }
+
+  getTodayScrollTop () {
+    let query = wx.createSelectorQuery()
+    query.select('#sk').boundingClientRect()
+    query.selectViewport().scrollOffset()
+    query.exec((res) => {
+      if (res[0]) {
+        this.todayScrollTop = res[0].top - this.height - this.infoHeight - 60
+        this.$apply()
+      }
+    })
+  }
+
+  getTitleScrollTop (str) {
+    let query = wx.createSelectorQuery()
+    query.select(str).boundingClientRect()
+    query.selectViewport().scrollOffset()
+    query.exec((res) => {
+      this.titleScrollTopArr = [...this.titleScrollTopArr, res[0].top - this.height - this.infoHeight]
+      this.$apply()
+    })
+  }
+
+  getInfoHeight () {
+    let query = wx.createSelectorQuery()
+    query.select('#info').boundingClientRect()
+    query.selectViewport().scrollOffset()
+    query.exec((res) => {
+      this.infoHeight = res[0].height
+      this.$apply()
+    })
+  }
+
+  onShow () {
+    this.getCourseCatalog()
+  }
+
+  onHide () {
+    this.todayScrollTop = 0
+  }
+  onUnload () {
+    this.todayScrollTop = 0
+  }
+  onShareAppMessage () {
+    return {
+      title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
+      path: `/pages/index`,
+      imageUrl: 'https://pub.file.k12.vip/tbzw/v2/logo2.png'
+    }
+  }
+}
+</script>
+<style lang="scss">
+@import '../assets/style/mixin.scss';
+.lesson {
+  position: relative;
+  color: #58422b;
+  &-content {
+    padding: 0 32px;
+    display: flex;
+  }
+  &-time {
+    display: flex;
+    flex-direction: column;
+    margin-right: 31px;
+    &-title {
+      margin-bottom: 19px;
+      font-size: 33px;
+      line-height: 33px;
+      font-weight: bold;
+      color: #474958;
+    }
+    &-text {
+      font-size: 20px;
+      color: #a8a8af;
+    }
+  }
+  &-list {
+    flex: 1;
+  }
+  &-item {
+    margin-bottom: 27px;
+    display: flex;
+    width: 100%;
+  }
+  &-cover {
+    margin-right: 33px;
+    width: 160px;
+    height: 200px;
+    border-radius: 20px;
+    background-color: #ccc;
+  }
+  &-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-right: 16px;
+  }
+  &-title {
+    margin-top: 20px;
+    font-size: 32px;
+    line-height: 32px;
+  }
+  &-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  &-num {
+    font-size: 24px;
+    color: #a8a8af;
+  }
+  &-btn {
+    @include flex-center;
+    width: 167px;
+    height: 53px;
+    font-size: 28px;
+    color: #fff;
+    font-weight: bold;
+    background: linear-gradient(
+      -37deg,
+      rgba(67, 155, 255, 1),
+      rgba(71, 132, 255, 1)
+    );
+    box-shadow: 0px 8px 8px 0px rgba(82, 136, 255, 0.4);
+    border-radius: 27px;
+  }
+  .empty {
+    @include flex-column-center;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    &-title {
+      align-self: flex-start;
+      margin-top: 20px;
+      margin-left: 32px;
+      margin-bottom: 18px;
+      font-size: 40px;
+      font-weight: bold;
+      color: #474958;
+    }
+    &-text {
+      margin-left: 32px;
+      align-self: flex-start;
+      margin-bottom: 55px;
+      font-size: 28px;
+      color: #a8a8af;
+    }
+    &-btn {
+      margin-bottom: 107px;
+      width: 685px;
+      height: 343px;
+      border-radius: 27px;
+      background-color: #ccc;
+    }
+  }
+  &-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 20px;
+    padding: 0 32px;
+    height: 53px;
+  }
+  &-all {
+    display: flex;
+    align-items: center;
+    font-size: 32px;
+    color: #a8a8af;
+    font-weight: bold;
+    &-icon {
+      margin-left: 12px;
+      width: 13px;
+      height: 23px;
+      background: url('https://pub.file.k12.vip/tbzw/course/my-icon-arrow.png')
+        no-repeat;
+      background-size: 100%;
+    }
+  }
+  &-tab {
+    display: flex;
+    align-items: center;
+    &-item {
+      @include flex-center;
+      margin-right: 22px;
+      width: 167px;
+      height: 53px;
+      font-size: 27px;
+      color: #fff;
+      font-weight: bold;
+      background-color: #dbd9e2;
+      border-radius: 7px;
+      &.active {
+        background: linear-gradient(
+          -37deg,
+          rgba(46, 110, 255, 1),
+          rgba(67, 129, 255, 1)
+        );
+      }
+    }
+  }
+  &-scroll-wrap {
+    padding-top: 53px;
+    padding-bottom: 120px;
+  }
+  &-scroll {
+    position: relative;
+    &-empty {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      background-color: #fff;
+      &-img {
+        margin-top: 248px;
+        margin-bottom: 51px;
+        width: 401px;
+        height: 401px;
+      }
+      &-text {
+        font-size: 32px;
+        color: #333;
+      }
+      &-btn {
+        @include flex-center;
+        margin: 0 22px;
+        width: 267px;
+        height: 73px;
+        font-size: 32px;
+        color: #fff;
+        background: linear-gradient(
+          -37deg,
+          rgba(255, 142, 74, 1),
+          rgba(255, 122, 50, 1)
+        );
+        box-shadow: 0px 8px 8px 0px rgba(255, 122, 50, 0.4);
+        border-radius: 37px;
+        &.sub {
+          background: linear-gradient(
+            -37deg,
+            rgba(255, 192, 0, 1),
+            rgba(254, 179, 18, 1)
+          );
+          box-shadow: 0px 5px 5px 0px rgba(255, 181, 76, 0.4);
+        }
+        &-wrap {
+          @include flex-center;
+          margin-top: 39px;
+        }
+      }
+    }
+  }
+}
+</style>

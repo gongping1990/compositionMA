@@ -4,113 +4,173 @@
     <mHeader flag="0"></mHeader>
     <view class="container-scroll"
           style="margin-top:{{height}}px">
-      <view class="header">
-        <image class="avatar"
-               src="{{userInfo.headimgurl}}" />
-        <view class="header-right">
-          <text class="subtitle">欢迎来到小语轻作文，</text>
-          <text class="title">{{!infoData.startStudy ? infoData.startTime + '记得来上课哦' : '赶快开始今天的学习吧'}}</text>
-        </view>
-      </view>
-      <view class="no-swiper"
-            wx:if="{{empty}}">
-        <view class="swiper-item active">
-          <view class="no-swiper-img"></view>
-          <text class="no-swiper-text">真棒，你已学完了全部作文课程！</text>
-          <button class="swiper-btn"
-                  @tap="bindClickMoreLesson">课程回看</button>
-        </view>
-      </view>
-      <view class="swiper"
-            wx:if="{{!empty}}">
-        <view class="swiper-item active"
-              wx:if="{{infoListData.id}}">
-          <view class="swiper-cover {{infoListData.type == 2 && 'sc'}}"
-                @tap="bindClickCover">
-            <view class="swiper-cover-tag">小班课</view>
-            <view class="swiper-cover-popup"
-                  wx:if="{{infoListData.expLesson}}"></view>
-            <image src="{{infoListData.coverphoto}}"
-                   class="swiper-cover-image" />
-          </view>
-          <view class="swiper-title">{{infoListData.lessonSort + '.' + infoListData.name}}</view>
-          <view class="swiper-subtitle">
-            小语轻作文 Level {{infoListData.grade - 2}}
-            <text class="swiper-subtitle-text"
-                  wx:if="{{infoListData.expLesson}}">体验课</text>
-          </view>
-          <button class="swiper-btn {{!infoData.startStudy && 'disabled'}}"
-                  @tap="bindClickCover"
-                  wx:if="{{infoListData.finished && infoListData.expLesson}}">升级课程</button>
-          <button class="swiper-btn {{!infoData.startStudy && 'disabled'}}"
-                  @tap="bindClickStudyStart()"
-                  disabled="{{!infoData.startStudy}}"
-                  wx:elif="{{infoListData.studyStatus != 5}}">{{!infoData.startStudy ? infoData.startTime + '开课' : btnText}}</button>
-          <button class="swiper-btn line "
-                  @tap="bindClickBtn({{3}})"
-                  wx:if="{{infoListData.status == 2 }}">
-            课程回看
-            <text class="swiper-btn-tag"
-                  wx:if="{{infoListData.studyStatus != 5}}">{{tagText}}</text>
-          </button>
-        </view>
-      </view>
-      <view class="message"
-            wx:if="{{broadcastList.length}}">
-        <view class="message-icon"></view>
-        <swiper class="message-swiper"
-                autoplay
-                vertical="{{true}}"
-                circular>
-          <block wx:for="{{broadcastList}}"
-                 wx:key="{{item.id}}">
-            <swiper-item class="message-text">
-              {{item.content}}
-            </swiper-item>
-          </block>
-        </swiper>
+      <view class="banner">
 
       </view>
-
+      <view class="title-item">
+        <text class="title-text">大语文精品课</text>
+      </view>
+      <view class="course-item">
+        <image src=""
+               class="course-cover"
+               lazy-load="true" />
+        <view class="course-right">
+          <view class="course-info">
+            <text class="course-title">小语轻作文</text>
+            <text class="course-text">每天5-8分钟，听北京师范大学老师讲小学必备130首古诗文</text>
+          </view>
+          <view class="course-btn-wrap">
+            <button class="course-btn">
+              去报名
+            </button>
+          </view>
+        </view>
+      </view>
+      <view class="title-item">
+        <view class="title-text">大语文精品课<view class="title-tag">规则</view>
+        </view>
+        <view class="title-tabs">
+          <view class="title-tabs-item active">最新佳作</view>
+          <view class="title-tabs-item">最新佳作</view>
+        </view>
+      </view>
+      <view class="work-list">
+        <view class="work-item">
+          <view class="work-cover">
+            <view class="work-time">42分钟前</view>
+            <image class="work-img"
+                   lazy-load="false" />
+          </view>
+          <view class="work-num">
+            <image class="work-num-icon"
+                   src="../assets/image/num-icon.png" />
+            <text class="work-num-text">累计表扬23次</text>
+          </view>
+          <view class="work-footer">
+            <view class="work-user">
+              <image class="work-user-avatar"
+                     src='' />
+              <text class="work-user-name">小米粥</text>
+            </view>
+            <view class="work-like">
+              <image class="work-like-icon"
+                     src="../assets/image/like.png" />
+              <text class="work-like-num">256</text>
+            </view>
+          </view>
+        </view>
+        <view class="work-item">
+          <view class="work-cover">
+            <view class="work-time">42分钟前</view>
+            <image class="work-img"
+                   lazy-load="false" />
+          </view>
+          <view class="work-num">
+            <image class="work-num-icon"
+                   src="../assets/image/num-icon.png" />
+            <text class="work-num-text">累计表扬23次</text>
+          </view>
+          <view class="work-footer">
+            <view class="work-user">
+              <image class="work-user-avatar"
+                     src='' />
+              <text class="work-user-name">小米粥</text>
+            </view>
+            <view class="work-like">
+              <image class="work-like-icon"
+                     src="../assets/image/like.png" />
+              <text class="work-like-num">256</text>
+            </view>
+          </view>
+        </view>
+        <view class="work-item">
+          <view class="work-cover">
+            <view class="work-time">42分钟前</view>
+            <image class="work-img"
+                   lazy-load="false" />
+          </view>
+          <view class="work-num">
+            <image class="work-num-icon"
+                   src="../assets/image/num-icon.png" />
+            <text class="work-num-text">累计表扬23次</text>
+          </view>
+          <view class="work-footer">
+            <view class="work-user">
+              <image class="work-user-avatar"
+                     src='' />
+              <text class="work-user-name">小米粥</text>
+            </view>
+            <view class="work-like">
+              <image class="work-like-icon"
+                     src="../assets/image/like.png" />
+              <text class="work-like-num">256</text>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="hot">
+        <view class="hot-banner">
+          <view class="hot-icon"></view>
+          <view class="hot-banner-left">
+            <image class="hot-user-avatar" />
+            <text class="hot-user-name"></text>
+            <text class="hot-user-text"></text>
+            <view class="hot-user-footer">
+              <view class="hot-user-by">
+                <view class="hot-user-by-icon"></view>
+                <text class="hot-user-by-text"></text>
+              </view>
+              <view class="hot-user-like">
+                <view class="hot-user-like-icon"></view>
+                <text class="hot-user-like-text"></text>
+              </view>
+            </view>
+          </view>
+          <view class="hot-banner-right">
+            <view class="hot-time"></view>
+            <image class="hot-cover" />
+          </view>
+        </view>
+      </view>
     </view>
     <van-tabbar active="0"
                 active-color="#58422B"
                 bind:change="onChangeTabbar">
       <van-tabbar-item>
         <image slot="icon"
-               src="../assets/image/icon-jrxx.png"
+               src="../assets/image/home-def.png"
                mode="aspectFit" />
         <image slot="icon-active"
-               src="../assets/image/icon-jrxx1.png"
+               src="../assets/image/home-pre.png"
                mode="aspectFit" />
-        今日学习
+        首页
       </van-tabbar-item>
       <van-tabbar-item>
         <image slot="icon"
-               src="../assets/image/icon-zpbz.png"
+               src="../assets/image/sk-def.png"
                mode="aspectFit" />
         <image slot="icon-active"
-               src="../assets/image/icon-zpbz1.png"
+               src="../assets/image/sk-pre.png"
                mode="aspectFit" />
-        作品表彰
+        上课
       </van-tabbar-item>
       <van-tabbar-item dot="{{remindData.todaycard}}">
         <image slot="icon"
-               src="../assets/image/icon-dkjl.png"
+               src="../assets/image/serve-def.png"
                mode="aspectFit" />
         <image slot="icon-active"
-               src="../assets/image/icon-dkjl1.png"
+               src="../assets/image/serve-pre.png"
                mode="aspectFit" />
-        打卡记录
+        服务
       </van-tabbar-item>
       <van-tabbar-item dot="{{remindData.uctip}}">
         <image slot="icon"
-               src="../assets/image/icon-grzx.png"
+               src="../assets/image/my-def.png"
                mode="aspectFit" />
         <image slot="icon-active"
-               src="../assets/image/icon-grzx1.png"
+               src="../assets/image/my-pre.png"
                mode="aspectFit" />
-        个人中心
+        我的
       </van-tabbar-item>
     </van-tabbar>
     <van-popup show="{{ show }}"
@@ -186,7 +246,8 @@ export default class Home extends wepy.page {
     swiperActive: 0,
     selectItem: {},
     awardsInfo: {},
-    selectTime: 0
+    selectTime: 0,
+    reloadStatus: false
   };
   mixins = [testMixin]
   components = {
@@ -234,7 +295,7 @@ export default class Home extends wepy.page {
     },
     bindPerfect () {
       this.show = false
-      wx.navigateTo({ url: '/pages/address' })
+      wx.navigateTo({ url: '/user/address' })
     },
     onClose () {
       this.show = false
@@ -248,16 +309,6 @@ export default class Home extends wepy.page {
 
     changePopupStatus () {
       this.showPraise = false
-    }
-  };
-  watch = {
-    userInfo (n) {
-      if (n.id || n.userId) {
-        this.initPage()
-        if (this.getUCRemindVOL) {
-          this.getUCRemindVOL()
-        }
-      }
     }
   };
   computed = {
@@ -295,9 +346,6 @@ export default class Home extends wepy.page {
 
   // 获取首页信息
   getHomePageInfo () {
-    wx.showLoading({
-      title: '加载中...'
-    })
     let { api } = this.$parent.globalData
     api.course.getHomePageInfo().then(({ data }) => {
       wx.hideLoading()
@@ -312,6 +360,7 @@ export default class Home extends wepy.page {
       }
       this.showPraise = this.infoData.awardsPop
       this.awardsInfo = this.infoData.awardsInfo
+      this.reloadStatus = false
       this.$apply()
     })
   }
@@ -334,10 +383,21 @@ export default class Home extends wepy.page {
     })
   }
 
-  onShow () {
+  reLoad () {
     if (this.userInfo.id || this.userInfo.userId) {
       this.initPage()
+    } else {
+      setTimeout(() => {
+        this.reLoad()
+      }, 1000)
     }
+  }
+
+  onShow () {
+    wx.showLoading({
+      title: '加载中...'
+    })
+    this.reLoad()
   };
 
   onShareAppMessage () {
@@ -353,6 +413,286 @@ export default class Home extends wepy.page {
 @import '../assets/style/mixin.scss';
 .home {
   position: relative;
+  .container-scroll {
+    padding: 32px;
+    padding-bottom: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .hot {
+    &-banner {
+      @include flex-center;
+      position: relative;
+      width: 686px;
+      height: 493px;
+      background: linear-gradient(
+        -37deg,
+        rgba(255, 192, 0, 1),
+        rgba(254, 179, 18, 1)
+      );
+      box-shadow: 0px 8px 8px 0px rgba(255, 181, 76, 0.4);
+      border-radius: 27px;
+      &-left {
+        @include flex-column-center;
+      }
+    }
+    &-user {
+      &-avatar {
+        margin-bottom: 23px;
+        width: 107px;
+        height: 107px;
+        background: rgba(0, 0, 0, 1);
+        box-shadow: 0px 13px 13px 0px rgba(255, 122, 50, 0.2);
+        border-radius: 50%;
+      }
+      &-name {
+        margin-bottom: 31px;
+        font-size: 32px;
+        font-weight: bold;
+        color: rgba(51, 51, 51, 1);
+        line-height: 30px;
+      }
+    }
+    &-icon {
+      position: absolute;
+      width: 137px;
+      height: 169px;
+      background: url('https://pub.file.k12.vip/tbzw/1.3/no1.png') no-repeat;
+      background-size: 100%;
+    }
+  }
+  .work {
+    &-list {
+      display: flex;
+      flex-wrap: wrap;
+      width: 100%;
+    }
+    &-item {
+      box-sizing: border-box;
+      padding: 27px;
+      margin-bottom: 35px;
+      width: 325px;
+      height: 493px;
+      background: rgba(255, 255, 255, 1);
+      box-shadow: 0px 0px 27px 0px rgba(182, 183, 206, 0.4);
+      border-radius: 27px;
+      &:nth-child(2n) {
+        margin-left: 35px;
+      }
+    }
+    &-cover {
+      position: relative;
+      margin-bottom: 29px;
+      width: 272px;
+      height: 334px;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+    &-num {
+      display: flex;
+      align-items: center;
+      margin-bottom: 23px;
+      font-size: 24px;
+      font-weight: 500;
+      color: #333333;
+      &-icon {
+        margin-right: 12px;
+        width: 23px;
+        height: 29px;
+      }
+      &-text {
+        font-size: 24px;
+        color: #333;
+      }
+    }
+    &-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    &-user {
+      display: flex;
+      align-items: center;
+      &-avatar {
+        margin-right: 15px;
+        width: 31px;
+        height: 31px;
+        border-radius: 50%;
+      }
+      &-name {
+        font-size: 21px;
+        font-weight: 500;
+      }
+    }
+    &-like {
+      display: flex;
+      align-items: flex-end;
+      &-icon {
+        margin-right: 10px;
+        width: 26px;
+        height: 27px;
+      }
+      &-num {
+        font-size: 21px;
+        line-height: 20px;
+        color: #999999;
+      }
+    }
+    &-time {
+      @include flex-center;
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      padding: 0 10px;
+      height: 40px;
+      font-size: 16px;
+      color: #fff;
+      background: rgba(0, 0, 0, 0.5);
+      opacity: 0.4;
+      border-radius: 9px;
+    }
+    &-img {
+      width: 272px;
+      height: 334px;
+      background-color: #ccc;
+    }
+  }
+  .banner {
+    width: 686px;
+    height: 300px;
+    border-radius: 27px;
+    background: #ccc;
+  }
+  .title {
+    &-item {
+      @include flex-center;
+      justify-content: space-between;
+      width: 100%;
+      margin-top: 62px;
+      margin-bottom: 34px;
+    }
+    &-text {
+      @include flex-center;
+      font-size: 40px;
+      color: #474958;
+      font-weight: bold;
+    }
+    &-tag {
+      @include flex-center;
+      margin-left: 11px;
+      width: 47px;
+      height: 35px;
+      font-size: 16px;
+      color: #fff;
+      background: linear-gradient(
+        -42deg,
+        rgba(255, 111, 40, 1),
+        rgba(255, 82, 69, 1)
+      );
+      border-radius: 17px 17px 17px 0px;
+    }
+    &-tabs {
+      display: flex;
+      width: 307px;
+      height: 53px;
+      background: rgba(255, 223, 205, 1);
+      border-radius: 27px;
+      &-item {
+        @include flex-center;
+        flex: 1;
+        font-size: 27px;
+        color: #4e505e;
+        &.active {
+          font-weight: bold;
+          color: #fff;
+          background: rgba(255, 122, 50, 1);
+          box-shadow: 2px 2px 13px 0px rgba(255, 122, 50, 0.4);
+          border-radius: 27px;
+        }
+      }
+    }
+  }
+  .course {
+    &-item {
+      display: flex;
+    }
+    &-cover {
+      position: relative;
+      margin-right: 31px;
+      width: 180px;
+      height: 213px;
+      border-radius: 20px;
+      background-color: #ccc;
+      &-img {
+        width: 180px;
+        height: 213px;
+      }
+      &-tag {
+        @include flex-center;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 88px;
+        height: 33px;
+        font-size: 18px;
+        color: #fff;
+        background: linear-gradient(
+          -42deg,
+          rgba(255, 111, 40, 1),
+          rgba(255, 82, 69, 1)
+        );
+        border-radius: 20px 0px 20px 0px;
+      }
+    }
+    &-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: space-between;
+      flex: 1;
+    }
+    &-title {
+      display: block;
+      margin-top: 20px;
+      margin-bottom: 14px;
+      font-size: 32px;
+      line-height: 32px;
+      font-weight: 500;
+      color: #474958;
+    }
+    &-text {
+      @include line-clamp;
+      font-size: 25px;
+      line-height: 30px;
+      color: #a8a8af;
+    }
+    &-btn {
+      &-wrap {
+        align-self: flex-end;
+      }
+      @include flex-center;
+      width: 133px;
+      height: 53px;
+      font-size: 23px;
+      color: #fff;
+      background: linear-gradient(
+        -37deg,
+        rgba(255, 192, 0, 1),
+        rgba(254, 179, 18, 1)
+      );
+      box-shadow: 0px 8px 8px 0px rgba(255, 181, 76, 0.4);
+      border-radius: 27px;
+      &.success {
+        background: linear-gradient(
+          -37deg,
+          rgba(15, 218, 130, 1),
+          rgba(0, 209, 118, 1)
+        );
+        box-shadow: 0px 8px 8px 0px rgba(63, 211, 147, 0.4);
+      }
+    }
+  }
   .kf-pop {
     @include flex-column-center;
     padding: 16px 24px;
@@ -499,22 +839,6 @@ export default class Home extends wepy.page {
       }
     }
   }
-  .no-swiper {
-    @include flex-center;
-    align-items: flex-start;
-    &-img {
-      @include bg('/v2/empty.png');
-      margin-top: 126px;
-      margin-bottom: 24px;
-      width: 332px;
-      height: 208px;
-    }
-    &-text {
-      margin-bottom: 82px;
-      font-size: 28px;
-      color: rgba($color: #58422b, $alpha: 0.5);
-    }
-  }
   .subscribe {
     @include flex-column-center;
     padding: 32px 40px;
@@ -590,11 +914,7 @@ export default class Home extends wepy.page {
       transform: translate(-50%, -50%);
     }
   }
-  .container-scroll {
-    @include bg('/jrxx/backgroud.png');
-    min-height: calc(100vh - 66px);
-    background-position-y: -120rpx;
-  }
+
   .message {
     @include flex-center;
     margin: 24px 32px;
@@ -613,176 +933,6 @@ export default class Home extends wepy.page {
     &-text {
       font-size: 26px;
       color: #58422b;
-    }
-  }
-  .header {
-    @include flex-center;
-    padding: 24px;
-    margin-bottom: 20px;
-    .avatar {
-      margin-right: 20px;
-      width: 72px;
-      height: 72px;
-      box-shadow: 0px 0px 40px 0px rgba(235, 171, 5, 1);
-      border-radius: 50%;
-      border: 4px solid rgba(255, 255, 255, 1);
-    }
-    &-right {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      flex: 1;
-    }
-    .title {
-      font-size: 28px;
-      color: #58422b;
-    }
-    .subtitle {
-      font-size: 24px;
-      color: rgba($color: #58422b, $alpha: 0.5);
-    }
-  }
-  .swiper {
-    @include flex-center;
-    align-items: flex-start;
-    width: 100%;
-    &-btn {
-      @include flex-center;
-      position: relative;
-      box-sizing: border-box;
-      width: 470px;
-      height: 100px;
-      font-size: 32px;
-      color: #58422b;
-      background: linear-gradient(
-        90deg,
-        rgba(249, 230, 11, 1) 0%,
-        rgba(253, 219, 85, 1) 100%
-      );
-      box-shadow: 0px 8px 16px 4px rgba(230, 194, 81, 0.4);
-      border-radius: 50px;
-      border: 3px solid #fcdd47;
-      &.line {
-        margin-top: 32px;
-        color: rgba($color: #58422b, $alpha: 0.5);
-        background: #fff;
-        box-shadow: none;
-        border: 3px solid rgba(61, 53, 45, 0.1);
-      }
-      &.yy {
-        color: #fff;
-        background: linear-gradient(
-          180deg,
-          rgba(61, 208, 255, 1) 0%,
-          rgba(17, 189, 244, 1) 100%
-        );
-        box-shadow: 0px 8px 16px 4px rgba(62, 181, 211, 0.3);
-        border-color: rgba(62, 181, 211, 0.3);
-      }
-      &.disabled {
-        color: rgba($color: #58422b, $alpha: 0.3);
-        background: #f2f2f2;
-        border-color: #f2f2f2;
-        box-shadow: none;
-      }
-      &-tag {
-        @include flex-center;
-        position: absolute;
-        right: 42px;
-        top: 16px;
-        width: 120px;
-        height: 36px;
-        font-size: 20px;
-        color: #fff;
-        background: rgba(255, 124, 118, 1);
-        border-radius: 200px 200px 200px 0px;
-      }
-    }
-    &-title {
-      @include text-overflow;
-      width: 100%;
-      margin-bottom: 8px;
-      font-size: 40px;
-      text-align: center;
-      color: #58422b;
-      line-height: 56px;
-    }
-    &-subtitle {
-      @include flex-center;
-      margin-bottom: 18px;
-      font-size: 28px;
-      color: rgba($color: #58422b, $alpha: 0.5);
-      &-text {
-        @include flex-center;
-        margin-left: 8px;
-        width: 84px;
-        height: 36px;
-        font-size: 20px;
-        color: #39dda9;
-        border-radius: 12px;
-        border: 2px solid rgba(57, 221, 169, 1);
-      }
-    }
-    &-cover {
-      position: relative;
-      margin-bottom: 32px;
-      &-popup {
-        @include bg('/jrxx/btn-login.png');
-        position: absolute;
-        top: -10px;
-        right: -114px;
-        width: 144px;
-        height: 118px;
-      }
-      &-image {
-        width: 284px;
-        height: 376px;
-        border-radius: 16px;
-        border: 4px solid rgba(255, 124, 118, 0.9);
-      }
-      &-tag {
-        @include flex-center;
-        position: absolute;
-        left: 0;
-        top: 0;
-        padding: 0 16px;
-        height: 68px;
-        font-size: 32px;
-        color: #fff;
-        background: rgba(255, 124, 118, 0.9);
-        border-radius: 16px 0px 32px 0px;
-      }
-      &.sc {
-        .swiper-cover-image {
-          background: rgba(61, 203, 255, 0.9);
-        }
-        .swiper-cover-tag {
-          background: rgba(61, 203, 255, 0.9);
-        }
-      }
-    }
-    &-wrap {
-      width: 100%;
-      height: 924px;
-    }
-    &-item {
-      @include flex-column-center;
-      justify-content: flex-start;
-      box-sizing: border-box;
-      margin: 20px 15px;
-      padding: 38px;
-      padding-bottom: 0;
-      width: 584px;
-      height: 884px;
-      background: rgba(255, 255, 255, 1);
-      box-shadow: 0px 0px 24px 0px rgba(236, 194, 96, 0.24);
-      border-radius: 32px;
-      transform: scale(0.93);
-      transition: all 0.5s;
-      transform-origin: center bottom;
-      &.active {
-        transform: scale(1);
-      }
     }
   }
 }

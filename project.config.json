@@ -52,8 +52,8 @@
 			"list": [
 				{
 					"id": 0,
-					"name": "classroom",
-					"pathName": "pages/login",
+					"name": "lesson",
+					"pathName": "pages/user",
 					"query": "id=1138721381526679554&lookback=1",
 					"scene": null
 				},

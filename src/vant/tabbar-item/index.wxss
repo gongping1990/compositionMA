@@ -1,11 +1,11 @@
 @import '../common/index.wxss';
 :host {
   -webkit-flex: 1;
-  flex: 1
+  flex: 1;
 }
 
 .van-tabbar-item {
-  color: #CCC6BF;
+  color: #ccc6bf;
   height: 100%;
   display: -webkit-flex;
   display: flex;
@@ -16,12 +16,12 @@
   -webkit-flex-direction: column;
   flex-direction: column;
   -webkit-justify-content: center;
-  justify-content: center
+  justify-content: center;
 }
 
 .van-tabbar-item__icon {
   font-size: 18px;
-  position: relative
+  position: relative;
 }
 
 .van-tabbar-item__icon--dot::after {
@@ -32,15 +32,16 @@
   content: ' ';
   position: absolute;
   border-radius: 100%;
-  background-color: #f44
+  background-color: #f44;
 }
 
 .van-tabbar-item__icon image {
-  width: 32px;
-  height: 32px;
-  display: block
+  margin-bottom: 5px;
+  width: 22px;
+  height: 22px;
+  display: block;
 }
 
 .van-tabbar-item--active {
-  color: #1989fa
+  color: #1989fa;
 }

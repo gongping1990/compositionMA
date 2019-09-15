@@ -1,7 +1,8 @@
 <!--  -->
 <template>
   <view class='container card'>
-    <mHeader flag="0" title="打卡记录"></mHeader>
+    <mHeader flag="0"
+             title="打卡记录"></mHeader>
     <view class="container-scroll"
           style="margin-top:{{height}}px">
       <view class="card-header">
@@ -47,7 +48,6 @@
         </view>
       </van-popup>
 
-
       <van-popup show="{{showNoLearn}}">
         <view class="card-popup">
           <view class="card-popup-title">
@@ -56,8 +56,10 @@
           </view>
 
           <view class="card-popup-flex">
-            <button class="card-popup-btn" @tap="closePopup">稍后学习</button>
-            <button class="card-popup-btn card-popup-btn2" @tap="toLearn">立即学习</button>
+            <button class="card-popup-btn"
+                    @tap="closePopup">稍后学习</button>
+            <button class="card-popup-btn card-popup-btn2"
+                    @tap="toLearn">立即学习</button>
           </view>
 
         </view>
@@ -70,51 +72,11 @@
       </van-popup>
 
     </view>
-    <van-tabbar active="2"
-                active-color="#58422B"
-                bind:change="onChangeTabbar">
-      <van-tabbar-item>
-        <image slot="icon"
-               src="../assets/image/icon-jrxx.png"
-               mode="aspectFit" />
-        <image slot="icon-active"
-               src="../assets/image/icon-jrxx1.png"
-               mode="aspectFit" />
-        今日学习
-      </van-tabbar-item>
-      <van-tabbar-item>
-        <image slot="icon"
-               src="../assets/image/icon-zpbz.png"
-               mode="aspectFit" />
-        <image slot="icon-active"
-               src="../assets/image/icon-zpbz1.png"
-               mode="aspectFit" />
-        作品表彰
-      </van-tabbar-item>
-      <van-tabbar-item dot="{{remindData.todaycard}}">
-        <image slot="icon"
-               src="../assets/image/icon-dkjl.png"
-               mode="aspectFit" />
-        <image slot="icon-active"
-               src="../assets/image/icon-dkjl1.png"
-               mode="aspectFit" />
-        打卡记录
-      </van-tabbar-item>
-      <van-tabbar-item dot="{{remindData.uctip}}">
-        <image slot="icon"
-               src="../assets/image/icon-grzx.png"
-               mode="aspectFit" />
-        <image slot="icon-active"
-               src="../assets/image/icon-grzx1.png"
-               mode="aspectFit" />
-        个人中心
-      </van-tabbar-item>
-    </van-tabbar>
   </view>
 </template>
 <script>
 import wepy from 'wepy'
-import {connect} from 'wepy-redux'
+import { connect } from 'wepy-redux'
 import api from '../request/api'
 import dayjs from 'dayjs'
 import calendar from '../components/calendar'
@@ -133,8 +95,6 @@ export default class Example extends wepy.page {
   config = {
     navigationBarTitleText: '',
     usingComponents: {
-      'van-tabbar': '../vant/tabbar/index',
-      'van-tabbar-item': '../vant/tabbar-item/index',
       'van-popup': '../vant/popup/index'
     }
   };
@@ -199,7 +159,7 @@ export default class Example extends wepy.page {
     height () {
       return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
     },
-    todayTime() {
+    todayTime () {
       return dayjs(new Date()).format('MM月DD日')
     }
   };
@@ -208,11 +168,11 @@ export default class Example extends wepy.page {
     this.getCardInfo()
   };
 
-  onUnload() {
+  onUnload () {
     this.showNoLearn = false
   }
 
-  onHide() {
+  onHide () {
     this.showNoLearn = false
   }
 
@@ -319,8 +279,8 @@ export default class Example extends wepy.page {
     border-radius: 50px;
     &.isCard {
       box-shadow: none;
-      background:rgba(242,242,242,1);
-      color:rgba(88,66,43,0.3);
+      background: rgba(242, 242, 242, 1);
+      color: rgba(88, 66, 43, 0.3);
     }
   }
   &-day {
@@ -331,18 +291,18 @@ export default class Example extends wepy.page {
       margin-bottom: 44px;
       font-size: 32px;
       font-weight: 600;
-      color: #3B3F3C;
+      color: #3b3f3c;
     }
     &-num {
       margin-bottom: 16px;
       font-size: 36px;
       font-weight: bold;
       line-height: 50px;
-      color: #FFD129;
+      color: #ffd129;
       text {
         font-weight: normal;
         font-size: 22px;
-        color: #3B3F3C;
+        color: #3b3f3c;
       }
     }
     &-right {
@@ -365,21 +325,21 @@ export default class Example extends wepy.page {
     height: 320px;
   }
   &-popup {
-    width:590px;
-    height:366px;
-    background:rgba(255,255,255,1);
-    border-radius:32px;
+    width: 590px;
+    height: 366px;
+    background: rgba(255, 255, 255, 1);
+    border-radius: 32px;
 
     &-title {
       padding-top: 72px;
       text-align: center;
       margin: 0 auto 48px;
-      width:496px;
-      height:100px;
-      font-size:36px;
-      font-weight:500;
-      color:rgba(88,66,43,1);
-      line-height:50px;
+      width: 496px;
+      height: 100px;
+      font-size: 36px;
+      font-weight: 500;
+      color: rgba(88, 66, 43, 1);
+      line-height: 50px;
     }
 
     &-flex {
@@ -391,24 +351,27 @@ export default class Example extends wepy.page {
 
     &-btn {
       text-align: center;
-      width:224px;
-      height:76px;
-      border-radius:40px;
-      border:2px solid rgba(88,66,43,0.1);
-      font-size:32px;
-      font-weight:400;
-      color:rgba(88,66,43,0.5);
-      line-height:76px;
+      width: 224px;
+      height: 76px;
+      border-radius: 40px;
+      border: 2px solid rgba(88, 66, 43, 0.1);
+      font-size: 32px;
+      font-weight: 400;
+      color: rgba(88, 66, 43, 0.5);
+      line-height: 76px;
     }
 
     &-btn2 {
       border: none;
-      background:linear-gradient(90deg,rgba(249,230,11,1) 0%,rgba(253,219,85,1) 100%);
-      box-shadow:0px 8px 16px 4px rgba(230,194,81,0.4);
-      font-weight:500;
-      color:rgba(70,65,60,1);
+      background: linear-gradient(
+        90deg,
+        rgba(249, 230, 11, 1) 0%,
+        rgba(253, 219, 85, 1) 100%
+      );
+      box-shadow: 0px 8px 16px 4px rgba(230, 194, 81, 0.4);
+      font-weight: 500;
+      color: rgba(70, 65, 60, 1);
     }
-
   }
 }
 </style>

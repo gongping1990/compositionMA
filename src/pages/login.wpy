@@ -18,7 +18,7 @@
                bindinput="bindInputChange('phone')"
                type="text"
                placeholder-class="placeholder"
-               placeholder="清输入手机号码" />
+               placeholder="请输入手机号码" />
         <view class="send-code-btn {{codeTime ? 'isSend' : ''}}"
               @tap="clickSendCode"
               wx:if="{{type}}"> {{codeTime ? codeTime + 's' : '获取验证码'}}</view>

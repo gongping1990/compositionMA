@@ -29,6 +29,8 @@ export default class extends wepy.app {
   config = {
     pages: [
       'pages/index',
+      'pages/lesson',
+      'pages/server',
       'pages/login',
       'pages/resetPwd',
       'pages/card',
@@ -57,7 +59,8 @@ export default class extends wepy.app {
           'submitHomework',
           'completionOfWork',
           'uploadAudioWork',
-          'uploadImgWork'
+          'uploadImgWork',
+          'workEvaluation'
         ]
       }
     ],
@@ -122,20 +125,22 @@ export default class extends wepy.app {
         }
       }
     })
+    wepy.login().then(res => {
+      let params = {
+        code: res.code
+      }
+      api.user.wxUserLogin(params).then(({ data }) => {
+        let { resultData } = data
+        this.globalData.userInfo = resultData
+        store.dispatch({ type: 'UPDATE_USERINFO', payload: resultData })
+        if (resultData.needAuth) {
+          let url = `/pages/authorize`
+          wx.redirectTo({ url })
+        }
+      })
+    })
   }
   onShow () {
-    // api.user.loginWithPhone({
-    //   password: '123654',
-    //   phone: '13699011543'
-    // }).then(({data}) => {
-    //   let { resultData } = data
-    //   this.globalData.userInfo = resultData
-    //   store.dispatch({ type: 'UPDATE_USERINFO', payload: resultData })
-    //   if (resultData.needAuth) {
-    //     let url = `/pages/authorize`
-    //     wx.redirectTo({ url })
-    //   }
-    // })
     wepy.login().then(res => {
       let params = {
         code: res.code

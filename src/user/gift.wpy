@@ -1,0 +1,123 @@
+<!--  -->
+<template>
+  <view class='container gift'>
+    <mHeader title="我的作业"
+             bgColor="#FAFAFA"></mHeader>
+    <view class="container-scroll"
+          style="margin-top:{{height}}px">
+      <view class="gift-item">
+        <image class="gift-cover" />
+        <view class="gift-info">
+          <text class="gift-title">小语轻作文【大礼包】</text>
+          <view class="gift-btn">待领取</view>
+        </view>
+      </view>
+      <view class="gift-item">
+        <image class="gift-cover" />
+        <view class="gift-info">
+          <text class="gift-title">小语轻作文【大礼包】</text>
+          <view class="gift-btn">待领取</view>
+        </view>
+      </view>
+      <view class="gift-item">
+        <image class="gift-cover" />
+        <view class="gift-info">
+          <text class="gift-title">小语轻作文【大礼包】</text>
+          <view class="gift-btn">待领取</view>
+        </view>
+      </view>
+      <view class="gift-item">
+        <image class="gift-cover" />
+        <view class="gift-info">
+          <text class="gift-title">小语轻作文【大礼包】</text>
+          <view class="gift-btn">待领取</view>
+        </view>
+      </view>
+    </view>
+
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import mHeader from '../components/header'
+export default class Gift extends wepy.page {
+  config = {
+    navigationBarTitleText: ''
+  };
+  data = {};
+  components = {
+    mHeader
+  };
+  methods = {};
+  events = {};
+  watch = {};
+  computed = {
+    height () {
+      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+    }
+  };
+  onLoad () { };
+  onShow () { };
+}
+</script>
+<style lang='scss'>
+@import '../assets/style/mixin.scss';
+.gift {
+  &-item {
+    margin: 0 auto;
+    margin-top: 48px;
+    width: 686px;
+    height: 500px;
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0px 4px 20px 0px rgba(234, 241, 247, 0.7);
+    border-radius: 32px;
+  }
+  &-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    height: 116px;
+  }
+  &-title {
+    font-size: 32px;
+    color: #4a4a4a;
+    font-weight: 600;
+  }
+  &-btn {
+    @include flex-center;
+    box-sizing: border-box;
+    padding: 0 32px;
+    height: 64px;
+    color: #fff;
+    font-size: 28px;
+    font-weight: 500;
+    border-radius: 80px;
+    background: linear-gradient(
+      105deg,
+      rgba(255, 142, 74, 1) 0%,
+      rgba(255, 122, 50, 1) 100%
+    );
+    box-shadow: 0px 4px 10px 0px rgba(254, 182, 15, 0.45);
+    &.bm {
+      background: linear-gradient(
+        90deg,
+        rgba(255, 192, 0, 1) 0%,
+        rgba(254, 179, 18, 1) 100%
+      );
+      box-shadow: 0px 4px 10px 0px rgba(254, 182, 15, 0.45);
+    }
+    &.fh {
+      background: #fff;
+      box-shadow: none;
+      color: #ff7a32;
+      border: 1px solid rgba(255, 122, 50, 1);
+    }
+  }
+  &-cover {
+    width: 686px;
+    height: 384px;
+    border-radius: 32px 32px 0px 0px;
+  }
+}
+</style>

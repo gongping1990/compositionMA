@@ -53,7 +53,7 @@
 				{
 					"id": 0,
 					"name": "lesson",
-					"pathName": "pages/user",
+					"pathName": "user/gift",
 					"query": "id=1138721381526679554&lookback=1",
 					"scene": null
 				},

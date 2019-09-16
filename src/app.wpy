@@ -52,6 +52,9 @@ export default class extends wepy.app {
         root: 'user',
         pages: [
           'gift',
+          'myCourse',
+          'lesson',
+          'sendGood',
           'address',
           'myWork',
           'pointNotice',
@@ -98,6 +101,11 @@ export default class extends wepy.app {
       audioContext.src = `https://pub.file.k12.vip/tbzw/v2/sound/sound_${index}.mp3`
       audioContext.stop()
       audioContext.play()
+    },
+    checkLogined () {
+      api.user.checkLogined().then(({ data }) => {
+        store.dispatch({ type: 'CHANGE_LOGIN_STATUS', payload: data.resultData })
+      })
     }
   }
 
@@ -126,39 +134,9 @@ export default class extends wepy.app {
         }
       }
     })
-    wepy.login().then(res => {
-      let params = {
-        code: res.code
-      }
-      api.user.wxUserLogin(params).then(({ data }) => {
-        let { resultData } = data
-        this.globalData.userInfo = resultData
-        store.dispatch({ type: 'UPDATE_USERINFO', payload: resultData })
-        if (resultData.needAuth) {
-          let url = `/pages/authorize`
-          wx.redirectTo({ url })
-        }
-      })
-    })
   }
   onShow () {
-    wepy.login().then(res => {
-      let params = {
-        code: res.code
-      }
-      api.user.wxUserLogin(params).then(({ data }) => {
-        let { resultData } = data
-        this.globalData.userInfo = resultData
-        store.dispatch({ type: 'UPDATE_USERINFO', payload: resultData })
-        if (resultData.needAuth) {
-          let url = `/pages/authorize`
-          wx.redirectTo({ url })
-        }
-      })
-    })
-  }
-  onHide () {
-    store.dispatch({ type: 'UPDATE_USERINFO', payload: { id: null } })
+    this.globalData.checkLogined()
   }
 }
 </script>

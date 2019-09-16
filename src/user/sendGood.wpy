@@ -1,0 +1,217 @@
+  <template>
+  <view class='container send'>
+    <mHeader></mHeader>
+    <view class="container-scroll"
+          style="margin-top:{{height}}px">
+      <view class="-banner">
+        <view class="-banner-title">
+          <image class="-banner-icon"
+                 src="https://pub.file.k12.vip/tbzw/1.3/user/address_icon_1@2x.png" />收货地址提交成功！</view>
+        <view class="-banner-text">我们将在48小时内，尽快为您安排发货~ <view class="-banner-btn">复制单号</view>
+        </view>
+      </view>
+      <view class="-content">
+        <view class="-cell">
+          <text class="-cell-text">小宝贝</text>
+          <view class="-cell-right">
+            <view class="-cell-address-btn">更换地址</view>
+          </view>
+        </view>
+        <view class="-address">
+          <view class="-address-cell">
+            <text class="-address-left">手机号码</text>
+            <text class="-address-right">11331233213</text>
+          </view>
+          <view class="-address-cell">
+            <text class="-address-left">收货地址</text>
+            <text class="-address-right">四川省成都市武侯区大悦城2栋802</text>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="-msg">
+      <view class="-msg-icon"></view>
+      <text class="-msg-text">发货前，您可以更改1次收货地址</text>
+      <view class="-msg-close"></view>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import api from '../request/api'
+import mHeader from '../components/header'
+import address from '../components/address'
+
+export default class Example extends wepy.page {
+  config = {
+    navigationBarTitleText: '',
+    'usingComponents': {
+      'van-area': '../vant/area/index',
+      'van-popup': '../vant/popup/index'
+    }
+  };
+  data = {};
+  components = {
+    mHeader,
+    address
+  };
+  methods = {};
+  events = {
+    save (params) {
+      wx.showToast({
+        icon: 'loading',
+        title: '正在提交'
+      })
+      api.order.saveRecipient(params)
+        .then(() => {
+          wx.showToast({
+            icon: 'succerss',
+            title: '保存成功'
+          })
+        })
+    }
+  };
+  watch = {};
+  computed = {
+    height () {
+      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+    }
+  };
+
+  onShareAppMessage () {
+    return {
+      title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
+      path: `/pages/index`,
+      imageUrl: 'https://pub.file.k12.vip/tbzw/v2/logo2.png'
+    }
+  }
+}
+</script>
+<style lang='scss'>
+@import '../assets/style/mixin.scss';
+.send {
+  .-msg {
+    box-sizing: border-box;
+    padding: 0 50px;
+    display: flex;
+    align-items: center;
+    position: fixed;
+    left: 50%;
+    bottom: 64px;
+    width: 616px;
+    height: 82px;
+    border-radius: 80px;
+    background: rgba(251, 133, 78, 0.1);
+    transform: translateX(-50%);
+    &-icon {
+      margin-right: 18px;
+      width: 28px;
+      height: 28px;
+      background: url('https://pub.file.k12.vip/tbzw/1.3/user/wrang.png')
+        no-repeat;
+      background-size: 100%;
+    }
+    &-text {
+      font-size: 24px;
+      color: #fb854e;
+      font-weight: 500;
+    }
+    &-close {
+      position: absolute;
+      right: 50px;
+      top: 50%;
+      width: 28px;
+      height: 28px;
+      background: url('https://pub.file.k12.vip/tbzw/1.3/user/close.png')
+        no-repeat;
+      background-size: 100%;
+      transform: translateY(-50%);
+    }
+  }
+  .-cell {
+    display: flex;
+    padding: 32px;
+    &-address-btn {
+      font-size: 28px;
+      color: #1acb9a;
+      font-weight: 500;
+      line-height: 52px;
+    }
+    &-text {
+      font-size: 36px;
+      color: #373c38;
+      font-weight: bold;
+    }
+    &-right {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      text {
+        font-size: 26px;
+        color: #666;
+        line-height: 52px;
+      }
+    }
+  }
+  .-address {
+    &-cell {
+      display: flex;
+      align-items: center;
+      padding: 0 32px;
+      height: 72px;
+    }
+    &-left {
+      margin-right: 64px;
+      font-size: 28px;
+      color: #666;
+    }
+    &-right {
+      font-size: 28px;
+      color: #333;
+    }
+  }
+  .-banner {
+    @include flex-column-center;
+    position: relative;
+    height: 300px;
+    background: linear-gradient(
+      315deg,
+      rgba(255, 139, 5, 1) 0%,
+      rgba(254, 179, 5, 1) 100%
+    );
+    &-title {
+      display: flex;
+      align-items: center;
+      margin-bottom: 18px;
+      font-size: 36px;
+      color: #fff;
+      font-weight: bold;
+    }
+    &-icon {
+      margin-right: 8px;
+      width: 56px;
+      height: 56px;
+    }
+    &-text {
+      display: flex;
+      align-items: center;
+      font-size: 24px;
+      color: #fff;
+      text {
+        color: #ff6d4d;
+      }
+    }
+    &-btn {
+      @include flex-center;
+      margin-left: 12px;
+      width: 136px;
+      height: 48px;
+      font-size: 24px;
+      font-weight: 500;
+      border-radius: 26px;
+      border: 2px solid rgba(255, 255, 255, 1);
+    }
+  }
+}
+</style>

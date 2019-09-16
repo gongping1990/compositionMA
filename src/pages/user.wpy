@@ -8,8 +8,8 @@
         <image class="-avatar"
                src="{{userInfo.headimgurl}}" />
         <view class="-info">
-          <text class="-name">{{userInfo.nickname}}</text>
-          <view class="-btn">切换账号</view>
+          <text class="-name">{{logined ? userInfo.nickname: '未登录'}}</text>
+          <view class="-btn">{{logined ? '切换账号': '立即登录'}}</view>
         </view>
       </view>
 
@@ -37,7 +37,7 @@
         </repeat>
       </view>
 
-      <view class="p-user-footer">
+      <!-- <view class="p-user-footer">
         <view class="-footer-btn"
               @tap="toJump({{'6'}})">
           <image class="-btn-img"
@@ -45,7 +45,7 @@
           <text class="-btn-text">约课</text>
         </view>
         <text class="-footer-text">随时约课随时学，赶紧来体验吧～</text>
-      </view>
+      </view> -->
     </view>
 
     <van-popup show="{{ showKF }}"
@@ -120,6 +120,9 @@ import mHeader from '../components/header'
   },
   remindData (state) {
     return state.user.remindData
+  },
+  logined (state) {
+    return state.user.logined
   }
 })
 export default class User extends wepy.page {
@@ -144,7 +147,28 @@ export default class User extends wepy.page {
   data = {
     showKF: false,
     noticeInfo: '',
-    itemList: []
+    itemList: [
+      {
+        id: 1,
+        num: 0,
+        isBuy: true,
+        name: '我的课程',
+        url: 'https://pub.file.k12.vip/tbzw/1.3/user/wdkc.png'
+      },
+      {
+        id: 2,
+        num: 0,
+        isBuy: true,
+        name: '我的作业',
+        url: 'https://pub.file.k12.vip/tbzw/1.3/user/zy.png'
+      },
+      {
+        id: 3,
+        name: '我的礼包',
+        isBuy: false,
+        url: 'https://pub.file.k12.vip/tbzw/1.3/user/wdlb.png'
+      }
+    ]
   };
 
   getUCRemindVO () {
@@ -187,33 +211,30 @@ export default class User extends wepy.page {
     },
     toJump (data) {
       switch (+data) {
+        case 1:
+          wx.navigateTo({ url: '/user/myCourse' })
+          break
         case 2:
           wx.navigateTo({ url: '/user/myWork' })
           break
         case 3:
-          wx.navigateTo({ url: '/user/pointNotice' })
+          wx.navigateTo({ url: '/user/gift' })
           break
-        case 4:
-          wx.navigateTo({ url: '/user/recognitionNotice' })
-          break
-        case 5:
-          wx.navigateTo({ url: '/user/address' })
-          break
-        case 6:
-          if (this.noticeInfo.finishcourse === 0) {
-            wx.showToast({
-              icon: 'none',
-              title: '你已经学完了全部作文课程，可以直接回看~'
-            })
-          } else if (this.noticeInfo.finishcourse === -1) {
-            wx.navigateTo({ url: '/pages/subscribe' })
-          } else if (this.noticeInfo.finishcourse === 1) {
-            wx.showToast({
-              icon: 'none',
-              title: '购买课程后才能预约上课哦~'
-            })
-          }
-          break
+        // case 6:
+        //   if (this.noticeInfo.finishcourse === 0) {
+        //     wx.showToast({
+        //       icon: 'none',
+        //       title: '你已经学完了全部作文课程，可以直接回看~'
+        //     })
+        //   } else if (this.noticeInfo.finishcourse === -1) {
+        //     wx.navigateTo({ url: '/pages/subscribe' })
+        //   } else if (this.noticeInfo.finishcourse === 1) {
+        //     wx.showToast({
+        //       icon: 'none',
+        //       title: '购买课程后才能预约上课哦~'
+        //     })
+        //   }
+        //   break
       }
     }
   };

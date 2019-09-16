@@ -6,11 +6,11 @@
       <view class="p-myWork-tab">
         <view class="-tab-text {{tabActive === '1' ? '-active' : ''}}"
               @tap="changeTab({{'1'}})">
-          <view class="-text">未提交</view>
+          <view class="-text">未交作业</view>
         </view>
         <view class="-tab-text {{tabActive === '2' ? '-active' : ''}}"
               @tap="changeTab({{'2'}})">
-          <view class="-text">已提交</view>
+          <view class="-text">已提交作业</view>
         </view>
 
       </view>
@@ -141,30 +141,28 @@ export default class MyWork extends wepy.page {
 .p-myWork {
   &-tab {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 0 244px;
+    padding: 32px;
     border-bottom: 1px solid #f5f5f5;
 
     .-tab-text {
-      padding: 36px 0 32px 0;
-      height: 40px;
-      font-size: 28px;
-      font-weight: 400;
-      color: rgba(88, 66, 43, 0.3);
-      border-bottom: 8px solid transparent;
-      width: 64px;
-
-      .-text {
-        transform: translateX(-10px);
-        width: 90px;
-      }
+      @include flex-center;
+      margin-right: 24px;
+      padding: 0 24px;
+      height: 64px;
+      font-size: 26px;
+      font-weight: 500;
+      color: #fff;
+      background: #dbd9e2;
+      border-radius: 12px;
     }
 
     .-active {
-      font-weight: 500;
-      color: rgba(88, 66, 43, 1);
-      border-bottom: 8px solid rgba(249, 230, 11, 1);
+      background: linear-gradient(
+        90deg,
+        rgba(64, 127, 255, 1) 0%,
+        rgba(46, 110, 255, 1) 100%
+      );
     }
   }
 

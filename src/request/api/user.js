@@ -40,6 +40,9 @@ const user = {
   },
   sendCode(params) {
     return request.get('/common/sendCode', params)
+  },
+  checkLogined() {
+    return request.get('/user/checkLogined')
   }
 }
 

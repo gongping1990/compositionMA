@@ -2,13 +2,19 @@ import request from '../index'
 
 const course = {
   getHomePageInfo(params) {
-    return request.post('/course/getHomePageInfo')
+    return request.get('/homepage/getHomePageInfo')
   },
   getCourseCatalog(params) {
     return request.post('/course/getCourseCatalog', params)
   },
   getClassInfo(params) {
     return request.get('/course/getClassInfo', params)
+  },
+  homeworkSquare(params) {
+    return request.get('/homepage/homeworkSquare', params)
+  },
+  dayByMasterpiece(params) {
+    return request.get('/homepage/dayByMasterpiece', params)
   }
 }
 

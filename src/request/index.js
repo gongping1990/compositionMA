@@ -68,14 +68,12 @@ export default {
           errorHandle(res.data.code, res.data.msg)
         },
         fail(e) {
-          reject(e)
+          let obj = {
+            msg: e,
+            code: 500
+          }
+          reject(obj)
           wx.hideLoading()
-          wx.showToast({
-            title: e // 提示的内容
-          })
-          setTimeout(() => {
-            wx.request(option)
-          }, 3000)
         }
       }
       wx.request(option)

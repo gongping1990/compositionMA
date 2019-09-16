@@ -1,134 +1,126 @@
-<!--  -->
 <template>
   <view class='container home'>
     <mHeader flag="0"></mHeader>
     <view class="container-scroll"
           style="margin-top:{{height}}px">
-      <view class="banner">
-
-      </view>
+      <swiper autoplay
+              class="banner"
+              circular>
+        <block wx:for="{{bannerList}}"
+               wx:key="{{index}}">
+          <swiper-item>
+            <image mode="aspectFill"
+                   class="banner-img"
+                   src="{{item.url}}" />
+          </swiper-item>
+        </block>
+      </swiper>
       <view class="title-item">
         <text class="title-text">大语文精品课</text>
       </view>
-      <view class="course-item">
-        <image src=""
-               class="course-cover"
-               lazy-load="true" />
-        <view class="course-right">
-          <view class="course-info">
-            <text class="course-title">小语轻作文</text>
-            <text class="course-text">每天5-8分钟，听北京师范大学老师讲小学必备130首古诗文</text>
+      <repeat for="{{courseList}}"
+              key="index"
+              index="index"
+              item="item">
+        <view class="course-item">
+          <image src="{{item.cardimgurl}}"
+                 class="course-cover"
+                 lazy-load="true" />
+          <view class="course-right">
+            <view class="course-info">
+              <text class="course-title">{{item.name}}</text>
+              <text class="course-text">{{item.courseDescribe}}</text>
+            </view>
+            <view class="course-btn-wrap">
+              <button class="course-btn">
+                去报名
+              </button>
+            </view>
           </view>
-          <view class="course-btn-wrap">
-            <button class="course-btn">
-              去报名
-            </button>
-          </view>
+        </view>
+      </repeat>
+
+      <view class="-tabs">
+
+        <view class="-tabs-item {{index == tabActive ? 'active': ''}}"
+              wx:for="{{tabList}}"
+              wx:key="{{index}}"
+              @tap="clickTab({{index}})"><text>{{item}}</text>
+          <view class="border"></view>
         </view>
       </view>
-      <view class="title-item">
-        <view class="title-text">大语文精品课<view class="title-tag">规则</view>
-        </view>
-        <view class="title-tabs">
-          <view class="title-tabs-item active">最新佳作</view>
-          <view class="title-tabs-item">最新佳作</view>
-        </view>
-      </view>
-      <view class="work-list">
-        <view class="work-item">
+      <view class="work-list"
+            wx:if="{{!tabActive}}">
+        <view class="work-item"
+              wx:for="{{workList}}"
+              wx:key="{{item.lessonId}}">
           <view class="work-cover">
-            <view class="work-time">42分钟前</view>
+            <view class="work-time">{{item.subitTime}}</view>
             <image class="work-img"
+                   src="{{item.coverphoto}}"
                    lazy-load="false" />
+            <view class="work-title">
+              <text class="van-ellipsis">{{item.lessonName}}</text>
+            </view>
           </view>
           <view class="work-num">
             <image class="work-num-icon"
                    src="../assets/image/num-icon.png" />
-            <text class="work-num-text">累计表扬23次</text>
+            <text class="work-num-text">坚持学习{{item.studys}}天</text>
           </view>
           <view class="work-footer">
             <view class="work-user">
               <image class="work-user-avatar"
-                     src='' />
-              <text class="work-user-name">小米粥</text>
+                     src="{{item.headimgurl}}" />
+              <text class="work-user-name">{{item.nickname}}</text>
             </view>
-            <view class="work-like">
+            <view class="work-like"
+                  @tap="addLike({{index}})">
               <image class="work-like-icon"
-                     src="../assets/image/like.png" />
-              <text class="work-like-num">256</text>
-            </view>
-          </view>
-        </view>
-        <view class="work-item">
-          <view class="work-cover">
-            <view class="work-time">42分钟前</view>
-            <image class="work-img"
-                   lazy-load="false" />
-          </view>
-          <view class="work-num">
-            <image class="work-num-icon"
-                   src="../assets/image/num-icon.png" />
-            <text class="work-num-text">累计表扬23次</text>
-          </view>
-          <view class="work-footer">
-            <view class="work-user">
-              <image class="work-user-avatar"
-                     src='' />
-              <text class="work-user-name">小米粥</text>
-            </view>
-            <view class="work-like">
+                     src="../assets/image/like.png"
+                     wx:if="{{item.liked}}" />
               <image class="work-like-icon"
-                     src="../assets/image/like.png" />
-              <text class="work-like-num">256</text>
-            </view>
-          </view>
-        </view>
-        <view class="work-item">
-          <view class="work-cover">
-            <view class="work-time">42分钟前</view>
-            <image class="work-img"
-                   lazy-load="false" />
-          </view>
-          <view class="work-num">
-            <image class="work-num-icon"
-                   src="../assets/image/num-icon.png" />
-            <text class="work-num-text">累计表扬23次</text>
-          </view>
-          <view class="work-footer">
-            <view class="work-user">
-              <image class="work-user-avatar"
-                     src='' />
-              <text class="work-user-name">小米粥</text>
-            </view>
-            <view class="work-like">
-              <image class="work-like-icon"
-                     src="../assets/image/like.png" />
-              <text class="work-like-num">256</text>
+                     wx:else
+                     src="../assets/image/like-def.png" />
+              <text class="work-like-num">{{item.likes}}</text>
             </view>
           </view>
         </view>
       </view>
-      <view class="hot">
-        <view class="hot-banner">
-          <view class="hot-icon"></view>
-          <view class="hot-banner-left">
-            <image class="hot-user-avatar" />
-            <text class="hot-user-name"></text>
-            <text class="hot-user-text"></text>
-            <view class="hot-user-footer">
-              <view class="hot-user-by">
-                <view class="hot-user-by-icon"></view>
-                <text class="hot-user-by-text"></text>
-              </view>
-              <view class="hot-user-like">
-                <view class="hot-user-like-icon"></view>
-                <text class="hot-user-like-text"></text>
+      <view class="hot"
+            wx:else>
+        <view class="hot-item"
+              wx:for="{{hotList}}"
+              wx:key="{{item.lessonId}}">
+          <view class="hot-cover">
+            <view class="hot-cover-tag">42分钟前</view>
+            <image class="hot-cover-img" />
+          </view>
+          <view class="hot-info">
+            <view class="hot-user">
+              <image class="hot-user-avatar"
+                     src="{{item.headimgurl}}" />
+              <view class="hot-user-info">
+                <text class="hot-user-name">{{item.nickname}}</text>
+                <view class="hot-user-num">
+                  <image class="hot-user-icon"
+                         src="../assets/image/num-icon.png" />
+                  累计表扬{{item.praises}}次
+                </view>
               </view>
             </view>
-          </view>
-          <view class="hot-banner-right">
-            <view class="hot-time"></view>
-            <image class="hot-cover" />
+            <view class="hot-right">
+              <view class="hot-tag">由{{item.praiseTeacher}}推荐</view>
+              <view class="hot-like">
+                <image class="hot-like-icon"
+                       wx:if="{{item.liked}}"
+                       src="../assets/image/like.png" />
+                <image class="hot-like-icon"
+                       wx:else
+                       src="../assets/image/like_def.png" />
+                <text>{{item.likes}}</text>
+              </view>
+            </view>
           </view>
         </view>
       </view>
@@ -208,12 +200,17 @@
   </view>
 </template>
 <script>
+
 import wepy from 'wepy'
 import { connect } from 'wepy-redux'
 import testMixin from '../mixins/test'
 import mHeader from '@/components/header'
 import praiseModal from '../components/praiseModal'
+import relativeTime from 'dayjs/plugin/relativeTime'
+import 'dayjs/locale/zh-cn'
 import dayjs from 'dayjs'
+dayjs.locale('zh-cn')
+dayjs.extend(relativeTime)
 @connect({
   userInfo (state) {
     return state.user.userInfo
@@ -237,17 +234,17 @@ export default class Home extends wepy.page {
     showKF: false,
     showHeader: true,
     showPraise: false,
-    infoData: {
-      startTime: ''
-    },
-    infoListData: {},
-    broadcastList: [],
-    gradeText: ['三年级', '四年级', '五年级', '六年级'],
-    swiperActive: 0,
-    selectItem: {},
-    awardsInfo: {},
-    selectTime: 0,
-    reloadStatus: false
+    infoData: {},
+    courseList: [],
+    bannerList: [],
+    workList: [],
+    hotList: [],
+    workCurrent: 1,
+    hotCurrent: 1,
+    workTotal: 10,
+    hotTotal: 10,
+    tabActive: 0,
+    tabList: ['作业广场', '最新佳作']
   };
   mixins = [testMixin]
   components = {
@@ -255,93 +252,27 @@ export default class Home extends wepy.page {
     praiseModal
   };
   methods = {
-    bindClickMoreLesson () {
-      wx.navigateTo({ url: '/pages/catalog' })
-    },
-    bindClickCover () {
-      if (this.infoListData.expLesson) {
-        this.showKF = true
-      }
-    },
-    bindClickStudyStart () {
-      let { infoListData } = this
-      if (!infoListData.stage) {
-        if (infoListData.status !== 2) {
-          this.startLessonStudy()
-        }
-        wx.navigateTo({ url: '/pages/classroom?id=' + infoListData.id })
-      } else if (infoListData.stage === 1) {
-        wx.navigateTo({ url: '/pages/study?id=' + infoListData.id })
-      } else if (infoListData.stage === 2) {
-        wx.navigateTo({ url: '/pages/test?id=' + infoListData.id })
-      } else {
-        wx.navigateTo({ url: '/user/submitHomework?id=' + infoListData.id })
-      }
-    },
-    bindClickBtn (type) {
-      wx.redirectTo({ url: '/pages/catalog' })
-    },
-    bindChangeTabBar (event) {
-      switch (event.detail) {
-        case 1:
-          wx.navigateTo({ url: '/pages' })
-          break
-        case 3:
-          wx.navigateTo({ url: '/pages/user' })
-      }
-    },
-    bindChangeSwiper (event) {
-      this.swiperActive = event.detail.current
-    },
-    bindPerfect () {
-      this.show = false
-      wx.navigateTo({ url: '/user/address' })
-    },
-    onClose () {
-      this.show = false
-      this.showKF = false
+    clickTab (index) {
+      this.tabActive = index
     }
   };
   events = {
-    select (date) {
-      this.selectTime = date.formatDate
-    },
-
-    changePopupStatus () {
-      this.showPraise = false
-    }
   };
   computed = {
     height () {
       return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
-    },
-    tagText () {
-      let { infoListData } = this
-      if (!infoListData) {
-        return ''
-      }
-      return infoListData.studyStatus < 3 ? '未上完课' : (infoListData.studyStatus === 3) && '未交作业'
-    },
-    btnText () {
-      if (!this.infoListData.studyStatus) {
-        return '开始今日学习'
-      }
-      return this.infoListData.studyStatus <= 2 ? '开始今日学习' : '交作业'
     }
   };
 
   initPage () {
     this.getHomePageInfo()
-    this.getBroadcastList()
-    this.checkPopByRecipient()
+    this.getDayByMasterpiece()
+    this.getHomeworkSquare()
   }
-  // 开始今日学习
-  startLessonStudy () {
-    let { api } = this.$parent.globalData
-    let { id } = this.infoListData
-    api.operate.startLessonStudy({
-      lessonId: id
-    })
+
+  // 作品点赞
+  addLike (index) {
+
   }
 
   // 获取首页信息
@@ -350,62 +281,63 @@ export default class Home extends wepy.page {
     api.course.getHomePageInfo().then(({ data }) => {
       wx.hideLoading()
       this.infoData = data.resultData
-      this.infoListData = data.resultData.infoList[0]
-      this.empty = !data.resultData.infoList.length
-      this.infoData.startTime = this.infoData.startTime ? dayjs(new Date(this.infoData.startTime)).format('MM月DD日') : ''
-      if (!data.resultData.buyCourse) {
-        if (this.empty || !data.resultData.infoList[0].expLesson) {
-          wx.redirectTo({ url: '/pages/login' })
-        }
-      }
-      this.showPraise = this.infoData.awardsPop
-      this.awardsInfo = this.infoData.awardsInfo
-      this.reloadStatus = false
+      this.courseList = data.resultData.courseList
+      this.bannerList = data.resultData.bannerList
       this.$apply()
     })
   }
-  getBroadcastList () {
+
+  // 获取作业广场
+  getHomeworkSquare () {
+    if (this.workList.length >= this.workTotal) return
     let { api } = this.$parent.globalData
-    api.broadcast.getBroadcastList({
-      current: 1,
-      size: 20
+    api.course.homeworkSquare({
+      current: this.workCurrent,
+      size: 10
     }).then(({ data }) => {
-      this.broadcastList = data.resultData.records
+      this.workCurrent += 1
+      this.workTotal = data.resultData.total
+      this.workList = [...this.workList, ...data.resultData.records]
+      this.workList = this.workList.map(e => {
+        e.subitTime = dayjs().to(dayjs(Number(e.subitTime)))
+        return e
+      })
+      console.log(this.workList)
       this.$apply()
     })
   }
 
-  checkPopByRecipient () {
+  // 获取最新佳作
+  getDayByMasterpiece () {
+    if (this.hotList.length >= this.hotTotal) return
     let { api } = this.$parent.globalData
-    api.order.checkPopByRecipient().then(({ data }) => {
-      this.show = data.resultData
+    api.course.dayByMasterpiece({
+      current: this.hotCurrent,
+      size: 10
+    }).then(({ data }) => {
+      this.hotCurrent += 1
+      this.hotList = [...this.hotList, ...data.resultData]
       this.$apply()
     })
-  }
-
-  reLoad () {
-    if (this.userInfo.id || this.userInfo.userId) {
-      this.initPage()
-    } else {
-      setTimeout(() => {
-        this.reLoad()
-      }, 1000)
-    }
   }
 
   onShow () {
     wx.showLoading({
       title: '加载中...'
     })
-    this.reLoad()
+    this.initPage()
   };
 
-  onShareAppMessage () {
-    return {
-      title: this.showPraise ? `我的作业受到${this.awardsInfo.teacherName}的表扬，快来给我点个赞吧` : '每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。',
-      path: this.showPraise ? `/user/completionOfWork?type=2&id=${this.awardsInfo.homeworkId}` : '/pages/index',
-      imageUrl: ''
+  onReachBottom () {
+    let { tabActive } = this
+    if (tabActive) {
+      this.getDayByMasterpiece()
+    } else {
+      this.getHomeworkSquare()
     }
+  }
+
+  onShareAppMessage () {
   }
 }
 </script>
@@ -421,29 +353,89 @@ export default class Home extends wepy.page {
     align-items: center;
   }
   .hot {
-    &-banner {
-      @include flex-center;
-      position: relative;
+    &-item {
+      margin-bottom: 32px;
+      box-sizing: border-box;
+      padding: 27px;
       width: 686px;
       height: 493px;
-      background: linear-gradient(
-        -37deg,
-        rgba(255, 192, 0, 1),
-        rgba(254, 179, 18, 1)
-      );
-      box-shadow: 0px 8px 8px 0px rgba(255, 181, 76, 0.4);
+      background: rgba(255, 255, 255, 1);
+      box-shadow: 0px 0px 27px 0px rgba(182, 183, 206, 0.4);
       border-radius: 27px;
-      &-left {
-        @include flex-column-center;
+    }
+    &-info {
+      display: flex;
+      justify-content: space-between;
+      padding-top: 35px;
+      padding-bottom: 4px;
+    }
+    &-cover {
+      position: relative;
+      width: 633px;
+      height: 313px;
+      border-radius: 20px;
+      overflow: hidden;
+      &-img {
+        width: 633px;
+        height: 313px;
+        border-radius: 20px;
+        background: #ccc;
+      }
+      &-tag {
+        @include flex-center;
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        width: 87px;
+        height: 40px;
+        font-size: 16px;
+        color: #fff;
+        background: rgba(0, 0, 0, 0.7);
+        opacity: 0.4;
+        border-radius: 9px;
+      }
+    }
+    &-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+    &-tag {
+      @include flex-center;
+      padding: 0 14px;
+      height: 40px;
+      font-size: 24px;
+      color: #fff;
+      font-weight: 500;
+      background: rgba(255, 189, 1, 1);
+      border-radius: 50px;
+    }
+    &-like {
+      display: flex;
+      align-items: flex-end;
+      text {
+        color: #333;
+        font-size: 21px;
+        line-height: 18px;
+      }
+      &-icon {
+        margin-right: 11px;
+        width: 26px;
+        height: 27px;
       }
     }
     &-user {
+      display: flex;
+      &-info {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
       &-avatar {
-        margin-bottom: 23px;
-        width: 107px;
-        height: 107px;
-        background: rgba(0, 0, 0, 1);
-        box-shadow: 0px 13px 13px 0px rgba(255, 122, 50, 0.2);
+        margin-right: 33px;
+        width: 86px;
+        height: 87px;
         border-radius: 50%;
       }
       &-name {
@@ -452,6 +444,17 @@ export default class Home extends wepy.page {
         font-weight: bold;
         color: rgba(51, 51, 51, 1);
         line-height: 30px;
+      }
+      &-num {
+        display: flex;
+        align-items: center;
+        font-size: 24px;
+        color: #333;
+      }
+      &-icon {
+        margin-right: 16px;
+        width: 22px;
+        height: 29px;
       }
     }
     &-icon {
@@ -463,6 +466,24 @@ export default class Home extends wepy.page {
     }
   }
   .work {
+    &-title {
+      display: flex;
+      align-items: flex-end;
+      position: absolute;
+      left: 0px;
+      right: 0;
+      bottom: 0;
+      height: 123px;
+      background: linear-gradient(transparent, rgba(0, 0, 0, 0.3));
+      text {
+        margin-left: 27px;
+        margin-bottom: 25px;
+        font-size: 24px;
+        font-weight: bold;
+        color: rgba(255, 255, 255, 1);
+        text-shadow: 0px 3px 3px rgba(0, 0, 0, 0.3);
+      }
+    }
     &-list {
       display: flex;
       flex-wrap: wrap;
@@ -562,7 +583,11 @@ export default class Home extends wepy.page {
     width: 686px;
     height: 300px;
     border-radius: 27px;
-    background: #ccc;
+    overflow: hidden;
+    &-img {
+      width: 100%;
+      height: 100%;
+    }
   }
   .title {
     &-item {
@@ -592,38 +617,62 @@ export default class Home extends wepy.page {
       );
       border-radius: 17px 17px 17px 0px;
     }
-    &-tabs {
+  }
+  .-tabs {
+    display: flex;
+    align-self: flex-start;
+    margin-left: 10px;
+    margin-top: 40px;
+    margin-bottom: 37px;
+    &-item {
       display: flex;
-      width: 307px;
-      height: 53px;
-      background: rgba(255, 223, 205, 1);
-      border-radius: 27px;
-      &-item {
-        @include flex-center;
-        flex: 1;
-        font-size: 27px;
-        color: #4e505e;
-        &.active {
-          font-weight: bold;
-          color: #fff;
-          background: rgba(255, 122, 50, 1);
-          box-shadow: 2px 2px 13px 0px rgba(255, 122, 50, 0.4);
-          border-radius: 27px;
+      align-items: center;
+      padding: 19px 0;
+      margin-right: 100px;
+      font-size: 32px;
+      color: #afafb6;
+      &.active {
+        position: relative;
+        font-weight: bold;
+        color: #474958;
+        text {
+          transform: scale(1.1);
+        }
+        .border {
+          position: absolute;
+          bottom: -4px;
+          left: 50%;
+          width: 47px;
+          height: 8px;
+          background: rgba(255, 189, 4, 1);
+          border-radius: 4px;
+          transform: translateX(-50%);
         }
       }
     }
   }
   .course {
     &-item {
+      position: relative;
       display: flex;
+      box-sizing: border-box;
+      width: 686px;
+      height: 213px;
+      padding: 25px 27px;
+      padding-left: 235px;
+      margin-top: 30px;
+      margin-bottom: 32px;
+      background: rgba(255, 255, 255, 1);
+      box-shadow: 0px 0px 27px 0px rgba(182, 183, 206, 0.4);
+      border-radius: 27px;
     }
     &-cover {
-      position: relative;
-      margin-right: 31px;
+      position: absolute;
+      left: 27px;
+      top: -27px;
       width: 180px;
       height: 213px;
       border-radius: 20px;
-      background-color: #ccc;
       &-img {
         width: 180px;
         height: 213px;

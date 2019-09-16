@@ -1,10 +1,13 @@
 import { handleActions } from 'redux-actions'
-import { UPDATE_USERINFO, UPDATE_TAB_REMIND } from '../types/user'
+import {
+  UPDATE_USERINFO,
+  UPDATE_TAB_REMIND,
+  CHANGE_LOGIN_STATUS
+} from '../types/user'
 
 export default handleActions(
   {
     [UPDATE_USERINFO](state, action) {
-      console.log(action.payload)
       return {
         ...state,
         userInfo: action.payload
@@ -15,10 +18,17 @@ export default handleActions(
         ...state,
         remindData: action.payload
       }
+    },
+    [CHANGE_LOGIN_STATUS](state, action) {
+      return {
+        ...state,
+        logined: action.payload
+      }
     }
   },
   {
     userInfo: {},
-    remindData: {}
+    remindData: {},
+    logined: false
   }
 )

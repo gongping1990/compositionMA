@@ -9,7 +9,8 @@
         <image class="gift-cover" />
         <view class="gift-info">
           <text class="gift-title">小语轻作文【大礼包】</text>
-          <view class="gift-btn">待领取</view>
+          <view class="gift-btn"
+                @tap="clickBtn">待领取</view>
         </view>
       </view>
       <view class="gift-item">
@@ -48,7 +49,12 @@ export default class Gift extends wepy.page {
   components = {
     mHeader
   };
-  methods = {};
+  methods = {
+    clickBtn () {
+      console.log(11)
+      wx.redirectTo({ url: '/user/address' })
+    }
+  };
   events = {};
   watch = {};
   computed = {

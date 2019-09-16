@@ -318,7 +318,7 @@ export default class Home extends wepy.page {
       }
       if (!data.resultData.buyCourse) {
         if (this.empty || !data.resultData.infoList[0].expLesson) {
-          wx.redirectTo({ url: '/pages/login' })
+          wx.redirectTo({ url: '/pages/enroll' })
         }
       }
       this.showPraise = this.infoData.awardsPop

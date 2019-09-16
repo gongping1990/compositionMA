@@ -417,7 +417,14 @@
         } else {
           for (let data of this.dataList) {
             if (data.id == item.id) {
-              data.isPlay = !data.isPlay;
+              // data.isPlay = !data.isPlay;
+              if (data.isPlay) {
+                data.isPlay = false;
+                this.innerAudioContext.stop();
+              } else {
+                data.isPlay = true;
+                this.innerAudioContext.play();
+              }
             } else {
               data.isPlay = false;
             }

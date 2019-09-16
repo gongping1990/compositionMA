@@ -59,6 +59,7 @@ export default class extends wepy.app {
           'myWorkAll',
           'submitHomework',
           'completionOfWork',
+          'completionOfWorkNew',
           'uploadAudioWork',
           'uploadImgWork',
           'workEvaluation'

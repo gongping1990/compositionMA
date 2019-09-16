@@ -415,6 +415,7 @@
         this.isShowConfirm = true;
       },
       changeAudioStatus() {
+        console.log(this.myAudio,11)
         this.isMyPlay = false;
         this.myAudio.destroy();
         this.initAudio(false);

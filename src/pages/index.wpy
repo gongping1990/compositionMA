@@ -23,7 +23,8 @@
       </view>
       <view class="swiper"
             wx:if="{{!empty}}">
-        <view class="swiper-item active">
+        <view class="swiper-item active"
+              wx:if="{{courseDate.id}}">
           <view class="swiper-cover {{courseDate.type == 2 && 'sc'}}"
                 @tap="bindClickCover">
             <view class="swiper-cover-tag">小班课</view>

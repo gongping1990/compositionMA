@@ -54,7 +54,7 @@
 					"id": 0,
 					"name": "作业详情老版",
 					"pathName": "user/completionOfWork",
-					"query": "type=1&id=1138723411242659841",
+					"query": "type=1&id=1134359706941546498",
 					"scene": null
 				},
 				{
@@ -68,7 +68,7 @@
 					"id": 2,
 					"name": "作业详情（自己）",
 					"pathName": "user/completionOfWorkNew",
-					"query": "type=1&id=1138723411242659841",
+					"query": "type=1&id=1134359706941546498",
 					"scene": null
 				},
 				{

@@ -12,7 +12,7 @@
               <view class="-tip">每个人都是童话大王</view>
             </view>
           </view>
-          <view class="-top-right">2小时前</view>
+          <view class="-top-right">{{workDetail.workTime}}</view>
         </view>
         <view class="-body-content-down">
           <swiper class="-content-down-swiper"
@@ -70,7 +70,7 @@
         <image class="-footer-left-img" src="{{workDetail.stuImg}}"></image>
         <view class="-footer-left-text">
           <view>{{workDetail.replyTeacher}}</view>
-          <view class="-tip">2小时</view>
+          <view class="-tip">{{workDetail.replyTime ? workDetail.replyTime : '请稍等，老师随后点评'}}</view>
         </view>
       </view>
       <view class="-footer-center" wx:if="{{workDetail.replyTime && workDetail.homeworkType == 1}}"
@@ -207,7 +207,7 @@
   import mHeader from '../components/header';
   import lookImage from '../components/lookImage';
   import ConfirmModal from '../components/confirmModal';
-  // import getDateDiff from '../utils/getDateDiff';
+  import getDateDiff from '../utils/getDateDiff';
 
   export default class CompletionOfWorkNew extends wepy.page {
     config = {
@@ -294,14 +294,14 @@
         lessonId: this.queryInfo.id
       }).then(res => {
         this.workDetail = res.data.resultData;
-        this.workDetail.workTime = dayjs(+this.workDetail.workTime).format('YYYY-MM-DD HH:mm');
+        this.workDetail.workTime = getDateDiff.getDateDiff(this.workDetail.workTime);
         this.workDetail.workImg = this.workDetail.workImg && this.workDetail.workImg.split(',');
         this.workDetail.workImgSrc = this.workDetail.workImgSrc && this.workDetail.workImgSrc.split(',');
         this.workDetail.replyImg = this.workDetail.replyImg && this.workDetail.replyImg.split(',');
         this.workDetail.duration = this.timeToFormat(this.workDetail.duration);
         this.workDetail.replyDuration = this.timeToFormat(this.workDetail.replyDuration);
         if (this.workDetail.replyTime) {
-          this.workDetail.replyTime = dayjs(+this.workDetail.replyTime).format('YYYY-MM-DD HH:mm');
+          this.workDetail.replyTime = getDateDiff.getDateDiff(this.workDetail.replyTime);
           this.isReply = true;
         } else {
           this.isReply = false;
@@ -340,11 +340,6 @@
     };
 
     methods = {
-      lookTeacherInfo() {
-        if (this.workDetail.homeworkType === 1) {
-          this.methods.changeAudioStatus();
-        }
-      },
       openShareModal() {
         this.isOpenPopup = false;
         this.isOpenShareModal = !this.isOpenShareModal;
@@ -493,7 +488,6 @@
     }
 
     onLoad(query) {
-      // console.log(this.getDateDiff(), 111);
       this.queryInfo = query;
       if (query.type === '1') {
         this.getMyHomework();
@@ -742,7 +736,7 @@
 
       .-footer-right {
         display: flex;
-        margin-top: 20px;
+        margin-top: 47px;
         margin-right: 23px;
 
         &-btn {

@@ -1,6 +1,7 @@
 <template>
   <view class="p-completionOfWork">
-    <view class="p-completionOfWork-body">
+    <view class="p-completionOfWork-body" id="scorllCompletion">
+      <Text class="-body-back" @tap="backPre"><van-icon size="26px" name="arrow-left" /></Text>
       <view class="-body-bg"></view>
       <view class="-body-content">
         <view class="-body-content-icon"></view>
@@ -29,6 +30,18 @@
               </swiper-item>
             </block>
           </swiper>
+          <view class="-content-down-wrap" wx:if="{{workDetail.homeworkType == 1}}">
+            <image class="-img" src="https://pub.file.k12.vip/2019/08/26/1165830591817195521.png"></image>
+            <view class="-reply-btn"  @tap="changeMyAudioStatus">
+              <view class="-reply-icon">
+                <view class="icon"
+                      wx:if="{{!isMyPlay}}"></view>
+                <view class="playIcon"
+                      wx:if="{{isMyPlay}}"></view>
+              </view>
+              <view class="-reply-time">{{workDetail.duration}}</view>
+            </view>
+          </view>
         </view>
       </view>
 
@@ -73,13 +86,13 @@
           <view class="-tip">{{workDetail.replyTime ? workDetail.replyTime : '请稍等，老师随后点评'}}</view>
         </view>
       </view>
-      <view class="-footer-center" wx:if="{{workDetail.replyTime && workDetail.homeworkType == 1}}"
+      <view class="-footer-center" wx:if="{{workDetail.replyTime && workDetail.replyAudio}}"
             @tap="changeAudioStatus">
         <text>收听老师点评</text>
         <image class="-footer-center-img1"
                src="https://pub.file.k12.vip/tbzw/1.3/course/bofang.png"></image>
       </view>
-      <view class="-footer-center" wx:if="{{workDetail.replyTime && workDetail.homeworkType == 2}}">
+      <view class="-footer-center" wx:if="{{workDetail.replyTime && !workDetail.replyAudio}}" @tap="scrollToFn">
         <text>查看老师点评</text>
         <image class="-footer-center-img2"
                src="https://pub.file.k12.vip/tbzw/1.3/course/look.png"></image>
@@ -340,6 +353,19 @@
     };
 
     methods = {
+      backPre () {
+        wx.navigateBack()
+      },
+      scrollToFn () {
+        let that = this
+        wx.createSelectorQuery().select('#scorllCompletion').boundingClientRect(function(rect) {
+          if (rect) {
+            wx.pageScrollTo({
+              scrollTop: rect.height
+            })
+          }
+        }).exec()
+      },
       openShareModal() {
         this.isOpenPopup = false;
         this.isOpenShareModal = !this.isOpenShareModal;
@@ -516,13 +542,17 @@
 
   .p-completionOfWork {
     background-color: #F6BA04;
-    height: 100vh;
 
     &-body {
       position: relative;
       display: inline-block;
-      overflow-y: auto;
-      height: calc(100vh - 173px);
+      margin-bottom: 173px;
+
+      .-body-back{
+        position: absolute;
+        top: 115px;
+        left: 34px;
+      }
 
       .-body-bg {
         position: absolute;
@@ -601,13 +631,59 @@
           border-radius: 27px;
 
           .-content-down-swiper {
+            margin: 0 27px;
             height: 100%;
             border-radius: 27px;
           }
+
           .-content-down-img {
             width: 100%;
             height: 776px;
             border-radius: 27px;
+          }
+
+          .-content-down-wrap {
+            margin: 0 0 81px;
+            text-align: center;
+
+            .-img {
+              margin: 67px auto 122px;
+              width:366px;
+              height:447px;
+              border-radius:33px;
+            }
+
+            .-reply-btn {
+              @include flex-center;
+              justify-content: space-between;
+              padding: 0 47px;
+              margin: 0 61px;
+              height:96px;
+              background:linear-gradient(-37deg,rgba(255,142,74,1),rgba(255,122,50,1));
+              box-shadow:0px 8px 8px 0px rgba(255,122,50,0.4);
+              border-radius:48px;
+
+              .-reply-icon {
+                .icon {
+                  @include bg('/1.3/course/icon-play.png');
+                  width: 52px;
+                  height: 39px;
+                }
+
+                .playIcon {
+                  background: url("https://pub.file.k12.vip/2019/09/16/1173531855166513154.gif");
+                  background-size: 100%;
+                  width: 52px;
+                  height: 39px;
+                }
+              }
+
+              .-reply-time {
+                font-size: 34px;
+                font-weight: 600;
+                color: #ffffff;
+              }
+            }
           }
         }
       }
@@ -656,6 +732,7 @@
               margin-right: 12px;
               width: 193px;
               height: 193px;
+              border-radius:20px;
             }
           }
 
@@ -874,15 +951,11 @@
         margin: 32px auto 30px;
         width: 354px;
         height: 76px;
-        background: linear-gradient(
-            90deg,
-            rgba(249, 230, 11, 1) 0%,
-            rgba(253, 219, 85, 1) 100%
-        );
+        background:linear-gradient(90deg,rgba(254,179,18,1) 0%,rgba(255,192,0,1) 100%);
         border-radius: 40px;
         font-size: 32px;
         font-weight: 500;
-        color: rgba(70, 65, 60, 1);
+        color: #ffffff;
         line-height: 76px;
       }
     }

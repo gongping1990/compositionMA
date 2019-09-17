@@ -322,7 +322,7 @@ export default class UploadImgWork extends wepy.page {
       border-radius: 50px;
       font-size: 32px;
       font-weight: 500;
-      color: rgba(88, 66, 43, 1);
+      color: #ffffff;
       line-height: 100px;
     }
   }

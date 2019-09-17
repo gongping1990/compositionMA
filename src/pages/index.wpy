@@ -53,7 +53,8 @@
             wx:if="{{!tabActive}}">
         <view class="work-item"
               wx:for="{{workList}}"
-              wx:key="{{item.lessonId}}">
+              wx:key="{{item.lessonId}}"
+              @tap="clickWorkItem({{item}})">
           <view class="work-cover">
             <view class="work-time">{{item.subitTime}}</view>
             <image class="work-img"
@@ -75,7 +76,7 @@
               <text class="work-user-name">{{item.nickname}}</text>
             </view>
             <view class="work-like"
-                  @tap="addLike({{index}})">
+                  @tap.stop="clickLike({{item}}, {{index}})">
               <image class="work-like-icon"
                      src="../assets/image/like.png"
                      wx:if="{{item.liked}}" />
@@ -165,7 +166,7 @@
         我的
       </van-tabbar-item>
     </van-tabbar>
-    <van-popup show="{{ show }}"
+    <van-popup show="{{ showAddress }}"
                @close="onClose">
       <view class="dialog">
         <view class="dialog-icon"></view>
@@ -193,10 +194,8 @@
         </button>
       </view>
     </van-popup>
-
-    <praiseModal :isShow.sync="showPraise"
-                 typeProps="1"
-                 :dataInfo.sync="awardsInfo"></praiseModal>
+    <login :showPopup.sync="showPopup"
+           :show.sync="showSelect"></login>
   </view>
 </template>
 <script>
@@ -205,7 +204,7 @@ import wepy from 'wepy'
 import { connect } from 'wepy-redux'
 import testMixin from '../mixins/test'
 import mHeader from '@/components/header'
-import praiseModal from '../components/praiseModal'
+import login from '../components/login'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import 'dayjs/locale/zh-cn'
 import dayjs from 'dayjs'
@@ -217,6 +216,9 @@ dayjs.extend(relativeTime)
   },
   remindData (state) {
     return state.user.remindData
+  },
+  logined (state) {
+    return state.user.logined
   }
 })
 export default class Home extends wepy.page {
@@ -230,10 +232,12 @@ export default class Home extends wepy.page {
   };
   data = {
     empty: false,
-    show: false,
+    showAddress: false,
     showKF: false,
     showHeader: true,
     showPraise: false,
+    showPopup: false,
+    showSelect: false,
     infoData: {},
     courseList: [],
     bannerList: [],
@@ -249,14 +253,28 @@ export default class Home extends wepy.page {
   mixins = [testMixin]
   components = {
     mHeader,
-    praiseModal
+    login
   };
   methods = {
+    clickLike (item, index) {
+      console.log(this.logined)
+      if (this.logined) {
+        this.addLike(item.homeworkId, index)
+      } else {
+        this.showSelect = true
+      }
+    },
+    clickWorkItem (item) {
+      wx.navigateTo({ url: `/user/completionOfWork?type=${item.isme ? 1 : 2}&id=${item.isme ? item.lessonId : item.homeworkId}` })
+    },
     clickTab (index) {
       this.tabActive = index
     }
   };
   events = {
+    login () {
+      console.log('login')
+    }
   };
   computed = {
     height () {
@@ -271,8 +289,21 @@ export default class Home extends wepy.page {
   }
 
   // 作品点赞
-  addLike (index) {
-
+  addLike (workId, index) {
+    let { api } = this.$parent.globalData
+    let { tabActive } = this
+    api.study.addLike({
+      workId: workId
+    }).then(() => {
+      if (!tabActive) {
+        this.workList[index].liked = true
+        this.workList[index].likes += 1
+      } else {
+        this.hotList[index].liked = true
+        this.hotList[index].likes += 1
+      }
+      this.$apply()
+    })
   }
 
   // 获取首页信息

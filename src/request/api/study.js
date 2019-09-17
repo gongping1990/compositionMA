@@ -69,6 +69,9 @@ const study = {
   },
   knowReply(params) {
     return request.post('/study/knowReply', params)
+  },
+  getAttendClassCatalog() {
+    return request.get('/study/getAttendClassCatalog')
   }
 }
 

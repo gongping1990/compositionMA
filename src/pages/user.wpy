@@ -203,7 +203,7 @@ export default class User extends wepy.page {
 
   methods = {
     changeAccount () {
-      wx.redirectTo({ url: '/pages/login' })
+      wx.navigateTo({ url: '/pages/login' })
     },
     onClose () {
       this.showKF = !this.showKF

@@ -4,12 +4,14 @@
              flag="0"></mHeader>
     <view class="container-scroll"
           style="margin-top:{{height}}px;height: calc(100vh - {{height}}px)">
+
       <view class="no-login"
             wx:if="{{!logined}}">
         <image class="no-login-icon"
                src="https://pub.file.k12.vip/tbzw/1.3/login/lion_bg.png" />
-        <text class="no-login-title">你还没有报名课程哦~</text>
-        <button class="no-login-btn"></button>
+        <text class="no-login-title">请登陆后查看本周课表~</text>
+        <button class="no-login-btn"
+                @tap="clickLoginBtn">立即登录</button>
       </view>
       <view class="empty"
             wx:if="{{!isBuy}}">
@@ -41,7 +43,7 @@
                      style="height: calc(100vh - {{height * 2 + 150 }}rpx)"
                      scroll-y
                      scroll-with-animation
-                     scroll-top="{{todayScrollTop}}"
+                     scroll-into-view="{{scrollView}}"
                      @scroll="bindScroll">
           <view class="lesson-scroll-empty"
                 wx:if="{{isEmpty}}">
@@ -54,59 +56,27 @@
             </view>
           </view>
           <view class="lesson-scroll-wrap">
-            <view class="lesson-content">
-              <view class="lesson-time"
-                    wx:for="{{catalogData}}"
-                    wx:key="{{item.lessonId}}">
-                <text class="lesson-time-title">今日</text>
-                <text class="lesson-time-text">08月28日</text>
-              </view>
-              <view class="lesson-list">
-                <view class="lesson-item">
-                  <image class="lesson-cover" />
-                  <view class="lesson-info">
-                    <text class="lesson-title">日记里的爱与愁</text>
-                    <view class="lesson-footer">
-                      <text class="lesson-num">233人已学</text>
-                      <view class="lesson-btn">开始学习</view>
-                    </view>
-                  </view>
-                </view>
-                <view class="lesson-item">
-                  <image class="lesson-cover" />
-                  <view class="lesson-info">
-                    <text class="lesson-title">日记里的爱与愁</text>
-                    <view class="lesson-footer">
-                      <text class="lesson-num">233人已学</text>
-                      <view class="lesson-btn">开始学习</view>
-                    </view>
-                  </view>
-                </view>
-              </view>
-            </view>
-            <view class="lesson-content">
+            <view class="lesson-content"
+                  id="{{item.isToday ? 'today' : ''}}"
+                  wx:for="{{catalogData}}"
+                  wx:key="{{item.lessonId}}">
               <view class="lesson-time">
-                <text class="lesson-time-title">今日</text>
-                <text class="lesson-time-text">08月28日</text>
+                <text class="lesson-time-title">{{item.isToday ? '今日': item.week}}</text>
+                <text class="lesson-time-text">{{item.dayTime}}</text>
               </view>
               <view class="lesson-list">
-                <view class="lesson-item">
-                  <image class="lesson-cover" />
+                <view class="lesson-item"
+                      wx:for="{{item.lessonlist}}"
+                      wx:for-item="lessonItem"
+                      wx:key="{{lessonItem.id}}">
+                  <image class="lesson-cover"
+                         src="{{lessonItem.coverphoto}}" />
                   <view class="lesson-info">
-                    <text class="lesson-title">日记里的爱与愁</text>
+                    <text class="lesson-title">{{lessonItem.name}}</text>
                     <view class="lesson-footer">
-                      <text class="lesson-num">233人已学</text>
-                      <view class="lesson-btn">开始学习</view>
-                    </view>
-                  </view>
-                </view>
-                <view class="lesson-item">
-                  <image class="lesson-cover" />
-                  <view class="lesson-info">
-                    <text class="lesson-title">日记里的爱与愁</text>
-                    <view class="lesson-footer">
-                      <text class="lesson-num">233人已学</text>
-                      <view class="lesson-btn">开始学习</view>
+                      <text class="lesson-num">{{lessonItem.learnNum}}人已学</text>
+                      <view class="lesson-btn {{lessonItem.stateClass}}"
+                            @tap="bindClickBtn({{lessonItem}})">{{lessonItem.stateText}}</view>
                     </view>
                   </view>
                 </view>
@@ -157,6 +127,8 @@
         我的
       </van-tabbar-item>
     </van-tabbar>
+    <login :showPopup.sync="showPopup"
+           :show.sync="showSelect"></login>
   </view>
 </template>
 
@@ -165,6 +137,7 @@ import wepy from 'wepy'
 import { connect } from 'wepy-redux'
 import dayjs from 'dayjs'
 import mHeader from '../components/header'
+import login from '../components/login'
 @connect({
   logined (state) {
     return state.user.logined
@@ -175,21 +148,22 @@ export default class Lesson extends wepy.page {
     navigationBarTitleText: '我的课程',
     usingComponents: {
       'van-tabbar': '../vant/tabbar/index',
-      'van-tabbar-item': '../vant/tabbar-item/index'
+      'van-tabbar-item': '../vant/tabbar-item/index',
+      'van-popup': '../vant/popup/index'
     }
   }
 
   components = {
-    mHeader
+    mHeader,
+    login
   }
 
   data = {
+    showPopup: false,
+    showSelect: false,
     isEmpty: false,
     isBuy: true,
-    query: null,
-    level: 1,
-    scrollTop: 0,
-    todayScrollTop: 0,
+    scrollView: '',
     catalogData: {},
     titleScrollTopArr: [],
     recommendList: [],
@@ -199,39 +173,30 @@ export default class Lesson extends wepy.page {
   computed = {
     height () {
       return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
-    },
-    today () {
-      return dayjs(new Date()).format('MM月DD日')
     }
   };
 
   watch = {
-    scrollTop (n) {
-      let { titleScrollTopArr } = this
-      if (n === titleScrollTopArr[0] || n < titleScrollTopArr[1]) {
-        this.level = 1
-      }
-      if (n >= titleScrollTopArr[1] && n < titleScrollTopArr[2]) {
-        this.level = 2
-      }
-      if (n >= titleScrollTopArr[2] && n < titleScrollTopArr[3]) {
-        this.level = 3
-      }
-      if (n >= titleScrollTopArr[3]) {
-        this.level = 4
+    logined (n) {
+      if (n) {
+        this.getAttendClassCatalog()
       }
     }
   }
 
   methods = {
+    clickLoginBtn () {
+      console.log(111)
+      this.showSelect = true
+    },
     clickTab (s) {
       this.nowWeek = s
       this.listCompositionWeekLesson()
     },
     bindClickBtn (lesson) {
       if (!lesson.stage) {
-        if (lesson.studyStatus !== 4) {
-          wx.navigateTo({ url: '/pages/classroom?id=' + lesson.lessonId })
+        if (lesson.state !== 4) {
+          wx.navigateTo({ url: '/pages/classroom?id=' + lesson.id })
         } else {
           wx.showToast({
             title: '课程尚未开始，先看看其他课程吧！', // 提示的内容,
@@ -241,25 +206,18 @@ export default class Lesson extends wepy.page {
           })
         }
       } else if (lesson.stage === 1) {
-        wx.navigateTo({ url: '/pages/study?id=' + lesson.lessonId })
+        wx.navigateTo({ url: '/pages/study?id=' + lesson.id })
       } else if (lesson.stage === 2) {
-        wx.navigateTo({ url: '/pages/test?id=' + lesson.lessonId })
+        wx.navigateTo({ url: '/pages/test?id=' + lesson.id })
       } else {
-        wx.navigateTo({ url: '/user/submitHomework?id=' + lesson.lessonId })
+        wx.navigateTo({ url: '/user/submitHomework?id=' + lesson.id })
       }
-    },
-    bindScroll (event) {
-      let { scrollTop } = event.detail
-      this.scrollTop = scrollTop
     }
   }
 
   events = {
-    'tap-btn' (num) {
-      wx.navigateTo({ url: '/pages/classroom' })
-    },
-    back () {
-      wx.redirectTo({ url: '/pages/index' })
+    login () {
+      this.getAttendClassCatalog()
     }
   }
   // 检查是否购买，并返回推荐课程
@@ -283,57 +241,41 @@ export default class Lesson extends wepy.page {
       nowWeek: this.nowWeek
     }).then(({ data }) => {
       if (data.resultData.length) {
-        this.catalogData = data.resultData
+        let weekArr = ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+        let today = dayjs(new Date()).format('YYYY/MM/DD')
+        this.catalogData = data.resultData.map(e => {
+          e.isToday = today === e.dayTime
+          e.dayTime = dayjs(new Date(e.dayTime)).format('MM月DD日')
+          e.week = weekArr[e.week - 1]
+          e.lessonlist = e.lessonlist.map(_e => {
+            let stateArr = ['补课', '开始学习', '交作业', '待开课', '回看', '预约上课']
+            let classArr = ['bk', 'sk', 'jzy', 'dkk', 'hk', 'yy']
+            _e.stateText = stateArr[_e.state - 1]
+            _e.stateClass = classArr[_e.state - 1]
+            return _e
+          })
+          return e
+        })
+        console.log(this.catalogData)
       } else {
-        this.isEmpty = true
+        this.catalogData = []
       }
-
-      this.$apply()
-    })
-  }
-
-  getTodayScrollTop () {
-    let query = wx.createSelectorQuery()
-    query.select('#sk').boundingClientRect()
-    query.selectViewport().scrollOffset()
-    query.exec((res) => {
-      if (res[0]) {
-        this.todayScrollTop = res[0].top - this.height - this.infoHeight - 60
+      this.isEmpty = !this.catalogData.length
+      this.scrollView = ''
+      setTimeout(() => {
+        this.scrollView = 'today'
         this.$apply()
-      }
-    })
-  }
-
-  getTitleScrollTop (str) {
-    let query = wx.createSelectorQuery()
-    query.select(str).boundingClientRect()
-    query.selectViewport().scrollOffset()
-    query.exec((res) => {
-      this.titleScrollTopArr = [...this.titleScrollTopArr, res[0].top - this.height - this.infoHeight]
-      this.$apply()
-    })
-  }
-
-  getInfoHeight () {
-    let query = wx.createSelectorQuery()
-    query.select('#info').boundingClientRect()
-    query.selectViewport().scrollOffset()
-    query.exec((res) => {
-      this.infoHeight = res[0].height
+      }, 1000)
       this.$apply()
     })
   }
 
   onShow () {
-    this.getAttendClassCatalog()
+    if (this.logined) {
+      this.getAttendClassCatalog()
+    }
   }
 
-  onHide () {
-    this.todayScrollTop = 0
-  }
-  onUnload () {
-    this.todayScrollTop = 0
-  }
   onShareAppMessage () {
     return {
       title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
@@ -418,6 +360,34 @@ export default class Lesson extends wepy.page {
     );
     box-shadow: 0px 8px 8px 0px rgba(82, 136, 255, 0.4);
     border-radius: 27px;
+    &.bk {
+      background: linear-gradient(
+        -37deg,
+        rgba(15, 218, 130, 1),
+        rgba(0, 209, 118, 1)
+      );
+      box-shadow: 0px 8px 8px 0px rgba(63, 211, 147, 0.4);
+    }
+    &.jzy {
+      background: linear-gradient(
+        -37deg,
+        rgba(255, 192, 0, 1),
+        rgba(254, 179, 18, 1)
+      );
+      box-shadow: 0px 5px 5px 0px rgba(255, 181, 76, 0.4);
+    }
+    &.hk {
+      background: linear-gradient(
+        -37deg,
+        rgba(255, 142, 74, 1),
+        rgba(255, 122, 50, 1)
+      );
+      box-shadow: 0px 8px 8px 0px rgba(255, 122, 50, 0.4);
+    }
+    &.dkk {
+      background: rgba(216, 213, 226, 1);
+      box-shadow: none;
+    }
   }
   .no-login {
     @include flex-column-center;
@@ -425,7 +395,8 @@ export default class Lesson extends wepy.page {
     left: 0;
     right: 0;
     top: 0;
-    z-index: 200;
+    bottom: 0;
+    z-index: 20;
     background-color: #fff;
     &-icon {
       width: 401px;
@@ -460,7 +431,7 @@ export default class Lesson extends wepy.page {
     left: 0;
     right: 0;
     top: 0;
-    z-index: 100;
+    z-index: 10;
     background-color: #fff;
     &-title {
       align-self: flex-start;
@@ -495,8 +466,7 @@ export default class Lesson extends wepy.page {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: 20px;
-    padding: 0 32px;
+    padding: 20px 32px;
     height: 53px;
   }
   &-all {
@@ -537,7 +507,7 @@ export default class Lesson extends wepy.page {
     }
   }
   &-scroll-wrap {
-    padding-top: 53px;
+    padding-top: 33px;
     padding-bottom: 120px;
   }
   &-scroll {

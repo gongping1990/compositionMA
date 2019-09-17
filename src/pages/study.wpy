@@ -226,7 +226,9 @@ export default class Example extends wepy.page {
       this.showDialog = false
       this.showContinueDiaolig = false
       this.changeLearnStage(this.roomData.id, 1)
-      wx.redirectTo({ url: '/pages/catalog' })
+      wx.navigateBack({
+        delta: 1 // 返回的页面数，如果 delta 大于现有页面数，则返回到首页,
+      })
     },
     bindClickConfirm () {
       this.showDialog = false

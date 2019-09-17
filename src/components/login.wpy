@@ -38,7 +38,7 @@ export default class Example extends wepy.component {
   props = {
     showPopup: {
       type: Boolean,
-      default: true,
+      default: false,
       twoWay: true
     },
     show: {

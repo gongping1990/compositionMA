@@ -1,210 +1,210 @@
 {
-	"description": "项目配置文件",
-	"packOptions": {
-		"ignore": []
-	},
-	"setting": {
-		"urlCheck": true,
-		"es6": false,
-		"postcss": false,
-		"minified": false,
-		"newFeature": true,
-		"autoAudits": false,
-		"checkInvalidKey": true,
-		"checkSiteMap": true,
-		"uploadWithSourceMap": true,
-		"babelSetting": {
-			"ignore": [],
-			"disablePlugins": [],
-			"outputPath": ""
-		}
-	},
-	"compileType": "miniprogram",
-	"libVersion": "2.8.0",
-	"appid": "wx2a0a77e396535475",
-	"projectname": "chinese-wepy",
-	"miniprogramRoot": "dist/",
-	"cloudfunctionTemplateRoot": "",
-	"debugOptions": {
-		"hidedInDevtools": []
-	},
-	"scripts": {},
-	"simulatorType": "wechat",
-	"simulatorPluginLibVersion": {},
-	"condition": {
-		"search": {
-			"current": -1,
-			"list": []
-		},
-		"conversation": {
-			"current": -1,
-			"list": []
-		},
-		"plugin": {
-			"current": -1,
-			"list": []
-		},
-		"game": {
-			"list": []
-		},
-		"miniprogram": {
-			"current": 0,
-			"list": [
-				{
-					"id": 0,
-					"name": "lesson",
-					"pathName": "pages/lesson",
-					"query": "id=1138721381526679554&lookback=1",
-					"scene": null
-				},
-				{
-					"id": 1,
-					"name": "作业详情（他人）",
-					"pathName": "pages/completionOfWork",
-					"query": "type=2&id=1160873652339605506",
-					"scene": null
-				},
-				{
-					"id": 2,
-					"name": "作业详情（自己）",
-					"pathName": "user/completionOfWork",
-					"query": "type=1&id=1139442398134145025",
-					"scene": null
-				},
-				{
-					"id": 3,
-					"name": "作业详情",
-					"pathName": "pages/completionOfWork",
-					"query": "type=1&id=1138721381526679554",
-					"scene": null
-				},
-				{
-					"id": 4,
-					"name": "交作业(语音)",
-					"pathName": "user/uploadAudioWork",
-					"query": "id=1138723411242659841",
-					"scene": null
-				},
-				{
-					"id": 5,
-					"name": "上传作业",
-					"pathName": "user/uploadImgWork",
-					"query": "id=1138723411242659841",
-					"scene": null
-				},
-				{
-					"id": 6,
-					"name": "作业分享",
-					"pathName": "pages/shareHomework",
-					"query": "id= 1173864726423019522",
-					"scene": null
-				},
-				{
-					"id": 9,
-					"name": "作品表彰",
-					"pathName": "pages/praiseOfWorks",
-					"query": "",
-					"scene": null
-				},
-				{
-					"id": -1,
-					"name": "地址",
-					"pathName": "pages/address",
-					"query": "",
-					"scene": null
-				},
-				{
-					"id": -1,
-					"name": "个人中心",
-					"pathName": "pages/user",
-					"query": "",
-					"scene": null
-				},
-				{
-					"id": -1,
-					"name": "约课",
-					"pathName": "pages/subscribe",
-					"query": "",
-					"scene": null
-				},
-				{
-					"id": -1,
-					"name": "打卡",
-					"pathName": "pages/card",
-					"query": "",
-					"scene": null
-				},
-				{
-					"id": 15,
-					"name": "日历",
-					"pathName": "pages/card",
-					"query": "",
-					"scene": null
-				},
-				{
-					"id": 16,
-					"name": "点赞",
-					"pathName": "pages/completionOfWork",
-					"query": "type=1&id=1139442398134145025",
-					"scene": null
-				},
-				{
-					"id": 14,
-					"name": "课程详情",
-					"pathName": "user/submitHomework",
-					"query": "id=1134359706941546498",
-					"scene": null
-				},
-				{
-					"id": -1,
-					"name": "上传",
-					"pathName": "pages/uploadHomework",
-					"query": "url=http://tmp/wxf8ad572ff36a4c11.o6zAJsx77hRqe0qnWoOefeSL0Yhw.83zXE0S5AZ92affdaa4897753252274d51100f4ba32d.jpg&name=我是听音辨人的高手&id=1134359706941546498&sortnum=1",
-					"scene": null
-				},
-				{
-					"id": 16,
-					"name": "作业详情",
-					"pathName": "pages/test",
-					"query": "id=1138721381526679554",
-					"scene": null
-				},
-				{
-					"id": 17,
-					"name": "我的作业",
-					"pathName": "user/myWork",
-					"query": "",
-					"scene": null
-				},
-				{
-					"id": -1,
-					"name": "表扬",
-					"pathName": "pages/recognitionNotice",
-					"query": "",
-					"scene": null
-				},
-				{
-					"id": 19,
-					"name": "reset",
-					"pathName": "pages/login",
-					"query": "",
-					"scene": null
-				},
-				{
-					"id": 20,
-					"name": "pages/sharePoster",
-					"pathName": "pages/sharePoster",
-					"query": "id=1166599721024905218",
-					"scene": null
-				},
-				{
-					"id": -1,
-					"name": "user/completionOfWork",
-					"pathName": "user/completionOfWork",
-					"query": "type=1&id=1139442473879080962",
-					"scene": null
-				}
-			]
-		}
-	}
+  "description": "项目配置文件",
+  "packOptions": {
+    "ignore": []
+  },
+  "setting": {
+    "urlCheck": true,
+    "es6": false,
+    "postcss": false,
+    "minified": false,
+    "newFeature": true,
+    "autoAudits": false,
+    "checkInvalidKey": true,
+    "checkSiteMap": true,
+    "uploadWithSourceMap": true,
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
+    }
+  },
+  "compileType": "miniprogram",
+  "libVersion": "2.8.0",
+  "appid": "wx2a0a77e396535475",
+  "projectname": "chinese-wepy",
+  "miniprogramRoot": "dist/",
+  "cloudfunctionTemplateRoot": "",
+  "debugOptions": {
+    "hidedInDevtools": []
+  },
+  "scripts": {},
+  "simulatorType": "wechat",
+  "simulatorPluginLibVersion": {},
+  "condition": {
+    "search": {
+      "current": -1,
+      "list": []
+    },
+    "conversation": {
+      "current": -1,
+      "list": []
+    },
+    "plugin": {
+      "current": -1,
+      "list": []
+    },
+    "game": {
+      "list": []
+    },
+    "miniprogram": {
+      "current": 0,
+      "list": [
+        {
+          "id": 0,
+          "name": "lesson",
+          "pathName": "pages/lesson",
+          "query": "id=1138721381526679554&lookback=1",
+          "scene": null
+        },
+        {
+          "id": 1,
+          "name": "作业详情（他人）",
+          "pathName": "pages/completionOfWork",
+          "query": "type=2&id=1160873652339605506",
+          "scene": null
+        },
+        {
+          "id": 2,
+          "name": "作业详情（自己）",
+          "pathName": "user/completionOfWork",
+          "query": "type=1&id=1139442398134145025",
+          "scene": null
+        },
+        {
+          "id": 3,
+          "name": "作业详情",
+          "pathName": "pages/completionOfWork",
+          "query": "type=1&id=1138721381526679554",
+          "scene": null
+        },
+        {
+          "id": 4,
+          "name": "交作业(语音)",
+          "pathName": "user/uploadAudioWork",
+          "query": "id=1138723411242659841",
+          "scene": null
+        },
+        {
+          "id": 5,
+          "name": "上传作业",
+          "pathName": "user/uploadImgWork",
+          "query": "id=1138723411242659841",
+          "scene": null
+        },
+        {
+          "id": 6,
+          "name": "作业分享",
+          "pathName": "pages/shareHomework",
+          "query": "id= 1173864726423019522",
+          "scene": null
+        },
+        {
+          "id": 9,
+          "name": "作品表彰",
+          "pathName": "pages/praiseOfWorks",
+          "query": "",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "地址",
+          "pathName": "pages/address",
+          "query": "",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "个人中心",
+          "pathName": "pages/user",
+          "query": "",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "约课",
+          "pathName": "pages/subscribe",
+          "query": "",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "打卡",
+          "pathName": "pages/card",
+          "query": "",
+          "scene": null
+        },
+        {
+          "id": 15,
+          "name": "日历",
+          "pathName": "pages/card",
+          "query": "",
+          "scene": null
+        },
+        {
+          "id": 16,
+          "name": "点赞",
+          "pathName": "pages/completionOfWork",
+          "query": "type=1&id=1139442398134145025",
+          "scene": null
+        },
+        {
+          "id": 14,
+          "name": "课程详情",
+          "pathName": "user/submitHomework",
+          "query": "id=1134359706941546498",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "上传",
+          "pathName": "pages/uploadHomework",
+          "query": "url=http://tmp/wxf8ad572ff36a4c11.o6zAJsx77hRqe0qnWoOefeSL0Yhw.83zXE0S5AZ92affdaa4897753252274d51100f4ba32d.jpg&name=我是听音辨人的高手&id=1134359706941546498&sortnum=1",
+          "scene": null
+        },
+        {
+          "id": 16,
+          "name": "作业详情",
+          "pathName": "pages/test",
+          "query": "id=1138721381526679554",
+          "scene": null
+        },
+        {
+          "id": 17,
+          "name": "我的作业",
+          "pathName": "user/myWork",
+          "query": "",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "表扬",
+          "pathName": "pages/recognitionNotice",
+          "query": "",
+          "scene": null
+        },
+        {
+          "id": 19,
+          "name": "reset",
+          "pathName": "pages/login",
+          "query": "",
+          "scene": null
+        },
+        {
+          "id": 20,
+          "name": "pages/sharePoster",
+          "pathName": "pages/sharePoster",
+          "query": "id=1166599721024905218",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "user/completionOfWork",
+          "pathName": "user/completionOfWork",
+          "query": "type=1&id=1139442473879080962",
+          "scene": null
+        }
+      ]
+    }
+  }
 }

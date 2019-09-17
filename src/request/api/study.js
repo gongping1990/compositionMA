@@ -72,6 +72,9 @@ const study = {
   },
   getAttendClassCatalog() {
     return request.get('/study/getAttendClassCatalog')
+  },
+  getLessonCatalogByCourse(params) {
+    return request.get('/study/getLessonCatalogByCourse', params)
   }
 }
 

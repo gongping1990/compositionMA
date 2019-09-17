@@ -1,129 +1,210 @@
- <template>
+<template>
   <view class='container lesson'>
     <mHeader title="我的课程"></mHeader>
     <view class="container-scroll"
           style="margin-top:{{height}}px">
-      <view class="lesson-list">
-        <view class="lesson-item van-hairline--bottom">
-          <view class="lesson-info">
-            <text class="lesson-title">回家过大年（写人的脸色）</text>
-            <text class="lesson-text">8月19日</text>
+
+      <scroll-view class="lesson-list"
+                   @scrolltolower="bindLoadItem"
+                   scroll-y
+                   scroll-with-animation>
+        <repeat for="{{dataList}}"
+                key="index"
+                index="index"
+                item="item">
+          <view class="lesson-wrap">
+            <view class="lesson-item van-hairline--bottom">
+              <view class="lesson-info">
+                <text class="lesson-title">{{item.lessonName}}</text>
+                <text class="lesson-text">{{item.schedulingTime}}</text>
+              </view>
+              <view @tap="toJump({{item}})" class="lesson-btn {{statusColorList[item.studyStatus]}}">
+                {{statusList[item.studyStatus]}}
+              </view>
+            </view>
           </view>
-          <view class="lesson-btn">开始学习</view>
-        </view>
-      </view>
+        </repeat>
+      </scroll-view>
     </view>
   </view>
 </template>
 <script>
-import wepy from 'wepy'
-import api from '../request/api'
-import mHeader from '../components/header'
+  import wepy from 'wepy';
+  import api from '../request/api';
+  import mHeader from '../components/header';
 
-export default class Example extends wepy.page {
-  config = {
-    navigationBarTitleText: '',
-    'usingComponents': {
-      'van-area': '../vant/area/index',
-      'van-popup': '../vant/popup/index'
+  export default class Example extends wepy.page {
+    config = {
+      navigationBarTitleText: '',
+      'usingComponents': {
+        'van-area': '../vant/area/index',
+        'van-popup': '../vant/popup/index'
+      }
+    };
+    data = {
+      page: {
+        current: 1,
+        size: 10,
+        total: ''
+      },
+      statusList: {
+        '1': '去补课',
+        '2': '开始学习',
+        '3': '交作业',
+        '4': '待开课',
+        '5': '回看'
+      },
+      statusColorList: {
+        '1': 'bk',
+        '3': 'jzy',
+        '4': 'dkk',
+        '5': 'hk'
+      },
+
+      courseId: '',
+      dataList: []
+    };
+    components = {
+      mHeader
+    };
+
+    onLoad(query) {
+      this.courseId = query.id;
     }
-  };
-  data = {};
-  components = {
-    mHeader
-  };
-  methods = {};
-  events = {
-    save (params) {
-      wx.showToast({
-        icon: 'loading',
-        title: '正在提交'
+
+    onShow() {
+      this.getList();
+    }
+
+    getList() {
+      api.study.getLessonCatalogByCourse({
+        current: this.page.current,
+        size: this.page.size,
+        courseId: this.courseId
       })
-      api.order.saveRecipient(params)
-        .then(() => {
-          wx.showToast({
-            icon: 'succerss',
-            title: '保存成功'
-          })
-        })
-    }
-  };
-  watch = {};
-  computed = {
-    height () {
-      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
-    }
-  };
+        .then(({ data }) => {
+          if (this.page.current > 1) {
+            this.dataList = this.dataList.concat(data.resultData.records);
+          } else {
+            this.dataList = data.resultData.records;
+          }
+          this.page.total = data.resultData.total;
+          this.$apply();
+        });
+    };
 
-  onShareAppMessage () {
-    return {
-      title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
-      path: `/pages/index`,
-      imageUrl: 'https://pub.file.k12.vip/tbzw/v2/logo2.png'
+    methods = {
+      bindLoadItem(data) {
+        if (this.page.current < Math.ceil(this.page.total / this.page.size)) {
+          this.page.current++;
+          this.getList();
+        }
+      },
+      toJump(data) {
+        switch (+data.studyStatus) {
+          case 1:
+            wx.navigateTo({ url: '/pages/classroom?id=' + data.lessonId })
+            break
+          case 2:
+            wx.navigateTo({ url: '/pages/classroom?id=' + data.lessonId })
+            break
+          case 3:
+            wx.navigateTo({ url: '/user/submitHomework?id=' + data.lessonId })
+            break
+          case 5:
+            wx.navigateTo({ url: '/user/submitHomework?id=' + data.lessonId })
+            break
+        }
+      }
+    };
+    events = {};
+    watch = {};
+    computed = {
+      height() {
+        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
+      }
+    };
+
+    onShareAppMessage() {
+      return {
+        title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
+        path: `/pages/index`,
+        imageUrl: 'https://pub.file.k12.vip/tbzw/v2/logo2.png'
+      };
     }
   }
-}
 </script>
 <style lang='scss'>
-@import '../assets/style/mixin.scss';
-.lesson {
-  &-list {
-    padding: 16px 32px;
-  }
-  &-item {
-    @include flex-center;
-    padding: 40px 0;
-  }
-  &-btn {
-    @include flex-center;
-    width: 152px;
-    height: 64px;
-    font-size: 26px;
-    color: #fff;
-    font-weight: 500;
-    background: linear-gradient(
-      90deg,
-      rgba(67, 155, 255, 1) 0%,
-      rgba(71, 132, 255, 1) 100%
-    );
-    box-shadow: 0px 4px 10px 0px rgba(69, 146, 255, 0.45);
-    border-radius: 32px;
-    &.bk {
+  @import '../assets/style/mixin.scss';
+
+  .lesson {
+    &-list {
+      height: 100vh;
+    }
+
+    &-wrap {
+      padding: 16px 32px;
+    }
+
+    &-item {
+      @include flex-center;
+      justify-content: space-between;
+      padding: 40px 0;
+    }
+    &-btn {
+      @include flex-center;
+      width: 152px;
+      height: 64px;
+      font-size: 26px;
+      color: #fff;
+      font-weight: 500;
       background: linear-gradient(
-        90deg,
-        rgba(15, 218, 130, 1) 0%,
-        rgba(0, 209, 118, 1) 100%
+          90deg,
+          rgba(67, 155, 255, 1) 0%,
+          rgba(71, 132, 255, 1) 100%
       );
-      box-shadow: 0px 4px 10px 0px rgba(5, 202, 115, 0.32);
+      box-shadow: 0px 4px 10px 0px rgba(69, 146, 255, 0.45);
+      border-radius: 32px;
+      &.bk {
+        background: linear-gradient(
+            90deg,
+            rgba(15, 218, 130, 1) 0%,
+            rgba(0, 209, 118, 1) 100%
+        );
+        box-shadow: 0px 4px 10px 0px rgba(5, 202, 115, 0.32);
+      }
+      &.jzy {
+        background: linear-gradient(90deg, rgba(255, 191, 0, 1) 0%, rgba(254, 178, 13, 1) 100%);
+        box-shadow: 0px 4px 10px 0px rgba(255, 185, 7, 0.32);
+      }
+      &.dkk {
+        background: rgba(216, 213, 226, 1);
+        box-shadow: none;
+      }
+      &.hk {
+        background: linear-gradient(
+            105deg,
+            rgba(255, 142, 74, 1) 0%,
+            rgba(255, 122, 50, 1) 100%
+        );
+        box-shadow: 0px 4px 10px 0px rgba(254, 182, 15, 0.45);
+      }
     }
-    &.dkk {
-      background: rgba(216, 213, 226, 1);
-      box-shadow: none;
+    &-info {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
     }
-    &.hk {
-      background: linear-gradient(
-        105deg,
-        rgba(255, 142, 74, 1) 0%,
-        rgba(255, 122, 50, 1) 100%
-      );
-      box-shadow: 0px 4px 10px 0px rgba(254, 182, 15, 0.45);
+    &-title {
+      font-size: 32px;
+      line-height: 50px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #4a4a4a;
+    }
+    &-text {
+      font-size: 26px;
+      color: #999;
     }
   }
-  &-info {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-  }
-  &-title {
-    font-size: 32px;
-    line-height: 50px;
-    font-weight: bold;
-    margin-bottom: 10px;
-    color: #4a4a4a;
-  }
-  &-text {
-    font-size: 26px;
-    color: #999;
-  }
-}
 </style>

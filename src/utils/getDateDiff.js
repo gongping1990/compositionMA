@@ -1,5 +1,7 @@
+import dayjs from 'dayjs'
+
 const getDateDiff = (dateTime) => {
-  let dateTimeStamp = new Date(dateTime).getTime();
+  let dateTimeStamp = new Date(+dateTime).getTime();
   let result = '';
   let minute = 1000 * 60;
   let hour = minute * 60;
@@ -19,7 +21,7 @@ const getDateDiff = (dateTime) => {
   let minEnd = diffValue / minute;
   let yearEnd = diffValue / year;
   if (yearEnd >= 1) {
-    result = dateTime;
+    result = dayjs(+dateTime).format('YYYY-MM-DD HH:mm');
   } else if (monthEnd >= 1) {
     result = '' + parseInt(monthEnd) + '月前';
   } else if (weekEnd >= 1) {

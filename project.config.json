@@ -48,12 +48,12 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 6,
+			"current": 0,
 			"list": [
 				{
 					"id": 0,
 					"name": "作业详情老版",
-					"pathName": "user/completionOfWork",
+					"pathName": "user/completionOfWorkNew",
 					"query": "type=1&id=1134359706941546498",
 					"scene": null
 				},
@@ -67,7 +67,7 @@
 				{
 					"id": 2,
 					"name": "作业详情（自己）",
-					"pathName": "user/completionOfWorkNew",
+					"pathName": "user/completionOfWork",
 					"query": "type=1&id=1139442398134145025",
 					"scene": null
 				},

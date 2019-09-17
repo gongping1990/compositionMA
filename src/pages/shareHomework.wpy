@@ -1,144 +1,116 @@
 <template>
-  <view class="container p-shareHomework">
-    <mHeader title="作业分享"></mHeader>
-    <view class="container-scroll "
-          style="margin-top:{{height}}px">
-      <view class="p-shareHomework-headerBg">
-        <view class="p-shareHomework-header">
-          <view class="-header-title"></view>
-          <view class="-header-text">
-            北师大特级名师主讲作业
-            <text class="-bload">1对1点评</text>
+  <view class="p-shareHomework" bindtouchmove="touchMove">
+    <view class="p-shareHomework-body" id="scorllCompletion">
+      <view class="-body-bg"></view>
+      <view class="-body-content">
+        <view class="-body-content-icon"></view>
+        <view class="-body-content-top">
+          <view class="-top-left">
+            <image class="-top-left-img" src="{{shareInfo.stuImg}}"></image>
+            <view class="-top-left-text">
+              <view>{{shareInfo.nickname}}</view>
+              <view class="-tip">{{shareInfo.lessonName}}</view>
+            </view>
           </view>
+          <view class="-top-right">{{shareInfo.workTime}}</view>
         </view>
-      </view>
+        <view class="-body-content-down">
+          <swiper class="-content-down-swiper"
+                  wx:if="{{shareInfo.homeworkType == 2}}"
+                  indicator-dots="{{swiperOptions.indicatorDots}}"
+                  indicator-active-color="{{swiperOptions.indicatorActiveColor}}"
+                  autoplay="{{swiperOptions.autoplay}}"
+                  interval="{{swiperOptions.interval}}"
+                  duration="{{swiperOptions.duration}}">
+            <block wx:for="{{shareInfo.workImg}}" wx:key="{{index}}">
+              <swiper-item>
+                <image class="-content-down-img"
+                       src="{{item}}" @tap="enlargeImage({{item}})"></image>
+              </swiper-item>
+            </block>
+          </swiper>
+          <view class="-content-down-wrap" wx:if="{{shareInfo.homeworkType == 1}}">
+            <image class="-img" src="{{shareInfo.coverphoto}}"></image>
 
-      <view class="p-shareHomework-content">
-        <view class="-content-top">
-          <view class="-content-top-left">
-            <image class="-left-img"
-                   src="{{shareInfo.stuImg}}"></image>
-            <view class="-left-name">{{shareInfo.nickname}}</view>
-          </view>
-
-          <view class="-content-top-right">
-            <view class="-right-study">
-              <view class="-right-num">{{shareInfo.learnDay}}</view>
-              <view class="-right-text">学习天数</view>
-              <view class="-right-btn" @tap="openPopup">我也要学</view>
-            </view>
-            <view class="-right-center">|</view>
-            <view class="-right-zan">
-              <view class="-right-num">{{shareInfo.likenum}}</view>
-              <view class="-right-text">获得点赞</view>
-              <view class="{{shareInfo.otherLike ? '-right-btn-two' : '-right-btn'}}"
-                    @tap="addLike">给Ta点赞
-              </view>
-            </view>
-          </view>
-        </view>
-
-        <view class="-content-down">
-          <view class="-content-down-title">
-            为我坚持学习点个赞吧！
-          </view>
-
-          <view class="-content-down-content">
-            <view class="-title">{{shareInfo.homeworkTitle}}</view>
-            <view class="-wrap-img">
-              <swiper wx:if="{{shareInfo.homeworkType == 2}}"
-                      indicator-dots="{{swiperOptions.indicatorDots}}"
-                      indicator-active-color="{{swiperOptions.indicatorActiveColor}}"
-                      autoplay="{{swiperOptions.autoplay}}"
-                      interval="{{swiperOptions.interval}}"
-                      duration="{{swiperOptions.duration}}">
-                <block wx:for="{{shareInfo.workImg}}" wx:key="{{index}}">
-                  <swiper-item>
-                    <image class="-content-down-img"
-                           src="{{item}}" @tap="enlargeImage({{item}})"></image>
-                  </swiper-item>
-                </block>
-              </swiper>
-
-              <view class="-content-down-audio" @tap="changeAudioStatus({{shareInfo.workAudio}},1)"
-                    wx:if="{{shareInfo.homeworkType == 1}}">
-                <view class="-reply-icon">
-                  <view class="icon"
-                        wx:if="{{!isMyPlay}}"></view>
-                  <view class="playIcon"
-                        wx:if="{{isMyPlay}}"></view>
-                </view>
-                <view class="-reply-time">{{shareInfo.duration}}</view>
-              </view>
-            </view>
-          </view>
-
-          <view class="-content-down-text" wx:if="{{shareInfo.replyTime && !isShow}}" @tap="lookTeacher">查看老师点评
-            <van-icon name="arrow-down"/>
-          </view>
-        </view>
-
-        <view class="-content-footer" wx:if="{{isShow}}">
-          <view class="-content-down-reply">
-            <view class="-down-reply-info">
-              <image class="-reply-info-img"
-                     src="{{shareInfo.replyTeacherImg}}"></image>
-              <view class="-reply-info-user">
-                <view class="-user-text">
-                  <view class="-name">{{shareInfo.replyTeacher}}</view>
-                  <view>{{shareInfo.replyTime}}</view>
-                </view>
-              </view>
-            </view>
-
-            <view class="-reply-info-text" wx:if="{{shareInfo.replyText}}">{{shareInfo.replyText}}</view>
-
-            <view class="-replay-info-audio" @tap="changeAudioStatus({{shareInfo.replyAudioAuthorUrl}},2)"
-                  wx:if="{{shareInfo.replyAudio}}">
+            <view class="-reply-btn" @tap="changeAudioStatus({{shareInfo.workAudio}},1)">
               <view class="-reply-icon">
                 <view class="icon"
-                      wx:if="{{!isPlay}}"></view>
+                      wx:if="{{!isMyPlay}}"></view>
                 <view class="playIcon"
-                      wx:if="{{isPlay}}"></view>
+                      wx:if="{{isMyPlay}}"></view>
               </view>
-              <view class="-reply-time">{{shareInfo.replyDuration}}</view>
-            </view>
-
-            <view class="-reply-info-img -footer-img" wx:if="{{shareInfo.replyImg.length}}">
-              <image class="-img" wx:for="{{shareInfo.replyImg}}" wx:key="{{item}}"
-                     @tap="enlargeImage({{item}})"
-                     src="{{item}}"></image>
+              <view class="-reply-time">{{shareInfo.duration}}</view>
             </view>
           </view>
         </view>
-
-        <view class="-content-end">
-          <view class="-content-end-btn" @tap="openPopup">我也想报名</view>
-        </view>
       </view>
 
-      <view class="p-shareHomework-btn">
-        <button class="-btn" @tap="openPopup"></button>
-      </view>
-
-      <van-popup show="{{ showKF }}"
-                 position="bottom"
-                 @close="onClose">
-        <view class="kf-pop">
-          <text class="kf-pop-title">报名课程</text>
-          <image src="https://pub.file.k12.vip/tbzw/v2/baoming.gif"
-                 class="kf-pop-img"/>
-          <text class="kf-pop-text">点击下方按钮</text>
-          <text class="kf-pop-text red">回复“1”即可报名学习</text>
-          <button class="kf-pop-btn"
-                  open-type="contact">
-            回复“1”立即报名
-          </button>
+      <view class="-body-teacher" wx:if="{{isReply}}">
+        <view class="-body-teacher-reply">
+          <view class="-reply-title">{{shareInfo.replyTeacher}}核心点拨：</view>
+          <view class="-reply-text" wx:if="{{shareInfo.replyText}}">{{shareInfo.replyText}}</view>
+          <view class="-reply-img-wrap" wx:if="{{shareInfo.replyImg.length}}">
+            <image class="-img"
+                   wx:for="{{shareInfo.replyImg}}"
+                   wx:key="{{item}}"
+                   @tap="enlargeImage({{item}})"
+                   src="{{item}}"></image>
+          </view>
         </view>
-      </van-popup>
+      </view>
+    </view>
+
+    <view class="p-shareHomework-tip {{isSlide ? '-animation-left' : '-animation-right'}}" @tap="openTip">
+      <view class="-tip-btn">
+        <view class="-tip-left">
+          <image class="-tip-userImg" src="{{shareInfo.stuImg}}"></image>
+          <view class="-tip-text">
+            <view>我是{{shareInfo.nickname}}，邀请你
+              <Text class="-tip-text-color">一起学习</Text>
+            </view>
+            <Text>{{shareInfo.courseName}}</Text>
+          </view>
+        </view>
+        <button class="-tip-clickbtn" open-type="contact">
+          <image class="-tip-btnImg" src="https://pub.file.k12.vip/2019/09/17/1173856313928458242.png"></image>
+        </button>
+      </view>
+    </view>
+
+    <view class="p-shareHomework-footer">
+      <view class="-footer-left">
+        <image class="-footer-left-img" src="{{shareInfo.stuImg}}"></image>
+        <view class="-footer-left-text">
+          <view>{{shareInfo.replyTeacher}}</view>
+          <view class="-tip">{{shareInfo.replyTime ? shareInfo.replyTime : '请稍等，老师随后点评'}}</view>
+        </view>
+      </view>
+      <view class="-footer-center" wx:if="{{shareInfo.replyTime && shareInfo.replyAudio}}"
+            @tap="changeAudioStatus({{shareInfo.replyAudioAuthorUrl}},2)">
+        <text>收听老师点评</text>
+        <image class="-footer-center-img1"
+               src="https://pub.file.k12.vip/tbzw/1.3/course/bofang.png"></image>
+      </view>
+      <view class="-footer-center" wx:if="{{shareInfo.replyTime && !shareInfo.replyAudio}}" @tap="scrollToFn">
+        <text>查看老师点评</text>
+        <image class="-footer-center-img2"
+               src="https://pub.file.k12.vip/tbzw/1.3/course/look.png"></image>
+      </view>
+      <view class="-footer-right">
+        <button class="-footer-right-btn"
+                open-type="share">
+          <image class="-footer-right-img"
+                 src="https://pub.file.k12.vip/tbzw/1.3/course/icon-1.png"></image>
+        </button>
+        <view class="-footer-right-wrap" @tap="addLike">
+          <view class="-tip">{{shareInfo.likenum}}</view>
+          <image class="-footer-right-img -img-two" src="https://pub.file.k12.vip/tbzw/1.3/course/icon-2.png"></image>
+        </view>
+      </view>
     </view>
 
     <lookImage :isShow.sync="isShowImage" :imgUrl.sync="itemUrl"></lookImage>
+
   </view>
 </template>
 
@@ -147,7 +119,7 @@
   import { connect } from 'wepy-redux';
   import api from '../request/api';
   import dayjs from 'dayjs';
-  import mHeader from '../components/header';
+  import getDateDiff from '../utils/getDateDiff';
   import lookImage from '../components/lookImage';
 
   @connect({
@@ -164,7 +136,6 @@
       }
     };
     components = {
-      mHeader,
       lookImage
     };
     computed = {
@@ -183,9 +154,10 @@
     data = {
       isPlay: false,
       isMyPlay: false,
-      showKF: false,
       isShowImage: false,
       isShow: false,
+      isReply: false,
+      isSlide: true,
       myAudio: '',
       durationTime: '',
       shareInfo: '',
@@ -217,12 +189,14 @@
         workId: this.workId
       }).then(res => {
         this.shareInfo = res.data.resultData;
-        this.shareInfo.replyTime = this.shareInfo.replyTime ? dayjs(+this.shareInfo.replyTime).format('YYYY-MM-DD HH:mm') : '';
+        this.shareInfo.workTime = getDateDiff.getDateDiff(this.shareInfo.workTime);
+        this.shareInfo.replyTime = this.shareInfo.replyTime ? getDateDiff.getDateDiff(this.shareInfo.replyTime) : '';
         this.shareInfo.workImg = this.shareInfo.workImg && this.shareInfo.workImg.split(',');
         this.shareInfo.workImgSrc = this.shareInfo.workImgSrc && this.shareInfo.workImgSrc.split(',');
         this.shareInfo.replyImg = this.shareInfo.replyImg && this.shareInfo.replyImg.split(',');
         this.shareInfo.duration = this.timeToFormat(this.shareInfo.duration);
         this.shareInfo.replyDuration = this.timeToFormat(this.shareInfo.replyDuration);
+        this.isReply = this.shareInfo.replyTime ? true : false;
         this.$apply();
       });
     };
@@ -247,18 +221,27 @@
     };
 
     methods = {
-      lookTeacher() {
-        this.isShow = true;
+      touchMove(e) {
+        if (this.isSlide) {
+          this.isSlide = false;
+        }
+      },
+      openTip() {
+        this.isSlide = true
+      },
+      scrollToFn() {
+        let that = this;
+        wx.createSelectorQuery().select('#scorllCompletion').boundingClientRect(function(rect) {
+          if (rect) {
+            wx.pageScrollTo({
+              scrollTop: rect.height
+            });
+          }
+        }).exec();
       },
       enlargeImage(data) {
         this.itemUrl = data;
         this.isShowImage = true;
-      },
-      openPopup() {
-        this.showKF = true;
-      },
-      onClose() {
-        this.showKF = false;
       },
       changeAudioStatus(url, num) {
         this.myAudio && this.myAudio.destroy();
@@ -324,394 +307,383 @@
     }
   }
 </script>
+
 <style lang="scss">
   @import '../assets/style/mixin.scss';
 
   .p-shareHomework {
-    background: rgba(255, 233, 178, 0.19);
-    border-top: 1px solid transparent;
-    padding-top: 30px;
+    background-color: #F6BA04;
 
-    &-headerBg {
-      /*margin-top: 30px;*/
-      background: url("https://pub.file.k12.vip/2019/08/26/1165914236214009858.png") no-repeat;
-      background-size: 94%;
-      background-position: 32px 0;
-      height: 122px;
-    }
-
-    &-header {
-      margin-left: 72px;
-      /*padding-top: 18px;*/
-
-      .-header-text {
-        width: 410px;
-        height: 74px;
-        font-size: 24px;
-        font-weight: 500;
-        color: rgba(160, 84, 12, 0.6);
-        line-height: 74px;
-
-        .-bload {
-          font-size: 32px;
-          font-weight: 600;
-          color: rgba(160, 84, 12, 0.6);
-        }
-      }
-    }
-
-    &-content {
+    &-body {
       position: relative;
-      margin: 0 auto;
-      width: 686px;
-      /*height: 850px;*/
-      background: rgba(255, 255, 255, 1);
-      box-shadow: 0px 8px 16px 4px rgba(255, 246, 162, 0.5);
-      border-radius: 32px;
-      z-index: 2;
+      display: inline-block;
+      margin-bottom: 173px;
 
-      .-content-top {
-        display: flex;
-        justify-content: space-between;
-        margin: 0 58px 38px 60px;
-        padding-top: 24px;
-        height: 150px;
+      .-body-back {
+        position: absolute;
+        top: 115px;
+        left: 34px;
+      }
 
-        &-left {
-          text-align: center;
-          .-left-img {
-            border-radius: 50%;
-            width: 84px;
-            height: 84px;
-          }
+      .-body-bg {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 366px;
+        height: 447px;
+        background: url("https://pub.file.k12.vip/tbzw/1.3/course/shizi.png") no-repeat;
+        background-size: 100%;
+      }
 
-          .-left-name {
-            margin-top: 10px;
-            height: 44px;
-            font-size: 32px;
-            font-weight: 400;
-            color: rgba(52, 50, 48, 1);
-            line-height: 44px;
-          }
+      .-body-content {
+        position: relative;
+        margin: 207px 32px 71px;
+        width: 686px;
+        height: 1033px;
+        background: rgba(255, 255, 255, 1);
+        box-shadow: 0px 13px 27px 0px rgba(246, 95, 4, 0.2);
+        border-radius: 33px;
+
+        &-icon {
+          position: absolute;
+          top: -30px;
+          right: 14px;
+          width: 266px;
+          height: 69px;
+          background: url("https://pub.file.k12.vip/tbzw/1.3/course/zhuazi.png") no-repeat;
+          background-size: 100%;
         }
 
-        &-right {
-          text-align: center;
-          display: inline-block;
+        &-top {
           display: flex;
           justify-content: space-between;
-          width: 55%;
 
-          .-right-center {
-            position: relative;
-            top: 20px;
-            width: 2px;
-            height: 40px;
-            color: #eeecea;
-          }
+          .-top-left {
+            display: flex;
+            margin: 58px 0 47px 29px;
 
-          .-right-num {
-            height: 66px;
-            font-size: 48px;
-            font-weight: 500;
-            color: rgba(70, 65, 60, 1);
-            line-height: 66px;
-          }
-
-          .-right-text {
-            height: 34px;
-            font-size: 24px;
-            font-weight: 400;
-            color: rgba(70, 65, 60, 0.6);
-            line-height: 34px;
-            margin-bottom: 14px;
-          }
-
-          .-right-btn {
-            text-align: center;
-            width: 116px;
-            height: 34px;
-            background: rgba(255, 238, 79, 0.8);
-            border-radius: 12px;
-            font-size: 20px;
-            font-weight: 400;
-            color: rgba(70, 65, 60, 1);
-            line-height: 34px;
-          }
-
-          .-right-btn-two {
-            text-align: center;
-            width: 116px;
-            height: 34px;
-            background: rgba(236, 236, 235, 1);
-            border-radius: 12px;
-            font-size: 20px;
-            font-weight: 400;
-            color: rgba(103, 99, 95, 1);
-            line-height: 34px;
-          }
-        }
-      }
-
-      .-content-down {
-        padding: 0 48px 32px;
-        border-bottom: 8px solid #F6F6F6;
-
-        &-title {
-          margin-bottom: 32px;
-          text-align: center;
-          height: 50px;
-          font-size: 36px;
-          font-weight: 500;
-          color: rgba(52, 50, 48, 1);
-          line-height: 50px;
-        }
-
-        &-content {
-          width: 590px;
-
-          .-title {
-            @include text-overflow(528px);
-            margin: 0 auto;
-            background: rgba(255, 245, 209, 1);
-            border-radius: 18px 18px 0 0;
-            padding: 20px 32px 16px;
-            font-size: 28px;
-            font-weight: 500;
-            color: rgba(209, 138, 59, 1);
-            line-height: 56px;
-          }
-
-          .-wrap-img {
-            padding: 32px;
-            border-radius: 0 0 16px 16px;
-            border: 2px solid rgba(144, 141, 138, 0.2);
-
-            .-content-down-img {
-
-              width: 526px;
-              height: 292px;
-              border-radius: 8px;
+            &-img {
+              width: 118px;
+              height: 117px;
+              border-radius: 50%;
+              margin-right: 33px;
             }
 
-            .-content-down-audio {
+            &-text {
+              font-size: 40px;
+              font-weight: bold;
+              color: rgba(0, 0, 0, 1);
+
+              .-tip {
+                margin-top: 14px;
+                text-align: center;
+                width: 267px;
+                height: 40px;
+                background: rgba(255, 192, 0, 1);
+                border-radius: 20px 20px 20px 0px;
+                font-size: 24px;
+                font-weight: 500;
+                color: rgba(255, 255, 255, 1);
+                line-height: 40px;
+              }
+            }
+          }
+
+          .-top-right {
+            margin: 68px 25px 0 0;
+            font-size: 27px;
+            font-weight: 400;
+            color: rgba(153, 153, 153, 1);
+          }
+        }
+
+        &-down {
+          height: 776px;
+          border-radius: 27px;
+
+          .-content-down-swiper {
+            margin: 0 27px;
+            height: 100%;
+            border-radius: 27px;
+          }
+
+          .-content-down-img {
+            width: 100%;
+            height: 776px;
+            border-radius: 27px;
+          }
+
+          .-content-down-wrap {
+            margin: 0 0 81px;
+            text-align: center;
+
+            .-img {
+              margin: 67px auto 122px;
+              width: 366px;
+              height: 447px;
+              border-radius: 33px;
+            }
+
+            .-reply-btn {
               @include flex-center;
               justify-content: space-between;
-              /*margin: 44px 0 64px 32px;*/
-              padding: 20px 32px 18px;
-              width: 464px;
-              background: rgba(255, 245, 209, 1);
-              border-radius: 36px;
-              border: 3px solid rgba(232, 197, 157, 1);
+              padding: 0 47px;
+              margin: 0 61px;
+              height: 96px;
+              background: linear-gradient(-37deg, rgba(255, 122, 50, 1), rgba(255, 142, 74, 1));
+              box-shadow: 0px 8px 8px 0px rgba(255, 122, 50, 0.4);
+              border-radius: 48px;
 
               .-reply-icon {
                 .icon {
-                  @include bg('/sk/icon-audio.png');
-                  width: 20px;
-                  height: 37px;
+                  @include bg('/1.3/course/icon-play.png');
+                  width: 52px;
+                  height: 39px;
                 }
 
                 .playIcon {
-                  @include bg('/v2/audio-pay.gif');
-                  width: 20px;
-                  height: 37px;
+                  background: url("https://pub.file.k12.vip/2019/09/17/1173850722128502785.gif");
+                  background-size: 100%;
+                  width: 52px;
+                  height: 39px;
                 }
               }
 
               .-reply-time {
-                height: 26px;
-                font-size: 19px;
+                font-size: 34px;
                 font-weight: 600;
-                color: rgba(209, 138, 59, 1);
-                line-height: 26px;
+                color: #ffffff;
               }
             }
           }
-
         }
+      }
 
-        &-text {
-          text-align: center;
-          margin: 32px 0 0 0;
-          height: 40px;
-          font-size: 28px;
-          font-weight: 400;
-          color: rgba(70, 65, 60, 0.6);
-          line-height: 40px;
-        }
+      .-body-btn {
+        text-align: center;
+        margin: 59px auto 71px;
+        width: 333px;
+        height: 80px;
+        background: linear-gradient(-37deg, rgba(255, 107, 67, 1), rgba(255, 122, 50, 1));
+        box-shadow: 0px 8px 8px 0px rgba(255, 122, 50, 0.4);
+        border-radius: 40px;
+        font-size: 32px;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 1);
+        line-height: 80px;
+      }
 
-        &-img {
-          display: block;
-          margin: 0 auto;
-          height: 342px;
-        }
-
-        &-colunm-img {
-          margin-top: 40px;
-          border-radius: 0;
-          width: 254px;
-          height: 342px;
-        }
+      .-body-teacher {
+        margin-bottom: 30px;
 
         &-reply {
-          padding: 0 48px 48px;
+          margin: 0 32px;
+          padding: 53px 27px 50px;
+          background: rgba(255, 255, 255, 1);
+          box-shadow: 0px 13px 27px 0px rgba(246, 95, 4, 0.2);
+          border-radius: 33px;
 
-          .-down-reply-info {
-            display: flex;
-            align-items: center;
-
-            .-reply-info-img {
-              margin-right: 16px;
-              width: 64px;
-              height: 64px;
-              border-radius: 50%;
-            }
-
-            .-reply-info-user {
-              .-user-text {
-                font-size: 20px;
-                font-weight: 400;
-                color: #343230;
-
-                .-name {
-                  height: 40px;
-                  font-size: 28px;
-                  font-weight: 500;
-                  color: #343230;
-                  line-height: 40px;
-                }
-              }
-            }
-
-          }
-
-          .-reply-info-text {
-            /*margin-top: 18px;*/
+          .-reply-title {
             font-size: 32px;
-            font-weight: 400;
-            color: rgba(52, 50, 48, 1);
-            line-height: 44px;
+            font-weight: bold;
+            color: rgba(0, 0, 0, 1);
           }
 
-          .-replay-info-audio {
-            @include flex-center;
-            justify-content: space-between;
-
-            margin: 24px 0 26px;
-            padding: 16px 24px;
-            width: 390px;
-            background: rgba(255, 245, 209, 1);
-            border-radius: 39px;
-            border: 2px solid rgba(232, 197, 157, 1);
-
-            .-reply-icon {
-              .icon {
-                @include bg('/sk/icon-audio.png');
-                width: 26px;
-                height: 43px;
-              }
-
-              .playIcon {
-                @include bg('/v2/audio-pay.gif');
-                width: 26px;
-                height: 43px;
-              }
-            }
-
-            .-reply-time {
-              height: 26px;
-              font-size: 19px;
-              font-weight: 600;
-              color: rgba(209, 138, 59, 1);
-              line-height: 26px;
-            }
+          .-reply-text {
+            margin-top: 28px;
+            font-size: 28px;
+            font-weight: 500;
+            color: rgba(0, 0, 0, 1);
           }
 
-          .-reply-info-img {
+          .-reply-img-wrap {
+            margin-top: 39px;
             display: flex;
-            margin: 24px 0 26px;
 
             .-img {
               margin-right: 12px;
-              width: 198px;
-              height: 198px;
+              width: 193px;
+              height: 193px;
+              border-radius: 20px;
             }
           }
 
-          .-footer-img {
-            margin-bottom: 0;
+        }
+
+        &-tip {
+          text-align: center;
+          margin: 67px auto 57px;
+          font-size: 32px;
+          font-weight: 500;
+          color: rgba(255, 255, 255, 1);
+        }
+      }
+    }
+
+    &-tip {
+      position: fixed;
+      transform: translateX(595px);
+      bottom: 212px;
+      width: 100%;
+
+      .-tip-btn {
+        @include flex-center;
+        justify-content: space-between;
+        height: 120px;
+        margin: 0 32px;
+        background: linear-gradient(-37deg, rgba(255, 107, 67, 1), rgba(255, 122, 50, 1));
+        box-shadow: 0px 8px 8px 0px rgba(255, 122, 50, 0.4);
+        border-radius: 60px;
+
+        .-tip-left {
+          display: flex;
+          align-items: center;
+        }
+
+        .-tip-userImg {
+          margin: 13px 26px 13px 18px;
+          width: 93px;
+          height: 93px;
+          border-radius: 50%;
+        }
+
+        .-tip-text {
+          font-size: 28px;
+          font-weight: bold;
+          color: rgba(255, 255, 255, 1);
+
+          &-color {
+            color: #FFCE45
+          }
+        }
+
+        .-tip-clickbtn {
+          background-color: transparent;
+          padding: 0;
+          margin: 0;
+          line-height: 0;
+        }
+
+        .-tip-btnImg {
+          margin: 13px 5px 1px 0;
+          width: 107px;
+          height: 108px;
+        }
+      }
+    }
+
+    &-footer {
+      @include flex-center;
+      justify-content: space-between;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      height: 173px;
+      background: rgba(255, 255, 255, 1);
+      box-shadow: 0px -13px 13px 0px rgba(210, 108, 46, 0.19);
+      border-radius: 40px 40px 0px 0px;
+
+      .-footer-left {
+        display: flex;
+        align-items: center;
+        margin-left: 32px;
+
+        &-img {
+          width: 80px;
+          height: 80px;
+          border-radius: 50%;
+          margin-right: 21px;
+        }
+
+        &-text {
+          font-size: 24px;
+          font-weight: 500;
+          color: rgba(51, 51, 51, 1);
+
+          .-tip {
+            margin-top: 21px;
+            height: 20px;
+            font-size: 20px;
+            font-weight: 500;
+            color: rgba(153, 153, 153, 1);
+            line-height: 20px;
           }
         }
       }
 
-      .-content-end {
-        background: url("https://pub.file.k12.vip/2019/08/26/1165916885399330817.png");
-        background-size: 100%;
-        width: 686px;
-        height: 278px;
-        border-radius: 0px 0px 32px 32px;
-        display: inline-block;
+      .-footer-center {
+        @include flex-center;
+        width: 274px;
+        height: 80px;
+        background: linear-gradient(-37deg, rgba(255, 142, 74, 1), rgba(255, 122, 50, 1));
+        box-shadow: 0px 8px 8px 0px rgba(255, 122, 50, 0.4);
+        border-radius: 40px 40px 40px 0px;
+        font-size: 24px;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 1);
+        line-height: 80px;
+
+        &-img1 {
+          width: 31px;
+          height: 42px;
+          margin-left: 36px;
+        }
+        &-img2 {
+          width: 23px;
+          height: 21px;
+          margin-left: 13px;
+        }
+      }
+
+      .-footer-right {
+        display: flex;
+        margin-top: 47px;
+        margin-right: 23px;
 
         &-btn {
-          margin: 172px auto 0;
-          text-align: center;
-          width: 296px;
-          height: 74px;
-          background: linear-gradient(180deg, rgba(255, 243, 92, 1) 0%, rgba(252, 194, 23, 1) 100%);
-          box-shadow: 0px 4px 8px 0px rgba(234, 151, 23, 0.73);
-          border-radius: 37px;
-          font-size: 32px;
-          font-weight: 500;
-          color: rgba(131, 79, 24, 1);
-          line-height: 74px;
+          background: #ffffff;
+          margin: 0;
+          padding: 0;
+        }
+
+        &-wrap {
+          position: relative;
+
+          .-tip {
+            position: absolute;
+            left: 65px;
+            top: -10px;
+            text-align: center;
+            width: 47px;
+            height: 35px;
+            background: linear-gradient(-42deg, rgba(255, 111, 40, 1), rgba(255, 82, 69, 1));
+            border-radius: 17px 17px 17px 0px;
+            font-size: 20px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 1);
+            line-height: 35px;
+          }
+        }
+
+        &-img {
+          width: 96px;
+          height: 96px;
+        }
+
+        .-img-two {
+          margin-left: 5px;
         }
       }
     }
 
-    &-btn {
-      position: absolute;
-      background: url("https://pub.file.k12.vip/2019/08/26/1165921939006787585.png") no-repeat;
-      background-size: 100%;
-      /*position: relative;*/
-      width: 100%;
-      height: 252px;
+    .-animation-left {
+      transition: all 2.5s;
+      transform: translateX(0);
     }
 
-    .kf-pop {
-      @include flex-column-center;
-      padding: 16px 24px;
-      background: rgba(255, 255, 255, 1);
-      border-radius: 16px 16px 0px 0px;
-      &-title {
-        font-size: 36px;
-      }
-      &-img {
-        margin: 48px 0;
-      }
-      &-text {
-        font-size: 36px;
-        line-height: 50px;
-        color: rgba($color: #58422b, $alpha: 0.5);
-        &.red {
-          color: #ff7c76;
-          font-weight: bold;
-        }
-      }
-      &-btn {
-        @include flex-center;
-        margin: 32px 0;
-        width: 654px;
-        height: 100px;
-        font-size: 32px;
-        color: #58422b;
-        background: linear-gradient(
-            90deg,
-            rgba(249, 230, 11, 1) 0%,
-            rgba(253, 219, 85, 1) 100%
-        );
-        box-shadow: 0px 8px 16px 4px rgba(230, 194, 81, 0.4);
-        border-radius: 54px;
-      }
+    .-animation-right {
+      transition: all 2.5s;
+      transform: translateX(-590);
     }
   }
 </style>

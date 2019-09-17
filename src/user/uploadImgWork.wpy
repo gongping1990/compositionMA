@@ -268,17 +268,12 @@ export default class UploadImgWork extends wepy.page {
       text-align: center;
       width: 470px;
       height: 100px;
-      background: linear-gradient(
-        90deg,
-        rgba(249, 230, 11, 1) 0%,
-        rgba(253, 219, 85, 1) 100%
-      );
-      box-shadow: 0px 8px 16px 4px rgba(230, 194, 81, 0.4);
-      border-radius: 50px;
+      background:linear-gradient(90deg,rgba(254,179,18,1) 0%,rgba(255,192,0,1) 100%);
+      box-shadow:0px 2px 8px 4px rgba(255,181,76,0.4);
+      border-radius:50px;
       font-size: 32px;
-      font-family: PingFangSC-Medium;
       font-weight: 500;
-      color: rgba(88, 66, 43, 1);
+      color: #FFFFFF;
       line-height: 100px;
     }
   }
@@ -322,16 +317,12 @@ export default class UploadImgWork extends wepy.page {
       margin: 0 auto;
       width: 470px;
       height: 100px;
-      background: linear-gradient(
-        90deg,
-        rgba(249, 230, 11, 1) 0%,
-        rgba(253, 219, 85, 1) 100%
-      );
-      box-shadow: 0px 8px 16px 4px rgba(230, 194, 81, 0.4);
+      background:linear-gradient(90deg,rgba(254,179,18,1) 0%,rgba(255,192,0,1) 100%);
+      box-shadow:0px 2px 8px 4px rgba(255,181,76,0.4);
       border-radius: 50px;
       font-size: 32px;
       font-weight: 500;
-      color: rgba(88, 66, 43, 1);
+      color: #ffffff;
       line-height: 100px;
     }
   }

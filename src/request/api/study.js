@@ -75,6 +75,9 @@ const study = {
   },
   listCompositionWeekLesson(params) {
     return request.get('/study/listCompositionWeekLesson', params)
+  },
+  getLessonCatalogByCourse(params) {
+    return request.get('/study/getLessonCatalogByCourse', params)
   }
 }
 

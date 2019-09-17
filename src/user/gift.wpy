@@ -1,39 +1,29 @@
 <!--  -->
 <template>
   <view class='container gift'>
-    <mHeader title="我的作业"
+    <mHeader title="我的礼包"
              bgColor="#FAFAFA"></mHeader>
     <view class="container-scroll"
           style="margin-top:{{height}}px">
-      <view class="gift-item">
-        <image class="gift-cover" />
-        <view class="gift-info">
-          <text class="gift-title">小语轻作文【大礼包】</text>
-          <view class="gift-btn"
-                @tap="clickBtn">待领取</view>
-        </view>
-      </view>
-      <view class="gift-item">
-        <image class="gift-cover" />
-        <view class="gift-info">
-          <text class="gift-title">小语轻作文【大礼包】</text>
-          <view class="gift-btn">待领取</view>
-        </view>
-      </view>
-      <view class="gift-item">
-        <image class="gift-cover" />
-        <view class="gift-info">
-          <text class="gift-title">小语轻作文【大礼包】</text>
-          <view class="gift-btn">待领取</view>
-        </view>
-      </view>
-      <view class="gift-item">
-        <image class="gift-cover" />
-        <view class="gift-info">
-          <text class="gift-title">小语轻作文【大礼包】</text>
-          <view class="gift-btn">待领取</view>
-        </view>
-      </view>
+      <scroll-view class="gift-list"
+                   @scrolltolower="bindLoadItem"
+                   scroll-y
+                   scroll-with-animation>
+        <repeat for="{{dataList}}"
+                key="index"
+                index="index"
+                item="item">
+          <view class="gift-item">
+            <image class="gift-cover" />
+            <view class="gift-info">
+              <text class="gift-title">小语轻作文【大礼包】</text>
+              <view class="gift-btn"
+                    @tap="clickBtn">待领取</view>
+            </view>
+          </view>
+        </repeat>
+      </scroll-view>
+
     </view>
 
   </view>
@@ -41,15 +31,44 @@
 <script>
 import wepy from 'wepy'
 import mHeader from '../components/header'
+import api from '../request/api'
+
 export default class Gift extends wepy.page {
   config = {
     navigationBarTitleText: ''
   };
-  data = {};
+  data = {
+    page: {
+      current: 1,
+      size: 10,
+      total: ''
+    },
+    dataList: []
+  };
   components = {
     mHeader
   };
+
+  getList() {
+    api.center.getMyGiftPackage()
+      .then(({ data }) => {
+      if (this.page.current > 1) {
+        this.dataList = this.dataList.concat(data.resultData.records);
+      } else {
+        this.dataList = data.resultData.records;
+      }
+      this.page.total = data.resultData.total;
+      this.$apply();
+    });
+  };
+
   methods = {
+    bindLoadItem(data) {
+      if (this.page.current < Math.ceil(this.page.total / this.page.size)) {
+        this.page.current++;
+        this.getOtherHomeWork();
+      }
+    },
     clickBtn () {
       console.log(11)
       wx.redirectTo({ url: '/user/address' })
@@ -62,13 +81,21 @@ export default class Gift extends wepy.page {
       return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
     }
   };
-  onLoad () { };
-  onShow () { };
+  onLoad () {
+
+  };
+  onShow () {
+    this.getList()
+  };
 }
 </script>
 <style lang='scss'>
 @import '../assets/style/mixin.scss';
 .gift {
+  &-list {
+    height: 100vh;
+  }
+
   &-item {
     margin: 0 auto;
     margin-top: 48px;

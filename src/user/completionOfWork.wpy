@@ -70,7 +70,7 @@
 
     <view class="p-completionOfWork-footer">
       <view class="-footer-left">
-        <image class="-footer-left-img" src="{{workDetail.stuImg}}"></image>
+        <image class="-footer-left-img" src="{{workDetail.replyTeacherImg}}"></image>
         <view class="-footer-left-text">
           <view>{{workDetail.replyTeacher}}</view>
           <view class="-tip">{{workDetail.replyTime ? workDetail.replyTime : '请稍等，老师随后点评'}}</view>
@@ -200,6 +200,8 @@
                 size="36px"
                 @click="openShareModal"/>
     </van-popup>
+
+    <load wx:if="{{isFetching}}"></load>
   </view>
 </template>
 
@@ -207,6 +209,7 @@
   import wepy from 'wepy';
   import api from '../request/api';
   import dayjs from 'dayjs';
+  import load from '../components/load'
   import mHeader from '../components/header';
   import lookImage from '../components/lookImage';
   import ConfirmModal from '../components/confirmModal';
@@ -223,7 +226,8 @@
     components = {
       mHeader,
       lookImage,
-      ConfirmModal
+      ConfirmModal,
+      load
     };
     computed = {
       height() {
@@ -311,8 +315,9 @@
         }
         this.initAudio(false);
         this.$apply();
-      }, () => {
+      }).finally(()=>{
         this.isFetching = false;
+        this.$apply();
       });
     };
 
@@ -337,8 +342,9 @@
         this.isCompliment = this.workDetail.otherLike;
         this.initAudio(false);
         this.$apply();
-      }, () => {
+      }).finally(()=>{
         this.isFetching = false;
+        this.$apply();
       });
     };
 
@@ -519,7 +525,7 @@
     onShareAppMessage(type) {
       return {
         title: this.queryInfo.type === '1' ? `我已坚持学习${this.workDetail.learnDay}天，刚完成今天的作业，请给我点个赞吧` : `快来给@${this.workDetail.nickname}点个赞，TA已坚持学习了${this.workDetail.learnDay}天`,
-        path: this.queryInfo.type === '1' ? `/pages/shareHomework?id=${this.workDetail.id}` : `/pages/completionOfWork?type=2&id=${this.workDetail.id}`,
+        path: `/pages/shareHomework?id=${this.workDetail.id}`,
         imageUrl: this.workDetail.homeworkType === 1 ? '' : this.workDetail.workImg[0]
       };
     }

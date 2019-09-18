@@ -60,7 +60,8 @@
       </view>
     </view>
 
-    <view class="p-shareHomework-tip {{isSlide ? '-animation-left' : '-animation-right'}}" @tap="openTip">
+    <view class="p-shareHomework-tip {{isSlide ? '-animation-left' : '-animation-right'}}" @tap="openTip"
+          wx:if="{{!shareInfo.self}}">
       <view class="-tip-btn">
         <view class="-tip-left">
           <image class="-tip-userImg" src="{{shareInfo.stuImg}}"></image>
@@ -227,7 +228,7 @@
         }
       },
       openTip() {
-        this.isSlide = true
+        this.isSlide = true;
       },
       scrollToFn() {
         let that = this;

@@ -31,7 +31,8 @@
             <text class="chart-title">{{roomData.teacherName}}</text>
             <view class="chart-content-wrap">
 
-              <view class="chart-content voice" @tap="bindClickVoice">
+              <view class="chart-content voice"
+                    @tap="bindClickVoice">
                 <view class="icon {{paused && 'paused'}}"></view>
               </view>
               <view class="chart-time">{{timeText}}</view>
@@ -101,7 +102,9 @@ export default class Example extends wepy.page {
   };
   events = {
     back () {
-      wx.redirectTo({ url: '/pages/catalog' })
+      wx.navigateBack({
+        delta: 1 // 返回的页面数，如果 delta 大于现有页面数，则返回到首页,
+      })
     },
     downTimeEnd () {
       this.showDownTime = false
@@ -224,10 +227,13 @@ export default class Example extends wepy.page {
   }
   onShow () {
     this.initPage()
+    wepy.$log.info('ready info')
   }
   onHide () {
     this.$parent.globalData.audioContext.stop()
     this.audioContext.stop()
+    wepy.$log.error('ready error')
+    wepy.$log.warn('ready warn')
   }
   onUnload () {
     this.$parent.globalData.audioContext.stop()
@@ -364,8 +370,8 @@ export default class Example extends wepy.page {
           45deg,
           transparent 0,
           transparent 25%,
-          rgba(61,53,45,0.1) 0,
-          rgba(61,53,45,0.1) 50%
+          rgba(61, 53, 45, 0.1) 0,
+          rgba(61, 53, 45, 0.1) 50%
         );
       background-size: 20px 20px;
       border: 4px dashed transparent;

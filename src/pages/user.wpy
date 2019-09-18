@@ -71,7 +71,7 @@
                mode="aspectFit" />
         上课
       </van-tabbar-item>
-      <van-tabbar-item dot="{{remindData.todaycard}}">
+      <van-tabbar-item dot="{{remindData.servicetip}}">
         <image slot="icon"
                src="../assets/image/serve-def.png"
                mode="aspectFit" />
@@ -198,11 +198,7 @@ export default class User extends wepy.page {
       wx.navigateTo({ url: '/pages/login' })
     },
     clickLoginBtn () {
-      if (!this.logined) {
-        this.showPopup = true
-      } else {
-        this.showSelect = true
-      }
+      this.showSelect = true
     },
     toJump (data) {
       if (!this.logined) {

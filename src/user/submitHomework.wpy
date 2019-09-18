@@ -12,7 +12,7 @@
           <view class="-top-right">
             <view>
               <view class="-title">{{lessonDetail.name}}</view>
-              <view class="-text">《{{workDetail.courseName}}》</view>
+              <view class="-text">《{{lessonDetail.courseName}}》</view>
             </view>
 
             <view class="-right-down">

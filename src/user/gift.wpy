@@ -82,16 +82,6 @@
         });
     };
 
-    getRecipient(id) {
-      api.center.getRecipient({
-        courseId: id
-      })
-        .then(({ data }) => {
-          this.addressInfo = data.resultData;
-          this.$apply();
-        });
-    };
-
     methods = {
       bindLoadItem(data) {
         if (this.page.current < Math.ceil(this.page.total / this.page.size)) {
@@ -104,9 +94,8 @@
           case 0:
             break
           case 1:
-            this.getRecipient(item.courseId);
-            if (!this.addressInfo) {
-              wx.navigateTo({ url: '/user/address' });
+            if (item.adressed) {
+              wx.navigateTo({ url: `/user/address?id=${item.courseId}` });
             } else {
               wx.navigateTo({ url: `/user/sendGood?id=${item.courseId}` });
             }

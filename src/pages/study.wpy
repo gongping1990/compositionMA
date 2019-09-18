@@ -538,12 +538,15 @@ export default class Example extends wepy.page {
     this.isLookBack = option.lookback
   };
   onShow () {
+    wepy.$log.info('study info')
     this.videoContext = wx.createVideoContext('video')
     this.initPage()
   };
   onHide () {
     this.reset()
     this.changeLearnStage(this.roomData.id, 1)
+    wepy.$log.error('study error')
+    wepy.$log.warn('study warn')
   }
   onUnload () {
     this.reset()

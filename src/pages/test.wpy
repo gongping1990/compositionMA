@@ -44,7 +44,9 @@
                 wx:key="{{index}}"
                 wx:if="{{index == stepIndex && !isSummary}}"
                 class="question-content">
-            <scroll-view scroll-y class="question-scroll" scroll-top="{{scrollTop}}">
+            <scroll-view scroll-y
+                         class="question-scroll"
+                         scroll-top="{{scrollTop}}">
               <view class="chart-item">
                 <image class="chart-avatar"
                        src="{{courseInfo.teacherHeadImage}}" />
@@ -83,8 +85,10 @@
             </scroll-view>
 
           </view>
-          <scroll-view scroll-y scroll-top="{{summaryScrollTop}}" class="summary"
-                wx:if="{{isSummary}}">
+          <scroll-view scroll-y
+                       scroll-top="{{summaryScrollTop}}"
+                       class="summary"
+                       wx:if="{{isSummary}}">
             <view class="summary-list">
               <view class="chart-item summary-item {{summaryIndex >= index && summaryAnimateIndex >= index && 'show'}}"
                     wx:if="{{summaryIndex >= index }}"
@@ -261,7 +265,9 @@ export default class Example extends wepy.page {
   };
   events = {
     back () {
-      wx.redirectTo({ url: '/pages/catalog' })
+      wx.navigateBack({
+        delta: 1 // 返回的页面数，如果 delta 大于现有页面数，则返回到首页,
+      })
     }
   };
   watch = {
@@ -356,7 +362,7 @@ export default class Example extends wepy.page {
 
   // 弹窗结束后切换题目
   changeAlertVisible () {
-    let {isSuccess, questionArr, stepIndex} = this
+    let { isSuccess, questionArr, stepIndex } = this
     this.showAlert = true
     setTimeout(() => {
       let url = isSuccess ? questionArr[stepIndex].rightAudio : questionArr[stepIndex].errorAudio
@@ -577,12 +583,15 @@ export default class Example extends wepy.page {
     })
   }
   onShow () {
+    wepy.$log.info('test info')
     this.getClassInfo()
     this.getLessonRoom()
   }
   onHide () {
     this.audioContext.stop()
     clearInterval(this.timer)
+    wepy.$log.error('test error')
+    wepy.$log.warn('test warn')
   }
   onUnload () {
     this.audioContext.stop()

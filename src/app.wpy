@@ -21,10 +21,12 @@ import configStore from './store'
 // eslint-disable-next-line no-unused-vars
 import api from './request/api'
 
+const log = require('./utils/log.js')
+
 const store = configStore()
 setStore(store)
 wepy.$store = store
-
+wepy.$log = log
 export default class extends wepy.app {
   config = {
     pages: [

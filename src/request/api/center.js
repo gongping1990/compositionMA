@@ -12,6 +12,9 @@ const center = {
   },
   getRecipient(params) {
     return request.get('/center/getRecipient', params)
+  },
+  saveRecipient(params) {
+    return request.post('/center/saveRecipient', params)
   }
 }
 

@@ -14,11 +14,12 @@
                 index="index"
                 item="item">
           <view class="gift-item">
-            <image class="gift-cover" />
+            <image class="gift-cover" src="{{item.coverphoto}}"/>
             <view class="gift-info">
-              <text class="gift-title">小语轻作文【大礼包】</text>
-              <view class="gift-btn"
-                    @tap="clickBtn">待领取</view>
+              <text class="gift-title">{{item.name}}</text>
+              <view class="gift-btn {{statusList[item.giftType].color}}"
+                    @tap="clickBtn({{item}})">{{statusList[item.giftType].text}}
+              </view>
             </view>
           </view>
         </repeat>
@@ -29,128 +30,177 @@
   </view>
 </template>
 <script>
-import wepy from 'wepy'
-import mHeader from '../components/header'
-import api from '../request/api'
+  import wepy from 'wepy';
+  import mHeader from '../components/header';
+  import api from '../request/api';
 
-export default class Gift extends wepy.page {
-  config = {
-    navigationBarTitleText: ''
-  };
-  data = {
-    page: {
-      current: 1,
-      size: 10,
-      total: ''
-    },
-    dataList: []
-  };
-  components = {
-    mHeader
-  };
+  export default class Gift extends wepy.page {
+    config = {
+      navigationBarTitleText: ''
+    };
+    data = {
+      page: {
+        current: 1,
+        size: 10,
+        total: ''
+      },
+      dataList: [],
+      addressInfo: '',
+      statusList: [
+        {
+          text: '报名免费领',
+          color: 'bm'
+        },
+        {
+          text: '待领取',
+          color: 'dlq'
+        },
+        {
+          text: '待发货',
+          color: 'fh'
+        },
+        {
+          text: '已发货',
+          color: 'fh'
+        }
+      ]
+    };
+    components = {
+      mHeader
+    };
 
-  getList() {
-    api.center.getMyGiftPackage()
-      .then(({ data }) => {
-      if (this.page.current > 1) {
-        this.dataList = this.dataList.concat(data.resultData.records);
-      } else {
-        this.dataList = data.resultData.records;
+    getList() {
+      api.center.getMyGiftPackage()
+        .then(({ data }) => {
+          if (this.page.current > 1) {
+            this.dataList = this.dataList.concat(data.resultData);
+          } else {
+            this.dataList = data.resultData;
+          }
+          this.page.total = data.resultData.total;
+          this.$apply();
+        });
+    };
+
+    getRecipient(id) {
+      api.center.getRecipient({
+        courseId: id
+      })
+        .then(({ data }) => {
+          this.addressInfo = data.resultData;
+          this.$apply();
+        });
+    };
+
+    methods = {
+      bindLoadItem(data) {
+        if (this.page.current < Math.ceil(this.page.total / this.page.size)) {
+          this.page.current++;
+          this.getOtherHomeWork();
+        }
+      },
+      clickBtn(item) {
+        switch (+item.giftType) {
+          case 0:
+            break
+          case 1:
+            this.getRecipient(item.courseId);
+            if (!this.addressInfo) {
+              wx.navigateTo({ url: '/user/address' });
+            } else {
+              wx.navigateTo({ url: `/user/sendGood?id=${item.courseId}` });
+            }
+            break;
+          case 2:
+          case 3:
+            wx.navigateTo({ url: `/user/sendGood?id=${item.courseId}` });
+            break
+        }
+
       }
-      this.page.total = data.resultData.total;
-      this.$apply();
-    });
-  };
-
-  methods = {
-    bindLoadItem(data) {
-      if (this.page.current < Math.ceil(this.page.total / this.page.size)) {
-        this.page.current++;
-        this.getOtherHomeWork();
+    };
+    events = {};
+    watch = {};
+    computed = {
+      height() {
+        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
       }
-    },
-    clickBtn () {
-      console.log(11)
-      wx.redirectTo({ url: '/user/address' })
-    }
-  };
-  events = {};
-  watch = {};
-  computed = {
-    height () {
-      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
-    }
-  };
-  onLoad () {
+    };
 
-  };
-  onShow () {
-    this.getList()
-  };
-}
+    onLoad() {
+
+    };
+
+    onShow() {
+      this.getList();
+    };
+  }
 </script>
 <style lang='scss'>
-@import '../assets/style/mixin.scss';
-.gift {
-  &-list {
-    height: 100vh;
-  }
+  @import '../assets/style/mixin.scss';
 
-  &-item {
-    margin: 0 auto;
-    margin-top: 48px;
-    width: 686px;
-    height: 500px;
-    background: rgba(255, 255, 255, 1);
-    box-shadow: 0px 4px 20px 0px rgba(234, 241, 247, 0.7);
-    border-radius: 32px;
-  }
-  &-info {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 24px;
-    height: 116px;
-  }
-  &-title {
-    font-size: 32px;
-    color: #4a4a4a;
-    font-weight: 600;
-  }
-  &-btn {
-    @include flex-center;
-    box-sizing: border-box;
-    padding: 0 32px;
-    height: 64px;
-    color: #fff;
-    font-size: 28px;
-    font-weight: 500;
-    border-radius: 80px;
-    background: linear-gradient(
-      105deg,
-      rgba(255, 142, 74, 1) 0%,
-      rgba(255, 122, 50, 1) 100%
-    );
-    box-shadow: 0px 4px 10px 0px rgba(254, 182, 15, 0.45);
-    &.bm {
-      background: linear-gradient(
-        90deg,
-        rgba(255, 192, 0, 1) 0%,
-        rgba(254, 179, 18, 1) 100%
-      );
-      box-shadow: 0px 4px 10px 0px rgba(254, 182, 15, 0.45);
+  .gift {
+    &-list {
+      height: 100vh;
     }
-    &.fh {
-      background: #fff;
-      box-shadow: none;
-      color: #ff7a32;
-      border: 1px solid rgba(255, 122, 50, 1);
+
+    &-item {
+      margin: 0 auto;
+      margin-top: 48px;
+      width: 686px;
+      height: 500px;
+      background: rgba(255, 255, 255, 1);
+      box-shadow: 0px 4px 20px 0px rgba(234, 241, 247, 0.7);
+      border-radius: 32px;
+    }
+    &-info {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      height: 116px;
+    }
+    &-title {
+      font-size: 32px;
+      color: #4a4a4a;
+      font-weight: 600;
+    }
+    &-btn {
+      @include flex-center;
+      box-sizing: border-box;
+      padding: 0 32px;
+      height: 64px;
+      color: #fff;
+      font-size: 28px;
+      font-weight: 500;
+      border-radius: 80px;
+      &.dlq {
+        background: linear-gradient(
+            105deg,
+            rgba(255, 142, 74, 1) 0%,
+            rgba(255, 122, 50, 1) 100%
+        );
+        box-shadow: 0px 4px 10px 0px rgba(254, 182, 15, 0.45);
+      }
+      &.bm {
+        background: linear-gradient(
+            90deg,
+            rgba(255, 192, 0, 1) 0%,
+            rgba(254, 179, 18, 1) 100%
+        );
+        box-shadow: 0px 4px 10px 0px rgba(254, 182, 15, 0.45);
+      }
+      &.fh {
+        background: #fff;
+        box-shadow: none;
+        color: #ff7a32;
+        border: 1px solid rgba(255, 122, 50, 1);
+      }
+    }
+    &-cover {
+      width: 686px;
+      height: 384px;
+      border-radius: 32px 32px 0px 0px;
     }
   }
-  &-cover {
-    width: 686px;
-    height: 384px;
-    border-radius: 32px 32px 0px 0px;
-  }
-}
 </style>

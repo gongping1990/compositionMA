@@ -36,7 +36,8 @@
               上周上课
             </view>
           </view>
-          <view class="lesson-all">全部课程<view class="lesson-all-icon"></view>
+          <view class="lesson-all"
+                @tap="clickAllBtn">全部课程<view class="lesson-all-icon"></view>
           </view>
         </view>
         <scroll-view class="lesson-scroll"
@@ -197,6 +198,9 @@ export default class Lesson extends wepy.page {
   }
 
   methods = {
+    clickAllBtn () {
+      wx.navigateTo({ url: '/user/myCourse' })
+    },
     clickEmptyBtn (i) {
       if (i) {
         wx.redirectTo({ url: '/pages/index' })

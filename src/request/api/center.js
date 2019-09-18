@@ -4,11 +4,14 @@ const center = {
   getMyCourse(params) {
     return request.get('/center/getMyCourse')
   },
-  getCourseCatalog(params) {
-    return request.post('/center/getMyGiftPackage', params)
+  getUCRemindVO(params) {
+    return request.get('/center/getUCRemindVO', params)
   },
   getMyGiftPackage(params) {
     return request.get('/center/getMyGiftPackage', params)
+  },
+  getRecipient(params) {
+    return request.get('/center/getRecipient', params)
   }
 }
 

@@ -21,18 +21,18 @@ export default class testMixin extends wepy.mixin {
       }
     }
   }
-  // getUCRemindVOL() {
-  //   let { api } = this.$parent.globalData
-  //   api.study
-  //     .getUCRemindVO()
-  //     .then(({ data }) => {
-  //       store.dispatch({ type: 'UPDATE_TAB_REMIND', payload: data.resultData })
-  //     })
-  //     .catch(e => {
-  //       console.log(1111,)
-  //     })
-  // }
-  // onShow() {
-  //   this.getUCRemindVOL()
-  // }
+  getUCRemindVOL() {
+    let { api } = this.$parent.globalData
+    api.study
+      .getUCRemindVO()
+      .then(({ data }) => {
+        store.dispatch({ type: 'UPDATE_TAB_REMIND', payload: data.resultData })
+      })
+      .catch(e => {
+        console.log(1111)
+      })
+  }
+  onShow() {
+    this.getUCRemindVOL()
+  }
 }

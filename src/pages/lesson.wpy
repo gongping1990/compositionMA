@@ -1,6 +1,6 @@
 <template>
   <view class="container lesson">
-    <mHeader title="我的课程"
+    <mHeader title="我的课程表"
              flag="0"></mHeader>
     <view class="container-scroll"
           style="margin-top:{{height}}px;height: calc(100vh - {{height}}px)">
@@ -34,11 +34,11 @@
           <view class="lesson-tab">
             <view class="lesson-tab-item {{nowWeek && 'active'}}"
                   @tap="clickTab({{true}})">
-              本周上课
+              本周课表
             </view>
             <view class="lesson-tab-item {{!nowWeek && 'active'}} "
                   @tap="clickTab({{false}})">
-              上周上课
+              上周课表
             </view>
           </view>
           <view class="lesson-all"

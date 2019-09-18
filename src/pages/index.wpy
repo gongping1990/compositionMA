@@ -9,9 +9,17 @@
         <block wx:for="{{bannerList}}"
                wx:key="{{index}}">
           <swiper-item>
-            <image mode="aspectFill"
-                   class="banner-img"
-                   src="{{item.url}}" />
+            <button open-type="contact"
+                    class="banner-btn"
+                    show-message-card="true"
+                    send-message-title="{{item.cardtitle}}"
+                    send-message-path="{{'/pages/index?homeConfig=' + item.sessionFrom}}"
+                    send-message-img="{{item.cardimgurl}}">
+              <image mode="aspectFill"
+                     class="banner-img"
+                     src="{{item.url}}" />
+            </button>
+
           </swiper-item>
         </block>
       </swiper>
@@ -234,6 +242,7 @@ dayjs.extend(relativeTime)
 export default class Home extends wepy.page {
   config = {
     navigationBarTitleText: '今日学习',
+    onReachBottomDistance: 100,
     usingComponents: {
       'van-tabbar': '../vant/tabbar/index',
       'van-tabbar-item': '../vant/tabbar-item/index',
@@ -260,7 +269,7 @@ export default class Home extends wepy.page {
     workTotal: 10,
     hotTotal: 10,
     tabActive: 0,
-    tabList: ['作业广场', '最新佳作']
+    tabList: ['作业广场', '最新表扬']
   };
   mixins = [testMixin]
   components = {
@@ -334,11 +343,16 @@ export default class Home extends wepy.page {
       this.isError = false
       this.loading = false
       this.infoData = data.resultData
-      this.courseList = data.resultData.courseList
-      this.bannerList = data.resultData.bannerList
-      this.courseList = this.courseList.map(e => {
+      this.courseList = data.resultData.courseList.map(e => {
         e.sessionFrom = JSON.stringify({
           type: 1,
+          homeConfig: e.id
+        })
+        return e
+      })
+      this.bannerList = data.resultData.bannerList.map(e => {
+        e.sessionFrom = JSON.stringify({
+          type: 2,
           homeConfig: e.id
         })
         return e
@@ -385,6 +399,7 @@ export default class Home extends wepy.page {
     }).then(({ data }) => {
       this.isError = false
       this.hotCurrent += 1
+      this.hotTotal = data.resultData.total
       this.hotList = [...this.hotList, ...data.resultData.records]
       this.$apply()
     })
@@ -401,6 +416,7 @@ export default class Home extends wepy.page {
   }
 
   onReachBottom () {
+    console.log('onReachBottomDistance')
     let { tabActive } = this
     if (tabActive) {
       this.getDayByMasterpiece()
@@ -419,7 +435,7 @@ export default class Home extends wepy.page {
   position: relative;
   .container-scroll {
     padding: 32px;
-    padding-bottom: 100px;
+    padding-bottom: 150px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -666,11 +682,19 @@ export default class Home extends wepy.page {
   .banner {
     width: 686px;
     height: 300px;
-    border-radius: 27px;
     overflow: hidden;
+    &-btn {
+      position: relative;
+      width: 686px;
+      height: 300px;
+      border-radius: 27px;
+    }
     &-img {
-      width: 100%;
-      height: 100%;
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 686px;
+      height: 300px;
       border-radius: 27px;
     }
   }

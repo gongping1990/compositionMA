@@ -39,7 +39,10 @@ export default class Example extends wepy.page {
         icon: 'loading',
         title: '正在提交'
       })
-      api.center.saveRecipient(params)
+      api.center.saveRecipient({
+        courseId: this.queryInfo.id,
+        ...params
+      })
         .then(() => {
           wx.showToast({
             icon: 'succerss',

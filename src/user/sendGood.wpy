@@ -50,27 +50,33 @@ export default class Example extends wepy.page {
       'van-popup': '../vant/popup/index'
     }
   };
-  data = {};
+  data = {
+    queryInfo: '',
+    addressInfo: ''
+  };
   components = {
     mHeader,
     address
   };
-  methods = {};
-  events = {
-    save (params) {
-      wx.showToast({
-        icon: 'loading',
-        title: '正在提交'
-      })
-      api.order.saveRecipient(params)
-        .then(() => {
-          wx.showToast({
-            icon: 'succerss',
-            title: '保存成功'
-          })
-        })
-    }
+  onLoad (query) {
+    this.queryInfo = query
+  }
+
+  onShow () {
+    this.getRecipient()
+  }
+  getRecipient() {
+    api.center.getRecipient({
+      courseId: this.queryInfo.id
+    })
+      .then(({ data }) => {
+        this.addressInfo = data.resultData;
+        this.$apply();
+      });
   };
+
+  methods = {};
+  events = {};
   watch = {};
   computed = {
     height () {

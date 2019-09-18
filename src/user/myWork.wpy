@@ -1,6 +1,6 @@
 <template>
   <view class="container p-myWork">
-    <mHeader title="我的作业"></mHeader>
+    <mHeader :title="{{queryInfo.name}}"></mHeader>
     <view class="container-scroll"
           style="margin-top:{{height}}px">
       <view class="p-myWork-tab">
@@ -12,45 +12,32 @@
               @tap="changeTab({{'2'}})">
           <view class="-text">已提交作业</view>
         </view>
-
       </view>
+
       <repeat for="{{dataList}}"
               key="index"
               index="index"
               item="list">
         <view class="p-myWork-list">
-          <view class="-list-title">
-            <view class="-list-title-left">{{list.gradeText}}</view>
-            <view class="-list-title-right"
-                  @tap="toDetail({{list}})">
-              查看全部
-              <image class="-icon"
-                     src="https://pub.file.k12.vip/tbzw/word/icon-return.png"></image>
+          <view class="-list-item van-hairline--bottom">
+            <view class="-list-item-left">
+              <view class="-left-name">{{list.name}}</view>
+              <view class="-left-time {{ list.status == 1 ? 'ts' : ''}}">
+                {{list.time}}{{ tabActive==='1' ? (list.status == 1 ? '的作业不合格' : '的作业') : '的作业' }}
+              </view>
+            </view>
+            <view class="-list-item-right {{ tabActive==='1' ? (list.status == 1 ? 'dh' : 'wj') : '' }}"
+                  @tap="workDetail({{list}})">
+              {{tabActive==='1' ? '交作业' : '看点评'}}
             </view>
           </view>
-          <repeat for="{{list.lessonsList}}"
-                  key="index"
-                  index="index"
-                  item="item">
-            <view class="-list-item">
-              <view class="-list-item-left">
-                <view class="-num">{{index+1}}</view>
-                <view class="-name">{{item.name}}</view>
-              </view>
-              <view class="-list-item-right"
-                    @tap="workDetail({{item}})">
-                <image class="-icon"
-                       wx:if="{{tabActive==='1'}}"
-                       src="https://pub.file.k12.vip/2019/06/05/1136167662351831042.png"></image>
-                <image class="-icon"
-                       wx:if="{{tabActive==='2'}}"
-                       src="https://pub.file.k12.vip/2019/06/05/1136167768069263362.png"></image>
-                {{tabActive==='1' ? '交作业' : '看点评'}}
-              </view>
-            </view>
-          </repeat>
         </view>
       </repeat>
+
+      <view class="p-myWork-all" @tap="lookAll()" wx:if="{{!isShow && dataList.length}}">
+        查看全部作业
+      </view>
+
       <view wx:if="{{!dataList.length}}">
         <emptyState :emptyInfo.sync="emptyOption"></emptyState>
       </view>
@@ -59,193 +46,189 @@
 </template>
 
 <script>
-import wepy from 'wepy'
-import api from '../request/api'
-import mHeader from '../components/header'
-import emptyState from '../components/emptyState'
+  import wepy from 'wepy';
+  import api from '../request/api';
+  import mHeader from '../components/header';
+  import emptyState from '../components/emptyState';
 
-export default class MyWork extends wepy.page {
-  config = {
-    navigationBarTitleText: '我的作业'
-  };
-  components = {
-    mHeader,
-    emptyState
-  };
-  computed = {
-    height () {
-      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
-    }
-  };
+  export default class MyWork extends wepy.page {
+    config = {
+      navigationBarTitleText: '我的作业'
+    };
+    components = {
+      mHeader,
+      emptyState
+    };
+    computed = {
+      height() {
+        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
+      }
+    };
 
-  data = {
-    tabActive: '1',
-    dataList: [],
-    emptyOption: {
-      url: 'https://pub.file.k12.vip/tbzw/v2/empty/wtj.png',
-      text: '真棒，你没有需要上交的作业！'
-    }
-  };
+    data = {
+      tabActive: '1',
+      isShow: false,
+      queryInfo: {},
+      dataList: [],
+      emptyOption: {
+        url: 'https://pub.file.k12.vip/tbzw/v2/empty/wtj.png',
+        text: '真棒，你没有需要上交的作业！'
+      }
+    };
 
-  getList () {
-    api.study.listExistWorkByPage({
-      existwork: this.tabActive !== '1'
-    })
-      .then(({ data }) => {
-        this.dataList = data.resultData
-        for (let list of this.dataList) {
-          list.lessonsList = list.lessons.slice(0, 2)
-        }
-        this.$apply()
+    getList(num) {
+      api.study.listExistWorkByPage({
+        courseId: this.queryInfo.id,
+        existwork: this.tabActive !== '1'
       })
-  }
+        .then(({ data }) => {
+          if (num) {
+            this.dataList = data.resultData;
+          } else {
+            this.dataList = data.resultData.slice(0, 2);
+          }
 
-  methods = {
-    changeTab (num) {
-      this.tabActive = num
-      this.emptyOption = {
-        url: `https://pub.file.k12.vip/tbzw/v2/empty/${this.tabActive === '1' ? 'wtj' : 'ytj'}.png`,
-        text: this.tabActive === '1' ? '真棒，你没有需要上交的作业！' : '你还没有交过作业，上课后别忘记交作业哦！'
-      }
-      this.getList()
-    },
-    toDetail (params) {
-      wx.navigateTo({ url: `/user/myWorkAll?type=${this.tabActive}&name=${params.gradeText}&grade=${params.grade}` })
-    },
-    workDetail (item) {
-      if (this.tabActive === '1') {
-        wx.navigateTo({ url: `/user/submitHomework?id=${item.lessonId}` })
-      } else {
-        wx.navigateTo({ url: `/user/completionOfWork?type=1&id=${item.lessonId}` })
-      }
+          this.$apply();
+        });
     }
-  };
 
-  events = {};
+    methods = {
+      lookAll() {
+        this.getList(1)
+        this.isShow = true;
+      },
+      changeTab(num) {
+        this.dataList = [];
+        this.dataListOne = [];
+        this.tabActive = num;
+        this.emptyOption = {
+          url: `https://pub.file.k12.vip/tbzw/v2/empty/${this.tabActive === '1' ? 'wtj' : 'ytj'}.png`,
+          text: this.tabActive === '1' ? '真棒，你没有需要上交的作业！' : '你还没有交过作业，上课后别忘记交作业哦！'
+        };
+        this.isShow = false;
+        this.getList();
+      },
+      workDetail(item) {
+        if (this.tabActive === '1') {
+          wx.navigateTo({ url: `/user/submitHomework?id=${item.lessonId}` });
+        } else {
+          wx.navigateTo({ url: `/user/completionOfWork?type=1&id=${item.lessonId}` });
+        }
+      }
+    };
 
-  onLoad () {
-    this.getList()
-  }
-  onShareAppMessage () {
-    return {
-      title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
-      path: `/pages/index`,
-      imageUrl: 'https://pub.file.k12.vip/tbzw/v2/logo2.png'
+    events = {};
+
+    onLoad(query) {
+      this.queryInfo = query;
+      this.getList();
+    }
+
+    onShareAppMessage() {
+      return {
+        title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
+        path: `/pages/index`,
+        imageUrl: 'https://pub.file.k12.vip/tbzw/v2/logo2.png'
+      };
     }
   }
-}
 </script>
 <style lang="scss">
-@import '../assets/style/mixin.scss';
+  @import '../assets/style/mixin.scss';
 
-.p-myWork {
-  &-tab {
-    display: flex;
-    align-items: center;
-    padding: 32px;
-    border-bottom: 1px solid #f5f5f5;
-
-    .-tab-text {
-      @include flex-center;
-      margin-right: 24px;
-      padding: 0 24px;
-      height: 64px;
-      font-size: 26px;
-      font-weight: 500;
-      color: #fff;
-      background: #dbd9e2;
-      border-radius: 12px;
-    }
-
-    .-active {
-      background: linear-gradient(
-        90deg,
-        rgba(64, 127, 255, 1) 0%,
-        rgba(46, 110, 255, 1) 100%
-      );
-    }
-  }
-
-  &-list {
-    border-bottom: 10px solid #f6f5f4;
-
-    .-list-title {
+  .p-myWork {
+    &-tab {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      padding: 32px 32px 24px;
-
-      &-left {
-        height: 50px;
-        font-size: 36px;
-        font-weight: 500;
-        color: rgba(88, 66, 43, 1);
-        line-height: 50px;
-      }
-
-      &-right {
-        height: 34px;
-        font-size: 24px;
-        font-weight: 500;
-        color: rgba(88, 66, 43, 0.5);
-        line-height: 34px;
-
-        .-icon {
-          margin-left: 12px;
-          width: 10px;
-          height: 20px;
-        }
-      }
-    }
-
-    .-list-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 26px 32px 30px;
+      padding: 32px;
       border-bottom: 1px solid #f5f5f5;
 
-      &-left {
+      .-tab-text {
         @include flex-center;
-
-        .-num {
-          @include flex-center;
-          @include bg('/word/ title-tag.png');
-          margin-right: 16px;
-          width: 52px;
-          height: 32px;
-          font-size: 28px;
-          font-weight: 400;
-          color: rgba(88, 66, 43, 1);
-        }
-
-        .-name {
-          @include text-overflow(400px);
-          height: 40px;
-          font-size: 28px;
-          font-weight: 400;
-          color: rgba(70, 65, 60, 1);
-          line-height: 40px;
-        }
+        margin-right: 24px;
+        padding: 0 24px;
+        height: 64px;
+        font-size: 26px;
+        font-weight: 500;
+        color: #fff;
+        background: #dbd9e2;
+        border-radius: 12px;
       }
 
-      &-right {
-        @include flex-center;
-        width: 140px;
-        height: 46px;
-        background: rgba(34, 234, 171, 1);
-        border-radius: 22px;
-        font-size: 24px;
-        font-weight: 500;
-        color: rgba(255, 255, 255, 1);
+      .-active {
+        background: linear-gradient(
+            90deg,
+            rgba(64, 127, 255, 1) 0%,
+            rgba(46, 110, 255, 1) 100%
+        );
+      }
+    }
 
-        .-icon {
-          margin-right: 10px;
-          width: 21px;
-          height: 21px;
+    &-list {
+      .-list-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 40px 0;
+        margin: 0 32px;
+
+        &-left {
+
+          .-left-name {
+            height: 44px;
+            font-size: 32px;
+            font-weight: 500;
+            color: rgba(74, 74, 74, 1);
+            line-height: 44px;
+          }
+
+          .-left-time {
+            margin-top: 8px;
+            height: 36px;
+            font-size: 26px;
+            font-weight: 400;
+            color: rgba(153, 153, 153, 1);
+            line-height: 36px;
+
+            &.ts {
+              color: #FF7C76;
+            }
+          }
+        }
+
+        &-right {
+          text-align: center;
+          width: 152px;
+          height: 64px;
+          background: linear-gradient(90deg, rgba(15, 218, 130, 1) 0%, rgba(0, 209, 118, 1) 100%);
+          box-shadow: 0px 4px 10px 0px rgba(5, 202, 115, 0.32);
+          border-radius: 32px;
+          font-size: 28px;
+          font-weight: 500;
+          color: rgba(255, 255, 255, 1);
+          line-height: 64px;
+
+          &.wj {
+            background: linear-gradient(90deg, rgba(255, 191, 0, 1) 0%, rgba(254, 178, 13, 1) 100%);
+            box-shadow: 0px 4px 10px 0px rgba(255, 185, 7, 0.32);
+          }
+          &.dh {
+            background: linear-gradient(90deg, rgba(255, 142, 74, 1) 0%, rgba(255, 122, 50, 1) 100%);
+            box-shadow: 0px 4px 10px 0px rgba(255, 122, 50, 0.32);
+          }
         }
       }
     }
+
+    &-all {
+      margin-top: 80px;
+      text-align: center;
+      height: 36px;
+      font-size: 26px;
+      font-weight: 400;
+      color: rgba(153, 153, 153, 1);
+      line-height: 36px;
+      text-decoration: underline;
+    }
   }
-}
 </style>

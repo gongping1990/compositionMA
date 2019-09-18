@@ -198,7 +198,11 @@ export default class User extends wepy.page {
       wx.navigateTo({ url: '/pages/login' })
     },
     clickLoginBtn () {
-      this.showPopup = true
+      if (!this.logined) {
+        this.showPopup = true
+      } else {
+        this.showSelect = true
+      }
     },
     toJump (data) {
       if (!this.logined) {

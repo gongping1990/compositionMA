@@ -20,7 +20,7 @@
         <button class="empty-btn"
                 wx:for="{{recommendList}}"
                 wx:key="{{index}}">
-          <image class="empty-btn-image"
+          <image class="empty-btn-img"
                  src="{{item.coverphoto}}" />
         </button>
       </view>
@@ -253,7 +253,7 @@ export default class Lesson extends wepy.page {
       this.loading = false
       if (!data.resultData.hasBuy) {
         this.isBuy = false
-        this.recommendList = data.resultData
+        this.recommendList = data.resultData.recommenList
         this.$apply()
       } else {
         this.listCompositionWeekLesson()
@@ -491,6 +491,8 @@ export default class Lesson extends wepy.page {
       color: #a8a8af;
     }
     &-btn {
+      @include flex-center;
+      position: relative;
       margin-bottom: 107px;
       width: 685px;
       height: 343px;
@@ -498,6 +500,9 @@ export default class Lesson extends wepy.page {
       overflow: hidden;
       background-color: #ccc;
       &-img {
+        position: absolute;
+        left: 0;
+        top: 0;
         width: 685px;
         height: 343px;
       }

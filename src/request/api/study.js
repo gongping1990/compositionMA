@@ -78,6 +78,9 @@ const study = {
   },
   getLessonCatalogByCourse(params) {
     return request.get('/study/getLessonCatalogByCourse', params)
+  },
+  listReplyByPage(params) {
+    return request.get('/study/listReplyByPage', params)
   }
 }
 

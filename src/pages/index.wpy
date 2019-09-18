@@ -32,6 +32,13 @@
               <text class="course-text">{{item.courseDescribe}}</text>
             </view>
             <view class="course-btn-wrap">
+              <button open-type="contact"
+                      show-message-card="true"
+                      send-message-title="{{item.cardtitle}}"
+                      send-message-path="分享路径"
+                      send-message-img="{{item.cardimgurl}}">
+
+              </button>
               <button class="course-btn">
                 去报名
               </button>
@@ -273,7 +280,7 @@ export default class Home extends wepy.page {
     },
     clickWorkItem (item) {
       if (!this.logined) {
-        this.showSelect = true
+        this.showPopup = true
         return
       }
       wx.navigateTo({ url: `/user/completionOfWork?type=${item.isme ? 1 : 2}&id=${item.isme ? item.lessonId : item.homeworkId}` })

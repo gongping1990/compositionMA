@@ -4,26 +4,29 @@
     <view class="container-scroll"
           style="margin-top:{{height}}px">
       <scroll-view class="item-scroll"
-                   wx:if="{{!dataList.length}}"
+                   wx:if="{{dataList.length}}"
                    @scrolltolower="bindLoadItem"
                    scroll-y
                    scroll-with-animation>
-        <view class="evaluation-item">
+        <view class="evaluation-item"
+              wx:for="{{dataList}}"
+              wx:key="{{item.workId}}">
           <view class="evaluation-item-header van-hairline--bottom">
-            <text class="evaluation-item-header-msg">小语老师给你发来了课后作业讲解</text>
-            <view class="evaluation-item-header-icon"></view>
+            <text class="evaluation-item-header-msg">{{item.teacherName}}老师给你发来了课后作业讲解</text>
+            <view class="evaluation-item-header-icon"
+                  wx:if="{{!item.know}}"></view>
           </view>
           <view class="evaluation-item-body">
             <image class="evaluation-item-cover" />
             <div class="evaluation-item-info">
               <text class="evaluation-item-title van-ellipsis">回家过大年</text>
               <text class="evaluation-item-text">写人的脸色</text>
-              <text class="evaluation-item-time">2019-5-22 17:35</text>
+              <text class="evaluation-item-time">{{item.datetime}}</text>
             </div>
           </view>
         </view>
       </scroll-view>
-      <view wx:if="{{dataList.length}}">
+      <view wx:if="{{!dataList.length}}">
         <emptyState :emptyInfo="emptyOption"></emptyState>
       </view>
     </view>
@@ -59,22 +62,19 @@ export default class Notice extends wepy.page {
     },
     emptyOption: {
       url: 'https://pub.file.k12.vip/tbzw/v2/empty/dz.png',
-      text: '暂时没有人给你点赞， 交作业后记得分享给熟悉的小伙伴哦！'
+      text: '暂时没有老师给你点评！'
     },
     dataList: []
   };
 
   getList () {
-    api.study.listLikeByPage({
+    api.study.listReplyByPage({
       current: this.page.current,
       size: this.page.size
     })
       .then(({ data }) => {
-        if (this.page.current > 1) {
-          this.dataList = this.dataList.concat(data.resultData.records)
-        } else {
-          this.dataList = data.resultData.records
-        }
+        this.page.current += 1
+        this.dataList = [...this.dataList, ...data.resultData.records]
 
         this.dataList.forEach(item => {
           item.datetime = dayjs(+item.datetime).format('YYYY-MM-DD HH:mm')
@@ -90,15 +90,14 @@ export default class Notice extends wepy.page {
       wx.navigateTo({ url: `/user/completionOfWork?type=2&id=${data.workId}` })
     },
     bindLoadItem (data) {
-      if (this.page.current < Math.ceil(this.page.total / this.page.size)) {
-        this.page.current++
+      if (this.dataList.length < this.page.total) {
         this.getList()
       }
     }
   };
 
-  onLoad () {
-    // this.getList()
+  onShow () {
+    this.getList()
   }
 
   onShareAppMessage () {

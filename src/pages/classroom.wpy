@@ -2,41 +2,47 @@
 <template>
   <view class='container classroom'>
     <mHeader title="进入教室"></mHeader>
-    <view class="container-scroll" style="margin-top:{{height}}px">
+    <view class="container-scroll"
+          style="margin-top:{{height}}px">
       <view class="classroom-header">
         <image class="classroom-img"
                src="{{lessonData.coverphoto}}" />
         <view class="classroom-info">
           <view class="classroom-text">
             <text class="classroom-title">{{lessonData.name}}</text>
-            <text class="classroom-subtitle">《小语轻作文》</text>
+            <text class="classroom-subtitle">《{{lessonData.courseName}}》</text>
           </view>
           <text class="classroom-num">{{lessonData.uv}} 人已学</text>
         </view>
       </view>
       <view class="classroom-list">
-        <view class="classroom-item" @tap="bindClickRoom">
+        <view class="classroom-item"
+              @tap="bindClickRoom">
           <image class="classroom-item-img"
                  src="https://pub.file.k12.vip/tbzw/romm.png" />
           <view class="classroom-item-btn">1号小教室</view>
         </view>
-        <view class="classroom-item" @tap="bindClickRoom">
+        <view class="classroom-item"
+              @tap="bindClickRoom">
           <image class="classroom-item-img"
                  src="https://pub.file.k12.vip/tbzw/romm.png" />
           <view class="classroom-item-btn">2号小教室</view>
         </view>
-        <view class="classroom-item" @tap="bindClickRoom">
+        <view class="classroom-item"
+              @tap="bindClickRoom">
           <image class="classroom-item-img"
                  src="https://pub.file.k12.vip/tbzw/romm.png" />
           <view class="classroom-item-btn">3号小教室</view>
         </view>
-        <view class="classroom-item" @tap="bindClickRoom">
+        <view class="classroom-item"
+              @tap="bindClickRoom">
           <image class="classroom-item-img"
                  src="https://pub.file.k12.vip/tbzw/romm.png" />
           <view class="classroom-item-btn">4号小教室</view>
         </view>
       </view>
-      <view class="classroom-btn" @tap="bindClickRoom">快速进入教室</view>
+      <view class="classroom-btn"
+            @tap="bindClickRoom">快速进入教室</view>
     </view>
   </view>
 </template>
@@ -61,7 +67,7 @@ export default class Classroom extends wepy.page {
     }
   };
   methods = {
-    bindClickRoom() {
+    bindClickRoom () {
       if (this.roomData && this.roomData.stage === 1) {
         wx.redirectTo({ url: '/pages/study?id=' + this.lessonId })
       } else {
@@ -70,36 +76,36 @@ export default class Classroom extends wepy.page {
     }
   }
 
-  initPage() {
+  initPage () {
     this.viewLesson()
     this.getLessonRoom()
   }
 
-  getLessonRoom() {
+  getLessonRoom () {
     let { api } = this.$parent.globalData
     api.study.getLessonRoom({
       lessonId: this.lessonId
-    }).then(({data}) => {
+    }).then(({ data }) => {
       this.roomData = data.resultData
       this.$apply()
     })
   }
 
-  viewLesson() {
-    let {api} = this.$parent.globalData
+  viewLesson () {
+    let { api } = this.$parent.globalData
     api.study.viewLesson({
       lessonId: this.lessonId
-    }).then(({data}) => {
+    }).then(({ data }) => {
       this.lessonData = data.resultData
       this.$apply()
     })
   }
 
-  onLoad(option) {
+  onLoad (option) {
     this.lessonId = option.id
   }
 
-  onShow() {
+  onShow () {
     this.initPage()
   }
   onShareAppMessage () {

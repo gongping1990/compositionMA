@@ -19,7 +19,12 @@
         <text class="empty-text">我们为你推荐了其他小朋友都在学的动画课程</text>
         <button class="empty-btn"
                 wx:for="{{recommendList}}"
-                wx:key="{{index}}">
+                wx:key="{{index}}"
+                open-type="contact"
+                show-message-card="true"
+                send-message-title="{{item.cardtitle}}"
+                send-message-path="{{'/pages/index?homeConfig=' + item.sessionFrom}}"
+                send-message-img="{{item.cardimgurl}}">
           <image class="empty-btn-img"
                  src="{{item.coverphoto}}" />
         </button>
@@ -253,7 +258,13 @@ export default class Lesson extends wepy.page {
       this.loading = false
       if (!data.resultData.hasBuy) {
         this.isBuy = false
-        this.recommendList = data.resultData.recommenList
+        this.recommendList = data.resultData.recommenList.map(e => {
+          e.sessionFrom = JSON.stringify({
+            type: 1,
+            homeConfig: e.id
+          })
+          return e
+        })
         this.$apply()
       } else {
         this.listCompositionWeekLesson()
@@ -498,7 +509,6 @@ export default class Lesson extends wepy.page {
       height: 343px;
       border-radius: 27px;
       overflow: hidden;
-      background-color: #ccc;
       &-img {
         position: absolute;
         left: 0;

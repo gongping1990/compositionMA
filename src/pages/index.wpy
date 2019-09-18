@@ -78,7 +78,7 @@
             <view class="work-user">
               <image class="work-user-avatar"
                      src="{{item.headimgurl}}" />
-              <text class="work-user-name">{{item.nickname}}</text>
+              <text class="work-user-name van-ellipsis">{{item.nickname}}</text>
             </view>
             <view class="work-like"
                   @tap.stop="clickLike({{item}}, {{index}})">
@@ -671,6 +671,7 @@ export default class Home extends wepy.page {
     &-img {
       width: 100%;
       height: 100%;
+      border-radius: 27px;
     }
   }
   .title {

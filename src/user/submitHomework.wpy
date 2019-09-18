@@ -317,8 +317,9 @@ export default class SubmitHomework extends wepy.page {
         this.workDetail.workImgSrc = this.workDetail.workImgSrc && this.workDetail.workImgSrc.split(',');
         this.workDetail.duration = this.timeToFormat(this.workDetail.duration);
       }
+      this.isFetching = false
       this.$apply();
-    }).finally(() => {
+    },()=>{
       this.isFetching = false
       this.$apply();
     });

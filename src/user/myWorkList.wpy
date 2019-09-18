@@ -1,14 +1,14 @@
  <template>
   <view class='container course'>
-    <mHeader title="我的课程"></mHeader>
+    <mHeader title="我的作业"></mHeader>
     <view class="container-scroll"
           style="margin-top:{{height}}px">
-      <view class="course-list">
+      <view class="course-list" wx:for="{{dataList}}" wx:key="{{index}}" @tap="toCourseDetail({{item}})">
         <view class="course-item van-hairline--bottom">
-          <image class="course-cover" />
+          <image class="course-cover" src="{{item.coverphoto}}"/>
           <view class="course-info">
-            <text class="course-title">小语轻作文</text>
-            <text class="course-text">共75节|已学2节</text>
+            <text class="course-title">{{item.name}}</text>
+            <text class="course-text {{!item.submited ? 'wj' : ''}}">{{!item.submited ? '有作业未交' : '作业已交齐'}}</text>
           </view>
         </view>
       </view>
@@ -28,26 +28,29 @@ export default class Example extends wepy.page {
       'van-popup': '../vant/popup/index'
     }
   };
-  data = {};
+  data = {
+    dataList: []
+  };
   components = {
     mHeader
   };
-  methods = {};
-  events = {
-    save (params) {
-      wx.showToast({
-        icon: 'loading',
-        title: '正在提交'
-      })
-      api.order.saveRecipient(params)
-        .then(() => {
-          wx.showToast({
-            icon: 'succerss',
-            title: '保存成功'
-          })
-        })
+  onShow() {
+    this.getList()
+  }
+
+  getList() {
+    api.center.getMyCourse()
+      .then(({ data }) => {
+        this.dataList = data.resultData;
+        this.$apply();
+      });
+  };
+  methods = {
+    toCourseDetail(data) {
+      wx.navigateTo({ url: `/user/myWork?id=${data.courseId}&name=${data.name}` });
     }
   };
+  events = {};
   watch = {};
   computed = {
     height () {
@@ -96,6 +99,10 @@ export default class Example extends wepy.page {
   &-text {
     font-size: 26px;
     color: #999;
+
+    &.wj {
+      color: #FF7C76;
+    }
   }
 }
 </style>

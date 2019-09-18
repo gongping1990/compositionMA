@@ -11,7 +11,7 @@ const study = {
     return request.get('/study/getLessonRoom', params)
   },
   getUCRemindVO() {
-    return request.get('/study/getUCRemindVO')
+    return request.get('/center/getUCRemindVO')
   },
   resetLearn(params) {
     return request.get('/study/resetLearn', params)

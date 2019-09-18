@@ -57,6 +57,7 @@ export default class extends wepy.app {
           'sendGood',
           'address',
           'myWork',
+          'myWorkList',
           'pointNotice',
           'recognitionNotice',
           'myWorkAll',

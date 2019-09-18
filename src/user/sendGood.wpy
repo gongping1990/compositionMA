@@ -6,33 +6,52 @@
       <view class="-banner">
         <view class="-banner-title">
           <image class="-banner-icon"
-                 src="https://pub.file.k12.vip/tbzw/1.3/user/address_icon_1@2x.png" />收货地址提交成功！</view>
-        <view class="-banner-text">我们将在48小时内，尽快为您安排发货~ <view class="-banner-btn">复制单号</view>
+                 src="{{addressInfo.sendout ? 'https://pub.file.k12.vip/tbzw/1.3/user/address_icon_2@2x.png' : 'https://pub.file.k12.vip/tbzw/1.3/user/address_icon_1@2x.png'}}" />
+          {{addressInfo.sendout ? '已发货' : '收货地址提交成功！'}}</view>
+        <view class="-banner-text">
+          {{addressInfo.sendout ? '物流单号：' + addressInfo.logisticsOddNum : '我们将在48小时内，尽快为您安排发货~'}}
+
+          <view class="-banner-btn" @tap="copyText" wx:if="{{addressInfo.sendout}}">复制单号</view>
         </view>
       </view>
-      <view class="-content">
+      <view class="-content" wx:if="{{!addressInfo.sendout}}">
         <view class="-cell">
-          <text class="-cell-text">小宝贝</text>
+          <text class="-cell-text">{{addressInfo.name}}</text>
           <view class="-cell-right">
-            <view class="-cell-address-btn">更换地址</view>
+            <view class="-cell-address-btn" @tap="toAddress">更换地址</view>
           </view>
         </view>
         <view class="-address">
           <view class="-address-cell">
             <text class="-address-left">手机号码</text>
-            <text class="-address-right">11331233213</text>
+            <text class="-address-right">{{addressInfo.telephone}}</text>
           </view>
           <view class="-address-cell">
             <text class="-address-left">收货地址</text>
-            <text class="-address-right">四川省成都市武侯区大悦城2栋802</text>
+            <text class="-address-right">{{addressInfo.areas}}{{addressInfo.address}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="-content" wx:if="{{addressInfo.sendout}}">
+        <view class="-address">
+          <view class="-address-cell">
+            <text class="-address-left -address-left-two">发货时间</text>
+            <text class="-address-right -address-right-two">{{addressInfo.sendTime}}</text>
+          </view>
+          <view class="-address-cell">
+            <text class="-address-left -address-left-two">收货地址</text>
+            <text class="-address-right -address-right-two">
+              <text>{{addressInfo.areas}}{{addressInfo.address}}</text>
+              <text>{{addressInfo.name}}{{addressInfo.telephone}}</text>
+            </text>
           </view>
         </view>
       </view>
     </view>
-    <view class="-msg">
-      <view class="-msg-icon"></view>
-      <text class="-msg-text">发货前，您可以更改1次收货地址</text>
-      <view class="-msg-close"></view>
+    <view class="-msg" wx:if="{{isShowTip}}">
+      <view class="-msg-icon {{addressInfo.sendout ? '-icon-two' : ''}}"></view>
+      <text class="-msg-text">{{addressInfo.sendout ? '您可以复制运单号到百度查询物流进度' : '发货前，您可以更改1次收货地址'}}</text>
+      <view class="-msg-close" @tap="closeTip"></view>
     </view>
   </view>
 </template>
@@ -40,7 +59,6 @@
 import wepy from 'wepy'
 import api from '../request/api'
 import mHeader from '../components/header'
-import address from '../components/address'
 
 export default class Example extends wepy.page {
   config = {
@@ -52,11 +70,11 @@ export default class Example extends wepy.page {
   };
   data = {
     queryInfo: '',
-    addressInfo: ''
+    addressInfo: '',
+    isShowTip: true
   };
   components = {
-    mHeader,
-    address
+    mHeader
   };
   onLoad (query) {
     this.queryInfo = query
@@ -75,7 +93,26 @@ export default class Example extends wepy.page {
       });
   };
 
-  methods = {};
+  methods = {
+    copyText () {
+      wx.setClipboardData ({
+        data: this.addressInfo.logisticsOddNum
+      })
+    },
+    closeTip () {
+      this.isShowTip = false
+    },
+    toAddress () {
+      if (this.addressInfo.num > 1) {
+       wx.showToast({
+         icon: 'none',
+         title: '只能修改一次收货地址哟~'
+       })
+      } else {
+        wx.navigateTo({ url: `/user/address?id=${this.queryInfo.id}` })
+      }
+    }
+  };
   events = {};
   watch = {};
   computed = {
@@ -116,6 +153,11 @@ export default class Example extends wepy.page {
       background: url('https://pub.file.k12.vip/tbzw/1.3/user/wrang.png')
         no-repeat;
       background-size: 100%;
+
+      &.-icon-two {
+        background: url('https://pub.file.k12.vip/2019/09/18/1174205522213568513.png')
+        no-repeat;
+      }
     }
     &-text {
       font-size: 24px;
@@ -165,16 +207,32 @@ export default class Example extends wepy.page {
       display: flex;
       align-items: center;
       padding: 0 32px;
-      height: 72px;
+      height: 104px;
     }
     &-left {
+      min-width: 120px;
       margin-right: 64px;
       font-size: 28px;
       color: #666;
     }
+
+    &-left-two {
+      font-size:30px;
+      font-weight:500;
+      color:rgba(51,51,51,0.9);
+    }
+
     &-right {
       font-size: 28px;
       color: #333;
+    }
+
+    &-right-two {
+      font-size:26px;
+      color:rgba(102,102,102,1);
+      text {
+        display: block;
+      }
     }
   }
   .-banner {

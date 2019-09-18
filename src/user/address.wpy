@@ -39,12 +39,13 @@ export default class Example extends wepy.page {
         icon: 'loading',
         title: '正在提交'
       })
-      api.order.saveRecipient(params)
+      api.center.saveRecipient(params)
         .then(() => {
           wx.showToast({
             icon: 'succerss',
             title: '保存成功'
           })
+          wx.navigateTo({ url: `/user/sendGood?id=${this.queryInfo.id}` });
         })
     }
   };
@@ -54,7 +55,9 @@ export default class Example extends wepy.page {
       return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
     }
   };
-
+  onLoad (query) {
+    this.queryInfo = query
+  }
   onShareAppMessage () {
     return {
       title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,

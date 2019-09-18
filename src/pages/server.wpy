@@ -56,7 +56,7 @@
                mode="aspectFit" />
         上课
       </van-tabbar-item>
-      <van-tabbar-item dot="{{remindData.todaycard}}">
+      <van-tabbar-item dot="{{remindData.servicetip}}">
         <image slot="icon"
                src="../assets/image/serve-def.png"
                mode="aspectFit" />

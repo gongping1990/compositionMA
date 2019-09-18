@@ -519,7 +519,7 @@
     onShareAppMessage(type) {
       return {
         title: this.queryInfo.type === '1' ? `我已坚持学习${this.workDetail.learnDay}天，刚完成今天的作业，请给我点个赞吧` : `快来给@${this.workDetail.nickname}点个赞，TA已坚持学习了${this.workDetail.learnDay}天`,
-        path: this.queryInfo.type === '1' ? `/pages/shareHomework?id=${this.workDetail.id}` : `/pages/completionOfWork?type=2&id=${this.workDetail.id}`,
+        path: this.queryInfo.type === '1' ? `/pages/shareHomework?id=${this.workDetail.id}` : `/user/completionOfWork?type=2&id=${this.workDetail.id}`,
         imageUrl: this.workDetail.homeworkType === 1 ? '' : this.workDetail.workImg[0]
       };
     }

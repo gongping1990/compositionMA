@@ -98,7 +98,7 @@
         <view class="hot-item"
               wx:for="{{hotList}}"
               wx:key="{{item.lessonId}}">
-          <view class="hot-cover">
+          <view class="hot-cover {{item.homeworkType == 1 && 'yy'}}">
             <view class="hot-cover-tag">42分钟前</view>
             <image class="hot-cover-img"
                    src="{{item.workImgs[0]}}" />
@@ -385,7 +385,7 @@ export default class Home extends wepy.page {
     }).then(({ data }) => {
       this.isError = false
       this.hotCurrent += 1
-      this.hotList = [...this.hotList, ...data.resultData]
+      this.hotList = [...this.hotList, ...data.resultData.records]
       this.$apply()
     })
   }

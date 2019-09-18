@@ -15,6 +15,9 @@ const center = {
   },
   saveRecipient(params) {
     return request.post('/center/saveRecipient', params)
+  },
+  getServiceRemindVO(params) {
+    return request.get('/center/getServiceRemindVO', params)
   }
 }
 

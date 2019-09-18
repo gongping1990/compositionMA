@@ -5,7 +5,7 @@
 	},
 	"setting": {
 		"urlCheck": true,
-		"es6": false,
+		"es6": true,
 		"postcss": false,
 		"minified": false,
 		"newFeature": true,
@@ -96,7 +96,7 @@
 					"id": 6,
 					"name": "作业分享",
 					"pathName": "pages/shareHomework",
-					"query": "id= 1173864726423019522",
+					"query": "id= 1174223269269225474",
 					"scene": null
 				},
 				{

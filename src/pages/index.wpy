@@ -805,9 +805,9 @@ export default class Home extends wepy.page {
         align-self: flex-end;
       }
       @include flex-center;
-      width: 133px;
+      padding: 0 29px;
       height: 53px;
-      font-size: 23px;
+      font-size: 26px;
       color: #fff;
       background: linear-gradient(
         -37deg,

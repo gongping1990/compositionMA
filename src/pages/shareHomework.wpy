@@ -112,6 +112,7 @@
 
     <lookImage :isShow.sync="isShowImage" :imgUrl.sync="itemUrl"></lookImage>
 
+    <load wx:if="{{isFetching}}"></load>
   </view>
 </template>
 
@@ -121,6 +122,7 @@
   import api from '../request/api';
   import dayjs from 'dayjs';
   import getDateDiff from '../utils/getDateDiff';
+  import load from '../components/load'
   import lookImage from '../components/lookImage';
 
   @connect({
@@ -137,7 +139,8 @@
       }
     };
     components = {
-      lookImage
+      lookImage,
+      load
     };
     computed = {
       height() {
@@ -153,6 +156,7 @@
     };
 
     data = {
+      isFetching: false,
       isPlay: false,
       isMyPlay: false,
       isShowImage: false,
@@ -186,6 +190,7 @@
     }
 
     getOtherHomework() {
+      this.isFetching = true
       api.study.viewHomework({
         workId: this.workId
       }).then(res => {
@@ -198,6 +203,9 @@
         this.shareInfo.duration = this.timeToFormat(this.shareInfo.duration);
         this.shareInfo.replyDuration = this.timeToFormat(this.shareInfo.replyDuration);
         this.isReply = this.shareInfo.replyTime ? true : false;
+        this.$apply();
+      }).finally(()=>{
+        this.isFetching = false
         this.$apply();
       });
     };

@@ -226,6 +226,7 @@
                 size="36px"
                 @click="changePopup"/>
     </van-popup>
+    <load wx:if="{{isFetching}}"></load>
   </view>
 </template>
 
@@ -235,6 +236,7 @@
   import dayjs from 'dayjs';
   import { connect } from 'wepy-redux';
   import mHeader from '../components/header';
+  import load from '../components/load'
   import lookImage from '../components/lookImage';
 
   @connect({
@@ -252,7 +254,8 @@
     };
     components = {
       mHeader,
-      lookImage
+      lookImage,
+      load
     };
     computed = {
       height() {
@@ -271,6 +274,7 @@
       tabActive: '1',
       itemUrl: '',
       isSuccessWork: false,
+      isFetching: false,
       isOpenPopup: false,
       isShowImage: false,
       isCard: false,
@@ -302,6 +306,7 @@
     };
 
     getMyHomework() {
+      this.isFetching = true
       api.study.viewMyHomework({
         lessonId: this.lessonId
       }).then(res => {
@@ -314,10 +319,14 @@
           this.workDetail.duration = this.timeToFormat(this.workDetail.duration);
         }
         this.$apply();
+      }).finally(()=>{
+        this.isFetching = false
+        this.$apply();
       });
     };
 
     getOtherHomeWork() {
+      this.isFetching = true
       api.study.listHomeworkByLesson({
         current: this.page.current,
         size: this.page.size,
@@ -339,6 +348,9 @@
         });
 
         this.page.total = data.resultData.total;
+        this.$apply();
+      }).finally(()=>{
+        this.isFetching = false
         this.$apply();
       });
     };

@@ -49,9 +49,10 @@
 import wepy from 'wepy'
 import { connect } from 'wepy-redux'
 import mHeader from '@/components/header'
-import { updateUserInfo } from '../store/actions/index.js'
+import { updateUserInfo, changeLoginStatus } from '../store/actions/index.js'
 @connect({}, {
-  updateUserInfo
+  updateUserInfo,
+  changeLoginStatus
 })
 export default class Example extends wepy.page {
   config = {
@@ -124,6 +125,7 @@ export default class Example extends wepy.page {
       }
       params[type ? 'code' : 'password'] = password
       loginFunc(params).then(({ data }) => {
+        this.methods.changeLoginStatus(true)
         this.methods.updateUserInfo(data.resultData)
         wx.navigateBack()
       })

@@ -1,7 +1,8 @@
 <!--  -->
 <template>
   <view class='login'>
-    <van-popup show="{{showPopup}}">
+    <van-popup show="{{showPopup}}"
+               z-index="{{300}}">
       <view class="-dialog">
         <image class="-dialog-icon"
                src="https://pub.file.k12.vip/tbzw/1.3/login/lion.png" />
@@ -18,6 +19,7 @@
       </view>
     </van-popup>
     <van-popup show="{{show}}"
+               z-index="{{300}}"
                position="bottom">
       <view class="-select">
         <text class="-select-title">请选择登录方式</text>

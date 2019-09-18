@@ -91,6 +91,7 @@
     </view>
     <van-tabbar active="1"
                 active-color="#58422B"
+                z-index="{{100}}"
                 bind:change="onChangeTabbar">
       <van-tabbar-item>
         <image slot="icon"
@@ -364,7 +365,6 @@ export default class Lesson extends wepy.page {
     width: 160px;
     height: 200px;
     border-radius: 20px;
-    background-color: #ccc;
   }
   &-info {
     flex: 1;

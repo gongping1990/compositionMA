@@ -265,7 +265,6 @@ export default class Home extends wepy.page {
   };
   methods = {
     clickLike (item, index) {
-      console.log(this.logined)
       if (this.logined) {
         this.addLike(item.homeworkId, index)
       } else {
@@ -273,6 +272,10 @@ export default class Home extends wepy.page {
       }
     },
     clickWorkItem (item) {
+      if (!this.logined) {
+        this.showSelect = true
+        return
+      }
       wx.navigateTo({ url: `/user/completionOfWork?type=${item.isme ? 1 : 2}&id=${item.isme ? item.lessonId : item.homeworkId}` })
     },
     clickTab (index) {
@@ -428,7 +431,6 @@ export default class Home extends wepy.page {
         width: 633px;
         height: 313px;
         border-radius: 20px;
-        background: #ccc;
       }
       &-tag {
         @include flex-center;
@@ -598,6 +600,8 @@ export default class Home extends wepy.page {
     &-like {
       display: flex;
       align-items: flex-end;
+      justify-content: flex-end;
+      width: 100px;
       &-icon {
         margin-right: 10px;
         width: 26px;
@@ -625,7 +629,6 @@ export default class Home extends wepy.page {
     &-img {
       width: 272px;
       height: 334px;
-      background-color: #ccc;
     }
   }
   .banner {

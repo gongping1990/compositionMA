@@ -48,20 +48,12 @@
 			"list": []
 		},
 		"miniprogram": {
-<<<<<<< HEAD
-			"current": 0,
-=======
-			"current": 23,
->>>>>>> b43f81a25677c8d2d6ff8e647fccb9643759454e
+			"current": 24,
 			"list": [
 				{
 					"id": 0,
 					"name": "lesson",
-<<<<<<< HEAD
-					"pathName": "pages/server",
-=======
 					"pathName": "pages/lesson",
->>>>>>> b43f81a25677c8d2d6ff8e647fccb9643759454e
 					"query": "id=1138721381526679554&lookback=1",
 					"scene": null
 				},
@@ -207,11 +199,6 @@
 				},
 				{
 					"id": -1,
-<<<<<<< HEAD
-					"name": "user/completionOfWork",
-					"pathName": "user/completionOfWork",
-					"query": "type=1&id=1139442473879080962",
-=======
 					"name": "user/myWorkList",
 					"pathName": "user/myWorkList",
 					"query": "",
@@ -229,7 +216,13 @@
 					"name": "user/gift",
 					"pathName": "user/gift",
 					"query": "",
->>>>>>> b43f81a25677c8d2d6ff8e647fccb9643759454e
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "user/sendGood",
+					"pathName": "user/sendGood",
+					"query": "id=1133673190743896065",
 					"scene": null
 				}
 			]

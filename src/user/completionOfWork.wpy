@@ -322,14 +322,14 @@
         workId: this.queryInfo.id
       }).then(res => {
         this.workDetail = res.data.resultData;
-        this.workDetail.workTime = dayjs(+this.workDetail.workTime).format('YYYY-MM-DD HH:mm');
+        this.workDetail.workTime = getDateDiff.getDateDiff(this.workDetail.workTime);
         this.workDetail.workImg = this.workDetail.workImg && this.workDetail.workImg.split(',');
         this.workDetail.workImgSrc = this.workDetail.workImgSrc && this.workDetail.workImgSrc.split(',');
         this.workDetail.replyImg = this.workDetail.replyImg && this.workDetail.replyImg.split(',');
         this.workDetail.duration = this.timeToFormat(this.workDetail.duration);
         this.workDetail.replyDuration = this.timeToFormat(this.workDetail.replyDuration);
         if (this.workDetail.replyTime) {
-          this.workDetail.replyTime = dayjs(+this.workDetail.replyTime).format('YYYY-MM-DD HH:mm');
+          this.workDetail.replyTime = getDateDiff.getDateDiff(this.workDetail.replyTime);
           this.isReply = true;
         } else {
           this.isReply = false;
@@ -692,6 +692,7 @@
       }
 
       .-body-teacher {
+        margin-bottom: 30px;
 
         &-reply {
           margin: 0 32px;

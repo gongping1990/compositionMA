@@ -196,6 +196,8 @@
     </van-popup>
     <login :showPopup.sync="showPopup"
            :show.sync="showSelect"></login>
+    <error wx:if="{{isError}}"></error>
+    <load wx:if="{{loading}}"></load>
   </view>
 </template>
 <script>
@@ -205,6 +207,8 @@ import { connect } from 'wepy-redux'
 import testMixin from '../mixins/test'
 import mHeader from '@/components/header'
 import login from '../components/login'
+import error from '../components/error'
+import load from '../components/load'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import 'dayjs/locale/zh-cn'
 import dayjs from 'dayjs'
@@ -231,6 +235,8 @@ export default class Home extends wepy.page {
     }
   };
   data = {
+    loading: false,
+    isError: false,
     empty: false,
     showAddress: false,
     showKF: false,
@@ -253,7 +259,9 @@ export default class Home extends wepy.page {
   mixins = [testMixin]
   components = {
     mHeader,
-    login
+    login,
+    error,
+    load
   };
   methods = {
     clickLike (item, index) {
@@ -274,6 +282,9 @@ export default class Home extends wepy.page {
   events = {
     login () {
       console.log('login')
+    },
+    tryAgain () {
+      this.initPage()
     }
   };
   computed = {
@@ -283,6 +294,7 @@ export default class Home extends wepy.page {
   };
 
   initPage () {
+    this.loading = true
     this.getHomePageInfo()
     this.getDayByMasterpiece()
     this.getHomeworkSquare()
@@ -310,11 +322,18 @@ export default class Home extends wepy.page {
   getHomePageInfo () {
     let { api } = this.$parent.globalData
     api.course.getHomePageInfo().then(({ data }) => {
-      wx.hideLoading()
+      this.isError = false
+      this.loading = false
       this.infoData = data.resultData
       this.courseList = data.resultData.courseList
       this.bannerList = data.resultData.bannerList
       this.$apply()
+    }).catch(({ code }) => {
+      this.loading = false
+      if (code == 500) {
+        this.isError = true
+        this.$apply()
+      }
     })
   }
 
@@ -326,6 +345,7 @@ export default class Home extends wepy.page {
       current: this.workCurrent,
       size: 10
     }).then(({ data }) => {
+      this.isError = false
       this.workCurrent += 1
       this.workTotal = data.resultData.total
       this.workList = [...this.workList, ...data.resultData.records]
@@ -346,6 +366,7 @@ export default class Home extends wepy.page {
       current: this.hotCurrent,
       size: 10
     }).then(({ data }) => {
+      this.isError = false
       this.hotCurrent += 1
       this.hotList = [...this.hotList, ...data.resultData]
       this.$apply()
@@ -353,9 +374,6 @@ export default class Home extends wepy.page {
   }
 
   onShow () {
-    wx.showLoading({
-      title: '加载中...'
-    })
     this.initPage()
   };
 

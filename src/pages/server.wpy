@@ -8,28 +8,31 @@
         <view class="banner-info">
           <text class="banner-title">小新老师</text>
           <text class="banner-text">学习和使用产品的疑问都可以咨询老师哦</text>
-          <view class="banner-btn">添加老师微信好友</view>
+          <view class="banner-btn"
+                @tap="clickKfBtn">添加老师微信好友</view>
         </view>
       </view>
       <view class="server-content">
-        <repeat for="{{itemList}}"
-                key="index"
-                index="index"
-                item="item">
-          <div class="-content-item">
-            <view class="-content-item-left">
+        <div class="-content-item"
+             wx:for="{{itemList}}"
+             wx:key="{{item.id}}"
+             @tap="toJump({{item.id}})">
+          <view class="-content-item-left">
+            <view class="-left-img-wrap">
+              <view class="-right-tip">{{item.num}}</view>
               <image class="-left-img"
                      src="{{item.url}}"></image>
-              <view class="-left-text">{{item.name}}</view>
             </view>
-            <view class="-content-item-right">
-              <view class="-right-tip">{{item.num}}</view>
-              <image class="-right-img"
-                     src="https://pub.file.k12.vip/tbzw/course/my-icon-arrow.png"
-                     mode="widthFix"></image>
-            </view>
-          </div>
-        </repeat>
+
+            <view class="-left-text">{{item.name}}</view>
+          </view>
+          <view class="-content-item-right">
+
+            <image class="-right-img"
+                   src="https://pub.file.k12.vip/tbzw/course/my-icon-arrow.png"
+                   mode="widthFix"></image>
+          </view>
+        </div>
       </view>
     </view>
     <van-tabbar active="2"
@@ -72,22 +75,51 @@
         我的
       </van-tabbar-item>
     </van-tabbar>
+    <van-popup show="{{ showKF }}"
+               position="bottom"
+               @close="onClose">
+      <view class="server-kf-pop">
+        <text class="server-kf-pop-title">添加老师微信</text>
+        <image src="https://pub.file.k12.vip/gif/donghua_2.gif"
+               class="server-kf-pop-img" />
+        <text class="server-kf-pop-text">点击下方按钮</text>
+        <text class="server-kf-pop-text red">回复“2”即可添加老师微信</text>
+        <button class="server-kf-pop-btn"
+                open-type="contact">
+          回复“2”立即添加
+        </button>
+      </view>
+    </van-popup>
+    <login :showPopup.sync="showPopup"
+           :show.sync="showSelect"></login>
   </view>
 </template>
 <script>
 import wepy from 'wepy'
+import { connect } from 'wepy-redux'
 import mHeader from '@/components/header'
 import testMixin from '../mixins/test'
+import login from '../components/login'
+
+@connect({
+  logined (state) {
+    return state.user.logined
+  }
+})
 export default class Example extends wepy.page {
   config = {
     navigationBarTitleText: '',
     usingComponents: {
       'van-tabbar': '../vant/tabbar/index',
-      'van-tabbar-item': '../vant/tabbar-item/index'
+      'van-tabbar-item': '../vant/tabbar-item/index',
+      'van-popup': '../vant/popup/index'
     }
   };
   mixins = [testMixin];
   data = {
+    showPopup: false,
+    showSelect: false,
+    showKF: false,
     itemList: [
       {
         id: 2,
@@ -110,9 +142,34 @@ export default class Example extends wepy.page {
     ]
   };
   components = {
-    mHeader
+    mHeader,
+    login
   };
-  methods = {};
+  methods = {
+    toJump (n) {
+      if (!this.logined) {
+        this.showPopup = true
+        return
+      }
+      switch (+n) {
+        case 2:
+          wx.navigateTo({ url: '/user/workEvaluation' })
+          break
+        case 3:
+          wx.navigateTo({ url: '/user/pointNotice' })
+          break
+        case 4:
+          wx.navigateTo({ url: '/user/recognitionNotice' })
+          break
+      }
+    },
+    clickKfBtn () {
+      this.showKF = true
+    },
+    onClose () {
+      this.showKF = !this.showKF
+    }
+  };
   events = {};
   watch = {};
   computed = {
@@ -127,6 +184,42 @@ export default class Example extends wepy.page {
 <style lang='scss'>
 @import '../assets/style/mixin.scss';
 .server {
+  &-kf-pop {
+    @include flex-column-center;
+    padding: 16px 24px;
+    background: rgba(255, 255, 255, 1);
+    border-radius: 16px 16px 0px 0px;
+    &-title {
+      font-size: 36px;
+    }
+    &-img {
+      margin: 48px 0;
+    }
+    &-text {
+      font-size: 36px;
+      line-height: 50px;
+      color: rgba($color: #58422b, $alpha: 0.5);
+      &.red {
+        color: #ff7c76;
+        font-weight: bold;
+      }
+    }
+    &-btn {
+      @include flex-center;
+      margin: 32px 0;
+      width: 654px;
+      height: 100px;
+      font-size: 32px;
+      color: #58422b;
+      background: linear-gradient(
+        90deg,
+        rgba(249, 230, 11, 1) 0%,
+        rgba(253, 219, 85, 1) 100%
+      );
+      box-shadow: 0px 8px 16px 4px rgba(230, 194, 81, 0.4);
+      border-radius: 54px;
+    }
+  }
   .banner {
     display: flex;
     justify-content: flex-end;
@@ -182,6 +275,26 @@ export default class Example extends wepy.page {
         @include flex-center;
 
         .-left-img {
+          &-wrap {
+            position: relative;
+            .-right-tip {
+              @include flex-center;
+              position: absolute;
+              right: -17px;
+              top: -7px;
+              width: 47px;
+              height: 35px;
+              background: linear-gradient(
+                -42deg,
+                rgba(255, 111, 40, 1),
+                rgba(255, 82, 69, 1)
+              );
+              border-radius: 17px 17px 17px 0px;
+              font-size: 20px;
+              font-weight: 500;
+              color: rgba(255, 255, 255, 1);
+            }
+          }
           width: 89px;
           height: 89px;
         }
@@ -198,18 +311,6 @@ export default class Example extends wepy.page {
 
       &-right {
         @include flex-center;
-
-        .-right-tip {
-          @include flex-center;
-
-          width: 32px;
-          height: 32px;
-          background: rgba(255, 137, 131, 1);
-          border-radius: 50%;
-          font-size: 20px;
-          font-weight: 500;
-          color: rgba(255, 255, 255, 1);
-        }
 
         .-right-img {
           margin-left: 16px;

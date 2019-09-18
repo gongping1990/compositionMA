@@ -52,7 +52,6 @@ export default class Example extends wepy.component {
   components = {};
   methods = {
     clickItem (i) {
-      console.log(wepy.$store)
       let index = Number(i)
       switch (index) {
         case 1:

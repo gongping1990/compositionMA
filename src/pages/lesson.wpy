@@ -43,16 +43,17 @@
                      style="height: calc(100vh - {{height * 2 + 150 }}rpx)"
                      scroll-y
                      scroll-with-animation
-                     scroll-into-view="{{scrollView}}"
-                     @scroll="bindScroll">
+                     scroll-into-view="{{scrollView}}">
           <view class="lesson-scroll-empty"
                 wx:if="{{isEmpty}}">
             <image class="lesson-scroll-empty-img"
                    src="https://pub.file.k12.vip/tbzw/1.3/lion.png" />
             <text class="lesson-scroll-empty-text">本周没有要学习的课程</text>
             <view class="lesson-scroll-empty-btn-wrap">
-              <view class="lesson-scroll-empty-btn">查看我的课程</view>
-              <view class="lesson-scroll-empty-btn sub">报名更多课程</view>
+              <view class="lesson-scroll-empty-btn"
+                    @tap="clickEmptyBtn({{0}})">查看我的课程</view>
+              <view class="lesson-scroll-empty-btn sub"
+                    @tap="clickEmptyBtn({{1}})">报名更多课程</view>
             </view>
           </view>
           <view class="lesson-scroll-wrap">
@@ -129,6 +130,8 @@
     </van-tabbar>
     <login :showPopup.sync="showPopup"
            :show.sync="showSelect"></login>
+    <load wx:if="{{loading}}"></load>
+    <error wx:if="{{isError}}"></error>
   </view>
 </template>
 
@@ -136,8 +139,11 @@
 import wepy from 'wepy'
 import { connect } from 'wepy-redux'
 import dayjs from 'dayjs'
+import testMixin from '../mixins/test'
 import mHeader from '../components/header'
 import login from '../components/login'
+import load from '../components/load'
+import error from '../components/error'
 @connect({
   logined (state) {
     return state.user.logined
@@ -153,12 +159,18 @@ export default class Lesson extends wepy.page {
     }
   }
 
+  mixins = [testMixin]
+
   components = {
     mHeader,
-    login
+    login,
+    error,
+    load
   }
 
   data = {
+    isError: false,
+    loading: false,
     showPopup: false,
     showSelect: false,
     isEmpty: false,
@@ -185,6 +197,13 @@ export default class Lesson extends wepy.page {
   }
 
   methods = {
+    clickEmptyBtn (i) {
+      if (i) {
+        wx.redirectTo({ url: '/pages/index' })
+      } else {
+        wx.navigateTo({ url: '/user/myCourse' })
+      }
+    },
     clickLoginBtn () {
       console.log(111)
       this.showSelect = true
@@ -222,8 +241,11 @@ export default class Lesson extends wepy.page {
   }
   // 检查是否购买，并返回推荐课程
   getAttendClassCatalog () {
+    this.loading = true
     let { api } = this.$parent.globalData
     api.study.getAttendClassCatalog().then(({ data }) => {
+      this.isError = false
+      this.loading = false
       if (!data.resultData.hasBuy) {
         this.isBuy = false
         this.recommendList = data.resultData
@@ -231,15 +253,24 @@ export default class Lesson extends wepy.page {
       } else {
         this.listCompositionWeekLesson()
       }
+    }).catch(({ code }) => {
+      this.loading = false
+      if (code === 500) {
+        this.isError = true
+      }
+      this.$apply()
     })
   }
 
   // 获取课程目录
   listCompositionWeekLesson () {
+    this.loading = true
     let { api } = this.$parent.globalData
     api.study.listCompositionWeekLesson({
       nowWeek: this.nowWeek
     }).then(({ data }) => {
+      this.isError = false
+      this.loading = false
       if (data.resultData.length) {
         let weekArr = ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
         let today = dayjs(new Date()).format('YYYY/MM/DD')
@@ -266,6 +297,12 @@ export default class Lesson extends wepy.page {
         this.scrollView = 'today'
         this.$apply()
       }, 1000)
+      this.$apply()
+    }).catch(({ code }) => {
+      this.loading = false
+      if (code === 500) {
+        this.isError = true
+      }
       this.$apply()
     })
   }
@@ -395,7 +432,7 @@ export default class Lesson extends wepy.page {
     left: 0;
     right: 0;
     top: 0;
-    bottom: 0;
+    bottom: 105px;
     z-index: 20;
     background-color: #fff;
     &-icon {

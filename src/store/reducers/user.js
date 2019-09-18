@@ -5,9 +5,11 @@ import {
   CHANGE_LOGIN_STATUS
 } from '../types/user'
 
+let userInfo = wx.getStorageSync('userInfo')
 export default handleActions(
   {
     [UPDATE_USERINFO](state, action) {
+      wx.setStorageSync('userInfo', action.payload)
       return {
         ...state,
         userInfo: action.payload
@@ -27,7 +29,7 @@ export default handleActions(
     }
   },
   {
-    userInfo: {},
+    userInfo: userInfo || {},
     remindData: {},
     logined: false
   }

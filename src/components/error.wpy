@@ -1,0 +1,63 @@
+
+<template>
+  <view class='-error'>
+    <image class="-error-img"
+           src="https://pub.file.k12.vip/tbzw/1.3/user/illustrations.png" />
+    <text class="-error-title">网络异常，请检查您的网络设置</text>
+    <view class="-error-btn"
+          @tap="clickTryAgain">再试一次</view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+export default class Error extends wepy.component {
+  props = {};
+  data = {};
+  components = {};
+  methods = {
+    clickTryAgain () {
+      this.$emit('tryAgain')
+    }
+  };
+  events = {};
+  watch = {};
+  computed = {};
+  onLoad () { };
+}
+</script>
+<style lang='scss'>
+.-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 100;
+  background-color: #f8f8f8;
+  &-img {
+    width: 394px;
+    height: 172px;
+    margin-bottom: 48px;
+  }
+  &-title {
+    font-size: 28px;
+    color: #878a88;
+  }
+  &-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 24px;
+    width: 220px;
+    height: 74px;
+    font-size: 32px;
+    color: #878a88;
+    border-radius: 37px;
+    border: 2px solid rgba(151, 151, 151, 1);
+  }
+}
+</style>

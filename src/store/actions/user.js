@@ -14,6 +14,5 @@ export const updateRemind = createAction(UPDATE_TAB_REMIND, payload => {
 })
 
 export const changeLoginStatus = createAction(CHANGE_LOGIN_STATUS, payload => {
-  console.log(payload)
   return payload
 })

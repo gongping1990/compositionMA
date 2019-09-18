@@ -6,10 +6,11 @@
           style="margin-top:{{height}}px">
       <view class="p-user-header">
         <image class="-avatar"
-               src="{{userInfo.headimgurl}}" />
+               src="{{logined ? userInfo.headimgurl : 'https://pub.file.k12.vip/tbzw/1.3/user/avatar_def.png'}}" />
         <view class="-info">
           <text class="-name">{{logined ? userInfo.nickname: '未登录'}}</text>
-          <view class="-btn">{{logined ? '切换账号': '立即登录'}}</view>
+          <view class="-btn"
+                @tap="clickLoginBtn">{{logined ? '切换账号': '立即登录'}}</view>
         </view>
       </view>
 
@@ -28,7 +29,8 @@
               <view class="-left-text">{{item.name}}</view>
             </view>
             <view class="-content-item-right">
-              <view class="-right-tip">{{item.num}}</view>
+              <view class="-right-tip"
+                    wx:if="{{item.num}}">{{item.num}}</view>
               <image class="-right-img"
                      src="https://pub.file.k12.vip/tbzw/course/my-icon-arrow.png"
                      mode="widthFix"></image>
@@ -48,23 +50,7 @@
       </view> -->
     </view>
 
-    <van-popup show="{{ showKF }}"
-               position="bottom"
-               @close="onClose">
-      <view class="p-user-kf-pop">
-        <text class="p-user-kf-pop-title">添加老师微信</text>
-        <image src="https://pub.file.k12.vip/gif/donghua_2.gif"
-               class="p-user-kf-pop-img" />
-        <text class="p-user-kf-pop-text">点击下方按钮</text>
-        <text class="p-user-kf-pop-text red">回复“2”即可添加老师微信</text>
-        <button class="p-user-kf-pop-btn"
-                open-type="contact">
-          回复“2”立即添加
-        </button>
-      </view>
-    </van-popup>
-
-    <van-tabbar active="0"
+    <van-tabbar active="3"
                 active-color="#58422B"
                 bind:change="onChangeTabbar">
       <van-tabbar-item>
@@ -104,6 +90,8 @@
         我的
       </van-tabbar-item>
     </van-tabbar>
+    <login :showPopup.sync="showPopup"
+           :show.sync="showSelect"></login>
   </view>
 </template>
 
@@ -113,7 +101,7 @@ import api from '../request/api'
 import { connect } from 'wepy-redux'
 import testMixin from '../mixins/test'
 import mHeader from '../components/header'
-
+import login from '../components/login'
 @connect({
   userInfo (state) {
     return state.user.userInfo
@@ -136,7 +124,8 @@ export default class User extends wepy.page {
   };
   mixins = [testMixin];
   components = {
-    mHeader
+    mHeader,
+    login
   };
   computed = {
     height () {
@@ -145,7 +134,8 @@ export default class User extends wepy.page {
   };
 
   data = {
-    showKF: false,
+    showPopup: false,
+    showSelect: false,
     noticeInfo: '',
     itemList: [
       {
@@ -165,6 +155,7 @@ export default class User extends wepy.page {
       {
         id: 3,
         name: '我的礼包',
+        num: 0,
         isBuy: false,
         url: 'https://pub.file.k12.vip/tbzw/1.3/user/wdlb.png'
       }
@@ -172,6 +163,7 @@ export default class User extends wepy.page {
   };
 
   getUCRemindVO () {
+    if (!this.logined) return
     api.study.getUCRemindVO()
       .then(res => {
         this.noticeInfo = res.data.resultData
@@ -193,6 +185,7 @@ export default class User extends wepy.page {
           {
             id: 3,
             name: '我的礼包',
+            num: 0,
             isBuy: this.noticeInfo.buyStatus === 2 || this.noticeInfo.buyStatus === 4,
             url: 'https://pub.file.k12.vip/tbzw/1.3/user/wdlb.png'
           }
@@ -205,11 +198,14 @@ export default class User extends wepy.page {
     changeAccount () {
       wx.navigateTo({ url: '/pages/login' })
     },
-    onClose () {
-      this.showKF = !this.showKF
-      this.$apply()
+    clickLoginBtn () {
+      this.showPopup = true
     },
     toJump (data) {
+      if (!this.logined) {
+        this.showPopup = true
+        return
+      }
       switch (+data) {
         case 1:
           wx.navigateTo({ url: '/user/myCourse' })
@@ -239,7 +235,11 @@ export default class User extends wepy.page {
     }
   };
 
-  events = {};
+  events = {
+    login () {
+      this.getUCRemindVO()
+    }
+  };
 
   onShow () {
     this.getUCRemindVO()

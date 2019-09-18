@@ -266,7 +266,7 @@
       isShowImage: false,
       isShowConfirm: false,
       isOpenShareModal: false,
-      isOpenAudio: true,
+      isOpenAudio: false,
       isActive: '',
       currentTime: 0,
       stumsg: '',

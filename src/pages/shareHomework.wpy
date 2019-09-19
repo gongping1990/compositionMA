@@ -58,7 +58,8 @@
         <view class="-body-teacher-reply">
           <view class="-reply-title">{{shareInfo.replyTeacher}}核心点拨：</view>
           <view class="-reply-text"
-                wx:if="{{shareInfo.replyText}}">{{shareInfo.replyText}}</view>
+                wx:if="{{shareInfo.replyText}}">{{shareInfo.replyText}}
+          </view>
           <view class="-reply-img-wrap"
                 wx:if="{{shareInfo.replyImg.length}}">
             <image class="-img"
@@ -94,7 +95,7 @@
     </view>
 
     <view class="p-shareHomework-footer">
-      <view class="-footer-left">
+      <view class="-footer-left" wx:if="{{!isOpenAudio}}">
         <image class="-footer-left-img"
                src="{{shareInfo.replyTeacherImg}}"></image>
         <view class="-footer-left-text">
@@ -103,18 +104,34 @@
         </view>
       </view>
       <view class="-footer-center"
-            wx:if="{{shareInfo.replyTime && shareInfo.replyAudio}}"
+            wx:if="{{shareInfo.replyTime && shareInfo.replyAudio && !isOpenAudio}}"
             @tap="changeAudioStatus({{shareInfo.replyAudioAuthorUrl}},2)">
         <text>收听老师点评</text>
         <image class="-footer-center-img1"
                src="https://pub.file.k12.vip/tbzw/1.3/course/bofang.png"></image>
       </view>
       <view class="-footer-center"
-            wx:if="{{shareInfo.replyTime && !shareInfo.replyAudio}}"
+            wx:if="{{shareInfo.replyTime && !shareInfo.replyAudio }}"
             @tap="scrollToFn">
         <text>查看老师点评</text>
         <image class="-footer-center-img2"
                src="https://pub.file.k12.vip/tbzw/1.3/course/look.png"></image>
+      </view>
+      <view class="-footer-audio" wx:if="{{shareInfo.replyTime && shareInfo.replyAudio && isOpenAudio}}">
+        <image class="-icon" @tap="changeAudioStatus" wx:if="{{!isPlay}}"
+               src="https://pub.file.k12.vip/tbzw/1.3/course/play-audio.png"></image>
+        <image class="-icon" @tap="changeAudioStatus" wx:if="{{isPlay}}"
+               src="https://pub.file.k12.vip/tbzw/1.3/course/stop-audio.png"></image>
+        <view class="-prossage">
+          <van-slider bar-height="6px"
+                      inactive-color="#ffffff"
+                      active-color="#FFD703"
+                      value="{{currentTime}}"
+                      use-button-slot
+                      bind:drag="changeSlider">
+            <view class="-prossage-btn" slot="button"></view>
+          </van-slider>
+        </view>
       </view>
       <view class="-footer-right">
         <button class="-footer-right-btn"
@@ -140,616 +157,673 @@
 </template>
 
 <script>
-import wepy from 'wepy'
-import { connect } from 'wepy-redux'
-import api from '../request/api'
-import dayjs from 'dayjs'
-import getDateDiff from '../utils/getDateDiff'
-import load from '../components/load'
-import lookImage from '../components/lookImage'
-import login from '../components/login'
-@connect({
-  userInfo (state) {
-    return state.user.userInfo
-  },
-  logined (state) {
-    return state.user.logined
-  }
-})
-export default class ShareHomework extends wepy.page {
-  config = {
-    navigationBarTitleText: '作业分享',
-    'usingComponents': {
-      'van-icon': '../vant/icon/index',
-      'van-popup': '../vant/popup/index'
-    }
-  };
-  components = {
-    lookImage,
-    load,
-    login
-  };
-  computed = {
-    height () {
-      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
-    }
-  };
-  watch = {
-    userInfo (n) {
-      if (n.id) {
-        this.getOtherHomework()
-      }
-    }
-  };
+  import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+  import api from '../request/api';
+  import dayjs from 'dayjs';
+  import getDateDiff from '../utils/getDateDiff';
+  import load from '../components/load';
+  import lookImage from '../components/lookImage';
+  import login from '../components/login';
 
-  data = {
-    showSelect: false,
-    showPopup: false,
-    isFetching: false,
-    isPlay: false,
-    isMyPlay: false,
-    isShowImage: false,
-    isShow: false,
-    isReply: false,
-    isSlide: true,
-    myAudio: '',
-    durationTime: '',
-    shareInfo: '',
-    workId: '',
-    itemUrl: '',
-    swiperOptions: {
-      indicatorDots: true,
-      indicatorActiveColor: '#FFDBA9',
-      autoplay: false,
-      interval: 5000,
-      duration: 1000
-    }
-  };
-
-  initAudio (url) {
-    this.myAudio = wx.createInnerAudioContext()
-    this.myAudio.src = url
-
-    this.myAudio.onEnded(() => {
-      this.isPlay = false
-      this.isMyPlay = false
-      this.$apply()
-    })
-  }
-
-  getOtherHomework () {
-    this.isFetching = true
-    api.study.viewHomework({
-      workId: this.workId
-    }).then(res => {
-      this.isFetching = false
-      this.shareInfo = res.data.resultData
-      this.shareInfo.workTime = getDateDiff.getDateDiff(this.shareInfo.workTime)
-      this.shareInfo.replyTime = this.shareInfo.replyTime ? getDateDiff.getDateDiff(this.shareInfo.replyTime) : ''
-      this.shareInfo.workImg = this.shareInfo.workImg && this.shareInfo.workImg.split(',')
-      this.shareInfo.workImgSrc = this.shareInfo.workImgSrc && this.shareInfo.workImgSrc.split(',')
-      this.shareInfo.replyImg = this.shareInfo.replyImg && this.shareInfo.replyImg.split(',')
-      this.shareInfo.duration = this.timeToFormat(this.shareInfo.duration)
-      this.shareInfo.replyDuration = this.timeToFormat(this.shareInfo.replyDuration)
-      this.isReply = !!this.shareInfo.replyTime
-      this.$apply()
-    })
-  };
-
-  timeToFormat (times) {
-    var result = '00 : 00'
-    // eslint-disable-next-line no-unused-vars
-    var hour, minute, second
-    if (times > 0) {
-      minute = Math.floor(times / 60)
-      if (minute < 10) {
-        minute = '0' + minute
-      }
-
-      second = Math.floor((times - 60 * minute) % 60)
-      if (second < 10) {
-        second = '0' + second
-      }
-      result = `${minute} : ${second}`
-    }
-    return result
-  };
-
-  methods = {
-    touchMove (e) {
-      if (this.isSlide) {
-        this.isSlide = false
-      }
+  @connect({
+    userInfo(state) {
+      return state.user.userInfo;
     },
-    openTip () {
-      this.isSlide = true
-    },
-    scrollToFn () {
-      let that = this
-      wx.createSelectorQuery().select('#scorllCompletion').boundingClientRect(function (rect) {
-        if (rect) {
-          wx.pageScrollTo({
-            scrollTop: rect.height
-          })
-        }
-      }).exec()
-    },
-    enlargeImage (data) {
-      this.itemUrl = data
-      this.isShowImage = true
-    },
-    changeAudioStatus (url, num) {
-      this.myAudio && this.myAudio.destroy()
-      this.initAudio(url)
-      if (num == 1) {
-        this.isPlay = false
-        if (this.isMyPlay) {
-          this.isMyPlay = false
-          this.myAudio.pause()
-        } else {
-          this.isMyPlay = true
-          this.myAudio.play()
-        }
-      } else {
-        this.isMyPlay = false
-        if (this.isPlay) {
-          this.isPlay = false
-          this.myAudio.pause()
-        } else {
-          this.isPlay = true
-          this.myAudio.play()
-        }
-      }
-    },
-    addLike () {
-      if (!this.logined) {
-        this.showPopup = true
-        return
-      }
-      api.study.addLike({
-        workId: this.shareInfo.id
-      })
-        .then(res => {
-          if (res.data.code === 200) {
-            wx.showToast({
-              title: '点赞成功'
-            })
-            this.getOtherHomework()
-          }
-        })
+    logined(state) {
+      return state.user.logined;
     }
-  };
-
-  events = {
-    changePopupStatus () {
-      this.isShowImage = false
-    }
-  };
-
-  onLoad (query) {
-    this.workId = query.id
-    this.getOtherHomework()
-  }
-
-  onUnload () {
-    this.myAudio.destroy()
-  }
-
-  onShareAppMessage () {
-    return {
-      title: this.shareInfo.self ? `我已坚持学习${this.shareInfo.learnDay}天，刚完成今天的作业，请给我点个赞吧` : `快来给@${this.shareInfo.nickname}点个赞，TA已坚持学习了${this.shareInfo.learnDay}天`,
-      path: `/pages/shareHomework?id=${this.shareInfo.id}`,
-      imageUrl: this.shareInfo.homeworkType === 1 ? '' : this.shareInfo.workImg[0]
+  })
+  export default class ShareHomework extends wepy.page {
+    config = {
+      navigationBarTitleText: '作业分享',
+      'usingComponents': {
+        'van-icon': '../vant/icon/index',
+        'van-popup': '../vant/popup/index',
+        "van-slider": "../vant/slider/index"
+      }
     };
+    components = {
+      lookImage,
+      load,
+      login
+    };
+    computed = {
+      height() {
+        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
+      }
+    };
+    watch = {
+      userInfo(n) {
+        if (n.id) {
+          this.getOtherHomework();
+        }
+      }
+    };
+
+    data = {
+      showSelect: false,
+      showPopup: false,
+      isFetching: false,
+      isPlay: false,
+      isMyPlay: false,
+      isShowImage: false,
+      isShow: false,
+      isReply: false,
+      isSlide: true,
+      isOpenAudio: false,
+      myAudio: '',
+      durationTime: '',
+      currentTime: '',
+      shareInfo: '',
+      workId: '',
+      itemUrl: '',
+      swiperOptions: {
+        indicatorDots: true,
+        indicatorActiveColor: '#FFDBA9',
+        autoplay: false,
+        interval: 5000,
+        duration: 1000
+      }
+    };
+
+    initAudio(url) {
+      this.myAudio = wx.createInnerAudioContext();
+      this.myAudio.src = url;
+
+      this.myAudio.onPlay(() => {
+        console.log('start');
+      });
+
+      this.myAudio.onTimeUpdate(() => {
+        let duration = parseInt(this.myAudio.duration);
+
+        this.currentTime = (parseInt(this.myAudio.currentTime) / duration) * 100;
+        console.log(this.currentTime);
+        this.$apply();
+      });
+
+      this.myAudio.onEnded(() => {
+        this.isPlay = false;
+        this.isMyPlay = false;
+        this.$apply();
+      });
+
+    }
+
+    getOtherHomework() {
+      this.isFetching = true;
+      api.study.viewHomework({
+        workId: this.workId
+      }).then(res => {
+        this.isFetching = false;
+        this.shareInfo = res.data.resultData;
+        this.shareInfo.workTime = getDateDiff.getDateDiff(this.shareInfo.workTime);
+        this.shareInfo.replyTime = this.shareInfo.replyTime ? getDateDiff.getDateDiff(this.shareInfo.replyTime) : '';
+        this.shareInfo.workImg = this.shareInfo.workImg && this.shareInfo.workImg.split(',');
+        this.shareInfo.workImgSrc = this.shareInfo.workImgSrc && this.shareInfo.workImgSrc.split(',');
+        this.shareInfo.replyImg = this.shareInfo.replyImg && this.shareInfo.replyImg.split(',');
+        this.shareInfo.duration = this.timeToFormat(this.shareInfo.duration);
+        this.shareInfo.replyDuration = this.timeToFormat(this.shareInfo.replyDuration);
+        this.isReply = !!this.shareInfo.replyTime;
+        this.$apply();
+      });
+    };
+
+    timeToFormat(times) {
+      var result = '00 : 00';
+      // eslint-disable-next-line no-unused-vars
+      var hour, minute, second;
+      if (times > 0) {
+        minute = Math.floor(times / 60);
+        if (minute < 10) {
+          minute = '0' + minute;
+        }
+
+        second = Math.floor((times - 60 * minute) % 60);
+        if (second < 10) {
+          second = '0' + second;
+        }
+        result = `${minute} : ${second}`;
+      }
+      return result;
+    };
+
+    methods = {
+      changeSlider(event) {
+        this.currentTime = (event.detail.value / 100) * this.myAudio.duration;
+        this.myAudio.seek(this.currentTime);
+        console.log(this.currentTime, 11);
+      },
+      touchMove(e) {
+        if (this.isSlide) {
+          this.isSlide = false;
+        }
+      },
+      openTip() {
+        this.isSlide = true;
+      },
+      scrollToFn() {
+        let that = this;
+        wx.createSelectorQuery().select('#scorllCompletion').boundingClientRect(function(rect) {
+          if (rect) {
+            wx.pageScrollTo({
+              scrollTop: rect.height
+            });
+          }
+        }).exec();
+      },
+      enlargeImage(data) {
+        this.itemUrl = data;
+        this.isShowImage = true;
+      },
+      changeAudioStatus(url, num) {
+        if (num == 1) {
+          this.isOpenAudio = false;
+          this.currentTime = 0;
+          this.myAudio && this.myAudio.destroy();
+          this.initAudio(url);
+          this.isPlay = false;
+          if (this.isMyPlay) {
+            this.isMyPlay = false;
+            this.myAudio.pause();
+          } else {
+            this.isMyPlay = true;
+            this.myAudio.play();
+          }
+        } else {
+          this.isMyPlay = false;
+          if (this.myAudio) {
+            !this.isOpenAudio && this.myAudio.destroy();
+          }
+          !this.isOpenAudio && this.initAudio(url);
+          if (this.isPlay) {
+            this.isPlay = false;
+            this.myAudio.pause();
+          } else {
+            this.isPlay = true;
+            this.myAudio.play();
+          }
+          this.isOpenAudio = true;
+        }
+      },
+      addLike() {
+        if (!this.logined) {
+          this.showPopup = true;
+          return;
+        }
+        api.study.addLike({
+          workId: this.shareInfo.id
+        })
+          .then(res => {
+            if (res.data.code === 200) {
+              wx.showToast({
+                title: '点赞成功'
+              });
+              this.getOtherHomework();
+            }
+          });
+      }
+    };
+
+    events = {
+      changePopupStatus() {
+        this.isShowImage = false;
+      }
+    };
+
+    onLoad(query) {
+      this.workId = query.id;
+      this.getOtherHomework();
+    }
+
+    onUnload() {
+      this.myAudio.destroy();
+    }
+
+    onShareAppMessage() {
+      return {
+        title: this.shareInfo.self ? `我已坚持学习${this.shareInfo.learnDay}天，刚完成今天的作业，请给我点个赞吧` : `快来给@${this.shareInfo.nickname}点个赞，TA已坚持学习了${this.shareInfo.learnDay}天`,
+        path: `/pages/shareHomework?id=${this.shareInfo.id}`,
+        imageUrl: this.shareInfo.homeworkType === 1 ? '' : this.shareInfo.workImg[0]
+      };
+    }
   }
-}
 </script>
 
 <style lang="scss">
-@import '../assets/style/mixin.scss';
+  @import '../assets/style/mixin.scss';
 
-.p-shareHomework {
-  background-color: #f6ba04;
+  .p-shareHomework {
+    background-color: #f6ba04;
 
-  &-body {
-    position: relative;
-    display: inline-block;
-    margin-bottom: 173px;
-
-    .-body-back {
-      position: absolute;
-      top: 115px;
-      left: 34px;
-    }
-
-    .-body-bg {
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 366px;
-      height: 447px;
-      background: url('https://pub.file.k12.vip/tbzw/1.3/course/shizi.png')
-        no-repeat;
-      background-size: 100%;
-    }
-
-    .-body-content {
+    &-body {
       position: relative;
-      margin: 207px 32px 71px;
-      width: 686px;
-      height: 1033px;
-      background: rgba(255, 255, 255, 1);
-      box-shadow: 0px 13px 27px 0px rgba(246, 95, 4, 0.2);
-      border-radius: 33px;
+      display: inline-block;
+      margin-bottom: 173px;
 
-      &-icon {
+      .-body-back {
         position: absolute;
-        top: -30px;
-        right: 14px;
-        width: 266px;
-        height: 69px;
-        background: url('https://pub.file.k12.vip/tbzw/1.3/course/zhuazi.png')
-          no-repeat;
+        top: 115px;
+        left: 34px;
+      }
+
+      .-body-bg {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 366px;
+        height: 447px;
+        background: url('https://pub.file.k12.vip/tbzw/1.3/course/shizi.png') no-repeat;
         background-size: 100%;
       }
 
-      &-top {
-        display: flex;
-        justify-content: space-between;
-
-        .-top-left {
-          display: flex;
-          margin: 58px 0 47px 29px;
-
-          &-img {
-            width: 118px;
-            height: 117px;
-            border-radius: 50%;
-            margin-right: 33px;
-          }
-
-          &-text {
-            font-size: 40px;
-            font-weight: bold;
-            color: rgba(0, 0, 0, 1);
-
-            .-tip {
-              display: inline-block;
-              padding: 0 27px;
-              margin-top: 14px;
-              max-width: 320px;
-              text-overflow: ellipsis;
-              overflow: hidden;
-              white-space: nowrap;
-              text-align: center;
-              height: 40px;
-              background: rgba(255, 192, 0, 1);
-              border-radius: 20px 20px 20px 0px;
-              font-size: 24px;
-              font-weight: 500;
-              color: rgba(255, 255, 255, 1);
-              line-height: 40px;
-            }
-          }
-        }
-
-        .-top-right {
-          margin: 68px 25px 0 0;
-          font-size: 27px;
-          font-weight: 400;
-          color: rgba(153, 153, 153, 1);
-        }
-      }
-
-      &-down {
-        height: 776px;
-        border-radius: 27px;
-
-        .-content-down-swiper {
-          margin: 0 27px;
-          height: 100%;
-          border-radius: 27px;
-        }
-
-        .-content-down-img {
-          width: 100%;
-          height: 776px;
-          border-radius: 27px;
-        }
-
-        .-content-down-wrap {
-          margin: 0 0 81px;
-          text-align: center;
-
-          .-img {
-            margin: 67px auto 122px;
-            width: 366px;
-            height: 447px;
-            border-radius: 33px;
-          }
-
-          .-reply-btn {
-            @include flex-center;
-            justify-content: space-between;
-            padding: 0 47px;
-            margin: 0 61px;
-            height: 96px;
-            background: linear-gradient(
-              -37deg,
-              rgba(255, 122, 50, 1),
-              rgba(255, 142, 74, 1)
-            );
-            box-shadow: 0px 8px 8px 0px rgba(255, 122, 50, 0.4);
-            border-radius: 48px;
-
-            .-reply-icon {
-              .icon {
-                background: url("https://pub.file.k12.vip/2019/09/19/1174518486010826754.png");
-                background-size: 100%;
-                width: 52px;
-                height: 39px;
-              }
-
-              .playIcon {
-                background: url('https://pub.file.k12.vip/2019/09/17/1173850722128502785.gif');
-                background-size: 100%;
-                width: 52px;
-                height: 39px;
-              }
-            }
-
-            .-reply-time {
-              font-size: 34px;
-              font-weight: 600;
-              color: #ffffff;
-            }
-          }
-        }
-      }
-    }
-
-    .-body-btn {
-      text-align: center;
-      margin: 59px auto 71px;
-      width: 333px;
-      height: 80px;
-      background: linear-gradient(
-        -37deg,
-        rgba(255, 107, 67, 1),
-        rgba(255, 122, 50, 1)
-      );
-      box-shadow: 0px 8px 8px 0px rgba(255, 122, 50, 0.4);
-      border-radius: 40px;
-      font-size: 32px;
-      font-weight: 500;
-      color: rgba(255, 255, 255, 1);
-      line-height: 80px;
-    }
-
-    .-body-teacher {
-      margin-bottom: 30px;
-
-      &-reply {
-        margin: 0 32px;
-        padding: 53px 27px 50px;
+      .-body-content {
+        position: relative;
+        margin: 207px 32px 71px;
+        width: 686px;
+        height: 1033px;
         background: rgba(255, 255, 255, 1);
         box-shadow: 0px 13px 27px 0px rgba(246, 95, 4, 0.2);
         border-radius: 33px;
 
-        .-reply-title {
-          font-size: 32px;
-          font-weight: bold;
-          color: rgba(0, 0, 0, 1);
+        &-icon {
+          position: absolute;
+          top: -30px;
+          right: 14px;
+          width: 266px;
+          height: 69px;
+          background: url('https://pub.file.k12.vip/tbzw/1.3/course/zhuazi.png') no-repeat;
+          background-size: 100%;
         }
 
-        .-reply-text {
-          margin-top: 28px;
-          font-size: 28px;
-          font-weight: 500;
-          color: rgba(0, 0, 0, 1);
-        }
-
-        .-reply-img-wrap {
-          margin-top: 39px;
+        &-top {
           display: flex;
+          justify-content: space-between;
 
-          .-img {
-            margin-right: 12px;
-            width: 193px;
-            height: 193px;
-            border-radius: 20px;
+          .-top-left {
+            display: flex;
+            margin: 58px 0 47px 29px;
+
+            &-img {
+              width: 118px;
+              height: 117px;
+              border-radius: 50%;
+              margin-right: 33px;
+            }
+
+            &-text {
+              font-size: 40px;
+              font-weight: bold;
+              color: rgba(0, 0, 0, 1);
+
+              .-tip {
+                display: inline-block;
+                padding: 0 27px;
+                margin-top: 14px;
+                max-width: 320px;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                white-space: nowrap;
+                text-align: center;
+                height: 40px;
+                background: rgba(255, 192, 0, 1);
+                border-radius: 20px 20px 20px 0px;
+                font-size: 24px;
+                font-weight: 500;
+                color: rgba(255, 255, 255, 1);
+                line-height: 40px;
+              }
+            }
+          }
+
+          .-top-right {
+            margin: 68px 25px 0 0;
+            font-size: 27px;
+            font-weight: 400;
+            color: rgba(153, 153, 153, 1);
+          }
+        }
+
+        &-down {
+          height: 776px;
+          border-radius: 27px;
+
+          .-content-down-swiper {
+            margin: 0 27px;
+            height: 100%;
+            border-radius: 27px;
+          }
+
+          .-content-down-img {
+            width: 100%;
+            height: 776px;
+            border-radius: 27px;
+          }
+
+          .-content-down-wrap {
+            margin: 0 0 81px;
+            text-align: center;
+
+            .-img {
+              margin: 67px auto 122px;
+              width: 366px;
+              height: 447px;
+              border-radius: 33px;
+            }
+
+            .-reply-btn {
+              @include flex-center;
+              justify-content: space-between;
+              padding: 0 47px;
+              margin: 0 61px;
+              height: 96px;
+              background: linear-gradient(
+                  -37deg,
+                  rgba(255, 122, 50, 1),
+                  rgba(255, 142, 74, 1)
+              );
+              box-shadow: 0px 8px 8px 0px rgba(255, 122, 50, 0.4);
+              border-radius: 48px;
+
+              .-reply-icon {
+                .icon {
+                  background: url("https://pub.file.k12.vip/2019/09/19/1174518486010826754.png");
+                  background-size: 100%;
+                  width: 52px;
+                  height: 39px;
+                }
+
+                .playIcon {
+                  background: url('https://pub.file.k12.vip/2019/09/17/1173850722128502785.gif');
+                  background-size: 100%;
+                  width: 52px;
+                  height: 39px;
+                }
+              }
+
+              .-reply-time {
+                font-size: 34px;
+                font-weight: 600;
+                color: #ffffff;
+              }
+            }
           }
         }
       }
 
-      &-tip {
+      .-body-btn {
         text-align: center;
-        margin: 67px auto 57px;
+        margin: 59px auto 71px;
+        width: 333px;
+        height: 80px;
+        background: linear-gradient(
+            -37deg,
+            rgba(255, 107, 67, 1),
+            rgba(255, 122, 50, 1)
+        );
+        box-shadow: 0px 8px 8px 0px rgba(255, 122, 50, 0.4);
+        border-radius: 40px;
         font-size: 32px;
         font-weight: 500;
         color: rgba(255, 255, 255, 1);
-      }
-    }
-  }
-
-  &-tip {
-    position: fixed;
-    transform: translateX(595px);
-    bottom: 212px;
-    width: 100%;
-
-    .-tip-btn {
-      @include flex-center;
-      justify-content: space-between;
-      height: 120px;
-      margin: 0 32px;
-      background: linear-gradient(
-        -37deg,
-        rgba(255, 107, 67, 1),
-        rgba(255, 122, 50, 1)
-      );
-      box-shadow: 0px 8px 8px 0px rgba(255, 122, 50, 0.4);
-      border-radius: 60px;
-
-      .-tip-left {
-        display: flex;
-        align-items: center;
+        line-height: 80px;
       }
 
-      .-tip-userImg {
-        margin: 13px 26px 13px 18px;
-        width: 93px;
-        height: 93px;
-        border-radius: 50%;
-        min-width: 93px;
-      }
+      .-body-teacher {
+        margin-bottom: 30px;
 
-      .-tip-text {
-        font-size: 28px;
-        font-weight: bold;
-        color: rgba(255, 255, 255, 1);
+        &-reply {
+          margin: 0 32px;
+          padding: 53px 27px 50px;
+          background: rgba(255, 255, 255, 1);
+          box-shadow: 0px 13px 27px 0px rgba(246, 95, 4, 0.2);
+          border-radius: 33px;
 
-        &-color {
-          color: #ffce45;
+          .-reply-title {
+            font-size: 32px;
+            font-weight: bold;
+            color: rgba(0, 0, 0, 1);
+          }
+
+          .-reply-text {
+            margin-top: 28px;
+            font-size: 28px;
+            font-weight: 500;
+            color: rgba(0, 0, 0, 1);
+          }
+
+          .-reply-img-wrap {
+            margin-top: 39px;
+            display: flex;
+
+            .-img {
+              margin-right: 12px;
+              width: 193px;
+              height: 193px;
+              border-radius: 20px;
+            }
+          }
         }
-      }
 
-      .-tip-clickbtn {
-        background-color: transparent;
-        padding: 0;
-        margin: 0;
-        line-height: 0;
-        min-width: 107px;
-      }
-
-      .-tip-btnImg {
-        margin: 13px 5px 1px 0;
-        width: 107px;
-        height: 108px;
-      }
-    }
-  }
-
-  &-footer {
-    @include flex-center;
-    justify-content: space-between;
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    height: 173px;
-    background: rgba(255, 255, 255, 1);
-    box-shadow: 0px -13px 13px 0px rgba(210, 108, 46, 0.19);
-    border-radius: 40px 40px 0px 0px;
-
-    .-footer-left {
-      display: flex;
-      align-items: center;
-      margin-left: 32px;
-
-      &-img {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        margin-right: 21px;
-      }
-
-      &-text {
-        font-size: 24px;
-        font-weight: 500;
-        color: rgba(51, 51, 51, 1);
-
-        .-tip {
-          margin-top: 21px;
-          height: 20px;
-          font-size: 20px;
-          font-weight: 500;
-          color: rgba(153, 153, 153, 1);
-          line-height: 20px;
-        }
-      }
-    }
-
-    .-footer-center {
-      @include flex-center;
-      width: 274px;
-      height: 80px;
-      background: linear-gradient(
-        -37deg,
-        rgba(255, 142, 74, 1),
-        rgba(255, 122, 50, 1)
-      );
-      box-shadow: 0px 8px 8px 0px rgba(255, 122, 50, 0.4);
-      border-radius: 40px 40px 40px 0px;
-      font-size: 24px;
-      font-weight: 500;
-      color: rgba(255, 255, 255, 1);
-      line-height: 80px;
-
-      &-img1 {
-        width: 31px;
-        height: 42px;
-        margin-left: 36px;
-      }
-      &-img2 {
-        width: 23px;
-        height: 21px;
-        margin-left: 13px;
-      }
-    }
-
-    .-footer-right {
-      display: flex;
-      margin-top: 47px;
-      margin-right: 23px;
-
-      &-btn {
-        background: #ffffff;
-        margin: 0;
-        padding: 0;
-      }
-
-      &-wrap {
-        position: relative;
-
-        .-tip {
-          position: absolute;
-          left: 65px;
-          top: -10px;
+        &-tip {
           text-align: center;
-          width: 47px;
-          height: 35px;
-          background: linear-gradient(
-            -42deg,
-            rgba(255, 111, 40, 1),
-            rgba(255, 82, 69, 1)
-          );
-          border-radius: 17px 17px 17px 0px;
-          font-size: 20px;
+          margin: 67px auto 57px;
+          font-size: 32px;
           font-weight: 500;
           color: rgba(255, 255, 255, 1);
-          line-height: 35px;
+        }
+      }
+    }
+
+    &-tip {
+      position: fixed;
+      transform: translateX(595px);
+      bottom: 212px;
+      width: 100%;
+
+      .-tip-btn {
+        @include flex-center;
+        justify-content: space-between;
+        height: 120px;
+        margin: 0 32px;
+        background: linear-gradient(
+            -37deg,
+            rgba(255, 107, 67, 1),
+            rgba(255, 122, 50, 1)
+        );
+        box-shadow: 0px 8px 8px 0px rgba(255, 122, 50, 0.4);
+        border-radius: 60px;
+
+        .-tip-left {
+          display: flex;
+          align-items: center;
+        }
+
+        .-tip-userImg {
+          margin: 13px 26px 13px 18px;
+          width: 93px;
+          height: 93px;
+          border-radius: 50%;
+          min-width: 93px;
+        }
+
+        .-tip-text {
+          font-size: 28px;
+          font-weight: bold;
+          color: rgba(255, 255, 255, 1);
+
+          &-color {
+            color: #ffce45;
+          }
+        }
+
+        .-tip-clickbtn {
+          background-color: transparent;
+          padding: 0;
+          margin: 0;
+          line-height: 0;
+          min-width: 107px;
+        }
+
+        .-tip-btnImg {
+          margin: 13px 5px 1px 0;
+          width: 107px;
+          height: 108px;
+        }
+      }
+    }
+
+    &-footer {
+      @include flex-center;
+      justify-content: space-between;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      height: 173px;
+      background: rgba(255, 255, 255, 1);
+      box-shadow: 0px -13px 13px 0px rgba(210, 108, 46, 0.19);
+      border-radius: 40px 40px 0px 0px;
+
+      .-footer-left {
+        display: flex;
+        align-items: center;
+        margin-left: 32px;
+
+        &-img {
+          width: 80px;
+          height: 80px;
+          border-radius: 50%;
+          margin-right: 21px;
+        }
+
+        &-text {
+          font-size: 24px;
+          font-weight: 500;
+          color: rgba(51, 51, 51, 1);
+
+          .-tip {
+            margin-top: 21px;
+            height: 20px;
+            font-size: 20px;
+            font-weight: 500;
+            color: rgba(153, 153, 153, 1);
+            line-height: 20px;
+          }
         }
       }
 
-      &-img {
-        width: 96px;
-        height: 96px;
+      .-footer-center {
+        @include flex-center;
+        width: 274px;
+        height: 80px;
+        background: linear-gradient(
+            -37deg,
+            rgba(255, 142, 74, 1),
+            rgba(255, 122, 50, 1)
+        );
+        box-shadow: 0px 8px 8px 0px rgba(255, 122, 50, 0.4);
+        border-radius: 40px 40px 40px 0px;
+        font-size: 24px;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 1);
+        line-height: 80px;
+
+        &-img1 {
+          width: 31px;
+          height: 42px;
+          margin-left: 36px;
+        }
+        &-img2 {
+          width: 23px;
+          height: 21px;
+          margin-left: 13px;
+        }
       }
 
-      .-img-two {
-        margin-left: 5px;
+      .-footer-audio {
+        @include flex-center;
+        justify-content: space-between;
+        margin-left: 34px;
+        width: 481px;
+        height: 80px;
+        background: linear-gradient(-37deg, rgba(255, 142, 74, 1), rgba(255, 122, 50, 1));
+        box-shadow: 0px 8px 8px 0px rgba(255, 122, 50, 0.4);
+        border-radius: 40px 40px 40px 0px;
+
+        .-icon {
+          width: 47px;
+          height: 47px;
+          margin-left: 20px;
+        }
+
+        .-prossage {
+          margin-right: 40px;
+          width: 351px;
+
+          &-btn {
+            width: 27px;
+            height: 27px;
+            background: rgba(255, 215, 3, 1);
+            box-shadow: 0px 10px 25px 0px rgba(255, 91, 0, 0.48);
+            border-radius: 50%;
+          }
+        }
+      }
+
+      .-footer-right {
+        display: flex;
+        margin-top: 47px;
+        margin-right: 23px;
+
+        &-btn {
+          background: #ffffff;
+          margin: 0;
+          padding: 0;
+        }
+
+        &-wrap {
+          position: relative;
+
+          .-tip {
+            position: absolute;
+            left: 65px;
+            top: -10px;
+            text-align: center;
+            width: 47px;
+            height: 35px;
+            background: linear-gradient(
+                -42deg,
+                rgba(255, 111, 40, 1),
+                rgba(255, 82, 69, 1)
+            );
+            border-radius: 17px 17px 17px 0px;
+            font-size: 20px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 1);
+            line-height: 35px;
+          }
+        }
+
+        &-img {
+          width: 96px;
+          height: 96px;
+        }
+
+        .-img-two {
+          margin-left: 5px;
+        }
       }
     }
-  }
 
-  .-animation-left {
-    transition: all 2.5s;
-    transform: translateX(0);
-  }
+    .-animation-left {
+      transition: all 2.5s;
+      transform: translateX(0);
+    }
 
-  .-animation-right {
-    transition: all 2.5s;
-    transform: translateX(-590);
+    .-animation-right {
+      transition: all 2.5s;
+      transform: translateX(-590);
+    }
   }
-}
 </style>

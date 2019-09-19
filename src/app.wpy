@@ -54,6 +54,7 @@ export default class extends wepy.app {
         root: 'user',
         pages: [
           'gift',
+          'giftActive',
           'myCourse',
           'lesson',
           'sendGood',

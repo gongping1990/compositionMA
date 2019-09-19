@@ -48,7 +48,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 25,
+			"current": 26,
 			"list": [
 				{
 					"id": 0,
@@ -230,6 +230,13 @@
 					"name": "user/submitHomework",
 					"pathName": "user/submitHomework",
 					"query": "id=1173513977189851138",
+					"scene": null
+				},
+				{
+					"id": 26,
+					"name": "user/giftActive",
+					"pathName": "user/giftActive",
+					"query": "imgUrl= https://pub.file.k12.vip/2019/09/19/1174511429295677441.jpg",
 					"scene": null
 				}
 			]

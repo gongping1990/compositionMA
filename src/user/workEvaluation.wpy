@@ -75,7 +75,7 @@ export default class Notice extends wepy.page {
       size: this.page.size
     })
       .then(({ data }) => {
-        this.page.current += 1
+
         this.dataList = [...this.dataList, ...data.resultData.records]
 
         this.dataList.forEach(item => {
@@ -93,12 +93,14 @@ export default class Notice extends wepy.page {
     },
     bindLoadItem (data) {
       if (this.dataList.length < this.page.total) {
+        this.page.current ++
         this.getList()
       }
     }
   };
 
   onShow () {
+    this.dataList = []
     this.getList()
   }
 

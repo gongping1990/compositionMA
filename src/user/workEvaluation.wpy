@@ -21,9 +21,11 @@
             <image class="evaluation-item-cover"
                    src="{{item.coverphoto}}" />
             <div class="evaluation-item-info">
-              <text class="evaluation-item-title van-ellipsis">{{item.lessonName}}</text>
-              <text class="evaluation-item-text">{{item.homework}}</text>
-              <text class="evaluation-item-time">{{item.datetime}}</text>
+              <view>
+                <text class="evaluation-item-title van-ellipsis">{{item.lessonName}}</text>
+                <text class="evaluation-item-text van-multi-ellipsis--l2">{{item.homework}}</text>
+              </view>
+              <text class="evaluation-item-time">{{item.formatTime}}</text>
             </div>
           </view>
         </view>
@@ -77,11 +79,10 @@ export default class Notice extends wepy.page {
       .then(({ data }) => {
         this.page.current += 1
         this.dataList = [...this.dataList, ...data.resultData.records]
-
-        this.dataList.forEach(item => {
-          item.datetime = dayjs(+item.datetime).format('YYYY-MM-DD HH:mm')
+        this.dataList = this.dataList.map(item => {
+          item.formatTime = dayjs(Number(item.datetime)).format('YYYY-MM-DD HH:mm')
+          return item
         })
-
         this.page.total = data.resultData.total
         this.$apply()
       })
@@ -154,7 +155,12 @@ export default class Notice extends wepy.page {
     &-info {
       display: flex;
       flex-direction: column;
+      justify-content: space-between;
       flex: 1;
+      div {
+        display: flex;
+        flex-direction: column;
+      }
     }
     &-title {
       margin-bottom: 10px;
@@ -169,7 +175,6 @@ export default class Notice extends wepy.page {
       font-size: 26px;
       color: #999;
       line-height: 36px;
-      margin-bottom: 48px;
     }
     &-time {
       font-size: 24px;

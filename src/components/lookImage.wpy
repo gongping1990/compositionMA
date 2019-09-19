@@ -2,9 +2,19 @@
   <van-popup show="{{ isShow }}"
              @close="onClose">
     <view class="p-image" @tap="onClose">
-      <image class="p-image-content"
-             mode="widthFix"
-             src="{{imgUrl}}"></image>
+      <swiper class="p-image-swiper"
+              indicator-dots="{{swiperOptions.indicatorDots}}"
+              indicator-active-color="{{swiperOptions.indicatorActiveColor}}"
+              autoplay="{{swiperOptions.autoplay}}"
+              interval="{{swiperOptions.interval}}"
+              current="{{swiperOptions.current}}"
+              duration="{{swiperOptions.duration}}">
+        <block wx:for="{{imgUrl}}" wx:key="{{index}}">
+          <swiper-item>
+            <image class="p-image-content" src="{{item}}" mode="widthFix"></image>
+          </swiper-item>
+        </block>
+      </swiper>
     </view>
   </van-popup>
 </template>
@@ -19,6 +29,10 @@ export default class LookImage extends wepy.component {
       default: false
     },
     imgUrl: {
+      type: Array,
+      default: []
+    },
+    index: {
       type: String,
       default: ''
     }
@@ -26,8 +40,22 @@ export default class LookImage extends wepy.component {
 
   computed = {};
 
-  data = {
+  watch = {
+    index (_n,_o) {
+      this.swiperOptions.current = _n
+      this.$apply()
+    }
+  }
 
+  data = {
+    swiperOptions: {
+      indicatorDots: true,
+      indicatorActiveColor: '#FFDBA9',
+      autoplay: false,
+      current: +this.index,
+      interval: 5000,
+      duration: 100
+    }
   };
 
   methods = {
@@ -39,6 +67,7 @@ export default class LookImage extends wepy.component {
   events = {};
 
   onLoad () {
+    console.log(this.imgUrl, this.index,111)
   }
 }
 </script>
@@ -47,6 +76,12 @@ export default class LookImage extends wepy.component {
 
 .p-image {
   width: 100vw;
+  height: 100vh;
+
+  &-swiper {
+    width: 100%;
+    height: 100%;
+  }
 
   &-content {
     width: 100%;

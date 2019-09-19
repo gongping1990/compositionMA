@@ -28,7 +28,7 @@
             <block wx:for="{{workDetail.workImg}}" wx:key="{{index}}">
               <swiper-item>
                 <image class="-content-down-img"
-                       src="{{item}}" @tap="enlargeImage({{item}})"></image>
+                       src="{{item}}" @tap="enlargeImage({{index}}, {{workDetail.workImgSrc}})"></image>
               </swiper-item>
             </block>
           </swiper>
@@ -59,7 +59,7 @@
             <image class="-img"
                    wx:for="{{workDetail.replyImg}}"
                    wx:key="{{item}}"
-                   @tap="enlargeImage({{item}})"
+                   @tap="enlargeImage({{index}}, {{workDetail.replyImg}})"
                    src="{{item}}"></image>
           </view>
         </view>
@@ -198,7 +198,7 @@
                   contentText="重新提交作业成功后，将会覆盖上次的内容，确定提交？"
                   okText="确认覆盖"></ConfirmModal>
 
-    <lookImage :isShow.sync="isShowImage" :imgUrl.sync="itemUrl"></lookImage>
+    <lookImage :isShow.sync="isShowImage" :imgUrl.sync="itemUrl" :index.sync="imgIndex"></lookImage>
 
     <van-popup show="{{isOpenShareModal}}" class="p-completionOfWork-share">
       <view class="-share-content">
@@ -273,7 +273,8 @@
       workDetail: '',
       queryInfo: '',
       myAudio: '',
-      itemUrl: '',
+      itemUrl: [],
+      imgIndex: '',
       swiperOptions: {
         indicatorDots: true,
         indicatorActiveColor: '#FFDBA9',
@@ -414,8 +415,9 @@
         this.isShowImage = false;
         this.isOpenPopup = true;
       },
-      enlargeImage(url) {
-        this.itemUrl = url;
+      enlargeImage(idx, list) {
+        this.imgIndex = idx
+        this.itemUrl = list;
         this.isShowImage = true;
       },
       shareFriend() {

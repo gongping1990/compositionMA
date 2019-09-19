@@ -43,7 +43,7 @@
             wx:if="{{tabActive === '1'}}">
         <view class="-center-blackboard">
           <view class="-center-blackboard-title">课后作业</view>
-          <view class="-center-blackboard-content">{{lessonDetail.homeworkClaim}}</view>
+          <text class="-center-blackboard-content">{{lessonDetail.homeworkClaim}}</text>
         </view>
 
         <view class="-center-mask"
@@ -710,6 +710,7 @@ export default class SubmitHomework extends wepy.page {
       }
 
       &-content {
+        display: inline-block;
         width: 500px;
         margin-top: 12px;
         margin-left: 62px;
@@ -717,7 +718,6 @@ export default class SubmitHomework extends wepy.page {
         font-weight: 500;
         color: rgba(255, 255, 255, 0.9);
         line-height: 34px;
-        height: 135px;
         overflow: hidden;
       }
     }

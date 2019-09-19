@@ -48,7 +48,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 14,
+			"current": 25,
 			"list": [
 				{
 					"id": 0,
@@ -223,6 +223,13 @@
 					"name": "user/sendGood",
 					"pathName": "user/sendGood",
 					"query": "id=1133673190743896065",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "user/submitHomework",
+					"pathName": "user/submitHomework",
+					"query": "id=1173513977189851138",
 					"scene": null
 				}
 			]

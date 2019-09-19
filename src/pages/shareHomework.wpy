@@ -96,7 +96,7 @@
     <view class="p-shareHomework-footer">
       <view class="-footer-left">
         <image class="-footer-left-img"
-               src="{{shareInfo.stuImg}}"></image>
+               src="{{shareInfo.replyTeacherImg}}"></image>
         <view class="-footer-left-text">
           <view>{{shareInfo.replyTeacher}}</view>
           <view class="-tip">{{shareInfo.replyTime ? shareInfo.replyTime : '请稍等，老师随后点评'}}</view>

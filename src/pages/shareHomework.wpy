@@ -81,8 +81,8 @@
           <view class="-tip-text">
             <view>我是{{shareInfo.nickname}}，邀请你
               <Text class="-tip-text-color">一起学习</Text>
+              {{shareInfo.courseName}}
             </view>
-            <Text>{{shareInfo.courseName}}</Text>
           </view>
         </view>
         <button class="-tip-clickbtn"
@@ -337,10 +337,10 @@ export default class ShareHomework extends wepy.page {
 
   onShareAppMessage () {
     return {
-      title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
-      path: `/pages/index`,
-      imageUrl: 'https://pub.file.k12.vip/tbzw/v2/logo2.png'
-    }
+      title: this.shareInfo.self ? `我已坚持学习${this.shareInfo.learnDay}天，刚完成今天的作业，请给我点个赞吧` : `快来给@${this.shareInfo.nickname}点个赞，TA已坚持学习了${this.shareInfo.learnDay}天`,
+      path: `/pages/shareHomework?id=${this.shareInfo.id}`,
+      imageUrl: this.shareInfo.homeworkType === 1 ? '' : this.shareInfo.workImg[0]
+    };
   }
 }
 </script>
@@ -414,9 +414,14 @@ export default class ShareHomework extends wepy.page {
             color: rgba(0, 0, 0, 1);
 
             .-tip {
+              display: inline-block;
+              padding: 0 27px;
               margin-top: 14px;
+              max-width: 320px;
+              text-overflow: ellipsis;
+              overflow: hidden;
+              white-space: nowrap;
               text-align: center;
-              width: 267px;
               height: 40px;
               background: rgba(255, 192, 0, 1);
               border-radius: 20px 20px 20px 0px;
@@ -479,7 +484,8 @@ export default class ShareHomework extends wepy.page {
 
             .-reply-icon {
               .icon {
-                @include bg('/1.3/course/icon-play.png');
+                background: url("https://pub.file.k12.vip/2019/09/19/1174518486010826754.png");
+                background-size: 100%;
                 width: 52px;
                 height: 39px;
               }
@@ -595,6 +601,7 @@ export default class ShareHomework extends wepy.page {
         width: 93px;
         height: 93px;
         border-radius: 50%;
+        min-width: 93px;
       }
 
       .-tip-text {
@@ -612,6 +619,7 @@ export default class ShareHomework extends wepy.page {
         padding: 0;
         margin: 0;
         line-height: 0;
+        min-width: 107px;
       }
 
       .-tip-btnImg {

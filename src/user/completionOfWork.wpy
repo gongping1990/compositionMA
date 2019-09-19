@@ -95,7 +95,7 @@
                       active-color="#FFD703"
                       value="{{currentTime}}"
                       use-button-slot
-                      @tap="changeSlider">
+                      bind:drag="changeSlider">
             <view class="-prossage-btn" slot="button"></view>
           </van-slider>
         </view>
@@ -107,11 +107,11 @@
       </view>
       <view class="-footer-right">
         <button class="-footer-right-btn"
-                open-type="share" wx:if="{{workDetail.homeworkType === 1}}">
+                open-type="share" wx:if="{{workDetail.homeworkType === 1 || !workDetail.self}}">
           <image class="-footer-right-img"
                  src="https://pub.file.k12.vip/tbzw/1.3/course/icon-1.png"></image>
         </button>
-        <image @tap="openShareModal" class="-footer-right-img" wx:if="{{workDetail.homeworkType === 2}}"
+        <image @tap="openShareModal" class="-footer-right-img" wx:if="{{workDetail.homeworkType === 2 && workDetail.self}}"
                src="https://pub.file.k12.vip/tbzw/1.3/course/icon-1.png"></image>
         <view class="-footer-right-wrap" @tap="addLike">
           <view class="-tip">{{workDetail.likenum}}</view>
@@ -288,14 +288,9 @@
       this.myAudio = wx.createInnerAudioContext();
       this.myAudio.src = bool ? this.workDetail.workAudio : this.workDetail.replyAudioAuthorUrl;
 
-      this.myAudio.onEnded(() => {
-        if (!bool) {
-          this.isPlay = false;
-        } else {
-          this.isMyPlay = false;
-        }
-        this.$apply();
-      });
+      this.myAudio.onPlay(()=>{
+        console.log('start')
+      })
 
       this.myAudio.onTimeUpdate(()=>{
         let duration = parseInt(this.myAudio.duration)
@@ -304,6 +299,14 @@
         console.log( this.currentTime)
         this.$apply();
       })
+      this.myAudio.onEnded(() => {
+        if (!bool) {
+          this.isPlay = false;
+        } else {
+          this.isMyPlay = false;
+        }
+        this.$apply();
+      });
     };
 
     timeToFormat(times) {
@@ -380,8 +383,10 @@
     };
 
     methods = {
-      changeSlider (data) {
-        console.log(data,11)
+      changeSlider (event) {
+        this.currentTime = (event.detail.value / 100 )*this.myAudio.duration
+        this.myAudio.seek(this.currentTime)
+        console.log(this.currentTime,11)
       },
       backPre() {
         wx.navigateBack();
@@ -420,10 +425,9 @@
         this.isShowConfirm = true;
       },
       changeAudioStatus() {
-        this.isOpenAudio = true;
         this.isMyPlay = false;
-        this.myAudio.destroy();
-        this.initAudio(false);
+        !this.isOpenAudio && this.myAudio.destroy();
+        !this.isOpenAudio && this.initAudio(false);
         if (this.isPlay) {
           this.isPlay = false;
           this.myAudio.pause();
@@ -431,8 +435,11 @@
           this.isPlay = true;
           this.myAudio.play();
         }
+        this.isOpenAudio = true;
       },
       changeMyAudioStatus() {
+        this.isOpenAudio = false;
+        this.currentTime = 0
         this.isPlay = false;
         this.myAudio.destroy();
         this.initAudio(true);
@@ -634,9 +641,14 @@
               color: rgba(0, 0, 0, 1);
 
               .-tip {
+                display: inline-block;
+                padding: 0 27px;
                 margin-top: 14px;
+                max-width: 320px;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                white-space: nowrap;
                 text-align: center;
-                width: 267px;
                 height: 40px;
                 background: rgba(255, 192, 0, 1);
                 border-radius: 20px 20px 20px 0px;
@@ -695,7 +707,8 @@
 
               .-reply-icon {
                 .icon {
-                  @include bg('/1.3/course/icon-play.png');
+                  background: url("https://pub.file.k12.vip/2019/09/19/1174518486010826754.png");
+                  background-size: 100%;
                   width: 52px;
                   height: 39px;
                 }

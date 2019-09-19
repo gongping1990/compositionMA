@@ -94,7 +94,7 @@
           case 0:
             break
           case 1:
-            if (item.adressed) {
+            if (!item.adressed) {
               wx.navigateTo({ url: `/user/address?id=${item.courseId}` });
             } else {
               wx.navigateTo({ url: `/user/sendGood?id=${item.courseId}` });

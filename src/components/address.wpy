@@ -32,12 +32,11 @@
     </view>
     <view class="_input textarea">
       <text class="_input-label">详细地址</text>
-      <textarea value="{{form.address}}"
-                bindinput="bindClickAddress"
-                type="number"
-                class="van-hairline--bottom"
-                placeholder-class="placeholder"
-                placeholder="详细地址 街道、小区、门牌等信息" />
+      <input value="{{form.telephone}}"
+             bindinput="bindClickAddress"
+             class="van-hairline--bottom"
+             placeholder-class="placeholder"
+             placeholder="详细地址 街道、小区、门牌等信息" />
       </view>
     <view class="_btn"
           @tap="save">{{btnText}}</view>
@@ -131,11 +130,15 @@ export default class Example extends wepy.component {
     font-size: 32px;
     color: #fff;
     font-weight: 600;
-    width:686px;
-    height:100px;
-    background:linear-gradient(90deg,rgba(255,192,0,1) 0%,rgba(254,179,18,1) 100%);
-    box-shadow:0px 4px 10px 0px rgba(254,182,15,0.45);
-    border-radius:50px;
+    width: 686px;
+    height: 100px;
+    background: linear-gradient(
+      90deg,
+      rgba(255, 192, 0, 1) 0%,
+      rgba(254, 179, 18, 1) 100%
+    );
+    box-shadow: 0px 4px 10px 0px rgba(254, 182, 15, 0.45);
+    border-radius: 50px;
     transform: translateX(-50%);
   }
   ._input {

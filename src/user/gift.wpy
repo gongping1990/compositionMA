@@ -90,7 +90,7 @@
       clickBtn(item) {
         switch (+item.giftType) {
           case 0:
-            wx.navigateTo({ url: `/user/giftActive?imgUrl=${item.giftShowImg}` });
+            wx.navigateTo({ url: `/user/giftActive?imgUrl=${item.giftShowImg}&id=${item.courseId}` });
             break
           case 1:
             if (!item.adressed) {

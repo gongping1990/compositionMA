@@ -90,7 +90,11 @@
           </view>
         </view>
         <button class="-tip-clickbtn"
-                open-type="contact">
+                open-type="contact"
+                show-message-card="true"
+                send-message-title="{{cardInfo.cardtitle}}"
+                send-message-path="{{'/pages/index?homeConfig=' + cardInfo.url}}"
+                send-message-img="{{cardInfo.cardimgurl}}">
           <image class="-tip-btnImg"
                  src="https://pub.file.k12.vip/2019/09/17/1173856313928458242.png"></image>
         </button>
@@ -219,6 +223,7 @@
       durationTime: '',
       currentTime: '',
       shareInfo: '',
+      cardInfo: '',
       workId: '',
       itemUrl: [],
       imgIndex: '',
@@ -270,9 +275,24 @@
         this.shareInfo.duration = this.timeToFormat(this.shareInfo.duration);
         this.shareInfo.replyDuration = this.timeToFormat(this.shareInfo.replyDuration);
         this.isReply = !!this.shareInfo.replyTime;
+        this.getShareTemplates()
         this.$apply();
       });
     };
+
+    getShareTemplates() {
+      api.course.getShareTemplates({
+        courseId: this.shareInfo.courseId
+      })
+        .then(({ data }) => {
+          this.cardInfo = data.resultData;
+          this.cardInfo.url = JSON.stringify({
+            type: 3,
+            homeConfig: this.cardInfo.courseId
+          })
+          this.$apply();
+        });
+    }
 
     timeToFormat(times) {
       var result = '00 : 00';

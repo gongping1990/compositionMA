@@ -15,6 +15,9 @@ const course = {
   },
   dayByMasterpiece(params) {
     return request.get('/homepage/dayByMasterpiece', params)
+  },
+  getShareTemplates(params) {
+    return request.get('/course/getShareTemplates', params)
   }
 }
 

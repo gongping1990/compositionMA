@@ -95,7 +95,7 @@
                       active-color="#FFD703"
                       value="{{currentTime}}"
                       use-button-slot
-                      @tap="changeSlider">
+                      @tap="changeSlider()">
             <view class="-prossage-btn" slot="button"></view>
           </van-slider>
         </view>
@@ -288,14 +288,9 @@
       this.myAudio = wx.createInnerAudioContext();
       this.myAudio.src = bool ? this.workDetail.workAudio : this.workDetail.replyAudioAuthorUrl;
 
-      this.myAudio.onEnded(() => {
-        if (!bool) {
-          this.isPlay = false;
-        } else {
-          this.isMyPlay = false;
-        }
-        this.$apply();
-      });
+      this.myAudio.onPlay(()=>{
+        console.log('start')
+      })
 
       this.myAudio.onTimeUpdate(()=>{
         let duration = parseInt(this.myAudio.duration)
@@ -304,6 +299,14 @@
         console.log( this.currentTime)
         this.$apply();
       })
+      this.myAudio.onEnded(() => {
+        if (!bool) {
+          this.isPlay = false;
+        } else {
+          this.isMyPlay = false;
+        }
+        this.$apply();
+      });
     };
 
     timeToFormat(times) {
@@ -634,9 +637,13 @@
               color: rgba(0, 0, 0, 1);
 
               .-tip {
-                @include text-overflow(320px);
-                padding: 0 12px;
+                display: inline-block;
+                padding: 0 27px;
                 margin-top: 14px;
+                max-width: 320px;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                white-space: nowrap;
                 text-align: center;
                 height: 40px;
                 background: rgba(255, 192, 0, 1);

@@ -81,8 +81,8 @@
           <view class="-tip-text">
             <view>我是{{shareInfo.nickname}}，邀请你
               <Text class="-tip-text-color">一起学习</Text>
+              {{shareInfo.courseName}}
             </view>
-            <Text>{{shareInfo.courseName}}</Text>
           </view>
         </view>
         <button class="-tip-clickbtn"
@@ -414,9 +414,13 @@ export default class ShareHomework extends wepy.page {
             color: rgba(0, 0, 0, 1);
 
             .-tip {
-              @include text-overflow(320px);
-              padding: 0 12px;
+              display: inline-block;
+              padding: 0 27px;
               margin-top: 14px;
+              max-width: 320px;
+              text-overflow: ellipsis;
+              overflow: hidden;
+              white-space: nowrap;
               text-align: center;
               height: 40px;
               background: rgba(255, 192, 0, 1);
@@ -596,6 +600,7 @@ export default class ShareHomework extends wepy.page {
         width: 93px;
         height: 93px;
         border-radius: 50%;
+        min-width: 93px;
       }
 
       .-tip-text {
@@ -613,6 +618,7 @@ export default class ShareHomework extends wepy.page {
         padding: 0;
         margin: 0;
         line-height: 0;
+        min-width: 107px;
       }
 
       .-tip-btnImg {

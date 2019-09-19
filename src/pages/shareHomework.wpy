@@ -337,10 +337,10 @@ export default class ShareHomework extends wepy.page {
 
   onShareAppMessage () {
     return {
-      title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
-      path: `/pages/index`,
-      imageUrl: 'https://pub.file.k12.vip/tbzw/v2/logo2.png'
-    }
+      title: this.shareInfo.self ? `我已坚持学习${this.shareInfo.learnDay}天，刚完成今天的作业，请给我点个赞吧` : `快来给@${this.shareInfo.nickname}点个赞，TA已坚持学习了${this.shareInfo.learnDay}天`,
+      path: `/pages/shareHomework?id=${this.shareInfo.id}`,
+      imageUrl: this.shareInfo.homeworkType === 1 ? '' : this.shareInfo.workImg[0]
+    };
   }
 }
 </script>
@@ -414,9 +414,10 @@ export default class ShareHomework extends wepy.page {
             color: rgba(0, 0, 0, 1);
 
             .-tip {
+              @include text-overflow(320px);
+              padding: 0 12px;
               margin-top: 14px;
               text-align: center;
-              width: 267px;
               height: 40px;
               background: rgba(255, 192, 0, 1);
               border-radius: 20px 20px 20px 0px;

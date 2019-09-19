@@ -107,11 +107,11 @@
       </view>
       <view class="-footer-right">
         <button class="-footer-right-btn"
-                open-type="share" wx:if="{{workDetail.homeworkType === 1}}">
+                open-type="share" wx:if="{{workDetail.homeworkType === 1 || !workDetail.self}}">
           <image class="-footer-right-img"
                  src="https://pub.file.k12.vip/tbzw/1.3/course/icon-1.png"></image>
         </button>
-        <image @tap="openShareModal" class="-footer-right-img" wx:if="{{workDetail.homeworkType === 2}}"
+        <image @tap="openShareModal" class="-footer-right-img" wx:if="{{workDetail.homeworkType === 2 && workDetail.self}}"
                src="https://pub.file.k12.vip/tbzw/1.3/course/icon-1.png"></image>
         <view class="-footer-right-wrap" @tap="addLike">
           <view class="-tip">{{workDetail.likenum}}</view>
@@ -634,9 +634,10 @@
               color: rgba(0, 0, 0, 1);
 
               .-tip {
+                @include text-overflow(320px);
+                padding: 0 12px;
                 margin-top: 14px;
                 text-align: center;
-                width: 267px;
                 height: 40px;
                 background: rgba(255, 192, 0, 1);
                 border-radius: 20px 20px 20px 0px;

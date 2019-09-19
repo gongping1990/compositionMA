@@ -105,11 +105,15 @@
             wx:else>
         <view class="hot-item"
               wx:for="{{hotList}}"
-              wx:key="{{item.lessonId}}">
+              wx:key="{{item.lessonId}}"
+              @tap="clickWorkItem({{item}})">
           <view class="hot-cover {{item.homeworkType == 1 && 'yy'}}">
             <view class="hot-cover-tag">42分钟前</view>
             <image class="hot-cover-img"
                    src="{{item.workImgs[0]}}" />
+            <view class="hot-title">
+              <text class="van-ellipsis">{{item.lessonName}}</text>
+            </view>
           </view>
           <view class="hot-info">
             <view class="hot-user">
@@ -126,13 +130,13 @@
             </view>
             <view class="hot-right">
               <view class="hot-tag">由{{item.praiseTeacher}}推荐</view>
-              <view class="hot-like">
+              <view class="hot-like" @tap.stop="clickLike({{item}}, {{index}})">
                 <image class="hot-like-icon"
                        wx:if="{{item.liked}}"
                        src="../assets/image/like.png" />
                 <image class="hot-like-icon"
                        wx:else
-                       src="../assets/image/like_def.png" />
+                       src="../assets/image/like-def.png" />
                 <text>{{item.likes}}</text>
               </view>
             </view>
@@ -441,6 +445,24 @@ export default class Home extends wepy.page {
     align-items: center;
   }
   .hot {
+    &-title {
+      display: flex;
+      align-items: flex-end;
+      position: absolute;
+      left: 0px;
+      right: 0;
+      bottom: 0;
+      height: 123px;
+      background: linear-gradient(transparent, rgba(0, 0, 0, 0.3));
+      text {
+        margin-left: 27px;
+        margin-bottom: 25px;
+        font-size: 32px;
+        font-weight: bold;
+        color: rgba(255, 255, 255, 1);
+        text-shadow: 0px 3px 3px rgba(0, 0, 0, 0.3);
+      }
+    }
     &-item {
       margin-bottom: 32px;
       box-sizing: border-box;

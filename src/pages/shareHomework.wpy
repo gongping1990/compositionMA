@@ -3,6 +3,9 @@
         bindtouchmove="touchMove">
     <view class="p-shareHomework-body"
           id="scorllCompletion">
+      <Text class="-body-back" @tap="backPre">
+        <van-icon size="26px" name="arrow-left"/>
+      </Text>
       <view class="-body-bg"></view>
       <view class="-body-content">
         <view class="-body-content-icon"></view>
@@ -30,7 +33,7 @@
               <swiper-item>
                 <image class="-content-down-img"
                        src="{{item}}"
-                       @tap="enlargeImage({{item}})"></image>
+                       @tap="enlargeImage({{index}}, {{workDetail.workImgSrc}})"></image>
               </swiper-item>
             </block>
           </swiper>
@@ -65,7 +68,7 @@
             <image class="-img"
                    wx:for="{{shareInfo.replyImg}}"
                    wx:key="{{item}}"
-                   @tap="enlargeImage({{item}})"
+                   @tap="enlargeImage({{index}}, {{workDetail.replyImg}})"
                    src="{{item}}"></image>
           </view>
         </view>
@@ -149,7 +152,7 @@
     </view>
 
     <lookImage :isShow.sync="isShowImage"
-               :imgUrl.sync="itemUrl"></lookImage>
+               :imgUrl.sync="itemUrl" :index.sync="imgIndex"></lookImage>
     <login :showPopup.sync="showPopup"
            :show.sync="showSelect"></login>
     <load wx:if="{{isFetching}}"></load>
@@ -217,7 +220,8 @@
       currentTime: '',
       shareInfo: '',
       workId: '',
-      itemUrl: '',
+      itemUrl: [],
+      imgIndex: '',
       swiperOptions: {
         indicatorDots: true,
         indicatorActiveColor: '#FFDBA9',
@@ -290,6 +294,11 @@
     };
 
     methods = {
+      backPre () {
+        wx.redirectTo({
+          url: '/pages/index'
+        })
+      },
       changeSlider(event) {
         this.currentTime = (event.detail.value / 100) * this.myAudio.duration;
         this.myAudio.seek(this.currentTime);
@@ -313,8 +322,9 @@
           }
         }).exec();
       },
-      enlargeImage(data) {
-        this.itemUrl = data;
+      enlargeImage(idx, list) {
+        this.imgIndex = idx
+        this.itemUrl = list;
         this.isShowImage = true;
       },
       changeAudioStatus(url, num) {

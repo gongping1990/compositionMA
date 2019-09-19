@@ -69,7 +69,7 @@
                    wx:for="{{workDetail.workImgSrc}}"
                    wx:key="{{item}}"
                    wx:if="{{lessonDetail.homeworkType == 2}}"
-                   @tap="enlargeImage({{item}},index)"
+                   @tap="enlargeImage({{index}}, {{workDetail.workImgSrc}})"
                    src="{{item}}"></image>
 
             <view class="-center-work-down-audio"
@@ -139,7 +139,7 @@
                      wx:for="{{item.workImgSrc}}"
                      wx:key="{{item}}"
                      wx:if="{{lessonDetail.homeworkType == 2}}"
-                     @tap="enlargeImage({{item}}, index)"
+                     @tap="enlargeImage({{index}}, {{workDetail.workImgSrc}})"
                      src="{{item}}"></image>
 
               <view class="-center-work-down-audio"
@@ -188,7 +188,7 @@
       </scroll-view>
 
     </view>
-    <lookImage :isShow.sync="isShowImage"
+    <lookImage :isShow.sync="isShowImage" :index.sync="imgIndex"
                :imgUrl.sync="itemUrl"></lookImage>
     <van-popup show="{{isOpenPopup}}">
       <view class="p-submitHomework-popup"
@@ -271,7 +271,8 @@ export default class SubmitHomework extends wepy.page {
     dataItem: '',
     backgroundY: 0,
     tabActive: '1',
-    itemUrl: '',
+    itemUrl: [],
+    imgIndex: '',
     isSuccessWork: false,
     isFetching: false,
     isOpenPopup: false,
@@ -445,8 +446,9 @@ export default class SubmitHomework extends wepy.page {
         this.isPlay = false;
       }
     },
-    enlargeImage (url, index) {
-      this.itemUrl = url;
+    enlargeImage(idx, list) {
+      this.imgIndex = idx
+      this.itemUrl = list;
       this.isShowImage = true;
     },
     openUrl (num) {

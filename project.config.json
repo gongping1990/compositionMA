@@ -48,7 +48,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 6,
+			"current": 14,
 			"list": [
 				{
 					"id": 0,
@@ -61,7 +61,7 @@
 					"id": 1,
 					"name": "作业详情（他人）",
 					"pathName": "user/completionOfWork",
-					"query": "type=2&id=1174274226057515009",
+					"query": "type=2&id=1174515041887584257",
 					"scene": null
 				},
 				{
@@ -152,7 +152,7 @@
 					"id": 14,
 					"name": "课程详情",
 					"pathName": "user/submitHomework",
-					"query": "id=1134359706941546498",
+					"query": "id= 1174515041887584257",
 					"scene": null
 				},
 				{

@@ -32,12 +32,12 @@
     </view>
     <view class="_input textarea">
       <text class="_input-label">详细地址</text>
-      <input value="{{form.telephone}}"
+      <input value="{{form.address}}"
              bindinput="bindClickAddress"
              class="van-hairline--bottom"
              placeholder-class="placeholder"
              placeholder="详细地址 街道、小区、门牌等信息" />
-      </view>
+    </view>
     <view class="_btn"
           @tap="save">{{btnText}}</view>
     <van-popup position="bottom"

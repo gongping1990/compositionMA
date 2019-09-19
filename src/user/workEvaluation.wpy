@@ -10,7 +10,8 @@
                    scroll-with-animation>
         <view class="evaluation-item"
               wx:for="{{dataList}}"
-              wx:key="{{item.workId}}">
+              wx:key="{{item.workId}}"
+              @tap="toWorkDetail({{item}})">
           <view class="evaluation-item-header van-hairline--bottom">
             <text class="evaluation-item-header-msg">{{item.teacherName}}给你发来了课后作业讲解</text>
             <view class="evaluation-item-header-icon"

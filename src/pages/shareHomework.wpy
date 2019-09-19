@@ -484,7 +484,8 @@ export default class ShareHomework extends wepy.page {
 
             .-reply-icon {
               .icon {
-                @include bg('/1.3/course/icon-play.png');
+                background: url("https://pub.file.k12.vip/2019/09/19/1174518486010826754.png");
+                background-size: 100%;
                 width: 52px;
                 height: 39px;
               }

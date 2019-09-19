@@ -350,7 +350,7 @@ export default class SubmitHomework extends wepy.page {
       this.page.total = data.resultData.total;
       this.isFetching = false
       this.$apply();
-    }).finally(() => {
+    },()=>{
       this.isFetching = false
       this.$apply();
     });

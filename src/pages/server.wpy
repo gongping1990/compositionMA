@@ -19,7 +19,8 @@
              @tap="toJump({{item.id}})">
           <view class="-content-item-left">
             <view class="-left-img-wrap">
-              <view class="-right-tip">{{item.num}}</view>
+              <view class="-right-tip"
+                    wx:if="{{item.num}}">{{item.num}}</view>
               <image class="-left-img"
                      src="{{item.url}}"></image>
             </view>

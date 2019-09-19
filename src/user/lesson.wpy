@@ -103,7 +103,7 @@ export default class Example extends wepy.page {
     },
     toJump (data) {
       if (!data.stage) {
-        if (data.state !== 4) {
+        if (data.studyStatus !== 4) {
           wx.navigateTo({ url: '/pages/classroom?id=' + data.lessonId })
         } else {
           wx.showToast({

@@ -12,15 +12,16 @@
               wx:for="{{dataList}}"
               wx:key="{{item.workId}}">
           <view class="evaluation-item-header van-hairline--bottom">
-            <text class="evaluation-item-header-msg">{{item.teacherName}}老师给你发来了课后作业讲解</text>
+            <text class="evaluation-item-header-msg">{{item.teacherName}}给你发来了课后作业讲解</text>
             <view class="evaluation-item-header-icon"
                   wx:if="{{!item.know}}"></view>
           </view>
           <view class="evaluation-item-body">
-            <image class="evaluation-item-cover" />
+            <image class="evaluation-item-cover"
+                   src="{{item.coverphoto}}" />
             <div class="evaluation-item-info">
-              <text class="evaluation-item-title van-ellipsis">回家过大年</text>
-              <text class="evaluation-item-text">写人的脸色</text>
+              <text class="evaluation-item-title van-ellipsis">{{item.lessonName}}</text>
+              <text class="evaluation-item-text">{{item.homework}}</text>
               <text class="evaluation-item-time">{{item.datetime}}</text>
             </div>
           </view>

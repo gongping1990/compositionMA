@@ -48,7 +48,11 @@
 			"list": []
 		},
 		"miniprogram": {
+<<<<<<< HEAD
 			"current": 0,
+=======
+			"current": 26,
+>>>>>>> b338af0f380066ff102ed074b465f9f94cb2fa39
 			"list": [
 				{
 					"id": 0,
@@ -223,6 +227,20 @@
 					"name": "user/sendGood",
 					"pathName": "user/sendGood",
 					"query": "id=1133673190743896065",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "user/submitHomework",
+					"pathName": "user/submitHomework",
+					"query": "id=1173513977189851138",
+					"scene": null
+				},
+				{
+					"id": 26,
+					"name": "user/giftActive",
+					"pathName": "user/giftActive",
+					"query": "imgUrl= https://pub.file.k12.vip/2019/09/19/1174511429295677441.jpg",
 					"scene": null
 				}
 			]

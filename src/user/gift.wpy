@@ -3,12 +3,12 @@
   <view class='container gift'>
     <mHeader title="我的礼包"
              bgColor="#FAFAFA"></mHeader>
-    <view class="container-scroll"
-          style="margin-top:{{height}}px">
-      <scroll-view class="gift-list"
-                   @scrolltolower="bindLoadItem"
-                   scroll-y
-                   scroll-with-animation>
+    <scroll-view class="gift-list"
+                 @scrolltolower="bindLoadItem"
+                 scroll-y
+                 scroll-with-animation>
+      <view class="container-scroll"
+            style="margin-top:{{height}}px">
         <repeat for="{{dataList}}"
                 key="index"
                 index="index"
@@ -23,10 +23,8 @@
             </view>
           </view>
         </repeat>
-      </scroll-view>
-
-    </view>
-
+      </view>
+    </scroll-view>
   </view>
 </template>
 <script>
@@ -92,6 +90,7 @@
       clickBtn(item) {
         switch (+item.giftType) {
           case 0:
+            wx.navigateTo({ url: `/user/giftActive?imgUrl=${item.giftShowImg}` });
             break
           case 1:
             if (!item.adressed) {
@@ -131,9 +130,11 @@
   .gift {
     &-list {
       height: 100vh;
+      text-align: center;
     }
 
     &-item {
+      display: inline-block;
       margin: 0 auto;
       margin-top: 48px;
       width: 686px;
@@ -141,6 +142,10 @@
       background: rgba(255, 255, 255, 1);
       box-shadow: 0px 4px 20px 0px rgba(234, 241, 247, 0.7);
       border-radius: 32px;
+
+      &:last-child {
+        margin-bottom: 100px;
+      }
     }
     &-info {
       display: flex;

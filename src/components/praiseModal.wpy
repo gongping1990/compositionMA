@@ -6,8 +6,7 @@
           <view class="-content-top-name">
             <text class="-title">{{dataInfo.nickName}}</text> 同学
           </view>
-          <view class="-content-top-body">
-            作文“{{dataInfo.homework}}“被评为
+          <view class="-content-top-body">《{{dataInfo.lessonName}}》的课后作业被评为
             <text class="-red">优秀作品</text>
             特发此状，以此鼓励
           </view>
@@ -21,7 +20,7 @@
             <view class="-title-name">{{dataInfo.teacherName}}</view>
           </view>
           <view class="-content-down-des">
-            {{dataInfo.nickName}}，你的作文“{{dataInfo.homework}}”写的太棒啦，
+            {{dataInfo.nickName}}，《{{dataInfo.lessonName}}》的课后作业你写的太棒啦，
             老师要将它推荐到作品表彰墙，让小朋友们都向你学习
           </view>
         </view>

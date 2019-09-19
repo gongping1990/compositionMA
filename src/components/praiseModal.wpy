@@ -8,7 +8,7 @@
           </view>
           <view class="-content-top-body">《{{dataInfo.lessonName}}》的课后作业被评为
             <text class="-red">优秀作品</text>
-            特发此状，以此鼓励
+            特发此状，以资鼓励
           </view>
           <view class="-content-top-text">小语轻作文</view>
           <view class="-content-top-text">{{dataInfo.citeTime}}</view>

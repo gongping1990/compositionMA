@@ -18,6 +18,9 @@ const center = {
   },
   getServiceRemindVO(params) {
     return request.get('/center/getServiceRemindVO', params)
+  },
+  getBottomTipsVO(params) {
+    return request.get('/center/getBottomTipsVO', params)
   }
 }
 

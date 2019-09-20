@@ -21,10 +21,10 @@ export default class testMixin extends wepy.mixin {
       }
     }
   }
-  getUCRemindVOL() {
+  getBottomTipsVO() {
     let { api } = this.$parent.globalData
-    api.study
-      .getUCRemindVO()
+    api.center
+      .getBottomTipsVO()
       .then(({ data }) => {
         store.dispatch({ type: 'UPDATE_TAB_REMIND', payload: data.resultData })
       })
@@ -33,6 +33,6 @@ export default class testMixin extends wepy.mixin {
       })
   }
   onShow() {
-    this.getUCRemindVOL()
+    this.getBottomTipsVO()
   }
 }

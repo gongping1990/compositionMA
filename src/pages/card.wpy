@@ -1,8 +1,7 @@
 <!--  -->
 <template>
   <view class='container card'>
-    <mHeader flag="0"
-             title="打卡记录"></mHeader>
+    <mHeader title="打卡记录"></mHeader>
     <view class="container-scroll"
           style="margin-top:{{height}}px">
       <view class="card-header">

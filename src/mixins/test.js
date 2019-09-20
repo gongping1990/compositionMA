@@ -29,7 +29,6 @@ export default class testMixin extends wepy.mixin {
         store.dispatch({ type: 'UPDATE_TAB_REMIND', payload: data.resultData })
       })
       .catch(e => {
-        console.log(1111)
       })
   }
   onShow() {

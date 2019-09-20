@@ -41,7 +41,7 @@ export default class LookImage extends wepy.component {
   computed = {};
 
   watch = {
-    index (_n,_o) {
+    index (_n, _o) {
       this.swiperOptions.current = _n
       this.$apply()
     }
@@ -65,10 +65,6 @@ export default class LookImage extends wepy.component {
   };
 
   events = {};
-
-  onLoad () {
-    console.log(this.imgUrl, this.index,111)
-  }
 }
 </script>
 <style lang="scss">

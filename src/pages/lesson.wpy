@@ -218,7 +218,6 @@ export default class Lesson extends wepy.page {
       }
     },
     clickLoginBtn () {
-      console.log(111)
       this.showSelect = true
     },
     clickTab (s) {
@@ -306,7 +305,6 @@ export default class Lesson extends wepy.page {
           })
           return e
         })
-        console.log(this.catalogData)
       } else {
         this.catalogData = []
       }

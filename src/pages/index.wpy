@@ -322,9 +322,6 @@ export default class Home extends wepy.page {
     }
   };
   events = {
-    login () {
-      console.log('login')
-    },
     tryAgain () {
       this.initPage()
     }
@@ -411,7 +408,6 @@ export default class Home extends wepy.page {
         e.formatSubitTime = dayjs().to(dayjs(Number(e.subitTime)))
         return e
       })
-      console.log(this.workList)
       this.$apply()
     })
   }
@@ -429,7 +425,7 @@ export default class Home extends wepy.page {
       this.hotTotal = data.resultData.total
       this.hotList = [...this.hotList, ...data.resultData.records]
       this.hotList = this.hotList.map(e => {
-        e.formatSubitTime = dayjs().to(dayjs(Number(e.subitTime)))
+        e.formatSubitTime = dayjs().to(dayjs(Number(e.praiseTime)))
         e.formatDuration = this.timeToFormat(e.duration)
         return e
       })
@@ -466,7 +462,6 @@ export default class Home extends wepy.page {
   }
 
   onReachBottom () {
-    console.log('onReachBottomDistance')
     let { tabActive } = this
     if (tabActive) {
       this.getDayByMasterpiece()
@@ -743,6 +738,7 @@ export default class Home extends wepy.page {
         border-radius: 50%;
       }
       &-name {
+        width: 150px;
         font-size: 21px;
         font-weight: 500;
       }

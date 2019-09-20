@@ -74,9 +74,7 @@ export default class Example extends wepy.page {
       wx.navigateTo({ url: '/pages/resetPwd' })
     },
     bindInputChange (name, event) {
-      console.log(event, name)
       this.form[name] = event.detail.value
-      console.log(this.form)
     },
     clickSendCode () {
       let { phone } = this.form
@@ -144,7 +142,6 @@ export default class Example extends wepy.page {
   }
   isPhoneVailable (phone) {
     var myreg = /^[1][0-9]{10}$/
-    console.log(myreg.test(phone))
     if (!myreg.test(phone)) {
       return false
     } else {

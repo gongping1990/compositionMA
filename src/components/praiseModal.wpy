@@ -46,7 +46,8 @@ export default class PariseModal extends wepy.component {
   props = {
     isShow: {
       type: Boolean,
-      default: false
+      default: false,
+      twoWay: true
     },
     typeProps: {
       type: String,
@@ -69,6 +70,7 @@ export default class PariseModal extends wepy.component {
       wx.navigateTo({ url: `/user/completionOfWork?type=1&id=${this.dataInfo.lessonId}` })
     },
     onClose () {
+      this.isShow = false
       this.$emit('changePopupStatus')
     }
   };

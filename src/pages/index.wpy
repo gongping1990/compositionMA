@@ -69,7 +69,7 @@
               wx:key="{{item.lessonId}}"
               @tap="clickWorkItem({{item}})">
           <view class="work-cover {{item.homeworkType == 1 && 'yy'}}">
-            <view class="work-time">{{item.subitTime}}</view>
+            <view class="work-time">{{item.formatSubitTime}}</view>
             <image class="work-img"
                    src="{{item.workImgs[0]}}"
                    lazy-load="false" />
@@ -108,7 +108,7 @@
               wx:key="{{item.lessonId}}"
               @tap="clickWorkItem({{item}})">
           <view class="hot-cover {{item.homeworkType == 1 && 'yy'}}">
-            <view class="hot-cover-tag">42分钟前</view>
+            <view class="hot-cover-tag">{{item.formatSubitTime}}</view>
             <image class="hot-cover-img"
                    wx:if="{{item.homeworkType != 1}}"
                    src="{{item.workImgs[0]}}" />
@@ -223,6 +223,7 @@
            :show.sync="showSelect"></login>
     <error wx:if="{{isError}}"></error>
     <load wx:if="{{loading}}"></load>
+    <praiseModal :isShow.sync="isShowPraise" typeProps="2" :dataInfo.sync="praiseItem"></praiseModal>
   </view>
 </template>
 <script>
@@ -234,6 +235,7 @@ import mHeader from '@/components/header'
 import login from '../components/login'
 import error from '../components/error'
 import load from '../components/load'
+import praiseModal from '../components/praiseModal'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import 'dayjs/locale/zh-cn'
 import dayjs from 'dayjs'
@@ -270,7 +272,9 @@ export default class Home extends wepy.page {
     showPraise: false,
     showPopup: false,
     showSelect: false,
+    isShowPraise: false,
     infoData: {},
+    praiseItem: {},
     courseList: [],
     bannerList: [],
     workList: [],
@@ -287,14 +291,17 @@ export default class Home extends wepy.page {
     mHeader,
     login,
     error,
-    load
+    load,
+    praiseModal
   };
   methods = {
     onClose () {
       this.showAddress = false
+      this.isShowPraise = false
     },
     bindPerfect () {
       wx.navigateTo({ url: `/user/gift` })
+      this.onClose()
     },
     clickLike (item, index) {
       if (this.logined) {
@@ -356,12 +363,13 @@ export default class Home extends wepy.page {
   // 获取首页信息
   getHomePageInfo () {
     let { api } = this.$parent.globalData
-    console.log(11111)
     api.course.getHomePageInfo().then(({ data }) => {
       this.isError = false
       this.loading = false
       this.infoData = data.resultData
       this.showAddress = data.resultData.hasgift
+      this.isShowPraise = data.resultData.awardsPop
+      this.praiseItem = data.resultData.awardsInfo
       this.courseList = data.resultData.courseList.map(e => {
         e.sessionFrom = JSON.stringify({
           type: 1,
@@ -400,7 +408,7 @@ export default class Home extends wepy.page {
       this.workTotal = data.resultData.total
       this.workList = [...this.workList, ...data.resultData.records]
       this.workList = this.workList.map(e => {
-        e.subitTime = dayjs().to(dayjs(Number(e.subitTime)))
+        e.formatSubitTime = dayjs().to(dayjs(Number(e.subitTime)))
         return e
       })
       console.log(this.workList)
@@ -421,6 +429,7 @@ export default class Home extends wepy.page {
       this.hotTotal = data.resultData.total
       this.hotList = [...this.hotList, ...data.resultData.records]
       this.hotList = this.hotList.map(e => {
+        e.formatSubitTime = dayjs().to(dayjs(Number(e.subitTime)))
         e.formatDuration = this.timeToFormat(e.duration)
         return e
       })

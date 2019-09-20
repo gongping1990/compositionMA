@@ -10,7 +10,7 @@
               current="{{swiperOptions.current}}"
               duration="{{swiperOptions.duration}}">
         <block wx:for="{{imgUrl}}" wx:key="{{index}}">
-          <swiper-item>
+          <swiper-item class="p-image-swiper-item">
             <image class="p-image-content" src="{{item}}" mode="widthFix"></image>
           </swiper-item>
         </block>
@@ -81,6 +81,9 @@ export default class LookImage extends wepy.component {
   &-swiper {
     width: 100%;
     height: 100%;
+  }
+  &-swiper-item {
+    @include flex-center;
   }
 
   &-content {

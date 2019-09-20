@@ -93,11 +93,7 @@
             wx.navigateTo({ url: `/user/giftActive?imgUrl=${item.giftShowImg}&id=${item.courseId}` });
             break
           case 1:
-            if (!item.adressed) {
-              wx.navigateTo({ url: `/user/address?id=${item.courseId}` });
-            } else {
-              wx.navigateTo({ url: `/user/sendGood?id=${item.courseId}` });
-            }
+            wx.navigateTo({ url: `/user/address?id=${item.courseId}` });
             break;
           case 2:
           case 3:

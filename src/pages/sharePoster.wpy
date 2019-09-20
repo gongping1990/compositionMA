@@ -102,7 +102,7 @@
         {
           id: 2,
           name: '海报背景',
-          url: 'https://pub.file.k12.vip/2019/08/26/1165881180018700289.png'
+          url: this.shareDetail.shareTemplates
         }
       ];
 

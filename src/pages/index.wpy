@@ -23,7 +23,7 @@
           </swiper-item>
         </block>
       </swiper>
-      <view class="title-item">
+      <view class="title-item" wx:if="{{courseList.length}}">
         <text class="title-text">大语文精品课</text>
       </view>
       <repeat for="{{courseList}}"

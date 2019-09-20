@@ -290,6 +290,12 @@ export default class Home extends wepy.page {
     load
   };
   methods = {
+    onClose () {
+      this.showAddress = false
+    },
+    bindPerfect () {
+      wx.navigateTo({ url: `/user/gift` })
+    },
     clickLike (item, index) {
       if (this.logined) {
         this.addLike(item.homeworkId, index)
@@ -350,10 +356,12 @@ export default class Home extends wepy.page {
   // 获取首页信息
   getHomePageInfo () {
     let { api } = this.$parent.globalData
+    console.log(11111)
     api.course.getHomePageInfo().then(({ data }) => {
       this.isError = false
       this.loading = false
       this.infoData = data.resultData
+      this.showAddress = data.resultData.hasgift
       this.courseList = data.resultData.courseList.map(e => {
         e.sessionFrom = JSON.stringify({
           type: 1,
@@ -368,7 +376,7 @@ export default class Home extends wepy.page {
         })
         return e
       })
-      console.log(this.courseList)
+
       this.$apply()
     }).catch(({ code }) => {
       this.loading = false
@@ -1129,6 +1137,7 @@ export default class Home extends wepy.page {
       height: 72px;
     }
     &-text {
+      color: #58422B;
       font-size: 28px;
       line-height: 40px;
     }
@@ -1145,6 +1154,7 @@ export default class Home extends wepy.page {
         rgba(253, 219, 85, 1) 100%
       );
       box-shadow: 0px 8px 16px 4px rgba(230, 194, 81, 0.4);
+      color: #ffffff;
       border-radius: 50px;
     }
     &-icon {

@@ -23,7 +23,7 @@
             <div class="evaluation-item-info">
               <view>
                 <text class="evaluation-item-title van-ellipsis">{{item.lessonName}}</text>
-                <text class="evaluation-item-text van-multi-ellipsis--l2">{{item.homework}}</text>
+                <text class="evaluation-item-text van-multi-ellipsis--l2">{{item.courseName}}</text>
               </view>
               <text class="evaluation-item-time">{{item.formatTime}}</text>
             </div>

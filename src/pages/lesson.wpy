@@ -116,7 +116,7 @@
                mode="aspectFit" />
         上课
       </van-tabbar-item>
-      <van-tabbar-item>
+      <van-tabbar-item dot="{{remindData.servicetip}}">
         <image slot="icon"
                src="../assets/image/serve-def.png"
                mode="aspectFit" />
@@ -125,7 +125,7 @@
                mode="aspectFit" />
         服务
       </van-tabbar-item>
-      <van-tabbar-item>
+      <van-tabbar-item dot="{{remindData.uctip}}">
         <image slot="icon"
                src="../assets/image/my-def.png"
                mode="aspectFit" />
@@ -154,6 +154,9 @@ import error from '../components/error'
 @connect({
   logined (state) {
     return state.user.logined
+  },
+  remindData (state) {
+    return state.user.remindData
   }
 })
 export default class Lesson extends wepy.page {

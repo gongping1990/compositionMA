@@ -106,7 +106,10 @@ import login from '../components/login'
 @connect({
   logined (state) {
     return state.user.logined
-  }
+  },
+  remindData (state) {
+    return state.user.remindData
+  },
 })
 export default class Example extends wepy.page {
   config = {

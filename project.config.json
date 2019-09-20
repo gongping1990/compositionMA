@@ -48,7 +48,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 26,
+			"current": 27,
 			"list": [
 				{
 					"id": 0,
@@ -68,7 +68,7 @@
 					"id": 2,
 					"name": "作业详情（自己）",
 					"pathName": "user/completionOfWork",
-					"query": "type=1&id=1139442473879080962",
+					"query": "type=1&id=1139442398134145025",
 					"scene": null
 				},
 				{
@@ -237,6 +237,13 @@
 					"name": "user/giftActive",
 					"pathName": "user/giftActive",
 					"query": "imgUrl= https://pub.file.k12.vip/2019/09/19/1174586175723016193.png",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "pages/sharePoster",
+					"pathName": "pages/sharePoster",
+					"query": "id=1173848797161070593",
 					"scene": null
 				}
 			]

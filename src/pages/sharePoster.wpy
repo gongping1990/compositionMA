@@ -209,9 +209,9 @@
         let textTip = canvasWorkBreak(160, 14, `${that.shareDetail.learnDay}天`);
         ctx.setTextAlign('left');
         ctx.setFillStyle('#885F04');
-        ctx.setFontSize(12);
+        ctx.setFontSize(9);
         for (let m = 0; m < textTip.length; m++) {
-          ctx.fillText(textTip[m], width * 0.2, height * 0.16);
+          ctx.fillText(textTip[m], width * 0.216, height * 0.158);
         }
 
         //绘制作业图片

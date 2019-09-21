@@ -33,7 +33,7 @@
               <swiper-item>
                 <image class="-content-down-img"
                        src="{{item}}"
-                       @tap="enlargeImage({{index}}, {{workDetail.workImgSrc}})"></image>
+                       @tap="enlargeImage({{index}}, {{shareInfo.workImgSrc}})"></image>
               </swiper-item>
             </block>
           </swiper>
@@ -68,7 +68,7 @@
             <image class="-img"
                    wx:for="{{shareInfo.replyImg}}"
                    wx:key="{{item}}"
-                   @tap="enlargeImage({{index}}, {{workDetail.replyImg}})"
+                   @tap="enlargeImage({{index}}, {{shareInfo.replyImg}})"
                    src="{{item}}"></image>
           </view>
         </view>

@@ -21,6 +21,17 @@ import configStore from './store'
 // eslint-disable-next-line no-unused-vars
 import api from './request/api'
 
+var fundebug = require('fundebug-wxjs')
+fundebug.init({
+  apikey: '5cc9937901a8611bc5ea88091b723f9c0f5d719752b5f13842bf775350454fd4',
+  monitorHttpData: true,
+  monitorMethodCall: true,
+  monitorMethodArguments: true,
+  setSystemInfo: true,
+  setUserInfo: true
+})
+
+fundebug.notify('Test', 'Hello, Fundebug!')
 const log = require('./utils/log.js')
 
 const store = configStore()

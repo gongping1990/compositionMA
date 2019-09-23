@@ -43,7 +43,7 @@ module.exports = {
     baseUrl:
       process.env.NODE_ENV === 'production'
         ? 'https://huoke.prod.k12.vip/compositionv2'
-        : 'https://huoke.prod.k12.vip/compositionv2'
+        : 'https://huoke.test.k12.vip/compositionv2'
   }
 }
 

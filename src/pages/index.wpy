@@ -301,7 +301,8 @@ export default class Home extends wepy.page {
     },
     bindPerfect () {
       wx.navigateTo({ url: `/user/gift` })
-      this.onClose()
+      this.showAddress = false
+      this.isShowPraise = false
     },
     clickLike (item, index) {
       if (this.logined) {

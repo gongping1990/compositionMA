@@ -232,8 +232,8 @@ export default class Example extends wepy.page {
   onHide () {
     this.$parent.globalData.audioContext.stop()
     this.audioContext.stop()
-    wepy.$log.error('ready error')
-    wepy.$log.warn('ready warn')
+    wepy.$log.error('ready error', this.roomData)
+    wepy.$log.warn('ready warn', this.roomData)
   }
   onUnload () {
     this.$parent.globalData.audioContext.stop()

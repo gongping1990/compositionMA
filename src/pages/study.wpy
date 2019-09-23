@@ -545,8 +545,8 @@ export default class Example extends wepy.page {
   onHide () {
     this.reset()
     this.changeLearnStage(this.roomData.id, 1)
-    wepy.$log.error('study error')
-    wepy.$log.warn('study warn')
+    wepy.$log.error('study error', this.roomData)
+    wepy.$log.warn('study warn', this.roomData)
   }
   onUnload () {
     this.reset()

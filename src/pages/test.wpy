@@ -484,6 +484,8 @@ export default class Example extends wepy.page {
     this.answerArr = this.answerArr.map(e => {
       e.status = 0
       e.answer = 0
+      e.answerError = 0
+      e.flower = 0
       return e
     })
     this.setRandomTime()
@@ -590,8 +592,8 @@ export default class Example extends wepy.page {
   onHide () {
     this.audioContext.stop()
     clearInterval(this.timer)
-    wepy.$log.error('test error')
-    wepy.$log.warn('test warn')
+    wepy.$log.error('test error', this.answerArr, this.roomData)
+    wepy.$log.warn('test warn', this.answerArr, this.roomData)
   }
   onUnload () {
     this.audioContext.stop()

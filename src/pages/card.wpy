@@ -55,10 +55,10 @@
           </view>
 
           <view class="card-popup-flex">
-            <button class="card-popup-btn"
-                    @tap="closePopup">稍后学习</button>
             <button class="card-popup-btn card-popup-btn2"
-                    @tap="toLearn">立即学习</button>
+                    @tap="closePopup">我知道了</button>
+            <!--<button class="card-popup-btn card-popup-btn2"-->
+                    <!--@tap="toLearn">立即学习</button>-->
           </view>
 
         </view>

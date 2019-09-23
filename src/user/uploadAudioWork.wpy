@@ -190,7 +190,7 @@
         })
 
         wx.uploadFile({
-          url: 'https://huoke.prod.k12.vip/composition/common/uploadPublicFile',
+          url: 'https://huoke.prod.k12.vip/compositionv2/common/uploadPublicFile',
           filePath: _self.fileAudioUrl,
           name: 'file',
           header: { 'Content-Type': 'multipart/form-data' },

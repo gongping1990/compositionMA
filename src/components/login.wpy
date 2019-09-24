@@ -26,7 +26,7 @@
         <view class="-select-item van-hairline--top"
               @tap="clickItem(1)">学习账号</view>
         <view class="-select-item van-hairline--top"
-              @tap="clickItem(2)">微信登录</view>
+              @tap="clickItem(2)"><view class="-select-item-icon"></view>微信登录</view>
         <view class="-select-item cancel van-hairline--top"
               @tap="clickItem(3)">取消</view>
       </view>
@@ -119,11 +119,23 @@ export default class Example extends wepy.component {
     }
     &-item {
       @include flex-center;
+      position: relative;
       width: 100%;
       height: 120px;
       font-size: 35px;
       font-weight: 500;
       color: #333;
+      &-icon {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-right: 10px;
+        width: 32px;
+        height: 32px;
+        background: url('https://pub.file.k12.vip/composition/tj.png') no-repeat;
+        background-size: 100%;
+        transform: translate(-120px, -50%);
+      }
       &.cancel {
         color: #ffbc05;
       }

@@ -6,10 +6,10 @@
     <view class="container-scroll login-scroll"
           style="margin-top:{{height}}px">
       <view class="login-logo">
-        <image src="https://pub.file.k12.vip/composition/login/logo@3x.png"
+        <image src="https://pub.file.k12.vip/composition/login/logo.png"
                class="login-logo-img" />
         <view class="login-logo-content">
-          <text class="login-logo-title">小语轻作文</text>
+          <text class="login-logo-title">乐小狮大语文</text>
           <text class="login-logo-text">学<text></text>技<text></text>巧<text></text>积<text></text>素</text>
         </view>
       </view>
@@ -251,6 +251,7 @@ export default class Example extends wepy.page {
       margin-right: 20px;
       width: 112px;
       height: 112px;
+      border-radius: 20px;
     }
     &-content {
       display: flex;

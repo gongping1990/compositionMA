@@ -31,7 +31,6 @@ fundebug.init({
   setUserInfo: true
 })
 
-fundebug.notify('Test', 'Hello, Fundebug!')
 const log = require('./utils/log.js')
 
 const store = configStore()

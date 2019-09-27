@@ -10,12 +10,13 @@
                class="login-logo-img" />
         <view class="login-logo-content">
           <text class="login-logo-title">乐小狮大语文</text>
-          <text class="login-logo-text">学<text></text>技<text></text>巧<text></text>积<text></text>素</text>
+          <!-- <text class="login-logo-text">学<text></text>技<text></text>巧<text></text>积<text></text>素</text> -->
         </view>
       </view>
       <view class="login-input">
         <input value="{{form.phone}}"
                bindinput="bindInputChange('phone')"
+               @blur="bindBlur"
                type="text"
                placeholder-class="placeholder"
                placeholder="请输入手机号码" />
@@ -26,7 +27,10 @@
       <view class="login-input">
         <input value="{{form.password}}"
                bindinput="bindInputChange('password')"
+               @blur="bindBlurOne"
                type="text"
+               id="password"
+               focus="{{focus}}"
                password="{{!type}}"
                placeholder-class="placeholder"
                placeholder="{{type ? '请输入验证码' : '请输入密码'}}" />
@@ -59,6 +63,7 @@ export default class Example extends wepy.page {
     navigationBarTitleText: ''
   };
   data = {
+    focus: false,
     type: 0,
     codeTime: 0,
     form: {
@@ -75,6 +80,14 @@ export default class Example extends wepy.page {
     },
     bindInputChange (name, event) {
       this.form[name] = event.detail.value
+    },
+    bindBlur () {
+      if (!this.type && this.form.phone.length >= 11) {
+        this.focus = true
+      }
+    },
+    bindBlurOne () {
+      this.focus = false
     },
     clickSendCode () {
       let { phone } = this.form
@@ -93,6 +106,7 @@ export default class Example extends wepy.page {
         phone
       }).then(() => {
         this.downTime()
+        this.focus = true
       })
     },
     changeLoginType () {
@@ -148,19 +162,17 @@ export default class Example extends wepy.page {
       return true
     }
   }
+
   events = {
     back () {
       wx.navigateBack()
     }
   };
-  watch = {};
   computed = {
     height () {
       return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
     }
   };
-  onLoad () { };
-  onShow () { };
 }
 </script>
 <style lang='scss'>
@@ -256,7 +268,8 @@ export default class Example extends wepy.page {
     &-content {
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      align-items: center;
+      justify-content: center;
     }
     &-title {
       font-size: 48px;

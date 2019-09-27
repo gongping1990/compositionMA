@@ -48,12 +48,12 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 28,
+			"current": 0,
 			"list": [
 				{
 					"id": 0,
 					"name": "lesson",
-					"pathName": "user/workEvaluation",
+					"pathName": "pages/login",
 					"query": "id=1138721381526679554&lookback=1",
 					"scene": null
 				},

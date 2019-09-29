@@ -23,11 +23,9 @@
               @tap="clickSendCode"
               wx:if="{{type}}"> {{codeTime ? codeTime + 's' : '获取验证码'}}</view>
       </view>
-      <view class="login-input"
-            @tap="bindTap">
+      <view class="login-input">
         <input value="{{form.password}}"
                bindinput="bindInputChange('password')"
-               @blur="bindBlurOne"
                type="text"
                id="password"
                focus="{{focus}}"
@@ -87,13 +85,14 @@ export default class Example extends wepy.page {
       wx.navigateTo({ url: '/pages/resetPwd' })
     },
     bindInputChange (name, event) {
+      if (name === 'phone') {
+        if (event.detail.value.length === 11) {
+          this.focus = true
+        } else {
+          this.focus = false
+        }
+      }
       this.form[name] = event.detail.value
-    },
-    bindTap () {
-      this.focus = true
-    },
-    bindBlurOne () {
-      this.focus = false
     },
     clickSendCode () {
       let { phone } = this.form

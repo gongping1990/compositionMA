@@ -16,7 +16,6 @@
       <view class="login-input">
         <input value="{{form.phone}}"
                bindinput="bindInputChange('phone')"
-               @blur="bindBlur"
                type="text"
                placeholder-class="placeholder"
                placeholder="请输入手机号码" />
@@ -24,7 +23,8 @@
               @tap="clickSendCode"
               wx:if="{{type}}"> {{codeTime ? codeTime + 's' : '获取验证码'}}</view>
       </view>
-      <view class="login-input">
+      <view class="login-input"
+            @tap="bindTap">
         <input value="{{form.password}}"
                bindinput="bindInputChange('password')"
                @blur="bindBlurOne"
@@ -71,6 +71,14 @@ export default class Example extends wepy.page {
       password: ''
     }
   };
+  // watch = {
+  //   form (v, o) {
+  //     if (v.phone.length >= 10) {
+  //       console.log(v.phone.length)
+  //       this.focus = true
+  //     }
+  //   }
+  // }
   components = {
     mHeader
   };
@@ -81,10 +89,8 @@ export default class Example extends wepy.page {
     bindInputChange (name, event) {
       this.form[name] = event.detail.value
     },
-    bindBlur () {
-      if (!this.type && this.form.phone.length >= 11) {
-        this.focus = true
-      }
+    bindTap () {
+      this.focus = true
     },
     bindBlurOne () {
       this.focus = false

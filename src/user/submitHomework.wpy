@@ -107,14 +107,14 @@
         </button>
       </view>
 
-      <view class="p-submitHomework-card"
-            wx:if="{{tabActive === '1'}}"
-            >
-        <view class="-yes-card" @tap="toJump"
-              wx:if="{{cardDetail.todayCard || !cardDetail.todayLearned || !lessonDetail.canCard}}"></view>
-        <view class="-no-card" @tap="addMyCard"
-              wx:if="{{!cardDetail.todayCard && cardDetail.todayLearned && lessonDetail.canCard}}"></view>
-      </view>
+      <!--<view class="p-submitHomework-card"-->
+            <!--wx:if="{{tabActive === '1'}}"-->
+            <!--&gt;-->
+        <!--<view class="-yes-card" @tap="toJump"-->
+              <!--wx:if="{{cardDetail.todayCard || !cardDetail.todayLearned || !lessonDetail.canCard}}"></view>-->
+        <!--<view class="-no-card" @tap="addMyCard"-->
+              <!--wx:if="{{!cardDetail.todayCard && cardDetail.todayLearned && lessonDetail.canCard}}"></view>-->
+      <!--</view>-->
 
       <scroll-view class="p-submitHomework-center p-submitHomework-list"
                    @scrolltolower="bindLoadItem"
@@ -491,7 +491,7 @@
             this.cardDetail.totaldays = data.resultData.totaldays;
             this.isCard = true;
             this.isOpenPopup = true;
-            this.getCardInfo();
+            // this.getCardInfo();
             this.$apply();
           });
       },
@@ -547,7 +547,7 @@
 
     onShow() {
       this.getLessonInfo();
-      this.getCardInfo();
+      // this.getCardInfo();
 
       if (this.tabActive === '1') {
         this.getMyHomework();

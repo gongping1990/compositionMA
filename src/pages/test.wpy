@@ -585,15 +585,15 @@ export default class Example extends wepy.page {
     })
   }
   onShow () {
-    wepy.$log.info('test info')
+    // wepy.$log.info('test info')
     this.getClassInfo()
     this.getLessonRoom()
   }
   onHide () {
     this.audioContext.stop()
     clearInterval(this.timer)
-    wepy.$log.error('test error', this.answerArr, this.roomData)
-    wepy.$log.warn('test warn', this.answerArr, this.roomData)
+    // wepy.$log.error('test error', this.answerArr, this.roomData)
+    // wepy.$log.warn('test warn', this.answerArr, this.roomData)
   }
   onUnload () {
     this.audioContext.stop()

@@ -453,13 +453,13 @@ export default class Home extends wepy.page {
   };
 
   onShow () {
-    wepy.$log.info('home info')
     this.initPage()
+    // wepy.$log.info('home info')
   };
 
   onHide () {
-    wepy.$log.error('home error')
-    wepy.$log.warn('home warn')
+    // wepy.$log.error('home error')
+    // wepy.$log.warn('home warn')
   }
 
   onReachBottom () {

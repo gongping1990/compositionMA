@@ -16,7 +16,7 @@
             <view class="lesson-item van-hairline--bottom">
               <view class="lesson-info">
                 <text class="lesson-title">{{item.lessonName}}</text>
-                <text class="lesson-text">{{item.schedulingTime}}</text>
+                <text class="lesson-text">{{item.schedulingTime}} ({{weekList[item.week]}})</text>
               </view>
               <view @tap="toJump({{item}})"
                     class="lesson-btn {{statusColorList[item.studyStatus]}}">
@@ -61,7 +61,15 @@ export default class Example extends wepy.page {
       '4': 'dkk',
       '5': 'hk'
     },
-
+    weekList: {
+      '1': '周一',
+      '2': '周二',
+      '3': '周三',
+      '4': '周四',
+      '5': '周五',
+      '6': '周六',
+      '7': '周日',
+    },
     courseId: '',
     dataList: []
   };

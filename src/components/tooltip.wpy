@@ -1,0 +1,39 @@
+<!--  -->
+<template>
+  <image class="top-img"
+         @tap="close"
+         wx:if="{{isShowTip && !first}}"
+         src="https://pub.file.k12.vip/composition/top-img.png" />
+</template>
+<script>
+import wepy from 'wepy'
+export default class Tooltip extends wepy.component {
+  props = {};
+  data = {
+    first: undefined,
+    isShowTip: true
+  };
+  components = {};
+  methods = {
+    close () {
+      this.isShowTip = false
+      wx.setStorageSync('first', 1)
+    }
+  };
+  events = {};
+  watch = {};
+  computed = {};
+  onShow () {
+    console.log('show')
+  }
+  onLoad () {
+    this.first = wx.getStorageSync('first')
+    if (this.first) {
+      this.isShowTip = false
+    }
+    this.$apply()
+  };
+}
+</script>
+<style lang='scss'>
+</style>

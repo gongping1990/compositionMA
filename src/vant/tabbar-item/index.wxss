@@ -5,6 +5,7 @@
 }
 
 .van-tabbar-item {
+  position: relative;
   color: #ccc6bf;
   height: 100%;
   display: -webkit-flex;

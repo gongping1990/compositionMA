@@ -10,6 +10,23 @@ button::after {
 .container-scroll {
   position: relative;
 }
+.tabbar-popup {
+  position: absolute;
+  left: 50%;
+  top: -50px;
+  width: 187px;
+  height: 60px;
+  transform: translateX(-50%);
+  z-index: 999;
+}
+.top-img {
+  position: fixed;
+  width: 559px;
+  height: 199px;
+  right: 9px;
+  top: 50px;
+  z-index: 1000;
+}
 </style>
 
 <script>
@@ -21,22 +38,9 @@ import configStore from './store'
 // eslint-disable-next-line no-unused-vars
 import api from './request/api'
 
-var fundebug = require('fundebug-wxjs')
-fundebug.init({
-  apikey: '5cc9937901a8611bc5ea88091b723f9c0f5d719752b5f13842bf775350454fd4',
-  monitorHttpData: true,
-  monitorMethodCall: true,
-  monitorMethodArguments: true,
-  setSystemInfo: true,
-  setUserInfo: true
-})
-
-const log = require('./utils/log.js')
-
 const store = configStore()
 setStore(store)
 wepy.$store = store
-wepy.$log = log
 export default class extends wepy.app {
   config = {
     pages: [

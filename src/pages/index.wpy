@@ -1,6 +1,7 @@
 <template>
   <view class='container home'>
     <mHeader flag="0"></mHeader>
+    <tooltip></tooltip>
     <view class="container-scroll"
           style="margin-top:{{height}}px">
       <swiper autoplay
@@ -23,7 +24,8 @@
           </swiper-item>
         </block>
       </swiper>
-      <view class="title-item" wx:if="{{courseList.length}}">
+      <view class="title-item"
+            wx:if="{{courseList.length}}">
         <text class="title-text">大语文精品课</text>
       </view>
       <repeat for="{{courseList}}"
@@ -164,6 +166,9 @@
         首页
       </van-tabbar-item>
       <van-tabbar-item>
+        <image class="tabbar-popup"
+               src="https://pub.file.k12.vip/composition/tabber-img.png"
+               mode="aspectFit" />
         <image slot="icon"
                src="../assets/image/sk-def.png"
                mode="aspectFit" />
@@ -223,7 +228,9 @@
            :show.sync="showSelect"></login>
     <error wx:if="{{isError}}"></error>
     <load wx:if="{{loading}}"></load>
-    <praiseModal :isShow.sync="isShowPraise" typeProps="2" :dataInfo.sync="praiseItem"></praiseModal>
+    <praiseModal :isShow.sync="isShowPraise"
+                 typeProps="2"
+                 :dataInfo.sync="praiseItem"></praiseModal>
   </view>
 </template>
 <script>
@@ -236,6 +243,7 @@ import login from '../components/login'
 import error from '../components/error'
 import load from '../components/load'
 import praiseModal from '../components/praiseModal'
+import tooltip from '../components/tooltip'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import 'dayjs/locale/zh-cn'
 import dayjs from 'dayjs'
@@ -264,6 +272,7 @@ export default class Home extends wepy.page {
   };
   data = {
     loading: false,
+    showTopImg: false,
     isError: false,
     empty: false,
     showAddress: false,
@@ -292,7 +301,8 @@ export default class Home extends wepy.page {
     login,
     error,
     load,
-    praiseModal
+    praiseModal,
+    tooltip
   };
   methods = {
     onClose () {
@@ -1143,7 +1153,7 @@ export default class Home extends wepy.page {
       height: 72px;
     }
     &-text {
-      color: #58422B;
+      color: #58422b;
       font-size: 28px;
       line-height: 40px;
     }

@@ -5,7 +5,7 @@
 	},
 	"setting": {
 		"urlCheck": true,
-		"es6": false,
+		"es6": true,
 		"postcss": false,
 		"minified": false,
 		"newFeature": true,
@@ -17,7 +17,8 @@
 			"ignore": [],
 			"disablePlugins": [],
 			"outputPath": ""
-		}
+		},
+		"nodeModules": true
 	},
 	"compileType": "miniprogram",
 	"libVersion": "2.8.0",
@@ -48,7 +49,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 0,
+			"current": 29,
 			"list": [
 				{
 					"id": 0,
@@ -247,10 +248,17 @@
 					"scene": null
 				},
 				{
-					"id": -1,
+					"id": 28,
 					"name": "user/submitHomework",
 					"pathName": "user/submitHomework",
-					"query": "id=1139442555626065921",
+					"query": "id=1134359706941546498",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "user/myWork",
+					"pathName": "user/myWork",
+					"query": "id=1133673190743896065&name=%E5%B0%8F%E8%AF%AD%E8%BD%BB%E4%BD%9C%E6%96%87",
 					"scene": null
 				}
 			]

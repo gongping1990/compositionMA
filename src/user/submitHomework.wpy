@@ -143,8 +143,9 @@
                      wx:for="{{item.workImgSrc}}"
                      wx:key="{{item}}"
                      wx:if="{{lessonDetail.homeworkType == 2}}"
-                     @tap="enlargeImage({{index}}, {{workDetail.workImgSrc}})"
-                     src="{{item}}"></image>
+                     wx:for-item="list"
+                     @tap="enlargeImage({{index}}, {{item.workImgSrc}})"
+                     src="{{list}}"></image>
 
               <view class="-center-work-down-audio"
                     @tap="changeMyAudioStatus({{item}})"
@@ -453,6 +454,7 @@
       enlargeImage(idx, list) {
         this.imgIndex = idx;
         this.itemUrl = list;
+        console.log(this.itemUrl,111)
         this.isShowImage = true;
       },
       openUrl(num) {

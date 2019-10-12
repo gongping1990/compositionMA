@@ -299,7 +299,7 @@ export default class Lesson extends wepy.page {
           e.lessonlist = e.lessonlist.map(_e => {
             let stateArr = ['补课', '开始学习', '交作业', '待开课', '回看', '预约上课']
             let classArr = ['bk', 'sk', 'jzy', 'dkk', 'hk', 'yy']
-            _e.stateText = stateArr[_e.state - 1]
+            _e.stateText = (_e.showOpenTime && _e.state == 4) ? _e.openTime + '开课' :  stateArr[_e.state - 1]
             _e.stateClass = classArr[_e.state - 1]
             return _e
           })

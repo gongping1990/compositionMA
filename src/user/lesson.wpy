@@ -20,7 +20,7 @@
               </view>
               <view @tap="toJump({{item}})"
                     class="lesson-btn {{statusColorList[item.studyStatus]}}">
-                {{statusList[item.studyStatus]}}
+                {{item.showOpenTime && item.studyStatus == 4 ? item.openTime + '开课' : statusList[item.studyStatus]}}
               </view>
             </view>
           </view>

@@ -1,9 +1,15 @@
 <template>
   <view class='container home'>
+    <form
+        report-submit="true"
+        @submit="submit"
+        >
     <mHeader flag="0"></mHeader>
     <tooltip></tooltip>
     <view class="container-scroll"
           style="margin-top:{{height}}px">
+
+
       <swiper autoplay
               class="banner"
               circular>
@@ -231,6 +237,7 @@
     <praiseModal :isShow.sync="isShowPraise"
                  typeProps="2"
                  :dataInfo.sync="praiseItem"></praiseModal>
+    </form>
   </view>
 </template>
 <script>
@@ -305,6 +312,9 @@ export default class Home extends wepy.page {
     tooltip
   };
   methods = {
+    submit(e) {
+      console.log(e)
+    },
     onClose () {
       this.showAddress = false
       this.isShowPraise = false

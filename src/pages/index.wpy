@@ -230,6 +230,24 @@
         </button>
       </view>
     </van-popup>
+    <van-popup show="{{ showAddTeacher }}"
+               @close="onClose">
+      <view class="dialog teacher_add">
+        <view class="teacher_add_info">
+          <image class="teacher_add_avatar" src="" />
+          <text class="teahcer-add_name"></text>
+        </view>
+        <text class="teacher_add_text">
+          您好，我是您乐小狮作文（低段）的辅导老师。添加我为微信好友，学习和使用产品的疑问都可以随时咨询我哟～
+        </text>
+        <view class="teacher_add_footer">
+          <button class="teacher_add_btn">加老师微信好友</button>
+          <button class="teacher_add_btn">我已添加，不再提醒</button>
+        </view>
+        <view class="dialog-close"
+              @tap="onClose"></view>
+      </view>
+    </van-popup>
     <login :showPopup.sync="showPopup"
            :show.sync="showSelect"></login>
     <error wx:if="{{isError}}"></error>
@@ -241,30 +259,29 @@
   </view>
 </template>
 <script>
-
-import wepy from 'wepy'
-import { connect } from 'wepy-redux'
-import testMixin from '../mixins/test'
-import mHeader from '@/components/header'
-import login from '../components/login'
-import error from '../components/error'
-import load from '../components/load'
-import praiseModal from '../components/praiseModal'
-import tooltip from '../components/tooltip'
-import relativeTime from 'dayjs/plugin/relativeTime'
-import 'dayjs/locale/zh-cn'
-import dayjs from 'dayjs'
-dayjs.locale('zh-cn')
-dayjs.extend(relativeTime)
+import wepy from 'wepy';
+import { connect } from 'wepy-redux';
+import testMixin from '../mixins/test';
+import mHeader from '@/components/header';
+import login from '../components/login';
+import error from '../components/error';
+import load from '../components/load';
+import praiseModal from '../components/praiseModal';
+import tooltip from '../components/tooltip';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import 'dayjs/locale/zh-cn';
+import dayjs from 'dayjs';
+dayjs.locale('zh-cn');
+dayjs.extend(relativeTime);
 @connect({
-  userInfo (state) {
-    return state.user.userInfo
+  userInfo(state) {
+    return state.user.userInfo;
   },
-  remindData (state) {
-    return state.user.remindData
+  remindData(state) {
+    return state.user.remindData;
   },
-  logined (state) {
-    return state.user.logined
+  logined(state) {
+    return state.user.logined;
   }
 })
 export default class Home extends wepy.page {
@@ -279,6 +296,7 @@ export default class Home extends wepy.page {
   };
   data = {
     loading: false,
+    showAddTeacher: true,
     showTopImg: false,
     isError: false,
     empty: false,
@@ -302,7 +320,7 @@ export default class Home extends wepy.page {
     tabActive: 0,
     tabList: ['作业广场', '最新表扬']
   };
-  mixins = [testMixin]
+  mixins = [testMixin];
   components = {
     mHeader,
     login,
@@ -312,193 +330,204 @@ export default class Home extends wepy.page {
     tooltip
   };
   methods = {
-    submit(e) {
-      console.log(e)
+    onClose() {
+      this.showAddTeacher = false;
+      this.showAddress = false;
+      this.isShowPraise = false;
     },
-    onClose () {
-      this.showAddress = false
-      this.isShowPraise = false
+    bindPerfect() {
+      wx.navigateTo({ url: `/user/gift` });
+      this.showAddress = false;
+      this.isShowPraise = false;
     },
-    bindPerfect () {
-      wx.navigateTo({ url: `/user/gift` })
-      this.showAddress = false
-      this.isShowPraise = false
-    },
-    clickLike (item, index) {
+    clickLike(item, index) {
       if (this.logined) {
-        this.addLike(item.homeworkId, index)
+        this.addLike(item.homeworkId, index);
       } else {
-        this.showPopup = true
+        this.showPopup = true;
       }
     },
-    clickWorkItem (item) {
+    clickWorkItem(item) {
       if (!this.logined) {
-        this.showPopup = true
-        return
+        this.showPopup = true;
+        return;
       }
-      wx.navigateTo({ url: `/user/completionOfWork?type=${item.isme ? 1 : 2}&id=${item.isme ? item.lessonId : item.homeworkId}` })
+      wx.navigateTo({
+        url: `/user/completionOfWork?type=${item.isme ? 1 : 2}&id=${
+          item.isme ? item.lessonId : item.homeworkId
+        }`
+      });
     },
-    clickTab (index) {
-      this.tabActive = index
+    clickTab(index) {
+      this.tabActive = index;
     }
   };
   events = {
-    tryAgain () {
-      this.initPage()
+    tryAgain() {
+      this.initPage();
     }
   };
   computed = {
-    height () {
-      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+    height() {
+      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
     }
   };
 
-  initPage () {
-    this.loading = true
-    this.getHomePageInfo()
-    this.getDayByMasterpiece()
-    this.getHomeworkSquare()
+  initPage() {
+    this.loading = true;
+    this.getHomePageInfo();
+    this.getDayByMasterpiece();
+    this.getHomeworkSquare();
   }
 
   // 作品点赞
-  addLike (workId, index) {
-    let { api } = this.$parent.globalData
-    let { tabActive } = this
-    api.study.addLike({
-      workId: workId
-    }).then(() => {
-      if (!tabActive) {
-        this.workList[index].liked = true
-        this.workList[index].likes += 1
-      } else {
-        this.hotList[index].liked = true
-        this.hotList[index].likes += 1
-      }
-      this.$apply()
-    })
+  addLike(workId, index) {
+    let { api } = this.$parent.globalData;
+    let { tabActive } = this;
+    api.study
+      .addLike({
+        workId: workId
+      })
+      .then(() => {
+        if (!tabActive) {
+          this.workList[index].liked = true;
+          this.workList[index].likes += 1;
+        } else {
+          this.hotList[index].liked = true;
+          this.hotList[index].likes += 1;
+        }
+        this.$apply();
+      });
   }
 
   // 获取首页信息
-  getHomePageInfo () {
-    let { api } = this.$parent.globalData
-    api.course.getHomePageInfo().then(({ data }) => {
-      this.isError = false
-      this.loading = false
-      this.infoData = data.resultData
-      this.showAddress = data.resultData.hasgift
-      this.isShowPraise = data.resultData.awardsPop
-      this.praiseItem = data.resultData.awardsInfo
-      this.courseList = data.resultData.courseList.map(e => {
-        e.sessionFrom = JSON.stringify({
-          type: 1,
-          homeConfig: e.id
-        })
-        return e
-      })
-      this.bannerList = data.resultData.bannerList.map(e => {
-        e.sessionFrom = JSON.stringify({
-          type: 2,
-          homeConfig: e.id
-        })
-        return e
-      })
+  getHomePageInfo() {
+    let { api } = this.$parent.globalData;
+    api.course
+      .getHomePageInfo()
+      .then(({ data }) => {
+        this.isError = false;
+        this.loading = false;
+        this.infoData = data.resultData;
+        this.showAddress = data.resultData.hasgift;
+        this.isShowPraise = data.resultData.awardsPop;
+        this.praiseItem = data.resultData.awardsInfo;
+        this.courseList = data.resultData.courseList.map(e => {
+          e.sessionFrom = JSON.stringify({
+            type: 1,
+            homeConfig: e.id
+          });
+          return e;
+        });
+        this.bannerList = data.resultData.bannerList.map(e => {
+          e.sessionFrom = JSON.stringify({
+            type: 2,
+            homeConfig: e.id
+          });
+          return e;
+        });
 
-      this.$apply()
-    }).catch(({ code }) => {
-      this.loading = false
-      if (code == 500) {
-        this.isError = true
-        this.$apply()
-      }
-    })
+        this.$apply();
+      })
+      .catch(({ code }) => {
+        this.loading = false;
+        if (code == 500) {
+          this.isError = true;
+          this.$apply();
+        }
+      });
   }
 
   // 获取作业广场
-  getHomeworkSquare () {
-    if (this.workList.length >= this.workTotal) return
-    let { api } = this.$parent.globalData
-    api.course.homeworkSquare({
-      current: this.workCurrent,
-      size: 10
-    }).then(({ data }) => {
-      this.isError = false
-      this.workCurrent += 1
-      this.workTotal = data.resultData.total
-      this.workList = [...this.workList, ...data.resultData.records]
-      this.workList = this.workList.map(e => {
-        e.formatSubitTime = dayjs().to(dayjs(Number(e.subitTime)))
-        return e
+  getHomeworkSquare() {
+    if (this.workList.length >= this.workTotal) return;
+    let { api } = this.$parent.globalData;
+    api.course
+      .homeworkSquare({
+        current: this.workCurrent,
+        size: 10
       })
-      this.$apply()
-    })
+      .then(({ data }) => {
+        this.isError = false;
+        this.workCurrent += 1;
+        this.workTotal = data.resultData.total;
+        this.workList = [...this.workList, ...data.resultData.records];
+        this.workList = this.workList.map(e => {
+          e.formatSubitTime = dayjs().to(dayjs(Number(e.subitTime)));
+          return e;
+        });
+        this.$apply();
+      });
   }
 
   // 获取最新佳作
-  getDayByMasterpiece () {
-    if (this.hotList.length >= this.hotTotal) return
-    let { api } = this.$parent.globalData
-    api.course.dayByMasterpiece({
-      current: this.hotCurrent,
-      size: 10
-    }).then(({ data }) => {
-      this.isError = false
-      this.hotCurrent += 1
-      this.hotTotal = data.resultData.total
-      this.hotList = [...this.hotList, ...data.resultData.records]
-      this.hotList = this.hotList.map(e => {
-        e.formatSubitTime = dayjs().to(dayjs(Number(e.praiseTime)))
-        e.formatDuration = this.timeToFormat(e.duration)
-        return e
+  getDayByMasterpiece() {
+    if (this.hotList.length >= this.hotTotal) return;
+    let { api } = this.$parent.globalData;
+    api.course
+      .dayByMasterpiece({
+        current: this.hotCurrent,
+        size: 10
       })
-      this.$apply()
-    })
+      .then(({ data }) => {
+        this.isError = false;
+        this.hotCurrent += 1;
+        this.hotTotal = data.resultData.total;
+        this.hotList = [...this.hotList, ...data.resultData.records];
+        this.hotList = this.hotList.map(e => {
+          e.formatSubitTime = dayjs().to(dayjs(Number(e.praiseTime)));
+          e.formatDuration = this.timeToFormat(e.duration);
+          return e;
+        });
+        this.$apply();
+      });
   }
 
-  timeToFormat (times) {
-    var result = '00 : 00'
-    var minute, second
+  timeToFormat(times) {
+    var result = '00 : 00';
+    var minute, second;
     if (times > 0) {
-      minute = Math.floor(times / 60)
+      minute = Math.floor(times / 60);
       if (minute < 10) {
-        minute = '0' + minute
+        minute = '0' + minute;
       }
 
-      second = Math.floor((times - 60 * minute) % 60)
+      second = Math.floor((times - 60 * minute) % 60);
       if (second < 10) {
-        second = '0' + second
+        second = '0' + second;
       }
-      result = `${minute} : ${second}`
+      result = `${minute} : ${second}`;
     }
-    return result
-  };
+    return result;
+  }
 
-  onShow () {
-    this.initPage()
+  onShow() {
+    this.initPage();
     // wepy.$log.info('home info')
-  };
+  }
 
-  onHide () {
+  onHide() {
     // wepy.$log.error('home error')
     // wepy.$log.warn('home warn')
   }
 
-  onReachBottom () {
-    let { tabActive } = this
+  onReachBottom() {
+    let { tabActive } = this;
     if (tabActive) {
-      this.getDayByMasterpiece()
+      this.getDayByMasterpiece();
     } else {
-      this.getHomeworkSquare()
+      this.getHomeworkSquare();
     }
   }
 
-  onShareAppMessage () {
-  }
+  onShareAppMessage() {}
 }
 </script>
 <style lang='scss'>
 @import '../assets/style/mixin.scss';
 .home {
   position: relative;
+
   .container-scroll {
     padding: 32px;
     padding-bottom: 150px;
@@ -1191,6 +1220,60 @@ export default class Home extends wepy.page {
       width: 178px;
       height: 175px;
       transform: translate(-50%, -50%);
+    }
+  }
+
+  .teacher_add {
+    @include bg('/1.4/pop_bg.png');
+    width: 602px;
+    height: 768px;
+    &_info {
+      position: absolute;
+      left: 50px;
+      top: -24px;
+    }
+    &_avatar {
+      margin-bottom: 14px;
+      width: 120px;
+      height: 120px;
+      box-shadow: 0px 4px 8px 0px rgba(255, 192, 0, 0.37);
+      border-radius: 16px;
+      border: 6px solid rgba(255, 208, 67, 1);
+    }
+    &_name {
+      font-size: 36px;
+      color: #333;
+      font-weight: 500;
+    }
+    &_text {
+      position: absolute;
+      left: 50%;
+      top: 216px;
+      width: 450px;
+      font-size: 32px;
+      color: #666;
+      line-height: 40px;
+      transform: translate(-50%);
+    }
+    &_footer {
+      position: absolute;
+      left: 50%;
+      bottom: 20px;
+      transform: translateX(-50%);
+    }
+    &_btn {
+      @include flex-center;
+      width: 470px;
+      height: 96px;
+      font-size: 32px;
+      color: #fff;
+      font-weight: 500;
+      background: rgba(255, 192, 0, 1);
+      border-radius: 48px;
+      &:last-child {
+        background: #fff;
+        color: #999;
+      }
     }
   }
 

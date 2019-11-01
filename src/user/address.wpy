@@ -14,15 +14,15 @@
   </view>
 </template>
 <script>
-import wepy from 'wepy'
-import api from '../request/api'
-import mHeader from '../components/header'
-import address from '../components/address'
+import wepy from 'wepy';
+import api from '../request/api';
+import mHeader from '../components/header';
+import address from '../components/address';
 
 export default class Example extends wepy.page {
   config = {
     navigationBarTitleText: '',
-    'usingComponents': {
+    usingComponents: {
       'van-area': '../vant/area/index',
       'van-popup': '../vant/popup/index'
     }
@@ -34,39 +34,40 @@ export default class Example extends wepy.page {
   };
   methods = {};
   events = {
-    save (params) {
+    save(params) {
       wx.showToast({
         icon: 'loading',
         title: '正在提交'
-      })
-      api.center.saveRecipient({
-        courseId: this.queryInfo.id,
-        ...params
-      })
+      });
+      api.center
+        .saveRecipient({
+          courseId: this.queryInfo.id,
+          ...params
+        })
         .then(() => {
           wx.showToast({
             icon: 'succerss',
             title: '保存成功'
-          })
+          });
           wx.navigateTo({ url: `/user/sendGood?id=${this.queryInfo.id}` });
-        })
+        });
     }
   };
   watch = {};
   computed = {
-    height () {
-      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+    height() {
+      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
     }
   };
-  onLoad (query) {
-    this.queryInfo = query
+  onLoad(query) {
+    this.queryInfo = query;
   }
-  onShareAppMessage () {
+  onShareAppMessage() {
     return {
       title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
       path: `/pages/index`,
       imageUrl: 'https://pub.file.k12.vip/tbzw/v2/logo2.png'
-    }
+    };
   }
 }
 </script>

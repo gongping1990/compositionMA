@@ -12,6 +12,11 @@
         <block wx:for="{{imgUrl}}" wx:key="{{index}}">
           <swiper-item class="p-image-swiper-item">
             <image class="p-image-content" src="{{item}}" mode="widthFix"></image>
+            <div class="p-image-footer">
+              <image class="p-image-footer-btn"
+                     @tap="downloadImg({{item}})"
+                     src="https://pub.file.k12.vip/2019/10/31/1189804987640201217.png" mode="widthFix"></image>
+            </div>
           </swiper-item>
         </block>
       </swiper>
@@ -20,79 +25,116 @@
 </template>
 
 <script>
-import wepy from 'wepy'
+  import wepy from 'wepy';
 
-export default class LookImage extends wepy.component {
-  props = {
-    isShow: {
-      type: Boolean,
-      default: false
-    },
-    imgUrl: {
-      type: Array,
-      default: []
-    },
-    index: {
-      type: String,
-      default: ''
-    }
+  export default class LookImage extends wepy.component {
+    props = {
+      isShow: {
+        type: Boolean,
+        default: false
+      },
+      imgUrl: {
+        type: Array,
+        default: []
+      },
+      index: {
+        type: String,
+        default: ''
+      }
+    };
+
+    computed = {};
+
+    watch = {
+      index(_n, _o) {
+        this.swiperOptions.current = _n;
+        this.$apply();
+      }
+    };
+
+    data = {
+      swiperOptions: {
+        indicatorDots: true,
+        indicatorActiveColor: '#FFDBA9',
+        autoplay: false,
+        current: +this.index,
+        interval: 5000,
+        duration: 100
+      }
+    };
+
+    methods = {
+      onClose() {
+        this.$emit('changePopupStatus');
+      },
+      downloadImg(imgItemUrl) {
+        let self = this;
+        wx.downloadFile({
+          url: imgItemUrl,
+          success: function(res) {
+            // 只要服务器有响应数据，就会把响应内容写入文件并进入 success 回调，业务需要自行判断是否下载到了想要的内容
+            if (res.statusCode === 200) {
+              wx.saveImageToPhotosAlbum({
+                filePath: res.tempFilePath,
+                success: function(res) {
+                  wx.showToast({
+                    title: '保存图片成功!~'
+                  });
+                },
+                fail: function(res) {
+                  wx.showToast({
+                    title: '保存图片失败!~'
+                  });
+                }
+              });
+            }
+          }
+        });
+      }
+    };
+
+    events = {};
   }
-
-  computed = {};
-
-  watch = {
-    index (_n, _o) {
-      this.swiperOptions.current = _n
-      this.$apply()
-    }
-  }
-
-  data = {
-    swiperOptions: {
-      indicatorDots: true,
-      indicatorActiveColor: '#FFDBA9',
-      autoplay: false,
-      current: +this.index,
-      interval: 5000,
-      duration: 100
-    }
-  };
-
-  methods = {
-    onClose () {
-      this.$emit('changePopupStatus')
-    }
-  };
-
-  events = {};
-}
 </script>
 <style lang="scss">
-@import '../assets/style/mixin.scss';
+  @import '../assets/style/mixin.scss';
 
-.p-image {
-  width: 100vw;
-  height: 100vh;
+  .p-image {
+    width: 100vw;
+    height: 100vh;
 
-  &-swiper {
-    width: 100%;
-    height: 100%;
-  }
-  &-swiper-item {
-    @include flex-center;
-  }
+    &-swiper {
+      width: 100%;
+      height: 100%;
+    }
+    &-swiper-item {
+      @include flex-center;
+    }
 
-  &-content {
-    width: 100%;
-  }
+    &-content {
+      width: 100%;
+    }
 
-  &-close {
-    @include bg('/jrxx/icon-close.png');
-    position: absolute;
-    top: -100px;
-    right: -2px;
-    width: 72px;
-    height: 72px;
+    &-close {
+      @include bg('/jrxx/icon-close.png');
+      position: absolute;
+      top: -100px;
+      right: -2px;
+      width: 72px;
+      height: 72px;
+    }
+
+    &-footer {
+      width: 100%;
+      position: absolute;
+      display: flex;
+      justify-content: center;
+      bottom: 70px;
+
+      &-btn {
+        width: 30%;
+        margin: 0 auto;
+      }
+    }
   }
-}
 </style>

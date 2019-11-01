@@ -1,4 +1,6 @@
-import { VantComponent } from '../common/component';
+import {
+  VantComponent
+} from '../common/component';
 VantComponent({
   classes: ['active-class', 'toolbar-class', 'column-class'],
   props: {
@@ -75,9 +77,9 @@ VantComponent({
       var _this = this;
 
       var _event$detail = event.detail,
-          index = _event$detail.index,
-          picker = _event$detail.picker,
-          value = _event$detail.value;
+        index = _event$detail.index,
+        picker = _event$detail.picker,
+        value = _event$detail.value;
       this.code = value[index].code;
       this.setValues().then(function () {
         _this.$emit('change', {

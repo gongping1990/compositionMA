@@ -241,7 +241,6 @@ import login from '../components/login'
       this.myAudio.src = url
 
       this.myAudio.onPlay(() => {
-        console.log('start')
       })
 
       this.myAudio.onTimeUpdate(() => {

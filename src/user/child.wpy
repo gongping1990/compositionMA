@@ -1,0 +1,263 @@
+<!-- 辅导老师列表 -->
+<template>
+  <view class='container child'>
+    <mHeader title="我的孩子"></mHeader>
+    <view class="container-scroll child-list"
+          style="margin-top:{{height}}px">
+      <view class="child-cell" >
+        <text class="child-cell-left">孩子头像</text>
+        <view class="child-cell-right" @tap="bindUploadAvatar">
+          <image class="child-avatar" src="{{form.headimgurl ? form.headimgurl : userInfo.headimgurl}}" />
+        </view>
+      </view>
+      <view class="child-cell" @tap="bindClickName">
+        <text class="child-cell-left">孩子昵称</text>
+        <view class="child-cell-right child-picker">
+          {{form.name ? form.name : '填写孩子姓名'}}
+        </view>
+      </view>
+      <view class="child-cell">
+        <text class="child-cell-left">孩子性别</text>
+        <view class="child-cell-right">
+          <picker bindchange="bindPickerChange" value="{{sexIndex}}" range="{{sexArr}}">
+            <view class="child-picker">
+              {{sexArr[sexIndex]}}
+            </view>
+          </picker>
+        </view>
+      </view>
+      <view class="child-cell">
+        <text class="child-cell-left">与孩子的关系</text>
+        <view class="child-cell-right">
+          <picker bindchange="bindPickerChange" value="{{gxIndex}}" range="{{gxArr}}">
+            <view class="child-picker">
+              {{gxArr[gxIndex]}}
+            </view>
+          </picker>
+        </view>
+      </view>
+      <view class="child-cell">
+        <text class="child-cell-left">在读年级</text>
+        <view class="child-cell-right">
+          <picker bindchange="bindPickerChange" value="{{gradeIndex}}" range="{{gradeArr}}">
+            <view class="child-picker">
+              {{gradeArr[gradeIndex]}}
+            </view>
+          </picker>
+        </view>
+      </view>
+      <view class="child-cell" >
+        <text class="child-cell-left">所在城市</text>
+        <view class="child-cell-right child-picker" @tap="bindClickAreas">
+          {{form.areas ? form.areas : '选择城市'}}
+        </view>
+      </view>
+    </view>
+    <van-popup position="bottom"
+               show="{{ show }}">
+      <van-area area-list="{{ areaList }}"
+                @confirm="bindClickConfirm"
+                @cancel="bindClickRegion" />
+    </van-popup>
+    <van-dialog
+      use-slot
+      title="孩子昵称"
+      customStyle="child-dialog"
+      show="{{ showDialog }}"
+      show-cancel-button
+      bind:close="onClose"
+      bind:confirm="onConfirm"
+    >
+      <view class="child-dialog-content">
+        <input class="child-dialog-input van-hairline--surround" value="{{form.name}}" bindinput="bindChangeName" placeholder="请输入孩子姓名"/>
+        <text class="child-dialog-msg">不超过8个字</text>
+      </view>
+    </van-dialog>
+  </view>
+</template>
+<script>
+import wepy from 'wepy';
+import { connect } from 'wepy-redux';
+import mHeader from '../components/header';
+import areaList from '../assets/comJS/area';
+
+@connect({
+  userInfo(state) {
+    return state.user.userInfo;
+  }
+})
+export default class Teacher extends wepy.page {
+  config = {
+    navigationBarTitleText: '',
+    usingComponents: {
+      'van-area': '../vant/area/index',
+      'van-popup': '../vant/popup/index',
+      'van-dialog': '../vant/dialog/index'
+    }
+  };
+  data = {
+    show: false,
+    showDialog: false,
+    showAction: false,
+    sexArr: ['小男孩', '小女孩'],
+    sexIndex: 0,
+    gxArr: ['母亲', '父亲', '爷爷', '奶奶', '外公', '外婆'],
+    gxIndex: 0,
+    gradeArr: ['一年级', '二年级', '三年级', '四年级', '五年级', '六年级'],
+    gradeIndex: 0,
+    form: {
+      areas: '选择城市',
+      name: '',
+      headimgurl: ''
+    },
+    areaList: Object.assign({}, areaList)
+  };
+  components = {
+    mHeader
+  };
+  methods = {
+    bindUploadAvatar() {
+      wx.showActionSheet({
+        itemList: ['从相册选择照片', '拍照'],
+        success: res => {
+          this.onSelect(res.tapIndex);
+        }
+      });
+    },
+    onConfirm() {},
+    onClose() {
+      this.form.name = '';
+      this.showDialog = !this.showDialog;
+    },
+    bindChangeName(event, name) {
+      this.form.name = event.detail.value;
+    },
+    bindClickName() {
+      this.showDialog = !this.showDialog;
+    },
+    bindClickAreas() {
+      this.show = true;
+    },
+    bindClickConfirm(event) {
+      let { values } = event.detail;
+      let arr = [];
+      values.forEach((e, i) => {
+        arr.push(e.name);
+      });
+      this.form.areas = arr.join('/');
+      this.show = false;
+    },
+    bindClickRegion() {
+      this.show = !this.show;
+    }
+  };
+  events = {};
+  watch = {};
+  computed = {
+    height() {
+      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
+    }
+  };
+
+  onSelect(type) {
+    let sourceType = !type ? 'album' : 'camera';
+    wx.chooseImage({
+      count: 1,
+      sizeType: ['original'],
+      sourceType: [sourceType],
+      success(res) {
+        // tempFilePath可以作为img标签的src属性显示图片
+        const tempFilePaths = res.tempFilePaths;
+        console.log(tempFilePaths);
+        // wx.uploadFile({
+        //   url: 'https://example.weixin.qq.com/upload', //仅为示例，非真实的接口地址
+        //   filePath: tempFilePaths[0],
+        //   name: 'file',
+        //   formData: {
+        //     user: 'test'
+        //   },
+        //   success(res) {
+        //     const data = res.data;
+        //     //do something
+        //   }
+        // });
+      }
+    });
+  }
+
+  onLoad() {}
+  onShow() {}
+}
+</script>
+<style lang='scss'>
+@import '../assets/style/mixin.scss';
+.child {
+  &-dialog {
+    background-color: #fff;
+    &-content {
+      @include flex-column-center;
+      padding: 80px 40px;
+    }
+    &-input {
+      box-sizing: border-box;
+      margin-bottom: 30px;
+      padding: 20px;
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+    &-msg {
+      align-self: flex-start;
+      margin-left: 20px;
+      font-size: 30px;
+      color: #ff7a32;
+    }
+  }
+  &-list {
+    padding: 1px 32px;
+    padding-bottom: 32px;
+  }
+  &-cell {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    margin-top: 40px;
+    padding-right: 60px;
+    width: 100%;
+    height: 107px;
+    &::after {
+      @include bg('/1.4/arrow.png');
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 50%;
+      width: 60px;
+      height: 60px;
+      transform: translateY(-50%);
+    }
+    &-left {
+      font-size: 32px;
+      color: #474958;
+      font-weight: 500;
+    }
+    &-right {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex: 1;
+      height: 107px;
+    }
+  }
+  &-avatar {
+    width: 107px;
+    height: 107px;
+    border-radius: 50%;
+  }
+  &-picker {
+    font-size: 32px;
+    color: #999;
+  }
+}
+</style>

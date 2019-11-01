@@ -23,9 +23,6 @@ export default class Tooltip extends wepy.component {
   events = {};
   watch = {};
   computed = {};
-  onShow () {
-    console.log('show')
-  }
   onLoad () {
     this.first = wx.getStorageSync('first')
     if (this.first) {

@@ -175,7 +175,6 @@ export default class SharePoster extends wepy.page {
         var height = rect.height
         var width = rect.width
 
-        console.log(width, height)
       // 绘制背景图
         ctx.drawImage(shareUrl, 0, 0, width, height)
 

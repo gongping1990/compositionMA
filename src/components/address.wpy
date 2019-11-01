@@ -49,9 +49,9 @@
   </view>
 </template>
 <script>
-import wepy from 'wepy'
-import api from '../request/api'
-import areaList from '../assets/comJS/area'
+import wepy from 'wepy';
+import api from '../request/api';
+import areaList from '../assets/comJS/area';
 export default class Example extends wepy.component {
   props = {
     btnText: {
@@ -70,48 +70,52 @@ export default class Example extends wepy.component {
     areaList: Object.assign({}, areaList)
   };
   components = {};
-  onLoad () {
-    this.getList()
-  };
-  getList () {
-    api.center.getRecipient()
-      .then(({ data }) => {
-        if (data.resultData !== null) {
-          this.form = data.resultData
-        }
-        this.$apply()
-      })
-  };
+  onLoad() {
+    this.getList();
+  }
+  getList() {
+    api.center.getRecipient().then(({ data }) => {
+      if (data.resultData !== null) {
+        this.form = data.resultData;
+      }
+      this.$apply();
+    });
+  }
   methods = {
-    bindClickName (event, name) {
-      this.form.name = event.detail.value
+    bindClickName(event, name) {
+      this.form.name = event.detail.value;
     },
-    bindClickPhone (event, name) {
-      this.form.telephone = event.detail.value
+    bindClickPhone(event, name) {
+      this.form.telephone = event.detail.value;
     },
-    bindClickAddress (event, name) {
-      this.form.address = event.detail.value
+    bindClickAddress(event, name) {
+      this.form.address = event.detail.value;
     },
-    bindClickConfirm (event) {
-      let { values } = event.detail
-      let arr = []
+    bindClickConfirm(event) {
+      let { values } = event.detail;
+      let arr = [];
       values.forEach((e, i) => {
-        arr.push(e.name)
-      })
-      this.form.areas = arr.join('/')
-      this.show = false
+        arr.push(e.name);
+      });
+      this.form.areas = arr.join('/');
+      this.show = false;
     },
-    bindClickRegion () {
-      this.show = !this.show
+    bindClickRegion() {
+      this.show = !this.show;
     },
-    save () {
-      if (!this.form.name || !this.form.telephone || !this.form.address || !this.form.areas) {
+    save() {
+      if (
+        !this.form.name ||
+        !this.form.telephone ||
+        !this.form.address ||
+        !this.form.areas
+      ) {
         return wx.showToast({
           icon: 'none',
           title: '请输入完整的收货信息哟~'
-        })
+        });
       }
-      this.$emit('save', this.form)
+      this.$emit('save', this.form);
     }
   };
   events = {};

@@ -49,7 +49,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 29,
+			"current": 2,
 			"list": [
 				{
 					"id": 0,
@@ -69,7 +69,7 @@
 					"id": 2,
 					"name": "作业详情（自己）",
 					"pathName": "user/completionOfWork",
-					"query": "type=1&id=1139442398134145025",
+					"query": "type=1&id=1134359706941546498",
 					"scene": null
 				},
 				{

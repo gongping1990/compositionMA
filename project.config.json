@@ -4,7 +4,7 @@
 		"ignore": []
 	},
 	"setting": {
-		"urlCheck": true,
+		"urlCheck": false,
 		"es6": true,
 		"postcss": false,
 		"minified": false,
@@ -48,8 +48,12 @@
 		"game": {
 			"list": []
 		},
+		"gamePlugin": {
+			"current": -1,
+			"list": []
+		},
 		"miniprogram": {
-			"current": 0,
+			"current": 30,
 			"list": [
 				{
 					"id": 0,
@@ -259,6 +263,13 @@
 					"name": "user/myWork",
 					"pathName": "user/myWork",
 					"query": "id=1133673190743896065&name=%E5%B0%8F%E8%AF%AD%E8%BD%BB%E4%BD%9C%E6%96%87",
+					"scene": null
+				},
+				{
+					"id": 30,
+					"name": "user/praisePoster",
+					"pathName": "user/praisePoster",
+					"query": "id=1189440902189035522",
 					"scene": null
 				}
 			]

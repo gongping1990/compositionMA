@@ -28,7 +28,7 @@
       <view class="praise-pop-btn">
         <button class="-btn"
                 wx:if="{{typeProps==='2'}}"
-                @tap="toHomeWork">查看作业</button>
+                @tap="toPoster">生成专属海报</button>
         <button class="-btn"
                 style="margin-left:{{ typeProps==='2' ? '30' : 'none'}}px"
                 open-type="share">炫耀一下</button>
@@ -66,8 +66,8 @@ export default class PariseModal extends wepy.component {
   };
 
   methods = {
-    toHomeWork () {
-      wx.navigateTo({ url: `/user/completionOfWork?type=1&id=${this.dataInfo.lessonId}` })
+    toPoster () {
+      wx.navigateTo({ url: `/user/praisePoster?id=${this.dataInfo.workId}` })
     },
     onClose () {
       this.isShow = false

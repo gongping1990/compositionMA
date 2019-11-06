@@ -2,25 +2,25 @@ import request from '../index'
 
 const center = {
   getMyCourse(params) {
-    return request.get('/center/getMyCourse')
+    return request.get('/compositionv2/center/getMyCourse')
   },
   getUCRemindVO(params) {
-    return request.get('/center/getUCRemindVO', params)
+    return request.get('/compositionv2/center/getUCRemindVO', params)
   },
   getMyGiftPackage(params) {
-    return request.get('/center/getMyGiftPackage', params)
+    return request.get('/compositionv2/center/getMyGiftPackage', params)
   },
   getRecipient(params) {
-    return request.get('/center/getRecipient', params)
+    return request.get('/compositionv2/center/getRecipient', params)
   },
   saveRecipient(params) {
-    return request.post('/center/saveRecipient', params)
+    return request.post('/compositionv2/center/saveRecipient', params)
   },
   getServiceRemindVO(params) {
-    return request.get('/center/getServiceRemindVO', params)
+    return request.get('/compositionv2/center/getServiceRemindVO', params)
   },
   getBottomTipsVO(params) {
-    return request.get('/center/getBottomTipsVO', params)
+    return request.get('/compositionv2/center/getBottomTipsVO', params)
   }
 }
 

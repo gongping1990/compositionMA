@@ -1,193 +1,211 @@
-import {
-  VantComponent
-} from '../common/component';
+import { VantComponent } from '../common/component';
+import { pickerProps } from '../picker/shared';
+const COLUMNSPLACEHOLDERCODE = '000000';
 VantComponent({
   classes: ['active-class', 'toolbar-class', 'column-class'],
-  props: {
-    title: String,
+  props: Object.assign(Object.assign({}, pickerProps), {
     value: String,
-    loading: Boolean,
-    cancelButtonText: String,
-    confirmButtonText: String,
-    itemHeight: {
-      type: Number,
-      value: 44
-    },
-    visibleItemCount: {
-      type: Number,
-      value: 5
-    },
-    columnsNum: {
-      type: [String, Number],
-      value: 3
-    },
     areaList: {
       type: Object,
       value: {}
+    },
+    columnsNum: {
+      type: null,
+      value: 3
+    },
+    columnsPlaceholder: {
+      type: Array,
+      observer(val) {
+        this.setData({
+          typeToColumnsPlaceholder: {
+            province: val[0] || '',
+            city: val[1] || '',
+            county: val[2] || ''
+          }
+        });
+      }
     }
-  },
+  }),
   data: {
-    columns: [{
-      values: []
-    }, {
-      values: []
-    }, {
-      values: []
-    }],
-    displayColumns: [{
-      values: []
-    }, {
-      values: []
-    }, {
-      values: []
-    }]
+    columns: [{ values: [] }, { values: [] }, { values: [] }],
+    displayColumns: [{ values: [] }, { values: [] }, { values: [] }],
+    typeToColumnsPlaceholder: {}
   },
   watch: {
-    value: function value(_value) {
-      this.code = _value;
+    value(value) {
+      this.code = value;
       this.setValues();
     },
     areaList: 'setValues',
-    columnsNum: function columnsNum(value) {
-      this.set({
+    columnsNum(value) {
+      this.setData({
         displayColumns: this.data.columns.slice(0, +value)
       });
     }
   },
+  mounted() {
+    setTimeout(() => {
+      this.setValues();
+    }, 0);
+  },
   methods: {
-    getPicker: function getPicker() {
+    getPicker() {
       if (this.picker == null) {
         this.picker = this.selectComponent('.van-area__picker');
       }
-
       return this.picker;
     },
-    onCancel: function onCancel(event) {
+    onCancel(event) {
       this.emit('cancel', event.detail);
     },
-    onConfirm: function onConfirm(event) {
-      this.emit('confirm', event.detail);
+    onConfirm(event) {
+      const { index } = event.detail;
+      let { value } = event.detail;
+      value = this.parseOutputValues(value);
+      this.emit('confirm', { value, index });
     },
-    emit: function emit(type, detail) {
+    emit(type, detail) {
       detail.values = detail.value;
       delete detail.value;
       this.$emit(type, detail);
     },
-    onChange: function onChange(event) {
-      var _this = this;
-
-      var _event$detail = event.detail,
-        index = _event$detail.index,
-        picker = _event$detail.picker,
-        value = _event$detail.value;
+    // parse output columns data
+    parseOutputValues(values) {
+      const { columnsPlaceholder } = this.data;
+      return values.map((value = {}, index) => {
+        value = JSON.parse(JSON.stringify(value));
+        if (!value.code || value.name === columnsPlaceholder[index]) {
+          value.code = '';
+          value.name = '';
+        }
+        return value;
+      });
+    },
+    onChange(event) {
+      const { index, picker, value } = event.detail;
       this.code = value[index].code;
-      this.setValues().then(function () {
-        _this.$emit('change', {
-          picker: picker,
-          values: picker.getValues(),
-          index: index
+      let getValues = picker.getValues();
+      getValues = this.parseOutputValues(getValues);
+      this.setValues().then(() => {
+        this.$emit('change', {
+          picker,
+          values: getValues,
+          index
         });
       });
     },
-    getConfig: function getConfig(type) {
-      var areaList = this.data.areaList;
-      return areaList && areaList[type + "_list"] || {};
+    getConfig(type) {
+      const { areaList } = this.data;
+      return (areaList && areaList[`${type}_list`]) || {};
     },
-    getList: function getList(type, code) {
-      var result = [];
-
+    getList(type, code) {
+      const { typeToColumnsPlaceholder } = this.data;
+      let result = [];
       if (type !== 'province' && !code) {
         return result;
       }
-
-      var list = this.getConfig(type);
-      result = Object.keys(list).map(function (code) {
-        return {
-          code: code,
-          name: list[code]
-        };
-      });
-
+      const list = this.getConfig(type);
+      result = Object.keys(list).map(code => ({
+        code,
+        name: list[code]
+      }));
       if (code) {
         // oversea code
         if (code[0] === '9' && type === 'city') {
           code = '9';
         }
-
-        result = result.filter(function (item) {
-          return item.code.indexOf(code) === 0;
+        result = result.filter(item => item.code.indexOf(code) === 0);
+      }
+      if (typeToColumnsPlaceholder[type] && result.length) {
+        // set columns placeholder
+        const codeFill =
+          type === 'province'
+            ? ''
+            : type === 'city'
+            ? COLUMNSPLACEHOLDERCODE.slice(2, 4)
+            : COLUMNSPLACEHOLDERCODE.slice(4, 6);
+        result.unshift({
+          code: `${code}${codeFill}`,
+          name: typeToColumnsPlaceholder[type]
         });
       }
-
       return result;
     },
-    getIndex: function getIndex(type, code) {
-      var compareNum = type === 'province' ? 2 : type === 'city' ? 4 : 6;
-      var list = this.getList(type, code.slice(0, compareNum - 2)); // oversea code
-
+    getIndex(type, code) {
+      let compareNum = type === 'province' ? 2 : type === 'city' ? 4 : 6;
+      const list = this.getList(type, code.slice(0, compareNum - 2));
+      // oversea code
       if (code[0] === '9' && type === 'province') {
         compareNum = 1;
       }
-
       code = code.slice(0, compareNum);
-
-      for (var i = 0; i < list.length; i++) {
+      for (let i = 0; i < list.length; i++) {
         if (list[i].code.slice(0, compareNum) === code) {
           return i;
         }
       }
-
       return 0;
     },
-    setValues: function setValues() {
-      var county = this.getConfig('county');
-      var code = this.code || Object.keys(county)[0] || '';
-      var province = this.getList('province');
-      var city = this.getList('city', code.slice(0, 2));
-      var picker = this.getPicker();
-
+    setValues() {
+      const county = this.getConfig('county');
+      let { code } = this;
+      if (!code) {
+        if (this.data.columnsPlaceholder.length) {
+          code = COLUMNSPLACEHOLDERCODE;
+        } else if (Object.keys(county)[0]) {
+          code = Object.keys(county)[0];
+        } else {
+          code = '';
+        }
+      }
+      const province = this.getList('province');
+      const city = this.getList('city', code.slice(0, 2));
+      const picker = this.getPicker();
       if (!picker) {
         return;
       }
-
-      var stack = [];
+      const stack = [];
       stack.push(picker.setColumnValues(0, province, false));
       stack.push(picker.setColumnValues(1, city, false));
-
       if (city.length && code.slice(2, 4) === '00') {
-        ;
-        code = city[0].code;
+        [{ code }] = city;
       }
-
-      stack.push(picker.setColumnValues(2, this.getList('county', code.slice(0, 4)), false));
-      stack.push(picker.setIndexes([this.getIndex('province', code), this.getIndex('city', code), this.getIndex('county', code)]));
-      return Promise.all(stack).catch(function () {});
+      stack.push(
+        picker.setColumnValues(
+          2,
+          this.getList('county', code.slice(0, 4)),
+          false
+        )
+      );
+      return Promise.all(stack)
+        .catch(() => {})
+        .then(() =>
+          picker.setIndexes([
+            this.getIndex('province', code),
+            this.getIndex('city', code),
+            this.getIndex('county', code)
+          ])
+        )
+        .catch(() => {});
     },
-    getValues: function getValues() {
-      var picker = this.getPicker();
-      return picker ? picker.getValues().filter(function (value) {
-        return !!value;
-      }) : [];
+    getValues() {
+      const picker = this.getPicker();
+      return picker ? picker.getValues().filter(value => !!value) : [];
     },
-    getDetail: function getDetail() {
-      var values = this.getValues();
-      var area = {
+    getDetail() {
+      const values = this.getValues();
+      const area = {
         code: '',
         country: '',
         province: '',
         city: '',
         county: ''
       };
-
       if (!values.length) {
         return area;
       }
-
-      var names = values.map(function (item) {
-        return item.name;
-      });
+      const names = values.map(item => item.name);
       area.code = values[values.length - 1].code;
-
       if (area.code[0] === '9') {
         area.country = names[1] || '';
         area.province = names[2] || '';
@@ -196,11 +214,10 @@ VantComponent({
         area.city = names[1] || '';
         area.county = names[2] || '';
       }
-
       return area;
     },
-    reset: function reset() {
-      this.code = '';
+    reset(code) {
+      this.code = code || '';
       return this.setValues();
     }
   }

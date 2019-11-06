@@ -54,8 +54,8 @@
 				{
 					"id": 0,
 					"name": "lesson",
-					"pathName": "user/recognitionNotice",
-					"query": "id=1138721381526679554&lookback=1",
+					"pathName": "user/teacher",
+					"query": "id=1175962017678974978",
 					"scene": null
 				},
 				{

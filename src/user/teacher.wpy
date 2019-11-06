@@ -4,12 +4,12 @@
     <mHeader title="辅导老师"></mHeader>
     <view class="container-scroll teacher-list"
           style="margin-top:{{height}}px">
-      <view class="teacher-item">
+      <view class="teacher-item" wx:for="{{teacherData.teachers}}">
         <view class="teacher-info">
-          <image class="teacher-avatar" src/>
+          <image class="teacher-avatar" src="{{item.avatar}}"/>
           <view class="teacher-text">
-            <text class="teacher-name">小辉老师</text>
-            <text class="teacher-msg">乐小狮高段体验课助教老师</text>
+            <text class="teacher-name">{{item.name}}</text>
+            <text class="teacher-msg">{{item.courseName}}助教老师</text>
           </view>
         </view>
         <button class="teacher-btn">
@@ -21,23 +21,35 @@
   </view>
 </template>
 <script>
-import wepy from 'wepy';
-import mHeader from '../components/header';
+import wepy from 'wepy'
+import api from '../request/api'
+import mHeader from '../components/header'
 export default class Teacher extends wepy.page {
-  data = {};
+  data = {
+    teacherData: []
+  }
   components = {
     mHeader
-  };
-  methods = {};
-  events = {};
-  watch = {};
+  }
+  methods = {}
+  events = {}
+  watch = {}
   computed = {
     height() {
-      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
+      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
     }
-  };
+  }
+
+  getKFTeacher() {
+    api.user.getKFTeacher().then(({ data }) => {
+      this.teacherData = data.resultData
+      this.$apply()
+    })
+  }
   onLoad() {}
-  onShow() {}
+  onShow() {
+    this.getKFTeacher()
+  }
 }
 </script>
 <style lang='scss'>

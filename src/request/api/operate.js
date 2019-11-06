@@ -2,19 +2,19 @@ import request from '../index'
 
 const operate = {
   reserveCourse(params) {
-    return request.post('/operate/reserveCourse', params)
+    return request.post('/compositionv2/operate/reserveCourse', params)
   },
   startLessonStudy(params) {
-    return request.post('/operate/startLessonStudy', params)
+    return request.post('/compositionv2/operate/startLessonStudy', params)
   },
   recordstopTimePoint(params) {
-    return request.post('/operate/recordstopTimePoint', params)
+    return request.post('/compositionv2/operate/recordstopTimePoint', params)
   },
   finishWarmUp(params) {
-    return request.post('/operate/finishWarmUp', params)
+    return request.post('/compositionv2/operate/finishWarmUp', params)
   },
   finishClassroomTest(params) {
-    return request.post('/operate/finishClassroomTest', params)
+    return request.post('/compositionv2/operate/finishClassroomTest', params)
   }
 }
 

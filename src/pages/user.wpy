@@ -97,21 +97,21 @@
 </template>
 
 <script>
-import wepy from 'wepy';
-import api from '../request/api';
-import { connect } from 'wepy-redux';
-import testMixin from '../mixins/test';
-import mHeader from '../components/header';
-import login from '../components/login';
+import wepy from 'wepy'
+import api from '../request/api'
+import { connect } from 'wepy-redux'
+import testMixin from '../mixins/test'
+import mHeader from '../components/header'
+import login from '../components/login'
 @connect({
   userInfo(state) {
-    return state.user.userInfo;
+    return state.user.userInfo
   },
   remindData(state) {
-    return state.user.remindData;
+    return state.user.remindData
   },
   logined(state) {
-    return state.user.logined;
+    return state.user.logined
   }
 })
 export default class User extends wepy.page {
@@ -122,17 +122,17 @@ export default class User extends wepy.page {
       'van-tabbar-item': '../vant/tabbar-item/index',
       'van-popup': '../vant/popup/index'
     }
-  };
-  mixins = [testMixin];
+  }
+  mixins = [testMixin]
   components = {
     mHeader,
     login
-  };
+  }
   computed = {
     height() {
-      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
+      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
     }
-  };
+  }
 
   data = {
     showPopup: false,
@@ -165,54 +165,48 @@ export default class User extends wepy.page {
         name: '我的礼包',
         isBuy: true,
         url: 'https://pub.file.k12.vip/tbzw/1.3/user/wdlb.png'
-      },
-      {
-        id: 5,
-        name: '我的老师',
-        isBuy: true,
-        url: 'https://pub.file.k12.vip/tbzw/1.3/user/teacher.png'
       }
     ]
-  };
+  }
 
   getUCRemindVO() {
-    if (!this.logined) return;
+    if (!this.logined) return
     api.center.getUCRemindVO().then(res => {
-      this.noticeInfo = res.data.resultData;
-      this.itemList[2].num = this.noticeInfo.nowork;
-      this.itemList[3].num = this.noticeInfo.gifts;
-      this.$apply();
-    });
+      this.noticeInfo = res.data.resultData
+      this.itemList[2].num = this.noticeInfo.nowork
+      this.itemList[3].num = this.noticeInfo.gifts
+      this.$apply()
+    })
   }
 
   methods = {
     loginOut() {
-      api.user.loginOut();
+      api.user.loginOut()
     },
     changeAccount() {
-      wx.navigateTo({ url: '/pages/login' });
+      wx.navigateTo({ url: '/pages/login' })
     },
     clickLoginBtn() {
-      this.showSelect = true;
+      this.showSelect = true
     },
     toJump(data) {
       if (!this.logined) {
-        this.showPopup = true;
-        return;
+        this.showPopup = true
+        return
       }
       switch (+data) {
         case 1:
-          wx.navigateTo({ url: '/user/myCourse' });
-          break;
+          wx.navigateTo({ url: '/user/myCourse' })
+          break
         case 2:
-          wx.navigateTo({ url: '/user/myWorkList' });
-          break;
+          wx.navigateTo({ url: '/user/myWorkList' })
+          break
         case 3:
-          wx.navigateTo({ url: '/user/gift' });
-          break;
+          wx.navigateTo({ url: '/user/gift' })
+          break
         case 4:
-          wx.navigateTo({ url: '/user/child' });
-          break;
+          wx.navigateTo({ url: '/user/child' })
+          break
         // case 6:
         //   if (this.noticeInfo.finishcourse === 0) {
         //     wx.showToast({
@@ -230,23 +224,23 @@ export default class User extends wepy.page {
         //   break
       }
     }
-  };
+  }
 
   events = {
     login() {
-      this.getUCRemindVO();
+      this.getUCRemindVO()
     }
-  };
+  }
 
   onShow() {
-    this.getUCRemindVO();
+    this.getUCRemindVO()
   }
   onShareAppMessage() {
     return {
       title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
       path: `/pages/index`,
       imageUrl: 'https://pub.file.k12.vip/tbzw/v2/logo2.png'
-    };
+    }
   }
 }
 </script>

@@ -4,7 +4,7 @@
     <mHeader title="辅导老师"></mHeader>
     <view class="container-scroll teacher-list"
           style="margin-top:{{height}}px">
-      <view class="teacher-item" wx:for="{{teacherData.teachers}}">
+      <view class="teacher-item" wx:for="{{teacherData.teachers}}" wx:key="{{item.id}}">
         <view class="teacher-info">
           <image class="teacher-avatar" src="{{item.avatar}}"/>
           <view class="teacher-text">

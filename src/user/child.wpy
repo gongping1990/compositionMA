@@ -71,7 +71,7 @@
       bind:confirm="onConfirm"
     >
       <view class="child-dialog-content">
-        <input class="child-dialog-input van-hairline--surround" value="{{form.nickname}}" bindinput="bindChangeName" placeholder="请输入孩子姓名"/>
+        <input class="child-dialog-input" value="{{form.nickname}}" bindinput="bindChangeName" placeholder="请输入孩子姓名"/>
         <text class="child-dialog-msg">不超过8个字</text>
       </view>
     </van-dialog>
@@ -264,6 +264,7 @@ export default class Child extends wepy.page {
       width: 100%;
       height: auto;
       border-radius: 8px;
+      border: 1px rgba($color: #a8a8af, $alpha: 0.5) solid;
     }
     &-msg {
       align-self: flex-start;

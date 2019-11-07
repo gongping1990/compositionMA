@@ -85,7 +85,8 @@ export default class extends wepy.app {
           'completionOfWorkNew',
           'uploadAudioWork',
           'uploadImgWork',
-          'workEvaluation'
+          'workEvaluation',
+          'praisePoster'
         ]
       }
     ],

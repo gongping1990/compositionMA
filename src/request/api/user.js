@@ -52,6 +52,9 @@ const user = {
   },
   getKFTeacher() {
     return request.get('/compositionv2/teacher/getKFTeacher')
+  },
+  bindKF(params) {
+    return request.post('/homework/kfteacher/bindKF', params)
   }
 }
 

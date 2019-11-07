@@ -85,6 +85,9 @@ const study = {
   },
   listReplyByPage(params) {
     return request.get('/compositionv2/study/listReplyByPage', params)
+  },
+  getPraiseById(params) {
+    return request.get('/compositionv2/study/getPraiseById', params)
   }
 }
 

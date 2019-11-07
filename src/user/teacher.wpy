@@ -12,7 +12,7 @@
             <text class="teacher-msg">{{item.courseName}}助教老师</text>
           </view>
         </view>
-        <button class="teacher-btn">
+        <button class="teacher-btn" open-type="contact" send-message-path="{{'/pages/index?teacherId=' + item.id}}">
           <view class="teacher-icon"></view>
           添加朋友
         </button>

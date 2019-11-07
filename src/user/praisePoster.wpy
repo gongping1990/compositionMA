@@ -169,12 +169,13 @@
         }
 
         // 课文名称
-        let textTip = canvasWorkBreak(400, 14, `恭喜你的作业《${that.shareDetail.lessonName}》被评为：`)
+        let textTip = canvasWorkBreak(240, 14, `恭喜你的作业《${that.shareDetail.lessonName}》被评为：`)
+        console.log(textTip,1)
         ctx.setTextAlign('left')
         ctx.setFillStyle('#000')
         ctx.setFontSize(10)
         for (let m = 0; m < textTip.length; m++) {
-          ctx.fillText(textTip[m], 40, 195)
+          ctx.fillText(textTip[m], 40, 195*(1+m*0.07))
         }
 
         // 课文名称

@@ -341,8 +341,10 @@ export default class Home extends wepy.page {
       this.isShowPraise = false
     },
     clickAddTeacher(type) {
-      console.log(type)
       this.bindKF()
+      if (type == 2) {
+        this.showAddTeacher = false
+      }
     },
     clickLike(item, index) {
       if (this.logined) {

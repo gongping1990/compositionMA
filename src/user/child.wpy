@@ -165,7 +165,9 @@ export default class Child extends wepy.page {
       this.addMyChild()
     },
     bindChangeName(event, name) {
-      this.form.nickname = event.detail.value
+      if (event.detail.value.length <= 8) {
+        this.form.nickname = event.detail.value
+      }
     },
     bindClickName() {
       this.showDialog = !this.showDialog

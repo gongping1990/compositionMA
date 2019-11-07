@@ -156,6 +156,7 @@ export default class Example extends wepy.page {
       this.itemList[0].num = this.noticeInfo.replys
       this.itemList[1].num = this.noticeInfo.likes
       this.itemList[2].num = this.noticeInfo.praises
+      this.itemList[3].num = this.noticeInfo.unfollowkf
       this.$apply()
     })
   }

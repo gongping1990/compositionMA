@@ -53,12 +53,12 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 30,
+			"current": 0,
 			"list": [
 				{
 					"id": 0,
 					"name": "lesson",
-					"pathName": "user/teacher",
+					"pathName": "user/child",
 					"query": "id=1175962017678974978",
 					"scene": null
 				},

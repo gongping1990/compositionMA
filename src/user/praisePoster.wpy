@@ -1,0 +1,434 @@
+<template>
+  <view class="container">
+    <mHeader title="表扬海报"></mHeader>
+    <view class="container-scroll p-praisePoster" style="margin-top:{{height}}px">
+      <view class="p-praisePoster-top">
+        <view class="-top-content">
+          <view class="-top-content-poster">
+            <view id='canvas-container' hidden="{{isOpenShareText}}">
+              <canvas canvas-id="myCanvas" class="canvas-wrap"></canvas>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="p-praisePoster-down">
+        <view class="btn-f" @tap="openText">获取朋友圈推荐语</view>
+        <view class="btn-b" wx:if="{{isAuth}}" @tap="saveCanvasImg">保存海报至相册</view>
+        <button open-type="openSetting" @tap="authCanvasImg" class="btn-b" wx:if="{{!isAuth}}">去授权</button>
+      </view>
+    </view>
+
+    <van-popup show="{{isOpenShareText}}" class="p-praisePoster-text">
+      <view class="-share-content">
+        <view class="-share-content-content">
+          {{copyText}}
+        </view>
+        <view class="-share-content-tip">复制文案可获得更多点赞哦~</view>
+        <view class="-share-content-btn" @tap="copyTextFn">
+          复制文案去发朋友圈
+        </view>
+      </view>
+      <view class="-share-close">
+        <van-icon name="close"
+                  class="-share-close-icon"
+                  color="#fff"
+                  size="36px"
+                  @click="openText"/>
+      </view>
+
+    </van-popup>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import api from '../request/api'
+  import mHeader from '../components/header'
+
+  export default class praisePoster extends wepy.page {
+    config = {
+      'usingComponents': {
+        'van-icon': '../vant/icon/index',
+        'van-popup': '../vant/popup/index'
+      }
+    };
+    components = {
+      mHeader
+    };
+    computed = {
+      height() {
+        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+      }
+    };
+
+    data = {
+      queryInfo: '',
+      workDetail: '',
+      copyText: '',
+      localArray: [],
+      isAuth: true,
+      isOpenShareText: false
+    };
+
+    onShow() {
+      this.getHomework()
+    }
+
+    getHomework() {
+      this.isFetching = true
+      api.study.getPraiseById({
+        workId: this.queryInfo.id
+      }).then(res => {
+        this.shareDetail = res.data.resultData
+        this.copyText = `我在乐小狮大语文已坚持学习了${this.shareDetail.learnDay}天，每天听北师大老师讲作文，按时完成作业还能获得老师1对1的点评指导。
+        目前已有${this.shareDetail.pv}位家长和孩子在这里学习，快来加入我们一起学习吧！`
+        this.downloadInit()
+        console.log(this.shareDetail,1)
+        this.$apply()
+      }, () => {
+        this.isFetching = false
+      })
+    };
+
+    downloadInit() {
+      let downFileArray = [
+        {
+          id: 1,
+          name: '海报背景',
+          url: 'https://pub.file.k12.vip/2019/11/05/1191659245630087169.png'
+        }
+      ]
+
+
+
+      for (let item of downFileArray) {
+        if (item.url) {
+          this.init(item)
+        } else {
+          wx.showToast({
+            title: `接口获取失败`,
+            icon: 'none',
+            duration: 2000
+          })
+        }
+      }
+    }
+
+    init(item) {
+      let _self = this
+      _self.isFetching = true
+      _self.localArray = []
+      wx.showLoading({ title: '海报生成中...', mask: true })
+      wx.downloadFile({
+        url: item.url,
+        success: function(res) {
+
+          if (res.statusCode === 200) {
+            _self.localArray.push({
+              id: item.id,
+              url: res.tempFilePath
+            })
+            _self.sharePosterCanvas(_self.localArray)
+          } else {
+            wx.showToast({
+              title: `${item.name}加载失败，请刷新重试`,
+              icon: 'none',
+              duration: 2000
+            })
+          }
+        }
+      })
+    }
+
+    sharePosterCanvas(data) {
+      let [shareUrl] = data
+      for (let item of data) {
+        if (item.id == '1') {
+          shareUrl = item.url
+        }
+      }
+      const ctx = wx.createCanvasContext('myCanvas')
+      let that = this
+      wx.createSelectorQuery().select('#canvas-container').boundingClientRect(function(rect) {
+        var height = rect.height
+        var width = rect.width
+
+        // 绘制背景图
+        ctx.drawImage(shareUrl, 0, 0, width, height)
+
+        // 昵称
+
+        const nickname = that.shareDetail.nickName.length > 7 ? `${that.shareDetail.nickName.substring(0, 7)}同学` : `${that.shareDetail.nickName}同学`
+
+        const contentArray = canvasWorkBreak(140, 14, nickname)
+        ctx.setTextAlign('left')
+        ctx.setFillStyle('#000')
+        ctx.setFontSize(13)
+        for (let m = 0; m < contentArray.length; m++) {
+          ctx.fillText(contentArray[m], 40, 180)
+        }
+
+        // 课文名称
+        let textTip = canvasWorkBreak(240, 14, `恭喜你的作业《${that.shareDetail.lessonName}》被评为：`)
+        console.log(textTip,1)
+        ctx.setTextAlign('left')
+        ctx.setFillStyle('#000')
+        ctx.setFontSize(10)
+        for (let m = 0; m < textTip.length; m++) {
+          ctx.fillText(textTip[m], 40, 195*(1+m*0.07))
+        }
+
+        // 课文名称
+        let textTime = canvasWorkBreak(400, 14, that.shareDetail.citeCnTime)
+        ctx.setTextAlign('left')
+        ctx.setFillStyle('#666666')
+        ctx.setFontSize(8)
+        for (let m = 0; m < textTime.length; m++) {
+          ctx.fillText(textTime[m], 88, 275)
+        }
+
+        function canvasWorkBreak(maxWidth, fontSize, text) {
+          const maxLength = maxWidth / fontSize
+          const textLength = text.length
+          let textRowArr = []
+          let tmp = 0
+          while (1) {
+            textRowArr.push(text.substr(tmp, maxLength))
+            tmp += maxLength
+            if (tmp >= textLength) {
+              return textRowArr
+            }
+          }
+        }
+      }).exec()
+
+      setTimeout(function() {
+        ctx.draw()
+        wx.hideLoading()
+        that.isFetching = false
+      }, 1000)
+    }
+
+    saveCanvasImg() {
+      let that = this
+      if (that.isFetching) return
+      wx.showLoading({
+        title: '正在保存',
+        mask: true
+      })
+      setTimeout(function() {
+        wx.canvasToTempFilePath({
+          canvasId: 'myCanvas',
+          success: function(res) {
+            wx.hideLoading()
+            var tempFilePath = res.tempFilePath
+            wx.saveImageToPhotosAlbum({
+              filePath: tempFilePath,
+              success(res) {
+                wx.showModal({
+                  content: '图片已保存到相册，赶紧晒一下吧~',
+                  showCancel: false,
+                  confirmText: '好的',
+                  confirmColor: '#333',
+                  success: function(res) {
+                    if (res.confirm) {
+                    }
+                  },
+                  fail: function(res) {
+                  }
+                })
+              },
+              fail: function(res) {
+                wx.showToast({
+                  title: res.errMsg,
+                  icon: 'none',
+                  duration: 2000
+                })
+              },
+              complete: function(res) {
+                that.$emit('closeSharePage')
+              }
+            })
+          },
+          fail() {
+            wx.showToast({
+              title: '未授权，无法保存图片',
+              icon: 'none',
+              duration: 2000
+            })
+            that.isAuth = false
+          }
+        })
+      }, 1000)
+    }
+
+    authCanvasImg(e) {
+      let that = this
+      // 对用户的设置进行判断，如果没有授权，即使用户返回到保存页面，显示的也是“去授权”按钮；同意授权之后才显示保存按钮
+      if (!e.detail.authSetting['scope.writePhotosAlbum']) {
+        wx.showModal({
+          title: '警告',
+          content: '若不打开授权，则无法将图片保存在相册中！',
+          showCancel: false
+        })
+        this.isAuth = false
+      } else {
+        wx.showModal({
+          title: '提示',
+          content: '您已授权，赶紧将图片保存在相册中吧！',
+          showCancel: false
+        })
+        this.isAuth = true
+      }
+    }
+
+    methods = {
+      openText() {
+        this.isOpenShareText = !this.isOpenShareText
+      },
+      copyTextFn() {
+        let self = this
+        wx.setClipboardData({
+          data: self.copyText,
+          success: function(res) {
+            wx.getClipboardData({
+              success: function(res) {
+
+              }
+            })
+          }
+        })
+      }
+    };
+
+    events = {};
+
+    onLoad(query) {
+      this.queryInfo = query
+      console.log(this.queryInfo,111)
+    }
+
+    onUnload() {
+
+    }
+
+    onShareAppMessage() {
+      return {
+        title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
+        path: `/pages/index`,
+        imageUrl: 'https://pub.file.k12.vip/tbzw/v2/logo2.png'
+      }
+    }
+  }
+</script>
+
+<style lang="scss">
+  @import '../assets/style/mixin.scss';
+
+  .p-praisePoster {
+    border-top: 1px solid transparent;
+
+    &-top {
+      background: url("https://pub.file.k12.vip/2019/11/05/1191650702021582849.png");
+      background-size: 100%;
+      padding: 32px 0;
+      width: 750px;
+
+      .-top-content {
+        padding-top: 32px;
+        margin: 0 auto;
+        width: 540px;
+        height: 940px;
+
+        &-poster {
+          height: 740px;
+          border: 8px solid #F1F2F6;
+          margin: 0 32px;
+
+          .canvas-wrap {
+            width: 465px;
+            height: 740px;
+            background-color: #fff;
+          }
+        }
+      }
+    }
+
+    &-down {
+      @include flex-center;
+      justify-content: space-between;
+      padding: 34px 32px;
+
+      .btn-f {
+        text-align: center;
+        width: 320px;
+        height: 100px;
+        border-radius: 54px;
+        font-size: 32px;
+        font-weight: 500;
+        color: #666666;
+        line-height: 100px;
+      }
+      .btn-b {
+        text-align: center;
+        width: 320px;
+        height: 100px;
+        background:rgba(255,192,0,1);
+        border-radius: 54px;
+        font-size: 32px;
+        font-weight: 500;
+        color: #ffffff;
+        line-height: 100px;
+      }
+    }
+
+    &-text {
+
+      .-share-content {
+        padding: 48px;
+        width: 468px;
+        background: rgba(255, 255, 255, 1);
+        border-radius: 24px;
+
+        &-content {
+          padding: 24px 20px;
+          background: rgba(246, 246, 246, 1);
+          border-radius: 12px;
+          font-size: 28px;
+          line-height: 40px;
+          color: #58422B;
+        }
+
+        &-tip {
+          margin: 64px auto 16px;
+          text-align: center;
+          height: 40px;
+          font-size: 28px;
+          font-weight: 400;
+          color: rgba(155, 142, 128, 1);
+          line-height: 40px;
+        }
+
+        &-btn {
+          margin: 0 auto;
+          text-align: center;
+          width: 468px;
+          height: 100px;
+          background: linear-gradient(90deg, rgba(249, 230, 11, 1) 0%, rgba(253, 219, 85, 1) 100%);
+          border-radius: 54px;
+          font-size: 32px;
+          font-weight: 500;
+          color: rgba(88, 66, 43, 1);
+          line-height: 100px;
+        }
+      }
+
+      .-share-close {
+        margin-top: 32px;
+        width: 564px;
+        text-align: center;
+      }
+    }
+  }
+
+</style>

@@ -12,7 +12,7 @@
                 key="index"
                 index="index"
                 item="item">
-          <view class="p-notice-item" @tap="openPopup({{item}})">
+          <view class="p-notice-item">
             <view class="-time">{{item.datetime}}</view>
             <view class="-content">
               <view class="-item-header van-hairline--bottom">
@@ -24,15 +24,15 @@
                 <text class="-msg">{{item.teacherName}}给你发来了课后讲解</text>
               </view>
               <view class="-item-footer">
-                <image class="-img" src="" />
+                <image class="-img" src="{{item.coverphoto}}" />
                 <view class="-item-footer-right">
                   <view class="-item-footer-info">
                     <view class="-name">{{item.courseName}}</view>
                     <view class="-text">{{item.lessonName}}</view>
                   </view>
                   <view class="-item-footer-btn">
-                    <button class="-btn">奖状</button>
-                    <button class="-btn">查看详情</button>
+                    <button class="-btn" @tap="openPopup({{item}})">奖状</button>
+                    <button class="-btn" @tap="toWorkDetail({{item}})">查看详情</button>
                   </view>
                 </view>
               </view>
@@ -119,6 +119,9 @@ export default class RecognitionNotice extends wepy.page {
     openPopup(item) {
       this.isShowPopup = true;
       this.dataItem = item;
+    },
+    toWorkDetail (item) {
+      wx.navigateTo({ url: `/user/completionOfWork?type=1&id=${item.lessonId}` })
     },
     bindLoadItem(data) {
       if (this.page.current < Math.ceil(this.page.total / this.page.size)) {

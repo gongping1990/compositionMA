@@ -12,7 +12,11 @@
             <text class="teacher-msg">{{item.courseName}}助教老师</text>
           </view>
         </view>
-        <button class="teacher-btn" open-type="contact" send-message-path="{{'/pages/index?teacherId=' + item.id}}">
+        <button class="teacher-btn" @tap="clickTeacherBtn" open-type="contact"
+          show-message-card="true"
+          send-message-title="{{item.name}}"
+          send-message-img="{{item.avatar}}"
+          send-message-path="{{'/pages/index?teacherId=' + item.id}}">
           <view class="teacher-icon"></view>
           添加朋友
         </button>
@@ -31,7 +35,9 @@ export default class Teacher extends wepy.page {
   components = {
     mHeader
   }
-  methods = {}
+  methods = {
+    clickTeacherBtn() {}
+  }
   events = {}
   watch = {}
   computed = {
@@ -44,6 +50,12 @@ export default class Teacher extends wepy.page {
     api.user.getKFTeacher().then(({ data }) => {
       this.teacherData = data.resultData
       this.$apply()
+    })
+  }
+
+  bindKF() {
+    api.user.bindKF({
+      courseId: this.infoData.kfTeacherVO.courseId
     })
   }
   onLoad() {}

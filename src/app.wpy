@@ -23,24 +23,24 @@ button::after {
   position: fixed;
   width: 559px;
   height: 199px;
-  right: 9px;
-  top: 50px;
+  right: 36px;
+  top: 90px;
   z-index: 100;
 }
 </style>
 
 <script>
-import wepy from 'wepy';
-import 'wepy-async-function';
-import 'weapp-cookie';
-import { setStore } from 'wepy-redux';
-import configStore from './store';
+import wepy from 'wepy'
+import 'wepy-async-function'
+import 'weapp-cookie'
+import { setStore } from 'wepy-redux'
+import configStore from './store'
 // eslint-disable-next-line no-unused-vars
-import api from './request/api';
+import api from './request/api'
 
-const store = configStore();
-setStore(store);
-wepy.$store = store;
+const store = configStore()
+setStore(store)
+wepy.$store = store
 export default class extends wepy.app {
   config = {
     pages: [
@@ -97,7 +97,7 @@ export default class extends wepy.app {
       navigationBarTextStyle: 'black',
       navigationStyle: 'custom'
     }
-  };
+  }
 
   globalData = {
     api: api,
@@ -113,54 +113,54 @@ export default class extends wepy.app {
         // 持续时间800ms
         duration: 500,
         timingFunction: 'ease'
-      });
+      })
       // var animation = this.animation
-      animation.opacity(opacity).step();
+      animation.opacity(opacity).step()
       // 设置动画
-      that[param] = animation.export();
+      that[param] = animation.export()
     },
     playSound(audioContext, index) {
-      audioContext.src = `https://pub.file.k12.vip/tbzw/v2/sound/sound_${index}.mp3`;
-      audioContext.stop();
-      audioContext.play();
+      audioContext.src = `https://pub.file.k12.vip/tbzw/v2/sound/sound_${index}.mp3`
+      audioContext.stop()
+      audioContext.play()
     },
     checkLogined() {
       api.user.checkLogined().then(({ data }) => {
         store.dispatch({
           type: 'CHANGE_LOGIN_STATUS',
           payload: data.resultData
-        });
-      });
+        })
+      })
     }
-  };
+  }
 
   constructor() {
-    super();
-    this.use('requestfix');
-    this.use('promisify');
+    super()
+    this.use('requestfix')
+    this.use('promisify')
   }
 
   onLaunch(options) {
-    const that = this;
-    let audioContext = wx.createInnerAudioContext();
-    audioContext.volume = 0.3;
-    audioContext.obeyMuteSwitch = false;
-    this.globalData.audioContext = audioContext;
+    const that = this
+    let audioContext = wx.createInnerAudioContext()
+    audioContext.volume = 0.3
+    audioContext.obeyMuteSwitch = false
+    this.globalData.audioContext = audioContext
     wx.setKeepScreenOn({
       keepScreenOn: true
-    });
+    })
     wx.getSystemInfo({
       success(res) {
-        that.globalData.systemInfo = res;
-        that.globalData.headHeight = res.statusBarHeight + 46;
+        that.globalData.systemInfo = res
+        that.globalData.headHeight = res.statusBarHeight + 46
         if (res.model.indexOf('iPhone X') > -1) {
-          that.globalData.isIpx = true;
+          that.globalData.isIpx = true
         }
       }
-    });
+    })
   }
   onShow() {
-    this.globalData.checkLogined();
+    this.globalData.checkLogined()
   }
 }
 </script>

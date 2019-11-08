@@ -241,7 +241,13 @@
           您好，我是您{{infoData.kfTeacherVO.courseName}}的辅导老师。添加我为微信好友，学习和使用产品的疑问都可以随时咨询我哟～
         </text>
         <view class="teacher_add_footer">
-          <button class="teacher_add_btn" open-type="contact" send-message-path="{{'/pages/index?teacherId=' + infoData.kfTeacherVO.id}}"  @tap="clickAddTeacher(1)">加老师微信好友</button>
+          <button class="teacher_add_btn"
+            open-type="contact"
+            show-message-card="true"
+            send-message-title="{{infoData.kfTeacherVO.name}}"
+            send-message-img="{{infoData.kfTeacherVO.avatar}}"
+            send-message-path="{{'/pages/index?teacherId=' + infoData.kfTeacherVO.id}}"
+            @tap="clickAddTeacher(1)">加老师微信好友</button>
           <button class="teacher_add_btn" @tap="clickAddTeacher(2)">我已添加，不再提醒</button>
         </view>
         <view class="dialog-close"

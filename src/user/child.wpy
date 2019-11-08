@@ -20,7 +20,7 @@
       <view class="child-cell">
         <text class="child-cell-left">孩子性别</text>
         <view class="child-cell-right">
-          <picker bindchange="bindPickerChangeSex" value="{{form.sex}}" range="{{sexArr}}">
+          <picker class="child-picker-input" bindchange="bindPickerChangeSex" value="{{form.sex}}" range="{{sexArr}}">
             <view class="child-picker">
               {{sexArr[form.sex]}}
             </view>
@@ -30,7 +30,7 @@
       <view class="child-cell">
         <text class="child-cell-left">与孩子的关系</text>
         <view class="child-cell-right">
-          <picker bindchange="bindPickerChangeRelation" value="{{form.relation}}" range="{{gxArr}}">
+          <picker class="child-picker-input" bindchange="bindPickerChangeRelation" value="{{form.relation}}" range="{{gxArr}}">
             <view class="child-picker">
               {{gxArr[form.relation]}}
             </view>
@@ -40,7 +40,7 @@
       <view class="child-cell">
         <text class="child-cell-left">在读年级</text>
         <view class="child-cell-right">
-          <picker bindchange="bindPickerChangeGrade" value="{{form.grade}}" range="{{gradeArr}}">
+          <picker class="child-picker-input" bindchange="bindPickerChangeGrade" value="{{form.grade}}" range="{{gradeArr}}">
             <view class="child-picker">
               {{gradeArr[form.grade]}}
             </view>
@@ -71,7 +71,7 @@
       bind:confirm="onConfirm"
     >
       <view class="child-dialog-content">
-        <input class="child-dialog-input" value="{{form.nickname}}" bindinput="bindChangeName" placeholder="请输入孩子姓名"/>
+        <input class="child-dialog-input" maxlength="8" value="{{form.nickname}}" bindinput="bindChangeName" placeholder="请输入孩子姓名"/>
         <text class="child-dialog-msg">不超过8个字</text>
       </view>
     </van-dialog>
@@ -165,9 +165,7 @@ export default class Child extends wepy.page {
       this.addMyChild()
     },
     bindChangeName(event, name) {
-      if (event.detail.value.length <= 8) {
-        this.form.nickname = event.detail.value
-      }
+      this.form.nickname = event.detail.value
     },
     bindClickName() {
       this.showDialog = !this.showDialog
@@ -318,8 +316,16 @@ export default class Child extends wepy.page {
     border-radius: 50%;
   }
   &-picker {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 100%;
+    height: 90px;
     font-size: 32px;
     color: #999;
+    &-input {
+      width: 100%;
+    }
   }
 }
 </style>

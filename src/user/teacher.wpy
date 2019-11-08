@@ -14,8 +14,8 @@
         </view>
         <button class="teacher-btn" @tap="clickTeacherBtn" open-type="contact"
           show-message-card="true"
-          send-message-title="{{item.name}}"
-          send-message-img="{{item.avatar}}"
+          send-message-title="{{item.cardTitle}}"
+          send-message-img="{{item.cardImg}}"
           send-message-path="{{'/pages/index?teacherId=' + item.id}}">
           <view class="teacher-icon"></view>
           添加朋友

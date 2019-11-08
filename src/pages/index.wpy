@@ -244,8 +244,8 @@
           <button class="teacher_add_btn"
             open-type="contact"
             show-message-card="true"
-            send-message-title="{{infoData.kfTeacherVO.name}}"
-            send-message-img="{{infoData.kfTeacherVO.avatar}}"
+            send-message-title="{{infoData.kfTeacherVO.cardTitle}}"
+            send-message-img="{{infoData.kfTeacherVO.cardImg}}"
             send-message-path="{{'/pages/index?teacherId=' + infoData.kfTeacherVO.id}}"
             @tap="clickAddTeacher(1)">加老师微信好友</button>
           <button class="teacher_add_btn" @tap="clickAddTeacher(2)">我已添加，不再提醒</button>
@@ -1247,6 +1247,8 @@ export default class Home extends wepy.page {
     width: 602px;
     height: 768px;
     &_info {
+      @include flex-column-center;
+      align-items: flex-start;
       position: absolute;
       left: 50px;
       top: -24px;

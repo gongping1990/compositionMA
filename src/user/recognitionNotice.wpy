@@ -27,12 +27,12 @@
                 <image class="-img" src="{{item.coverphoto}}" />
                 <view class="-item-footer-right">
                   <view class="-item-footer-info">
-                    <view class="-name">{{item.courseName}}</view>
-                    <view class="-text">{{item.lessonName}}</view>
+                    <view class="-name">{{item.lessonName}}</view>
+                    <view class="-text">{{item.courseName}}</view>
                   </view>
                   <view class="-item-footer-btn">
                     <button class="-btn" @tap="openPopup({{item}})">奖状</button>
-                    <button class="-btn" @tap="toWorkDetail({{item}})">查看详情</button>
+                    <button class="-btn" @tap="toWorkDetail({{item}})">查看作业</button>
                   </view>
                 </view>
               </view>
@@ -165,12 +165,16 @@ export default class RecognitionNotice extends wepy.page {
     padding-top: 32px;
     .-content {
       box-sizing: border-box;
-      margin-top: 32px;
+      margin-top: 32px ;
       padding: 32px;
       width: 686px;
       height: 380px;
       background: rgba(255, 255, 255, 1);
       border-radius: 16px;
+
+      &:last-child{
+        margin-bottom: 32px;
+      }
     }
     .-time {
       @include flex-center;

@@ -123,7 +123,8 @@ export default class Child extends wepy.page {
       avatar: '',
       grade: 0,
       relation: 0,
-      sex: 0
+      sex: 0,
+      puid: 0
     },
     areaList: Object.assign({}, areaList)
   }
@@ -200,19 +201,59 @@ export default class Child extends wepy.page {
   getMyChild() {
     api.user.getMyChild().then(({ data }) => {
       if (data.resultData) {
-        this.form = data.resultData
+        let {
+          areasId,
+          areasText,
+          nickname,
+          avatar,
+          grade,
+          relation,
+          sex,
+          puid
+        } = data.resultData
+        this.form = {
+          areasId: areasId || '',
+          areasText: areasText || '',
+          nickname: nickname || '',
+          avatar: avatar || '',
+          grade: grade || 0,
+          relation: relation || 0,
+          sex: sex || 0,
+          puid: puid || 0
+        }
       }
       this.isLoad = true
       this.$apply()
     })
   }
   addMyChild() {
-    api.user.addMyChild(this.form).then(({ data }) => {
-      if (data.resultData) {
-        this.form = data.resultData
-        this.$apply()
-      }
-    })
+    let {
+      areasId,
+      areasText,
+      avatar,
+      grade,
+      nickname,
+      puid,
+      relation,
+      sex
+    } = this.form
+    api.user
+      .addMyChild({
+        areasId,
+        areasText,
+        avatar,
+        grade,
+        nickname,
+        relation,
+        sex,
+        puid
+      })
+      .then(({ data }) => {
+        if (data.resultData) {
+          this.form = data.resultData
+          this.$apply()
+        }
+      })
   }
 
   onSelect(type) {
@@ -224,7 +265,6 @@ export default class Child extends wepy.page {
       success: res => {
         // tempFilePath可以作为img标签的src属性显示图片
         const tempFilePaths = res.tempFilePaths
-        console.log(tempFilePaths)
         wx.uploadFile({
           url:
             wepy.$appConfig.baseUrl + '/compositionv2/common/uploadPublicFile', //仅为示例，非真实的接口地址
@@ -232,7 +272,6 @@ export default class Child extends wepy.page {
           name: 'file',
           success: res => {
             const data = JSON.parse(res.data)
-            console.log(data)
             this.form.avatar = data.resultData.url
             this.$apply()
             this.addMyChild()

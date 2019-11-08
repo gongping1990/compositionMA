@@ -67,7 +67,8 @@ export default class PariseModal extends wepy.component {
 
   methods = {
     toPoster () {
-      wx.navigateTo({ url: `/user/praisePoster?id=${this.dataInfo.workId}` })
+      console.log(this.dataInfo,121)
+      wx.navigateTo({ url: `/user/praisePoster?id=${this.dataInfo.homeworkId}` })
     },
     onClose () {
       this.isShow = false

@@ -271,6 +271,13 @@
 					"pathName": "user/praisePoster",
 					"query": "id=1189440902189035522",
 					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "user/recognitionNotice",
+					"pathName": "user/recognitionNotice",
+					"query": "",
+					"scene": null
 				}
 			]
 		}

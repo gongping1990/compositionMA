@@ -10,7 +10,11 @@ export default class testMixin extends wepy.mixin {
           wx.redirectTo({ url: '/pages/index' })
           break
         case 1:
-          wx.redirectTo({ url: '/pages/lesson' })
+          if (this.logined && !this.remindData.hasChild) {
+            wx.redirectTo({ url: '/user/info' })
+          } else {
+            wx.redirectTo({ url: '/pages/lesson' })
+          }
           break
         case 2:
           wx.redirectTo({ url: '/pages/server' })
@@ -28,8 +32,7 @@ export default class testMixin extends wepy.mixin {
       .then(({ data }) => {
         store.dispatch({ type: 'UPDATE_TAB_REMIND', payload: data.resultData })
       })
-      .catch(e => {
-      })
+      .catch(e => {})
   }
   onShow() {
     this.getBottomTipsVO()

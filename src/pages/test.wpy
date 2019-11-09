@@ -124,18 +124,39 @@
             </view>
           </view>
         </view>
-        <view class="question-btn-wrap"
+        <form
+          report-submit="true"
+          @submit="submit"
+          >
+          <view class="question-btn-wrap"
               wx:if="{{showQuestion}}">
-          <view class="question-btn"
-                wx:if="{{!isSummary && !showNextBtn}}"
-                @tap="clickStudy">确定</view>
-          <view class="question-btn"
-                wx:if="{{!isSummary && showNextBtn}}"
-                @tap="clickNext">{{stepIndex != questionArr.length - 1 ? '下一题' : '完成答题'}}</view>
-          <view class="question-btn"
-                wx:if="{{setSummaryEnd}}"
-                @tap="clickLinkHomeWork">去完成课后作业</view>
-        </view>
+            <button
+              form-type="submit"
+              class="question-btn"
+              wx:if="{{!isSummary && !showNextBtn}}"
+              @tap="clickStudy"
+              >
+              确定
+            </button>
+            <button
+              form-type="submit"
+              class="question-btn"
+              wx:if="{{!isSummary && showNextBtn}}"
+              @tap="clickNext"
+              >
+              {{stepIndex != questionArr.length - 1 ? '下一题' : '完成答题'}}
+            </button>
+            <button
+              form-type="submit"
+              class="question-btn"
+              wx:if="{{setSummaryEnd}}"
+              @tap="clickLinkHomeWork"
+              >
+             去完成课后作业
+            </button>
+          </view>
+        </form>
+
       </view>
     </view>
     <van-popup show="{{ showAlert }}"
@@ -151,16 +172,17 @@
 </template>
 <script>
 import wepy from 'wepy'
+import { saveFormId } from '../utils'
 import mHeader from '@/components/header'
 import loading from '@/components/loading'
 import flower from '@/components/flower'
 export default class Example extends wepy.page {
   config = {
     navigationBarTitleText: '',
-    'usingComponents': {
+    usingComponents: {
       'van-popup': '../vant/popup/index'
     }
-  };
+  }
   data = {
     loading: true,
     summaryScrollTop: 0,
@@ -199,17 +221,20 @@ export default class Example extends wepy.page {
     flower: 0,
     paused: false,
     showNextBtn: false
-  };
+  }
   components = {
     mHeader,
     loading,
     flower
-  };
+  }
   methods = {
-    clickLinkHomeWork () {
+    submit(e) {
+      saveFormId(e.detail.formId)
+    },
+    clickLinkHomeWork() {
       wx.redirectTo({ url: '/user/submitHomework?id=' + this.lessonId })
     },
-    clickStudy () {
+    clickStudy() {
       if (this.answerEnd) {
         return
       }
@@ -226,7 +251,7 @@ export default class Example extends wepy.page {
       this.answerEnd = true
       this.publishAnswer()
     },
-    bindClickVoice () {
+    bindClickVoice() {
       if (this.paused) {
         this.paused = false
         this.audioContext.seek(0)
@@ -237,7 +262,7 @@ export default class Example extends wepy.page {
       }
       this.$apply()
     },
-    bindClickInput (i) {
+    bindClickInput(i) {
       if (this.showNextBtn) {
         return
       }
@@ -245,7 +270,7 @@ export default class Example extends wepy.page {
       playSound(audioContext, 1)
       this.selectIndex = i
     },
-    clickNext () {
+    clickNext() {
       this.stop()
       if (this.stepIndex === this.questionArr.length - 1) {
         let { audioContext, playSound } = this.$parent.globalData
@@ -262,26 +287,26 @@ export default class Example extends wepy.page {
       this.scrollTop = 0
       this.showNextBtn = false
     }
-  };
+  }
   events = {
-    back () {
+    back() {
       wx.navigateBack({
         delta: 1 // 返回的页面数，如果 delta 大于现有页面数，则返回到首页,
       })
     }
-  };
+  }
   watch = {
-    stepIndex (n) {
+    stepIndex(n) {
       if (n === this.questionArr.length - 1) {
         this.imitateReady()
       }
     }
-  };
+  }
   computed = {
-    height () {
+    height() {
       return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
     },
-    anwserTimeText () {
+    anwserTimeText() {
       if (this.answerTime) {
         let minute = 0
         let second = 0
@@ -295,39 +320,47 @@ export default class Example extends wepy.page {
         return '00分00秒'
       }
     }
-  };
+  }
 
-  play () {
+  play() {
     this.audioContext.play()
   }
 
-  stop () {
+  stop() {
     this.audioContext.stop()
   }
 
-  alertError () {
+  alertError() {
     let { audioContext, playSound } = this.$parent.globalData
     playSound(audioContext, 2)
     this.isSuccess = false
     this.changeAlertVisible()
   }
 
-  alertSuccess () {
+  alertSuccess() {
     let { audioContext, playSound } = this.$parent.globalData
     playSound(audioContext, 3)
     this.isSuccess = true
     this.changeAlertVisible()
   }
   // 设置答题完成后的总结
-  setSummary () {
+  setSummary() {
     let numText = ['一', '二', '三', '四', '五']
     let { answerArr, questionArr } = this
     let arr = []
     let errorNum = answerArr[3].answerError
     if (errorNum) {
-      arr.push(`${answerArr[3].mateName}，恭喜你完成了随堂测验。用时${this.anwserTimeText}。你做错了${errorNum}道，不要灰心，来听听下面老师的错题分析，下次会更棒哦！`)
+      arr.push(
+        `${answerArr[3].mateName}，恭喜你完成了随堂测验。用时${
+          this.anwserTimeText
+        }。你做错了${errorNum}道，不要灰心，来听听下面老师的错题分析，下次会更棒哦！`
+      )
     } else {
-      arr.push(`${answerArr[3].mateName}，真棒，随堂测验你全部答对了。用时${this.anwserTimeText}。继续加油，保持优秀！`)
+      arr.push(
+        `${answerArr[3].mateName}，真棒，随堂测验你全部答对了。用时${
+          this.anwserTimeText
+        }。继续加油，保持优秀！`
+      )
     }
     questionArr.forEach((e, i) => {
       if (e.isRight === 2) {
@@ -339,7 +372,7 @@ export default class Example extends wepy.page {
   }
 
   // 设置显示答题的索引
-  setSummaryIndex () {
+  setSummaryIndex() {
     let { summaryIndex, summaryArr } = this
     if (summaryIndex !== summaryArr.length) {
       setTimeout(() => {
@@ -361,11 +394,13 @@ export default class Example extends wepy.page {
   }
 
   // 弹窗结束后切换题目
-  changeAlertVisible () {
+  changeAlertVisible() {
     let { isSuccess, questionArr, stepIndex } = this
     this.showAlert = true
     setTimeout(() => {
-      let url = isSuccess ? questionArr[stepIndex].rightAudio : questionArr[stepIndex].errorAudio
+      let url = isSuccess
+        ? questionArr[stepIndex].rightAudio
+        : questionArr[stepIndex].errorAudio
       this.showAlert = false
       this.showNextBtn = true
       if (url) {
@@ -376,7 +411,7 @@ export default class Example extends wepy.page {
   }
 
   // 模拟其他用户完成答题
-  imitateReady () {
+  imitateReady() {
     let { answerArr } = this
     let random = parseInt(Math.random() * 3)
     this.answerArr[random].status = 1
@@ -391,7 +426,7 @@ export default class Example extends wepy.page {
   }
 
   // 公布答案
-  publishAnswer () {
+  publishAnswer() {
     if (this.selectIndex === this.correctAnswer) {
       this.alertSuccess()
       this.questionArr[this.stepIndex].isRight = 1
@@ -406,7 +441,7 @@ export default class Example extends wepy.page {
   }
 
   // 设置答题正确还是错误
-  setAnswerStatus () {
+  setAnswerStatus() {
     let isErr = parseInt(Math.random() * 3)
     let index = parseInt(Math.random() * 3)
     for (let i = 0; i < 3; i++) {
@@ -420,14 +455,14 @@ export default class Example extends wepy.page {
     this.$apply()
   }
 
-  randomImitateReady () {
+  randomImitateReady() {
     let base = parseInt(Math.random() * 3 + 3)
     setTimeout(() => {
       this.imitateReady()
     }, base * 1000)
   }
 
-  changeQuestion () {
+  changeQuestion() {
     this.app.show(this, 'itemAnimate', 0)
     setTimeout(() => {
       this.stepIndex += 1
@@ -439,7 +474,7 @@ export default class Example extends wepy.page {
     }, 500)
   }
 
-  initQuestion () {
+  initQuestion() {
     this.showQuestion = true
     this.correctAnswer = this.questionArr[0].answer
     this.app.show(this, 'questionAnimate', 1)
@@ -454,7 +489,7 @@ export default class Example extends wepy.page {
     this.$apply()
   }
 
-  initAudio (src) {
+  initAudio(src) {
     let { audioContext } = this
     audioContext.obeyMuteSwitch = false
     audioContext.src = src
@@ -463,17 +498,18 @@ export default class Example extends wepy.page {
     }, 500)
   }
 
-  playAudio (type) {
+  playAudio(type) {
     let { audioContext, isSuccess, questionArr, stepIndex } = this
     this.paused = false
-    audioContext.src = questionArr[stepIndex][isSuccess ? 'rightAudio' : 'errorAudio']
+    audioContext.src =
+      questionArr[stepIndex][isSuccess ? 'rightAudio' : 'errorAudio']
     setTimeout(() => {
       this.scrollTop = 1000
       audioContext.play()
     }, 500)
   }
 
-  reset () {
+  reset() {
     this.selectIndex = -1
     this.readyEnd = false
     this.isSuccess = false
@@ -491,7 +527,7 @@ export default class Example extends wepy.page {
     this.setRandomTime()
   }
 
-  formatTimeText () {
+  formatTimeText() {
     let { currentTime, duration } = this
     let minute = 0
     let second = 0
@@ -505,51 +541,55 @@ export default class Example extends wepy.page {
   }
 
   // 获取教室信息
-  getLessonRoom (type) {
+  getLessonRoom(type) {
     let { api } = this.$parent.globalData
-    api.study.getLessonRoom({
-      lessonId: this.lessonId
-    }).then(({ data }) => {
-      this.roomData = data.resultData
-      this.mateInfo = data.resultData.mateInfo
-      this.answerArr = this.mateInfo.map(e => {
-        e.status = 0
-        e.answer = 0
-        e.answerError = 0
-        e.flower = this.lookback ? 0 : e.correctNum
-        return e
+    api.study
+      .getLessonRoom({
+        lessonId: this.lessonId
       })
-      this.flower = this.answerArr[3].flower
-      this.$apply()
-    })
+      .then(({ data }) => {
+        this.roomData = data.resultData
+        this.mateInfo = data.resultData.mateInfo
+        this.answerArr = this.mateInfo.map(e => {
+          e.status = 0
+          e.answer = 0
+          e.answerError = 0
+          e.flower = this.lookback ? 0 : e.correctNum
+          return e
+        })
+        this.flower = this.answerArr[3].flower
+        this.$apply()
+      })
   }
 
   // 获取教室试题等信息
-  getClassInfo () {
+  getClassInfo() {
     let { api } = this.$parent.globalData
-    api.course.getClassInfo({
-      lessonId: this.lessonId
-    }).then(({ data }) => {
-      this.courseInfo = data.resultData
-      this.questionArr = data.resultData.quizList.map(e => {
-        e.isRight = 3
-        return e
+    api.course
+      .getClassInfo({
+        lessonId: this.lessonId
       })
-      setTimeout(() => {
-        this.loading = false
-        if (this.lookback) {
-          this.initQuestion()
-        } else {
-          this.initAudio(this.courseInfo.voiceUrl)
-        }
+      .then(({ data }) => {
+        this.courseInfo = data.resultData
+        this.questionArr = data.resultData.quizList.map(e => {
+          e.isRight = 3
+          return e
+        })
+        setTimeout(() => {
+          this.loading = false
+          if (this.lookback) {
+            this.initQuestion()
+          } else {
+            this.initAudio(this.courseInfo.voiceUrl)
+          }
+          this.$apply()
+        }, 1000)
         this.$apply()
-      }, 1000)
-      this.$apply()
-    })
+      })
   }
 
   // 更新课程状态
-  changeLearnStage (type) {
+  changeLearnStage(type) {
     let { api } = this.$parent.globalData
     api.study.changeLearnStage({
       id: this.roomData.id,
@@ -557,7 +597,7 @@ export default class Example extends wepy.page {
     })
   }
 
-  onLoad (option) {
+  onLoad(option) {
     this.lessonId = option.id
     this.lookback = option.lookback
     // eslint-disable-next-line no-undef
@@ -584,23 +624,23 @@ export default class Example extends wepy.page {
       this.$apply()
     })
   }
-  onShow () {
+  onShow() {
     // wepy.$log.info('test info')
     this.getClassInfo()
     this.getLessonRoom()
   }
-  onHide () {
+  onHide() {
     this.audioContext.stop()
     clearInterval(this.timer)
     // wepy.$log.error('test error', this.answerArr, this.roomData)
     // wepy.$log.warn('test warn', this.answerArr, this.roomData)
   }
-  onUnload () {
+  onUnload() {
     this.audioContext.stop()
     this.audioContext.destroy()
     clearInterval(this.timer)
   }
-  onShareAppMessage () {
+  onShareAppMessage() {
     return {
       title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
       path: `/pages/index`,

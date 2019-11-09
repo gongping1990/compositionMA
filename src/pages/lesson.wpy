@@ -63,32 +63,42 @@
             </view>
           </view>
           <view class="lesson-scroll-wrap">
-            <view class="lesson-content"
+            <form
+              report-submit="true"
+              @submit="submit"
+              >
+              <view class="lesson-content"
                   id="{{item.isToday ? 'today' : ''}}"
                   wx:for="{{catalogData}}"
                   wx:key="{{item.lessonId}}">
-              <view class="lesson-time">
-                <text class="lesson-time-title">{{item.isToday ? '今日': item.week}}</text>
-                <text class="lesson-time-text">{{item.dayTime}}</text>
-              </view>
-              <view class="lesson-list">
-                <view class="lesson-item"
-                      wx:for="{{item.lessonlist}}"
-                      wx:for-item="lessonItem"
-                      wx:key="{{lessonItem.id}}">
-                  <image class="lesson-cover"
-                         src="{{lessonItem.coverphoto}}" />
-                  <view class="lesson-info">
-                    <text class="lesson-title">{{lessonItem.name}}</text>
-                    <view class="lesson-footer">
-                      <text class="lesson-num">{{lessonItem.learnNum}}人已学</text>
-                      <view class="lesson-btn {{lessonItem.stateClass}}"
-                            @tap="bindClickBtn({{lessonItem}})">{{lessonItem.stateText}}</view>
+                <view class="lesson-time">
+                  <text class="lesson-time-title">{{item.isToday ? '今日': item.week}}</text>
+                  <text class="lesson-time-text">{{item.dayTime}}</text>
+                </view>
+                <view class="lesson-list">
+                  <view class="lesson-item"
+                        wx:for="{{item.lessonlist}}"
+                        wx:for-item="lessonItem"
+                        wx:key="{{lessonItem.id}}">
+                    <image class="lesson-cover"
+                          src="{{lessonItem.coverphoto}}" />
+                    <view class="lesson-info">
+                      <text class="lesson-title">{{lessonItem.name}}</text>
+                      <view class="lesson-footer">
+                        <text class="lesson-num">{{lessonItem.learnNum}}人已学</text>
+                        <button
+                          class="lesson-btn {{lessonItem.stateClass}}"
+                          form-type="submit"
+                          @tap="bindClickBtn({{lessonItem}})"
+                          >
+                          {{lessonItem.stateText}}
+                        </button>
+                      </view>
                     </view>
                   </view>
                 </view>
               </view>
-            </view>
+            </form>
           </view>
         </scroll-view>
       </view>
@@ -146,16 +156,17 @@
 import wepy from 'wepy'
 import { connect } from 'wepy-redux'
 import dayjs from 'dayjs'
+import { saveFormId } from '../utils'
 import testMixin from '../mixins/test'
 import mHeader from '../components/header'
 import login from '../components/login'
 import load from '../components/load'
 import error from '../components/error'
 @connect({
-  logined (state) {
+  logined(state) {
     return state.user.logined
   },
-  remindData (state) {
+  remindData(state) {
     return state.user.remindData
   }
 })
@@ -193,13 +204,13 @@ export default class Lesson extends wepy.page {
   }
 
   computed = {
-    height () {
+    height() {
       return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
     }
-  };
+  }
 
   watch = {
-    logined (n) {
+    logined(n) {
       if (n) {
         this.getAttendClassCatalog()
       }
@@ -207,24 +218,27 @@ export default class Lesson extends wepy.page {
   }
 
   methods = {
-    clickAllBtn () {
+    submit(e) {
+      saveFormId(e.detail.formId)
+    },
+    clickAllBtn() {
       wx.navigateTo({ url: '/user/myCourse' })
     },
-    clickEmptyBtn (i) {
+    clickEmptyBtn(i) {
       if (i) {
         wx.redirectTo({ url: '/pages/index' })
       } else {
         wx.navigateTo({ url: '/user/myCourse' })
       }
     },
-    clickLoginBtn () {
+    clickLoginBtn() {
       this.showSelect = true
     },
-    clickTab (s) {
+    clickTab(s) {
       this.nowWeek = s
       this.listCompositionWeekLesson()
     },
-    bindClickBtn (lesson) {
+    bindClickBtn(lesson) {
       if (!lesson.stage) {
         if (lesson.state !== 4) {
           wx.navigateTo({ url: '/pages/classroom?id=' + lesson.id })
@@ -247,90 +261,107 @@ export default class Lesson extends wepy.page {
   }
 
   events = {
-    login () {
+    login() {
       this.getAttendClassCatalog()
     }
   }
+
   // 检查是否购买，并返回推荐课程
-  getAttendClassCatalog () {
+  getAttendClassCatalog() {
     this.loading = true
     let { api } = this.$parent.globalData
-    api.study.getAttendClassCatalog().then(({ data }) => {
-      this.isError = false
-      this.loading = false
-      if (!data.resultData.hasBuy) {
-        this.isBuy = false
-        this.recommendList = data.resultData.recommenList.map(e => {
-          e.sessionFrom = JSON.stringify({
-            type: 1,
-            homeConfig: e.id
+    api.study
+      .getAttendClassCatalog()
+      .then(({ data }) => {
+        this.isError = false
+        this.loading = false
+        if (!data.resultData.hasBuy) {
+          this.isBuy = false
+          this.recommendList = data.resultData.recommenList.map(e => {
+            e.sessionFrom = JSON.stringify({
+              type: 1,
+              homeConfig: e.id
+            })
+            return e
           })
-          return e
-        })
+          this.$apply()
+        } else {
+          this.listCompositionWeekLesson()
+        }
+      })
+      .catch(({ code }) => {
+        this.loading = false
+        if (code === 500) {
+          this.isError = true
+        }
         this.$apply()
-      } else {
-        this.listCompositionWeekLesson()
-      }
-    }).catch(({ code }) => {
-      this.loading = false
-      if (code === 500) {
-        this.isError = true
-      }
-      this.$apply()
-    })
+      })
   }
 
   // 获取课程目录
-  listCompositionWeekLesson () {
+  listCompositionWeekLesson() {
     this.loading = true
     let { api } = this.$parent.globalData
-    api.study.listCompositionWeekLesson({
-      nowWeek: this.nowWeek
-    }).then(({ data }) => {
-      this.isError = false
-      this.loading = false
-      if (data.resultData.length) {
-        let weekArr = ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
-        let today = dayjs(new Date()).format('YYYY/MM/DD')
-        this.catalogData = data.resultData.map(e => {
-          e.isToday = today === e.dayTime
-          e.dayTime = dayjs(new Date(e.dayTime)).format('MM月DD日')
-          e.week = weekArr[e.week - 1]
-          e.lessonlist = e.lessonlist.map(_e => {
-            let stateArr = ['补课', '开始学习', '交作业', '待开课', '回看', '预约上课']
-            let classArr = ['bk', 'sk', 'jzy', 'dkk', 'hk', 'yy']
-            _e.stateText = (_e.showOpenTime && _e.state == 4) ? _e.openTime + '开课' :  stateArr[_e.state - 1]
-            _e.stateClass = classArr[_e.state - 1]
-            return _e
+    api.study
+      .listCompositionWeekLesson({
+        nowWeek: this.nowWeek
+      })
+      .then(({ data }) => {
+        this.isError = false
+        this.loading = false
+        if (data.resultData.length) {
+          let weekArr = ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+          let today = dayjs(new Date()).format('YYYY/MM/DD')
+          this.catalogData = data.resultData.map(e => {
+            e.isToday = today === e.dayTime
+            e.dayTime = dayjs(new Date(e.dayTime)).format('MM月DD日')
+            e.week = weekArr[e.week - 1]
+            e.lessonlist = e.lessonlist.map(_e => {
+              let stateArr = [
+                '补课',
+                '开始学习',
+                '交作业',
+                '待开课',
+                '回看',
+                '预约上课'
+              ]
+              let classArr = ['bk', 'sk', 'jzy', 'dkk', 'hk', 'yy']
+              _e.stateText =
+                _e.showOpenTime && _e.state == 4
+                  ? _e.openTime + '开课'
+                  : stateArr[_e.state - 1]
+              _e.stateClass = classArr[_e.state - 1]
+              return _e
+            })
+            return e
           })
-          return e
-        })
-      } else {
-        this.catalogData = []
-      }
-      this.isEmpty = !this.catalogData.length
-      this.scrollView = ''
-      setTimeout(() => {
-        this.scrollView = 'today'
+        } else {
+          this.catalogData = []
+        }
+        this.isEmpty = !this.catalogData.length
+        this.scrollView = ''
+        setTimeout(() => {
+          this.scrollView = 'today'
+          this.$apply()
+        }, 1000)
         this.$apply()
-      }, 1000)
-      this.$apply()
-    }).catch(({ code }) => {
-      this.loading = false
-      if (code === 500) {
-        this.isError = true
-      }
-      this.$apply()
-    })
+      })
+      .catch(({ code }) => {
+        this.loading = false
+        if (code === 500) {
+          this.isError = true
+        }
+        this.$apply()
+      })
   }
 
-  onShow () {
+  onShow() {
     if (this.logined) {
       this.getAttendClassCatalog()
     }
   }
 
-  onShareAppMessage () {
+  onShareAppMessage() {
     return {
       title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
       path: `/pages/index`,

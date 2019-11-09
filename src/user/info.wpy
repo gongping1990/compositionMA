@@ -1,0 +1,305 @@
+<!-- 辅导老师列表 -->
+<template>
+  <view class="container info">
+    <mHeader flag="4" title="完善学籍信息"></mHeader>
+    <view class="container-scroll info-content" style="margin-top:{{height}}px">
+      <text class="info-msg">为了给您匹配适合的课程，请填写以下信息</text>
+      <view class="info-sex">
+        <view
+          class="info-sex-item {{form.sex == 1 && 'active'}}"
+          @tap="bindClickSex({{1}})"
+        >
+          <image
+            class="info-sex-avatar "
+            src="https://pub.file.k12.vip/tbzw/1.4/boy.png"
+          />
+          <text class="info-sex-text">小男孩</text>
+        </view>
+        <view
+          class="info-sex-item {{form.sex == 0 && 'active'}}"
+          @tap="bindClickSex({{0}})"
+        >
+          <image
+            class="info-sex-avatar"
+            src="https://pub.file.k12.vip/tbzw/1.4/girl.png"
+          />
+          <text class="info-sex-text">小女孩</text>
+        </view>
+      </view>
+      <view class="info-name">
+        <text class="info-name-left">孩子昵称:</text>
+        <input
+          type="text"
+          class="info-name-input"
+          placeholder="请输入孩子昵称"
+          value="{{form.nickname}}"
+          @input="bindChangeName"
+        />
+      </view>
+      <view class="info-grade">
+        <text class="info-grade-left">在读年级:</text>
+        <view class="info-grade-right">
+          <view
+            class="info-grade-item {{index == form.grade && 'active'}}"
+            wx:for="{{gradeList}}"
+            wx:key="{{index}}"
+            @tap="bindClickGrade({{index}})"
+          >
+            {{ item }}
+          </view>
+        </view>
+      </view>
+      <button class="info-btn" @tap="bindSubmit">确认</button>
+      <text class="info-text">确认后就可以查看孩子的课表咯~</text>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import { connect } from 'wepy-redux'
+import api from '../request/api'
+import mHeader from '../components/header'
+
+@connect({
+  userInfo(state) {
+    return state.user.userInfo
+  }
+})
+export default class Info extends wepy.page {
+  config = {
+    navigationBarTitleText: ''
+  }
+  data = {
+    gradeList: [
+      '其他',
+      '幼儿园',
+      '一年级',
+      '二年级',
+      '三年级',
+      '四年级',
+      '五年级',
+      '六年级',
+      '初中'
+    ],
+    form: {
+      grade: 0,
+      sex: 0,
+      nickname: '',
+      puid: 0,
+      id: 0
+    }
+  }
+  components = {
+    mHeader
+  }
+  events = {
+    back() {
+      wx.redirectTo({ url: '/pages/index' });
+    }
+  }
+  methods = {
+    bindClickGrade(index) {
+      this.form.grade = index
+    },
+    bindChangeName(event, name) {
+      this.form.nickname = event.detail.value
+    },
+    bindClickSex(sex) {
+      this.form.sex = sex
+    },
+    bindSubmit() {
+      let { nickname } = this.form
+      if (!nickname) {
+        wx.showToast({
+          title: '请填写孩子的昵称', //提示的内容,
+          icon: 'none' //图标
+        })
+        return
+      }
+      this.addMyChild()
+    }
+  }
+  computed = {
+    height() {
+      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+    }
+  }
+
+  getMyChild() {
+    api.user.getMyChild().then(({ data }) => {
+      if (data.resultData) {
+        let { nickname, grade, sex, puid, id } = data.resultData
+        this.form = {
+          nickname: nickname || '',
+          grade: grade || 0,
+          sex: sex || 0,
+          puid: puid || 0,
+          id
+        }
+      }
+      this.isLoad = true
+      this.$apply()
+    })
+  }
+  addMyChild() {
+    let { grade, nickname, puid, sex, id } = this.form
+    let params = {
+      grade,
+      nickname,
+      puid,
+      sex
+    }
+    if (id) {
+      params.id = id
+    }
+    api.user.addMyChild(params).then(({ data }) => {
+      wx.showToast({
+        title: '信息已完善', //提示的内容,
+        icon: 'none' //图标
+      })
+      wx.redirectTo({ url: '/pages/lesson' })
+      this.$apply()
+    })
+  }
+
+  onLoad() {}
+  onShow() {
+    this.getMyChild()
+  }
+}
+</script>
+<style lang="scss">
+@import '../assets/style/mixin.scss';
+.info {
+  &-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px;
+  }
+  &-msg {
+    margin-bottom: 53px;
+    font-size: 32px;
+    color: #000;
+    font-weight: 500;
+  }
+  &-sex {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 33px;
+    &-item {
+      @include flex-center;
+      width: 327px;
+      height: 173px;
+      background: rgba(255, 255, 255, 1);
+      box-shadow: 0px 0px 33px 0px rgba(216, 215, 234, 0.5);
+      border-radius: 27px;
+      &.active {
+        background: #ffc000;
+        .info-sex-text {
+          color: #fff;
+        }
+      }
+    }
+    &-avatar {
+      margin-right: 28px;
+      width: 93px;
+      height: 93px;
+      background: rgba(255, 197, 223, 1);
+      border: 5px solid rgba(255, 255, 255, 1);
+      border-radius: 50%;
+    }
+    &-text {
+      font-size: 32px;
+      color: #000;
+      font-weight: 500;
+    }
+  }
+  &-name {
+    @include flex-center;
+    margin-bottom: 32px;
+    width: 100%;
+    height: 187px;
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0px 0px 33px 0px rgba(216, 215, 234, 0.5);
+    border-radius: 27px;
+    &-left {
+      margin-left: 28px;
+      margin-right: 32px;
+      font-size: 32px;
+      color: #000;
+      font-weight: 500;
+    }
+    &-input {
+      flex: 1;
+      height: 180px;
+      font-size: 32px;
+    }
+  }
+  &-grade {
+    @include flex-center;
+    align-items: flex-start;
+    box-sizing: border-box;
+    padding: 43px 27px;
+    padding-bottom: 0;
+    width: 100%;
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0px 0px 33px 0px rgba(216, 215, 234, 0.5);
+    border-radius: 27px;
+    &-left {
+      font-size: 32px;
+      color: #000;
+      font-weight: 500;
+    }
+    &-right {
+      display: flex;
+      flex-wrap: wrap;
+      flex: 1;
+    }
+    &-item {
+      @include flex-center;
+      margin: 0 18px;
+      margin-bottom: 33px;
+      width: 220px;
+      height: 73px;
+      font-size: 32px;
+      color: #666666;
+      font-weight: 500;
+      background: rgba(255, 255, 255, 1);
+      box-shadow: 0px 0px 33px 0px rgba(216, 215, 234, 0.5);
+      border-radius: 7px;
+      &.active {
+        background: #ffc000;
+        color: #fff;
+      }
+      &:nth-child(2n) {
+        margin-right: 0;
+      }
+    }
+  }
+  &-btn {
+    @include flex-center;
+    margin-top: 59px;
+    margin-bottom: 28px;
+    width: 533px;
+    height: 93px;
+    font-size: 32px;
+    color: #fff;
+    font-weight: 500;
+    background: linear-gradient(
+      -37deg,
+      rgba(255, 192, 0, 1),
+      rgba(254, 179, 18, 1)
+    );
+    box-shadow: 0px 5px 5px 0px rgba(255, 181, 76, 0.4);
+    border-radius: 47px;
+  }
+  &-text {
+    font-size: 24px;
+    color: #000;
+    font-weight: 500;
+  }
+}
+</style>

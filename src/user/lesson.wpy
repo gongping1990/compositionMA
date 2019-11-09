@@ -1,30 +1,39 @@
 <template>
-  <view class='container lesson'>
+  <view class="container lesson">
     <mHeader title="我的课程"></mHeader>
-    <view class="container-scroll"
-          style="margin-top:{{height}}px">
-
-      <scroll-view class="lesson-list"
-                   @scrolltolower="bindLoadItem"
-                   scroll-y
-                   scroll-with-animation>
-        <repeat for="{{dataList}}"
-                key="index"
-                index="index"
-                item="item">
-          <view class="lesson-wrap">
-            <view class="lesson-item van-hairline--bottom">
+    <view class="container-scroll" style="margin-top:{{height}}px">
+      <scroll-view
+        class="lesson-list"
+        @scrolltolower="bindLoadItem"
+        scroll-y
+        scroll-with-animation
+      >
+        <view class="lesson-wrap">
+          <form report-submit="true" @submit="submit">
+            <view
+              wx:for="{{dataList}}"
+              class="lesson-item van-hairline--bottom"
+            >
               <view class="lesson-info">
-                <text class="lesson-title">{{item.lessonName}}</text>
-                <text class="lesson-text">{{item.schedulingTime}} ({{weekList[item.week]}})</text>
+                <text class="lesson-title">{{ item.lessonName }}</text>
+                <text class="lesson-text">
+                  {{ item.schedulingTime }} ({{ weekList[item.week] }})
+                </text>
               </view>
-              <view @tap="toJump({{item}})"
-                    class="lesson-btn {{statusColorList[item.studyStatus]}}">
-                {{item.showOpenTime && item.studyStatus == 4 ? item.openTime + '开课' : statusList[item.studyStatus]}}
-              </view>
+              <button
+                form-type="submit"
+                @tap="toJump({{item}})"
+                class="lesson-btn {{statusColorList[item.studyStatus]}}"
+              >
+                {{
+                  item.showOpenTime && item.studyStatus == 4
+                    ? item.openTime + '开课'
+                    : statusList[item.studyStatus]
+                }}
+              </button>
             </view>
-          </view>
-        </repeat>
+          </form>
+        </view>
       </scroll-view>
     </view>
   </view>
@@ -32,16 +41,17 @@
 <script>
 import wepy from 'wepy'
 import api from '../request/api'
+import { saveFormId } from '../utils'
 import mHeader from '../components/header'
 
 export default class Example extends wepy.page {
   config = {
     navigationBarTitleText: '',
-    'usingComponents': {
+    usingComponents: {
       'van-area': '../vant/area/index',
       'van-popup': '../vant/popup/index'
     }
-  };
+  }
   data = {
     page: {
       current: 1,
@@ -68,29 +78,30 @@ export default class Example extends wepy.page {
       '4': '周四',
       '5': '周五',
       '6': '周六',
-      '7': '周日',
+      '7': '周日'
     },
     courseId: '',
     dataList: []
-  };
+  }
   components = {
     mHeader
-  };
+  }
 
-  onLoad (query) {
+  onLoad(query) {
     this.courseId = query.id
   }
 
-  onShow () {
+  onShow() {
     this.getList()
   }
 
-  getList () {
-    api.study.getLessonCatalogByCourse({
-      current: this.page.current,
-      size: this.page.size,
-      courseId: this.courseId
-    })
+  getList() {
+    api.study
+      .getLessonCatalogByCourse({
+        current: this.page.current,
+        size: this.page.size,
+        courseId: this.courseId
+      })
       .then(({ data }) => {
         if (this.page.current > 1) {
           this.dataList = this.dataList.concat(data.resultData.records)
@@ -100,16 +111,19 @@ export default class Example extends wepy.page {
         this.page.total = data.resultData.total
         this.$apply()
       })
-  };
+  }
 
   methods = {
-    bindLoadItem (data) {
+    submit(e) {
+      saveFormId(e.detail.formId)
+    },
+    bindLoadItem(data) {
       if (this.page.current < Math.ceil(this.page.total / this.page.size)) {
         this.page.current++
         this.getList()
       }
     },
-    toJump (data) {
+    toJump(data) {
       if (!data.stage) {
         if (data.studyStatus !== 4) {
           wx.navigateTo({ url: '/pages/classroom?id=' + data.lessonId })
@@ -129,16 +143,16 @@ export default class Example extends wepy.page {
         wx.navigateTo({ url: '/user/submitHomework?id=' + data.lessonId })
       }
     }
-  };
-  events = {};
-  watch = {};
+  }
+  events = {}
+  watch = {}
   computed = {
-    height () {
+    height() {
       return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
     }
-  };
+  }
 
-  onShareAppMessage () {
+  onShareAppMessage() {
     return {
       title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
       path: `/pages/index`,
@@ -147,7 +161,7 @@ export default class Example extends wepy.page {
   }
 }
 </script>
-<style lang='scss'>
+<style lang="scss">
 @import '../assets/style/mixin.scss';
 
 .lesson {

@@ -41,25 +41,35 @@
         </view>
       </view>
     </view>
-
-    <view class="ready-btn {{isReady && 'show'}}"
-          @tap="clickStudy">{{time ? '开始上课（' + time + '）s' : '开始上课'}}</view>
+    <form
+      report-submit="true"
+      @submit="submit"
+      >
+      <button
+        form-type="submit"
+        class="ready-btn {{isReady && 'show'}}"
+        @tap="clickStudy"
+        >
+        {{time ? '开始上课（' + time + '）s' : '开始上课'}}
+      </button>
+    </form>
     <loading wx:if="{{loading}}"></loading>
     <downTime :show.sync="showDownTime"></downTime>
   </view>
 </template>
 <script>
 import wepy from 'wepy'
+import { saveFormId } from '../utils'
 import mHeader from '@/components/header'
 import loading from '@/components/loading'
 import downTime from '@/components/downTime'
 export default class Example extends wepy.page {
   config = {
     navigationBarTitleText: '',
-    'usingComponents': {
+    usingComponents: {
       'van-popup': '../vant/popup/index'
     }
-  };
+  }
   data = {
     lessonId: 0,
     audioContext: null,
@@ -76,19 +86,22 @@ export default class Example extends wepy.page {
     timeText: '00:00',
     showDownTime: false,
     paused: false
-  };
+  }
   components = {
     mHeader,
     loading,
     downTime
-  };
+  }
   methods = {
-    clickStudy () {
+    submit(e) {
+      saveFormId(e.detail.formId)
+    },
+    clickStudy() {
       let { audioContext, playSound } = this.$parent.globalData
       playSound(audioContext, 1)
       this.time = 0
     },
-    bindClickVoice () {
+    bindClickVoice() {
       if (this.paused) {
         this.paused = false
         this.audioContext.seek(0)
@@ -99,26 +112,26 @@ export default class Example extends wepy.page {
       }
       this.$apply()
     }
-  };
+  }
   events = {
-    back () {
+    back() {
       wx.navigateBack({
         delta: 1 // 返回的页面数，如果 delta 大于现有页面数，则返回到首页,
       })
     },
-    downTimeEnd () {
+    downTimeEnd() {
       this.showDownTime = false
       wx.redirectTo({ url: '/pages/study?id=' + this.lessonId })
     }
-  };
-  watch = {};
+  }
+  watch = {}
   computed = {
-    height () {
+    height() {
       return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
     }
-  };
+  }
 
-  imitateReady () {
+  imitateReady() {
     let { readyArr } = this
     let random = parseInt(Math.random() * 3)
     this.readyArr[random] = 1
@@ -128,11 +141,10 @@ export default class Example extends wepy.page {
         this.$apply()
       }, 300)
     } else {
-
     }
   }
 
-  downTime () {
+  downTime() {
     if (this.time >= 1) {
       this.time -= 1
       setTimeout(() => {
@@ -146,7 +158,7 @@ export default class Example extends wepy.page {
     this.$apply()
   }
 
-  initAudio (src) {
+  initAudio(src) {
     let { audioContext } = this
     audioContext.obeyMuteSwitch = false
     audioContext.src = src
@@ -155,7 +167,7 @@ export default class Example extends wepy.page {
     }, 500)
   }
 
-  formatTimeText () {
+  formatTimeText() {
     let { currentTime, duration } = this
     let minute = 0
     let second = 0
@@ -168,38 +180,42 @@ export default class Example extends wepy.page {
     this.$apply()
   }
 
-  initPage () {
+  initPage() {
     this.joinRoom()
     this.getClassInfo()
   }
 
-  joinRoom () {
+  joinRoom() {
     let { api } = this.$parent.globalData
-    api.study.joinRoom({
-      lessonId: this.lessonId
-    }).then(({ data }) => {
-      this.roomData = data.resultData
-      this.mateInfo = data.resultData.mateInfo
-      this.$apply()
-    })
-  }
-
-  getClassInfo () {
-    let { api } = this.$parent.globalData
-    api.course.getClassInfo({
-      lessonId: this.lessonId
-    }).then(({ data }) => {
-      this.courseInfo = data.resultData
-      setTimeout(() => {
-        this.loading = false
-        this.initAudio(data.resultData.guideAudio)
+    api.study
+      .joinRoom({
+        lessonId: this.lessonId
+      })
+      .then(({ data }) => {
+        this.roomData = data.resultData
+        this.mateInfo = data.resultData.mateInfo
         this.$apply()
-      }, 1000)
-      this.$apply()
-    })
+      })
   }
 
-  onLoad (option) {
+  getClassInfo() {
+    let { api } = this.$parent.globalData
+    api.course
+      .getClassInfo({
+        lessonId: this.lessonId
+      })
+      .then(({ data }) => {
+        this.courseInfo = data.resultData
+        setTimeout(() => {
+          this.loading = false
+          this.initAudio(data.resultData.guideAudio)
+          this.$apply()
+        }, 1000)
+        this.$apply()
+      })
+  }
+
+  onLoad(option) {
     this.audioContext = wx.createInnerAudioContext()
     this.lessonId = option.id
     this.audioContext.onEnded(() => {
@@ -211,9 +227,7 @@ export default class Example extends wepy.page {
       // this.randomImitateReady()
       this.$apply()
     })
-    this.audioContext.onPlay(() => {
-
-    })
+    this.audioContext.onPlay(() => {})
     this.audioContext.onTimeUpdate(() => {
       if (!this.currentTime) {
         this.duration = parseInt(this.audioContext.duration)
@@ -225,22 +239,22 @@ export default class Example extends wepy.page {
       this.$apply()
     })
   }
-  onShow () {
+  onShow() {
     this.initPage()
     // wepy.$log.info('ready info')
   }
-  onHide () {
+  onHide() {
     this.$parent.globalData.audioContext.stop()
     this.audioContext.stop()
     // wepy.$log.error('ready error', this.roomData)
     // wepy.$log.warn('ready warn', this.roomData)
   }
-  onUnload () {
+  onUnload() {
     this.$parent.globalData.audioContext.stop()
     this.audioContext.stop()
     this.audioContext.destroy()
   }
-  onShareAppMessage () {
+  onShareAppMessage() {
     return {
       title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
       path: `/pages/index`,

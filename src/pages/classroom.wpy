@@ -41,33 +41,47 @@
           <view class="classroom-item-btn">4号小教室</view>
         </view>
       </view>
-      <view class="classroom-btn"
-            @tap="bindClickRoom">快速进入教室</view>
+      <form
+        report-submit="true"
+        @submit="submit"
+        >
+        <button
+          class="classroom-btn"
+          form-type="submit"
+          @tap="bindClickRoom"
+          >
+          快速进入教室
+        </button>
+      </form>
     </view>
   </view>
 </template>
 <script>
 import wepy from 'wepy'
+import { saveFormId } from '../utils'
 import mHeader from '../components/header'
 export default class Classroom extends wepy.page {
   config = {
     navigationBarTitleText: '进入教室'
-  };
+  }
   components = {
     mHeader
-  };
+  }
   data = {
     lessonId: 0,
     lessonData: {},
     roomData: {}
   }
   computed = {
-    height () {
+    height() {
       return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
     }
-  };
+  }
   methods = {
-    bindClickRoom () {
+    submit(e) {
+      saveFormId(e.detail.formId)
+    },
+    bindClickRoom() {
       if (this.roomData && this.roomData.stage === 1) {
         wx.redirectTo({ url: '/pages/study?id=' + this.lessonId })
       } else {
@@ -76,39 +90,43 @@ export default class Classroom extends wepy.page {
     }
   }
 
-  initPage () {
+  initPage() {
     this.viewLesson()
     this.getLessonRoom()
   }
 
-  getLessonRoom () {
+  getLessonRoom() {
     let { api } = this.$parent.globalData
-    api.study.getLessonRoom({
-      lessonId: this.lessonId
-    }).then(({ data }) => {
-      this.roomData = data.resultData
-      this.$apply()
-    })
+    api.study
+      .getLessonRoom({
+        lessonId: this.lessonId
+      })
+      .then(({ data }) => {
+        this.roomData = data.resultData
+        this.$apply()
+      })
   }
 
-  viewLesson () {
+  viewLesson() {
     let { api } = this.$parent.globalData
-    api.study.viewLesson({
-      lessonId: this.lessonId
-    }).then(({ data }) => {
-      this.lessonData = data.resultData
-      this.$apply()
-    })
+    api.study
+      .viewLesson({
+        lessonId: this.lessonId
+      })
+      .then(({ data }) => {
+        this.lessonData = data.resultData
+        this.$apply()
+      })
   }
 
-  onLoad (option) {
+  onLoad(option) {
     this.lessonId = option.id
   }
 
-  onShow () {
+  onShow() {
     this.initPage()
   }
-  onShareAppMessage () {
+  onShareAppMessage() {
     return {
       title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
       path: `/pages/index`,

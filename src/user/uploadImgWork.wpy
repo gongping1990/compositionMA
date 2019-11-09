@@ -1,28 +1,29 @@
 <template>
   <view class="container ">
     <mHeader title="提交作业"></mHeader>
-    <view class="container-scroll p-uploadImgWork"
-          style="margin-top:{{height}}px">
+    <view
+      class="container-scroll p-uploadImgWork"
+      style="margin-top:{{height}}px"
+    >
       <view class="p-uploadImgWork-title">
-        {{lessonDetail.homeworkClaim}}
+        {{ lessonDetail.homeworkClaim }}
       </view>
       <view class="p-uploadImgWork-content">
         <view class="-upload-wrap">
-          <view class="-upload-list"
-                wx:for="{{workImgList}}"
-                wx:key="{{item}}">
-            <image class="-upload-img"
-                   src="{{item}}"></image>
-            <image class="-upload-icon"
-                   @tap="delImg({{index}})"
-                   src="https://pub.file.k12.vip/poem/1_2/tjzy_icon_cancel copy@3x.png"></image>
+          <view class="-upload-list" wx:for="{{workImgList}}" wx:key="{{item}}">
+            <image class="-upload-img" src="{{item}}"></image>
+            <image
+              class="-upload-icon"
+              @tap="delImg({{index}})"
+              src="https://pub.file.k12.vip/poem/1_2/tjzy_icon_cancel copy@3x.png"
+            ></image>
           </view>
-          <view class="-upload-add"
-                @tap="uploadSeting"
-                wx:if="{{workImgList.length<3}}">
-            <van-icon name="plus"
-                      size="24px"
-                      color="#58422B" />
+          <view
+            class="-upload-add"
+            @tap="uploadSeting"
+            wx:if="{{workImgList.length<3}}"
+          >
+            <van-icon name="plus" size="24px" color="#58422B" />
           </view>
         </view>
 
@@ -30,47 +31,50 @@
       </view>
 
       <view class="p-uploadImgWork-footer">
-        <view class="-footer-btn"
-              @tap="submitWork">确认提交</view>
+        <form report-submit="true" @submit="submit">
+          <button form-type="submit" class="-footer-btn" @tap="submitWork">
+            确认提交
+          </button>
+        </form>
       </view>
-
     </view>
 
     <van-popup show="{{isOpenPopup}}">
       <view class="p-uploadImgWork-popup">
-        <image class="-popup-icon"
-               src="https://pub.file.k12.vip/tbzw/jrxx/succes.png"></image>
+        <image
+          class="-popup-icon"
+          src="https://pub.file.k12.vip/tbzw/jrxx/succes.png"
+        ></image>
         <view class="-popup-title">作业上传成功</view>
         <view class="-popup-text">老师随后为你点评，请留意微信通知!</view>
-        <button class="-popup-btn"
-                @tap="toWorkDetail">我知道了</button>
+        <button class="-popup-btn" @tap="toWorkDetail">我知道了</button>
       </view>
     </van-popup>
-
   </view>
 </template>
 
 <script>
 import wepy from 'wepy'
 import api from '../request/api'
+import { saveFormId } from '../utils'
 import mHeader from '../components/header'
 
 export default class UploadImgWork extends wepy.page {
   config = {
     navigationBarTitleText: '提交作业',
-    'usingComponents': {
+    usingComponents: {
       'van-icon': '../vant/icon/index',
       'van-popup': '../vant/popup/index'
     }
-  };
+  }
   components = {
     mHeader
-  };
+  }
   computed = {
-    height () {
+    height() {
       return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
     }
-  };
+  }
 
   data = {
     isOpenPopup: false,
@@ -78,18 +82,20 @@ export default class UploadImgWork extends wepy.page {
     queryInfo: '',
     lessonDetail: '',
     workImgList: []
-  };
+  }
 
-  getLessonInfo () {
-    api.study.getLessonDetail({
-      lessonId: this.queryInfo.id
-    }).then(res => {
-      this.lessonDetail = res.data.resultData
-      this.$apply()
-    })
-  };
+  getLessonInfo() {
+    api.study
+      .getLessonDetail({
+        lessonId: this.queryInfo.id
+      })
+      .then(res => {
+        this.lessonDetail = res.data.resultData
+        this.$apply()
+      })
+  }
 
-  uploadImgFn (fileUrl) {
+  uploadImgFn(fileUrl) {
     let _self = this
     if (_self.isSending) return
     _self.isSending = true
@@ -104,7 +110,7 @@ export default class UploadImgWork extends wepy.page {
       filePath: fileUrl,
       name: 'file',
       header: { 'Content-Type': 'multipart/form-data' },
-      success: function (res) {
+      success: function(res) {
         if (res.statusCode !== 200) {
           wx.showModal({
             title: '提示',
@@ -122,7 +128,7 @@ export default class UploadImgWork extends wepy.page {
         _self.isSending = false
         _self.$apply()
       },
-      fail: function (e) {
+      fail: function(e) {
         wx.hideToast()
         wx.showModal({
           title: '提示',
@@ -130,35 +136,38 @@ export default class UploadImgWork extends wepy.page {
           showCancel: false
         })
       },
-      complete: function () {
-
-      }
+      complete: function() {}
     })
-  };
+  }
 
   methods = {
-    toWorkDetail () {
-      this.isOpenPopup = false
-      wx.navigateTo({ url: `/user/completionOfWork?type=1&id=${this.queryInfo.id}` })
+    submit(e) {
+      saveFormId(e.detail.formId)
     },
-    delImg (index) {
+    toWorkDetail() {
+      this.isOpenPopup = false
+      wx.navigateTo({
+        url: `/user/completionOfWork?type=1&id=${this.queryInfo.id}`
+      })
+    },
+    delImg(index) {
       this.workImgList.splice(index, 1)
     },
-    uploadSeting () {
+    uploadSeting() {
       let _self = this
 
       wx.chooseImage({
         count: 1, // 默认9
         sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
         sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
-        success: function (res) {
+        success: function(res) {
           // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
           _self.uploadImgFn(res.tempFilePaths[0])
         }
       })
     },
 
-    submitWork () {
+    submitWork() {
       if (this.isSending) return
 
       if (!this.workImgList.length) {
@@ -168,23 +177,27 @@ export default class UploadImgWork extends wepy.page {
         })
       }
 
-      api.study.addHomework({
-        lessonId: this.queryInfo.id,
-        workImg: this.workImgList
-      }).then(res => {
-        this.isSending = false
-        this.isOpenPopup = true
-        this.$apply()
-      }, () => {
-        this.isSending = false
-      })
+      api.study
+        .addHomework({
+          lessonId: this.queryInfo.id,
+          workImg: this.workImgList
+        })
+        .then(
+          res => {
+            this.isSending = false
+            this.isOpenPopup = true
+            this.$apply()
+          },
+          () => {
+            this.isSending = false
+          }
+        )
     }
+  }
 
-  };
+  events = {}
 
-  events = {};
-
-  onLoad (query) {
+  onLoad(query) {
     this.queryInfo = query
     this.getLessonInfo()
   }
@@ -267,12 +280,16 @@ export default class UploadImgWork extends wepy.page {
       text-align: center;
       width: 470px;
       height: 100px;
-      background:linear-gradient(90deg,rgba(254,179,18,1) 0%,rgba(255,192,0,1) 100%);
-      box-shadow:0px 2px 8px 4px rgba(255,181,76,0.4);
-      border-radius:50px;
+      background: linear-gradient(
+        90deg,
+        rgba(254, 179, 18, 1) 0%,
+        rgba(255, 192, 0, 1) 100%
+      );
+      box-shadow: 0px 2px 8px 4px rgba(255, 181, 76, 0.4);
+      border-radius: 50px;
       font-size: 32px;
       font-weight: 500;
-      color: #FFFFFF;
+      color: #ffffff;
       line-height: 100px;
     }
   }
@@ -316,8 +333,12 @@ export default class UploadImgWork extends wepy.page {
       margin: 0 auto;
       width: 470px;
       height: 100px;
-      background:linear-gradient(90deg,rgba(254,179,18,1) 0%,rgba(255,192,0,1) 100%);
-      box-shadow:0px 2px 8px 4px rgba(255,181,76,0.4);
+      background: linear-gradient(
+        90deg,
+        rgba(254, 179, 18, 1) 0%,
+        rgba(255, 192, 0, 1) 100%
+      );
+      box-shadow: 0px 2px 8px 4px rgba(255, 181, 76, 0.4);
       border-radius: 50px;
       font-size: 32px;
       font-weight: 500;

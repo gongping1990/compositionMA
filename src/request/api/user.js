@@ -44,6 +44,9 @@ const user = {
   checkLogined() {
     return request.get('/compositionv2/user/checkLogined')
   },
+  saveFormId(params) {
+    return request.get('/compositionv2/user/saveFormId', params)
+  },
   addMyChild(params) {
     return request.post('/umg/student/addMyChild', params)
   },

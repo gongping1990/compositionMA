@@ -1,28 +1,38 @@
 <!-- 辅导老师列表 -->
 <template>
-  <view class='container child'>
+  <view class="container child">
     <mHeader title="我的孩子"></mHeader>
-    <view class="container-scroll child-list"
-          wx:if="{{isLoad}}"
-          style="margin-top:{{height}}px">
-      <view class="child-cell" >
+    <view
+      class="container-scroll child-list"
+      wx:if="{{isLoad}}"
+      style="margin-top:{{height}}px"
+    >
+      <view class="child-cell">
         <text class="child-cell-left">孩子头像</text>
         <view class="child-cell-right" @tap="bindUploadAvatar">
-          <image class="child-avatar" src="{{form.avatar ? form.avatar : userInfo.headimgurl}}" />
+          <image
+            class="child-avatar"
+            src="{{form.avatar ? form.avatar : userInfo.headimgurl}}"
+          />
         </view>
       </view>
       <view class="child-cell" @tap="bindClickName">
         <text class="child-cell-left">孩子昵称</text>
         <view class="child-cell-right child-picker">
-          {{form.nickname ? form.nickname : '填写孩子姓名'}}
+          {{ form.nickname ? form.nickname : '填写孩子姓名' }}
         </view>
       </view>
       <view class="child-cell">
         <text class="child-cell-left">孩子性别</text>
         <view class="child-cell-right">
-          <picker class="child-picker-input" bindchange="bindPickerChangeSex" value="{{form.sex}}" range="{{sexArr}}">
+          <picker
+            class="child-picker-input"
+            bindchange="bindPickerChangeSex"
+            value="{{form.sex}}"
+            range="{{sexArr}}"
+          >
             <view class="child-picker">
-              {{sexArr[form.sex]}}
+              {{ sexArr[form.sex] }}
             </view>
           </picker>
         </view>
@@ -30,9 +40,14 @@
       <view class="child-cell">
         <text class="child-cell-left">与孩子的关系</text>
         <view class="child-cell-right">
-          <picker class="child-picker-input" bindchange="bindPickerChangeRelation" value="{{form.relation}}" range="{{gxArr}}">
+          <picker
+            class="child-picker-input"
+            bindchange="bindPickerChangeRelation"
+            value="{{form.relation}}"
+            range="{{gxArr}}"
+          >
             <view class="child-picker">
-              {{gxArr[form.relation]}}
+              {{ gxArr[form.relation] }}
             </view>
           </picker>
         </view>
@@ -40,26 +55,32 @@
       <view class="child-cell">
         <text class="child-cell-left">在读年级</text>
         <view class="child-cell-right">
-          <picker class="child-picker-input" bindchange="bindPickerChangeGrade" value="{{form.grade}}" range="{{gradeArr}}">
+          <picker
+            class="child-picker-input"
+            bindchange="bindPickerChangeGrade"
+            value="{{form.grade}}"
+            range="{{gradeArr}}"
+          >
             <view class="child-picker">
-              {{gradeArr[form.grade]}}
+              {{ gradeArr[form.grade] }}
             </view>
           </picker>
         </view>
       </view>
-      <view class="child-cell" >
+      <view class="child-cell">
         <text class="child-cell-left">所在城市</text>
         <view class="child-cell-right child-picker" @tap="bindClickAreas">
-          {{form.areasText ? form.areasText : '选择城市'}}
+          {{ form.areasText ? form.areasText : '选择城市' }}
         </view>
       </view>
     </view>
-    <van-popup position="bottom"
-               show="{{ show }}">
-      <van-area area-list="{{ areaList }}"
-                value="{{form.areasId}}"
-                @confirm="bindClickConfirm"
-                @cancel="bindClickRegion" />
+    <van-popup position="bottom" show="{{ show }}">
+      <van-area
+        area-list="{{ areaList }}"
+        value="{{form.areasId}}"
+        @confirm="bindClickConfirm"
+        @cancel="bindClickRegion"
+      />
     </van-popup>
     <van-dialog
       use-slot
@@ -71,7 +92,13 @@
       bind:confirm="onConfirm"
     >
       <view class="child-dialog-content">
-        <input class="child-dialog-input" maxlength="8" value="{{form.nickname}}" bindinput="bindChangeName" placeholder="请输入孩子姓名"/>
+        <input
+          class="child-dialog-input"
+          maxlength="8"
+          value="{{form.nickname}}"
+          bindinput="bindChangeName"
+          placeholder="请输入孩子姓名"
+        />
         <text class="child-dialog-msg">不超过8个字</text>
       </view>
     </van-dialog>
@@ -124,7 +151,8 @@ export default class Child extends wepy.page {
       grade: 0,
       relation: 0,
       sex: 0,
-      puid: 0
+      puid: 0,
+      id: 0
     },
     areaList: Object.assign({}, areaList)
   }
@@ -209,7 +237,8 @@ export default class Child extends wepy.page {
           grade,
           relation,
           sex,
-          puid
+          puid,
+          id
         } = data.resultData
         this.form = {
           areasId: areasId || '',
@@ -219,7 +248,8 @@ export default class Child extends wepy.page {
           grade: grade || 0,
           relation: relation || 0,
           sex: sex || 0,
-          puid: puid || 0
+          puid: puid || 0,
+          id: id
         }
       }
       this.isLoad = true
@@ -235,25 +265,29 @@ export default class Child extends wepy.page {
       nickname,
       puid,
       relation,
-      sex
+      sex,
+      id
     } = this.form
-    api.user
-      .addMyChild({
-        areasId,
-        areasText,
-        avatar,
-        grade,
-        nickname,
-        relation,
-        sex,
-        puid
-      })
-      .then(({ data }) => {
-        if (data.resultData) {
-          this.form = data.resultData
-          this.$apply()
-        }
-      })
+    let params = {
+      areasId,
+      areasText,
+      avatar,
+      grade,
+      nickname,
+      relation,
+      sex,
+      puid
+    }
+    if (id) {
+      params.id = id
+    }
+
+    api.user.addMyChild(params).then(({ data }) => {
+      if (data.resultData) {
+        this.form = data.resultData
+        this.$apply()
+      }
+    })
   }
 
   onSelect(type) {
@@ -287,7 +321,7 @@ export default class Child extends wepy.page {
   }
 }
 </script>
-<style lang='scss'>
+<style lang="scss">
 @import '../assets/style/mixin.scss';
 .child {
   &-dialog {

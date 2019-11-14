@@ -212,7 +212,14 @@ export default class Lesson extends wepy.page {
   watch = {
     logined(n) {
       if (n) {
+        this.getBottomTipsVO()
         this.getAttendClassCatalog()
+      }
+    },
+    remindData(n) {
+      if (this.logined && !n.hasChild) {
+        wx.setStorageSync('redirect', '/pages/lesson')
+        wx.redirectTo({ url: '/user/info' })
       }
     }
   }

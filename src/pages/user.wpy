@@ -228,7 +228,14 @@ export default class User extends wepy.page {
 
   events = {
     login() {
+      this.getBottomTipsVO()
       this.getUCRemindVO()
+    },
+    remindData(n) {
+      if (this.logined && !n.hasChild) {
+        wx.setStorageSync('redirect', '/pages/user')
+        wx.redirectTo({ url: '/user/info' })
+      }
     }
   }
 

@@ -94,8 +94,7 @@ export default class Info extends wepy.page {
   }
   events = {
     back() {
-      let path = wx.getStorageSync('redirect')
-      wx.redirectTo({ url: path })
+      wx.redirectTo({ url: '/pages/index' })
     }
   }
   methods = {

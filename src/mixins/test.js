@@ -11,6 +11,7 @@ export default class testMixin extends wepy.mixin {
           break
         case 1:
           if (this.logined && !this.remindData.hasChild) {
+            wx.setStorageSync('redirect', '/pages/lesson')
             wx.redirectTo({ url: '/user/info' })
           } else {
             wx.redirectTo({ url: '/pages/lesson' })
@@ -20,7 +21,12 @@ export default class testMixin extends wepy.mixin {
           wx.redirectTo({ url: '/pages/server' })
           break
         case 3:
-          wx.redirectTo({ url: '/pages/user' })
+          if (this.logined && !this.remindData.hasChild) {
+            wx.setStorageSync('redirect', '/pages/user')
+            wx.redirectTo({ url: '/user/info' })
+          } else {
+            wx.redirectTo({ url: '/pages/user' })
+          }
           break
       }
     }

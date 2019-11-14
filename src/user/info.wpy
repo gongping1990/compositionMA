@@ -94,7 +94,8 @@ export default class Info extends wepy.page {
   }
   events = {
     back() {
-      wx.redirectTo({ url: '/pages/index' });
+      let path = wx.getStorageSync('redirect')
+      wx.redirectTo({ url: path })
     }
   }
   methods = {
@@ -153,11 +154,12 @@ export default class Info extends wepy.page {
       params.id = id
     }
     api.user.addMyChild(params).then(({ data }) => {
+      let path = wx.getStorageSync('redirect')
       wx.showToast({
         title: '信息已完善', //提示的内容,
         icon: 'none' //图标
       })
-      wx.redirectTo({ url: '/pages/lesson' })
+      wx.redirectTo({ url: path })
       this.$apply()
     })
   }

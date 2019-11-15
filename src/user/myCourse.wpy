@@ -12,9 +12,9 @@
           <image class="course-cover" src="{{item.coverphoto}}" />
           <view class="course-info">
             <text class="course-title">{{ item.name }}</text>
-            <text class="course-text"
-              >共{{ item.lessons }}节|已学{{ item.studys }}节</text
-            >
+            <text class="course-text">
+              共{{ item.lessons }}节|已学{{ item.studys }}节
+            </text>
           </view>
         </view>
       </view>

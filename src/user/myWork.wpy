@@ -267,6 +267,7 @@ export default class MyWork extends wepy.page {
     font-size: 26px;
     font-weight: 400;
     color: rgba(153, 153, 153, 1);
+    background-color: #fff;
     line-height: 36px;
     text-decoration: underline;
   }

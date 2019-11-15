@@ -39,7 +39,7 @@
       </view>
     </view>
 
-    <van-popup show="{{isOpenPopup}}">
+    <!-- <van-popup show="{{isOpenPopup}}">
       <view class="p-uploadImgWork-popup">
         <image
           class="-popup-icon"
@@ -49,7 +49,8 @@
         <view class="-popup-text">老师随后为你点评，请留意微信通知!</view>
         <button class="-popup-btn" @tap="toWorkDetail">我知道了</button>
       </view>
-    </van-popup>
+    </van-popup> -->
+    <loaded></loaded>
   </view>
 </template>
 
@@ -58,6 +59,7 @@ import wepy from 'wepy'
 import api from '../request/api'
 import { saveFormId } from '../utils'
 import mHeader from '../components/header'
+import loaded from '../components/loaded'
 
 export default class UploadImgWork extends wepy.page {
   config = {
@@ -68,7 +70,8 @@ export default class UploadImgWork extends wepy.page {
     }
   }
   components = {
-    mHeader
+    mHeader,
+    loaded
   }
   computed = {
     height() {
@@ -185,7 +188,7 @@ export default class UploadImgWork extends wepy.page {
         .then(
           res => {
             this.isSending = false
-            this.isOpenPopup = true
+            this.$broadcast('show')
             this.$apply()
           },
           () => {
@@ -195,11 +198,21 @@ export default class UploadImgWork extends wepy.page {
     }
   }
 
-  events = {}
+  events = {
+    success() {
+      wx.navigateTo({
+        url: `/user/completionOfWork?type=1&id=${this.queryInfo.id}`
+      })
+    }
+  }
 
   onLoad(query) {
     this.queryInfo = query
     this.getLessonInfo()
+  }
+
+  onHide() {
+    this.$broadcast('destroy')
   }
 }
 </script>
@@ -208,7 +221,6 @@ export default class UploadImgWork extends wepy.page {
 
 .p-uploadImgWork {
   border-top: 1px solid transparent;
-
   &-title {
     margin: 32px 48px 48px;
     padding: 32px;

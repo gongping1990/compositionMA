@@ -58,8 +58,8 @@
 				{
 					"id": 0,
 					"name": "lesson",
-					"pathName": "user/info",
-					"query": "id=1174867249594982402",
+					"pathName": "user/uploadImgWork",
+					"query": "id=1173416243014283266",
 					"scene": null
 				},
 				{

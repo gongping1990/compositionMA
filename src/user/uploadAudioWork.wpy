@@ -27,7 +27,7 @@
       </view>
     </view>
 
-    <van-popup show="{{isOpenPopup}}">
+    <!-- <van-popup show="{{isOpenPopup}}">
       <view class="p-uploadAudioWork-popup">
         <image class="-popup-icon"
                src="https://pub.file.k12.vip/tbzw/jrxx/succes.png"></image>
@@ -36,7 +36,8 @@
         <button class="-popup-btn"
                 @tap="toWorkDetail">我知道了</button>
       </view>
-    </van-popup>
+    </van-popup> -->
+    <loaded></loaded>
 
     <ConfirmModal :isShow.sync="isOpenResultPopup"
                   titleText="提示"
@@ -49,6 +50,7 @@
   import api from '../request/api'
   import mHeader from '../components/header'
   import ConfirmModal from '../components/confirmModal'
+  import loaded from '../components/loaded'
 
   export default class UploadAudioWork extends wepy.page {
     config = {
@@ -60,7 +62,8 @@
     };
     components = {
       mHeader,
-      ConfirmModal
+      ConfirmModal,
+      loaded
     };
     computed = {
       height() {
@@ -210,7 +213,7 @@
               }).then(res => {
                 _self.isSending = false
                 wx.hideToast()  // 隐藏Toast
-                _self.isOpenPopup = true
+                _self.$broadcast('show')
                 _self.$apply()
               }, () => {
                 _self.isSending = false
@@ -242,6 +245,9 @@
         if (bool === 'true') {
           this.nowStatus = 1
         }
+      },
+      success() {
+        wx.navigateTo({ url: `/user/completionOfWork?type=1&id=${this.queryInfo.id}` })
       }
     };
 
@@ -250,6 +256,11 @@
     }
 
     onUnload () {
+      this.recorderManager.stop()
+    }
+
+    onHide() {
+      this.$broadcast('destroy')
       this.recorderManager.stop()
     }
 

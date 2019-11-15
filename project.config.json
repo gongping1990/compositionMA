@@ -278,6 +278,13 @@
 					"pathName": "user/recognitionNotice",
 					"query": "",
 					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "user/completionOfWork",
+					"pathName": "user/completionOfWork",
+					"query": "type=2&id=1195168090364067842",
+					"scene": null
 				}
 			]
 		}

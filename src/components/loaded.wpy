@@ -1,7 +1,10 @@
 <!--  -->
 <template>
-  <view class='loaded' wx:if="{{show}}">
-    <image class="loaded-img" src="https://pub.file.k12.vip/tbzw/1.4/loading.gif" />
+  <view class="loaded" wx:if="{{show}}">
+    <image
+      class="loaded-img"
+      src="https://pub.file.k12.vip/tbzw/1.4/loading.gif"
+    />
     <view class="loaded-item {{active > 0 && 'active'}}">
       <view class="loaded-icon"></view>
       作品上传成功
@@ -18,9 +21,9 @@ export default class Example extends wepy.component {
   data = {
     active: 0,
     show: false
-  };
-  components = {};
-  methods = {};
+  }
+  components = {}
+  methods = {}
   events = {
     show() {
       this.show = true
@@ -31,16 +34,16 @@ export default class Example extends wepy.component {
         this.show = false
         this.active = 0
         this.$apply()
-      }, 500);
+      }, 1000)
     }
-  };
+  }
 
   downTime() {
-    if(this.active < 2) {
+    if (this.active < 2) {
       setTimeout(() => {
         this.active += 1
         this.downTime()
-      }, 1000);
+      }, 2000)
     } else {
       this.$emit('success')
     }
@@ -48,7 +51,7 @@ export default class Example extends wepy.component {
   }
 }
 </script>
-<style lang='scss'>
+<style lang="scss">
 @import '../assets/style/mixin.scss';
 .loaded {
   display: flex;
@@ -76,12 +79,12 @@ export default class Example extends wepy.component {
   &-item {
     @include flex-center;
     margin-top: 30px;
-    color: #C5C5C5;
+    color: #c5c5c5;
     font-size: 36px;
     &.active {
       color: #333;
       .loaded-icon {
-        background-image: url('https://pub.file.k12.vip/tbzw/1.4/icon-selected.png')
+        background-image: url('https://pub.file.k12.vip/tbzw/1.4/icon-selected.png');
       }
     }
   }

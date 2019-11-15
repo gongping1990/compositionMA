@@ -57,9 +57,9 @@
 			"list": [
 				{
 					"id": 0,
-					"name": "lesson",
-					"pathName": "user/uploadImgWork",
-					"query": "id=1173416243014283266",
+					"name": "pages/classroom",
+					"pathName": "pages/classroom",
+					"query": "id=1139443331912044546",
 					"scene": null
 				},
 				{

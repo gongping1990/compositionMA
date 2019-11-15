@@ -1,56 +1,52 @@
 <!--  -->
 <template>
-  <view class='container ready'>
-    <mHeader title="课前热身"
-             flag="4"></mHeader>
-    <view class="container-scroll"
-          style="margin-top:{{height}}px">
+  <view class="container ready">
+    <mHeader title="课前热身" flag="4"></mHeader>
+    <view class="container-scroll" style="margin-top:{{height}}px">
       <view class="header">
         <view class="header-left">
-          <image class="header-avatar"
-                 src="{{roomData.teacherImg}}" />
-          <text class="header-title">{{roomData.teacherName}}</text>
+          <image class="header-avatar" src="{{roomData.teacherImg}}" />
+          <text class="header-title">{{ roomData.teacherName }}</text>
           <text class="header-subtitle">写作老师</text>
         </view>
         <view class="header-right {{isReady && 'isReady'}}">
-          <view class="header-student {{readyArr[index] && 'isReady'}}"
-                wx:for="{{mateInfo}}"
-                wx:key="{{item.mateId}}">
-            <image class="header-student-avatar"
-                   src="{{item.mateImg}}" />
-            <view class="header-status">{{readyArr[index] ? '已准备' : '准备中...'}}</view>
+          <view
+            class="header-student {{readyArr[index] && 'isReady'}}"
+            wx:for="{{mateInfo}}"
+            wx:key="{{item.mateId}}"
+          >
+            <image class="header-student-avatar" src="{{item.mateImg}}" />
+            <view class="header-status">{{
+              readyArr[index] ? '已准备' : '准备中...'
+            }}</view>
           </view>
         </view>
       </view>
-      <view class="content"
-            style="height:calc(100vh - 254rpx - {{height * 2}}rpx)">
+      <view
+        class="content"
+        style="height:calc(100vh - 254rpx - {{height * 2}}rpx)"
+      >
         <view class="chart-item">
-          <image class="chart-avatar"
-                 src="{{roomData.teacherImg}}" />
+          <image class="chart-avatar" src="{{roomData.teacherImg}}" />
           <view class="chart-right">
-            <text class="chart-title">{{roomData.teacherName}}</text>
+            <text class="chart-title">{{ roomData.teacherName }}</text>
             <view class="chart-content-wrap">
-
-              <view class="chart-content voice"
-                    @tap="bindClickVoice">
+              <view class="chart-content voice" @tap="bindClickVoice">
                 <view class="icon {{paused && 'paused'}}"></view>
               </view>
-              <view class="chart-time">{{timeText}}</view>
+              <view class="chart-time">{{ timeText }}</view>
             </view>
           </view>
         </view>
       </view>
     </view>
-    <form
-      report-submit="true"
-      @submit="submit"
-      >
+    <form report-submit="true" @submit="submit">
       <button
         form-type="submit"
         class="ready-btn {{isReady && 'show'}}"
         @tap="clickStudy"
-        >
-        {{time ? '开始上课（' + time + '）s' : '开始上课'}}
+      >
+        {{ time ? '开始上课（' + time + '）s' : '开始上课' }}
       </button>
     </form>
     <loading wx:if="{{loading}}"></loading>
@@ -263,7 +259,7 @@ export default class Example extends wepy.page {
   }
 }
 </script>
-<style lang='scss'>
+<style lang="scss">
 @import '../assets/style/mixin.scss';
 .ready {
   position: relative;

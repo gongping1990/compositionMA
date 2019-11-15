@@ -1,58 +1,30 @@
 <!--  -->
 <template>
-  <view class='container classroom'>
+  <view class="container classroom">
     <mHeader title="进入教室"></mHeader>
-    <view class="container-scroll"
-          style="margin-top:{{height}}px">
-      <view class="classroom-header">
-        <image class="classroom-img"
-               src="{{lessonData.coverphoto}}" />
-        <view class="classroom-info">
-          <view class="classroom-text">
-            <text class="classroom-title">{{lessonData.name}}</text>
-            <text class="classroom-subtitle">《{{lessonData.courseName}}》</text>
+    <view class="container-scroll" style="margin-top:{{height}}px">
+      <view class="classroom-content">
+        <view class="classroom-header-wrap">
+          <view class="classroom-header">
+            <image class="classroom-img" src="{{lessonData.coverphoto}}" />
+            <view class="classroom-info">
+              <view class="classroom-text">
+                <text class="classroom-title">{{ lessonData.name }}</text>
+                <text class="classroom-subtitle">
+                  《{{ lessonData.courseName }}》
+                </text>
+              </view>
+              <text class="classroom-num">{{ lessonData.uv }} 人已学</text>
+            </view>
           </view>
-          <text class="classroom-num">{{lessonData.uv}} 人已学</text>
         </view>
+        <view class="classroom-list"> </view>
+        <form report-submit="true" @submit="submit">
+          <button class="classroom-btn" form-type="submit" @tap="bindClickRoom">
+            快速进入教室
+          </button>
+        </form>
       </view>
-      <view class="classroom-list">
-        <view class="classroom-item"
-              @tap="bindClickRoom">
-          <image class="classroom-item-img"
-                 src="https://pub.file.k12.vip/tbzw/romm.png" />
-          <view class="classroom-item-btn">1号小教室</view>
-        </view>
-        <view class="classroom-item"
-              @tap="bindClickRoom">
-          <image class="classroom-item-img"
-                 src="https://pub.file.k12.vip/tbzw/romm.png" />
-          <view class="classroom-item-btn">2号小教室</view>
-        </view>
-        <view class="classroom-item"
-              @tap="bindClickRoom">
-          <image class="classroom-item-img"
-                 src="https://pub.file.k12.vip/tbzw/romm.png" />
-          <view class="classroom-item-btn">3号小教室</view>
-        </view>
-        <view class="classroom-item"
-              @tap="bindClickRoom">
-          <image class="classroom-item-img"
-                 src="https://pub.file.k12.vip/tbzw/romm.png" />
-          <view class="classroom-item-btn">4号小教室</view>
-        </view>
-      </view>
-      <form
-        report-submit="true"
-        @submit="submit"
-        >
-        <button
-          class="classroom-btn"
-          form-type="submit"
-          @tap="bindClickRoom"
-          >
-          快速进入教室
-        </button>
-      </form>
     </view>
   </view>
 </template>
@@ -82,6 +54,8 @@ export default class Classroom extends wepy.page {
       saveFormId(e.detail.formId)
     },
     bindClickRoom() {
+      let { playBtnAudio, btnAudioContext } = this.$parent.globalData
+      playBtnAudio(btnAudioContext)
       if (this.roomData && this.roomData.stage === 1) {
         wx.redirectTo({ url: '/pages/study?id=' + this.lessonId })
       } else {
@@ -135,10 +109,17 @@ export default class Classroom extends wepy.page {
   }
 }
 </script>
-<style lang='scss'>
+<style lang="scss">
 @import '../assets/style/mixin.scss';
 .classroom {
   color: #58422b;
+  &-content {
+    padding-top: 220px;
+    background: url('https://pub.file.k12.vip/tbzw/1.5/classroom/bg.png')
+      no-repeat;
+    background-size: 100%;
+    background-position-y: -100px;
+  }
   &-btn {
     @include flex-center;
     position: fixed;
@@ -190,8 +171,14 @@ export default class Classroom extends wepy.page {
   }
   &-header {
     display: flex;
-    padding: 40px 46px;
-    box-shadow: 0px 8px 24px 0px rgba(236, 194, 96, 0.1);
+    padding-bottom: 18px;
+    border-bottom: 2px dashed #dfdfdf;
+    &-wrap {
+      padding: 40px 46px;
+      padding-bottom: 0;
+      background: rgba(255, 255, 255, 1);
+      border-radius: 32px 32px 24px 24px;
+    }
   }
   &-img {
     margin-right: 32px;

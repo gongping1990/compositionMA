@@ -65,7 +65,7 @@ export default class Example extends wepy.component {
   background: #fff;
   z-index: 1200;
   &-img {
-    margin-top: 260px;
+    margin-top: 340px;
     margin-bottom: 26px;
     width: 236px;
     height: 206px;

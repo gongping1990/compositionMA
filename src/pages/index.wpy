@@ -1,266 +1,344 @@
 <template>
-  <view class='container home'>
-    <form
-        report-submit="true"
-        @submit="submit"
-        >
-    <mHeader flag="0"></mHeader>
-    <tooltip></tooltip>
-    <view class="container-scroll"
-          style="margin-top:{{height}}px">
-
-
-      <swiper autoplay
-              class="banner"
-              circular>
-        <block wx:for="{{bannerList}}"
-               wx:key="{{index}}">
-          <swiper-item>
-            <button open-type="contact"
-                    class="banner-btn"
-                    show-message-card="true"
-                    send-message-title="{{item.cardtitle}}"
-                    send-message-path="{{'/pages/index?homeConfig=' + item.sessionFrom}}"
-                    send-message-img="{{item.cardimgurl}}">
-              <image mode="aspectFill"
-                     class="banner-img"
-                     src="{{item.url}}" />
-            </button>
-
-          </swiper-item>
-        </block>
-      </swiper>
-      <view class="title-item"
-            wx:if="{{courseList.length}}">
-        <text class="title-text">大语文精品课</text>
-      </view>
-      <repeat for="{{courseList}}"
-              key="index"
-              index="index"
-              item="item">
-        <view class="course-item">
-          <image src="{{item.verticalCover}}"
-                 class="course-cover"
-                 lazy-load="true" />
-          <view class="course-right">
-            <view class="course-info">
-              <text class="course-title">{{item.name}}</text>
-              <text class="course-text">{{item.courseDescribe}}</text>
-            </view>
-            <view class="course-btn-wrap">
-              <button open-type="contact"
-                      class="course-btn"
-                      show-message-card="true"
-                      send-message-title="{{item.cardtitle}}"
-                      send-message-path="{{'/pages/index?homeConfig=' + item.sessionFrom}}"
-                      send-message-img="{{item.cardimgurl}}">
-                去报名
+  <view class="container home">
+    <form report-submit="true" @submit="submit">
+      <mHeader flag="0"></mHeader>
+      <tooltip></tooltip>
+      <view class="container-scroll" style="margin-top:{{height}}px">
+        <swiper autoplay class="banner" circular>
+          <block wx:for="{{bannerList}}" wx:key="{{index}}">
+            <swiper-item>
+              <button
+                open-type="contact"
+                class="banner-btn"
+                show-message-card="true"
+                send-message-title="{{item.cardtitle}}"
+                send-message-path="{{'/pages/index?homeConfig=' + item.sessionFrom}}"
+                send-message-img="{{item.cardimgurl}}"
+              >
+                <image
+                  mode="aspectFill"
+                  class="banner-img"
+                  src="{{item.url}}"
+                />
               </button>
+            </swiper-item>
+          </block>
+        </swiper>
+        <view class="title-item" wx:if="{{courseList.length}}">
+          <text class="title-text">大语文精品课</text>
+        </view>
+        <repeat for="{{courseList}}" key="index" index="index" item="item">
+          <view class="course-item">
+            <image
+              src="{{item.verticalCover}}"
+              class="course-cover"
+              lazy-load="true"
+            />
+            <view class="course-right">
+              <view class="course-info">
+                <text class="course-title">{{ item.name }}</text>
+                <text class="course-text">{{ item.courseDescribe }}</text>
+              </view>
+              <view class="course-btn-wrap">
+                <button
+                  open-type="contact"
+                  class="course-btn"
+                  show-message-card="true"
+                  send-message-title="{{item.cardtitle}}"
+                  send-message-path="{{'/pages/index?homeConfig=' + item.sessionFrom}}"
+                  send-message-img="{{item.cardimgurl}}"
+                >
+                  去报名
+                </button>
+              </view>
             </view>
           </view>
-        </view>
-      </repeat>
+        </repeat>
 
-      <view class="-tabs">
-
-        <view class="-tabs-item {{index == tabActive ? 'active': ''}}"
-              wx:for="{{tabList}}"
-              wx:key="{{index}}"
-              @tap="clickTab({{index}})"><text>{{item}}</text>
-          <view class="border"></view>
-        </view>
-      </view>
-      <view class="work-list"
-            wx:if="{{!tabActive}}">
-        <view class="work-item"
-              wx:for="{{workList}}"
-              wx:key="{{item.lessonId}}"
-              @tap="clickWorkItem({{item}})">
-          <view class="work-cover {{item.homeworkType == 1 && 'yy'}}">
-            <view class="work-time">{{item.formatSubitTime}}</view>
-            <image class="work-img"
-                   src="{{item.workImgs[0]}}"
-                   lazy-load="false" />
-            <view class="work-title">
-              <text class="van-ellipsis">{{item.lessonName}}</text>
-            </view>
-          </view>
-          <view class="work-num">
-            <image class="work-num-icon"
-                   src="../assets/image/num-icon.png" />
-            <text class="work-num-text">坚持学习{{item.studys}}天</text>
-          </view>
-          <view class="work-footer">
-            <view class="work-user">
-              <image class="work-user-avatar"
-                     src="{{item.headimgurl}}" />
-              <text class="work-user-name van-ellipsis">{{item.nickname}}</text>
-            </view>
-            <view class="work-like"
-                  @tap.stop="clickLike({{item}}, {{index}})">
-              <image class="work-like-icon"
-                     src="../assets/image/like.png"
-                     wx:if="{{item.liked}}" />
-              <image class="work-like-icon"
-                     wx:else
-                     src="../assets/image/like-def.png" />
-              <text class="work-like-num">{{item.likes}}</text>
-            </view>
+        <view class="-tabs">
+          <view
+            class="-tabs-item {{index == tabActive ? 'active': ''}}"
+            wx:for="{{tabList}}"
+            wx:key="{{index}}"
+            @tap="clickTab({{index}})"
+            ><text>{{ item }}</text>
+            <view class="border"></view>
           </view>
         </view>
-      </view>
-      <view class="hot"
-            wx:else>
-        <view class="hot-item"
-              wx:for="{{hotList}}"
-              wx:key="{{item.lessonId}}"
-              @tap="clickWorkItem({{item}})">
-          <view class="hot-cover {{item.homeworkType == 1 && 'yy'}}">
-            <view class="hot-cover-tag">{{item.formatSubitTime}}</view>
-            <image class="hot-cover-img"
-                   wx:if="{{item.homeworkType != 1}}"
-                   src="{{item.workImgs[0]}}" />
-            <view class="hot-cover-audio"
-                  wx:else>
-              <view class="hot-cover-audio-icon"></view>
-              <text class="hot-cover-audio-time">{{item.formatDuration}}</text>
+        <view class="work-list" wx:if="{{!tabActive}}">
+          <view
+            class="work-item"
+            wx:for="{{workList}}"
+            wx:key="{{item.lessonId}}"
+            @tap="clickWorkItem({{item}})"
+          >
+            <view class="work-cover {{item.homeworkType == 1 && 'yy'}}">
+              <view class="work-time">{{ item.formatSubitTime }}</view>
+              <image
+                class="work-img"
+                src="{{item.workImgs[0]}}"
+                lazy-load="false"
+              />
+              <view class="work-title">
+                <text class="van-ellipsis">{{ item.lessonName }}</text>
+              </view>
             </view>
-            <view class="hot-title">
-              <text class="van-ellipsis">{{item.lessonName}}</text>
+            <view class="work-num">
+              <image class="work-num-icon" src="../assets/image/num-icon.png" />
+              <text class="work-num-text">坚持学习{{ item.studys }}天</text>
+            </view>
+            <view class="work-footer">
+              <view class="work-user">
+                <image class="work-user-avatar" src="{{item.headimgurl}}" />
+                <text class="work-user-name van-ellipsis">{{
+                  item.nickname
+                }}</text>
+              </view>
+              <view
+                class="work-like"
+                @tap.stop="clickLike({{item}}, {{index}})"
+              >
+                <image
+                  class="work-like-icon"
+                  src="../assets/image/like.png"
+                  wx:if="{{item.liked}}"
+                />
+                <image
+                  class="work-like-icon"
+                  wx:else
+                  src="../assets/image/like-def.png"
+                />
+                <text class="work-like-num">{{ item.likes }}</text>
+              </view>
             </view>
           </view>
-          <view class="hot-info">
-            <view class="hot-user">
-              <image class="hot-user-avatar"
-                     src="{{item.headimgurl}}" />
-              <view class="hot-user-info">
-                <text class="hot-user-name">{{item.nickname}}</text>
-                <view class="hot-user-num">
-                  <image class="hot-user-icon"
-                         src="../assets/image/num-icon.png" />
-                  累计表扬{{item.praises}}次
+        </view>
+        <view class="hot" wx:else>
+          <view
+            class="hot-item"
+            wx:for="{{hotList}}"
+            wx:key="{{item.lessonId}}"
+            @tap="clickWorkItem({{item}})"
+          >
+            <view class="hot-cover {{item.homeworkType == 1 && 'yy'}}">
+              <view class="hot-cover-tag">{{ item.formatSubitTime }}</view>
+              <image
+                class="hot-cover-img"
+                wx:if="{{item.homeworkType != 1}}"
+                src="{{item.workImgs[0]}}"
+              />
+              <view class="hot-cover-audio" wx:else>
+                <view class="hot-cover-audio-icon"></view>
+                <text class="hot-cover-audio-time">{{
+                  item.formatDuration
+                }}</text>
+              </view>
+              <view class="hot-title">
+                <text class="van-ellipsis">{{ item.lessonName }}</text>
+              </view>
+            </view>
+            <view class="hot-info">
+              <view class="hot-user">
+                <image class="hot-user-avatar" src="{{item.headimgurl}}" />
+                <view class="hot-user-info">
+                  <text class="hot-user-name">{{ item.nickname }}</text>
+                  <view class="hot-user-num">
+                    <image
+                      class="hot-user-icon"
+                      src="../assets/image/num-icon.png"
+                    />
+                    累计表扬{{ item.praises }}次
+                  </view>
+                </view>
+              </view>
+              <view class="hot-right">
+                <view class="hot-tag">由{{ item.praiseTeacher }}推荐</view>
+                <view
+                  class="hot-like"
+                  @tap.stop="clickLike({{item}}, {{index}})"
+                >
+                  <image
+                    class="hot-like-icon"
+                    wx:if="{{item.liked}}"
+                    src="../assets/image/like.png"
+                  />
+                  <image
+                    class="hot-like-icon"
+                    wx:else
+                    src="../assets/image/like-def.png"
+                  />
+                  <text>{{ item.likes }}</text>
                 </view>
               </view>
             </view>
-            <view class="hot-right">
-              <view class="hot-tag">由{{item.praiseTeacher}}推荐</view>
-              <view class="hot-like"
-                    @tap.stop="clickLike({{item}}, {{index}})">
-                <image class="hot-like-icon"
-                       wx:if="{{item.liked}}"
-                       src="../assets/image/like.png" />
-                <image class="hot-like-icon"
-                       wx:else
-                       src="../assets/image/like-def.png" />
-                <text>{{item.likes}}</text>
-              </view>
-            </view>
           </view>
         </view>
       </view>
-    </view>
-    <van-tabbar active="0"
-                active-color="#58422B"
-                bind:change="onChangeTabbar">
-      <van-tabbar-item>
-        <image slot="icon"
-               src="../assets/image/home-def.png"
-               mode="aspectFit" />
-        <image slot="icon-active"
-               src="../assets/image/home-pre.png"
-               mode="aspectFit" />
-        首页
-      </van-tabbar-item>
-      <van-tabbar-item>
-        <image class="tabbar-popup"
-               src="https://pub.file.k12.vip/composition/tabber-img.png"
-               mode="aspectFit" />
-        <image slot="icon"
-               src="../assets/image/sk-def.png"
-               mode="aspectFit" />
-        <image slot="icon-active"
-               src="../assets/image/sk-pre.png"
-               mode="aspectFit" />
-        上课
-      </van-tabbar-item>
-      <van-tabbar-item dot="{{remindData.servicetip}}">
-        <image slot="icon"
-               src="../assets/image/serve-def.png"
-               mode="aspectFit" />
-        <image slot="icon-active"
-               src="../assets/image/serve-pre.png"
-               mode="aspectFit" />
-        服务
-      </van-tabbar-item>
-      <van-tabbar-item dot="{{remindData.uctip}}">
-        <image slot="icon"
-               src="../assets/image/my-def.png"
-               mode="aspectFit" />
-        <image slot="icon-active"
-               src="../assets/image/my-pre.png"
-               mode="aspectFit" />
-        我的
-      </van-tabbar-item>
-    </van-tabbar>
-    <van-popup show="{{ showAddress }}"
-               @close="onClose">
-      <view class="dialog">
-        <view class="dialog-icon"></view>
-        <text class="dialog-title">礼包配送</text>
-        <text class="dialog-text">请您完善收货地址</text>
-        <text class="dialog-text">以便为您配送课程配套的“实物大礼包”</text>
-        <view class="dialog-btn"
-              @tap="bindPerfect">去完善</view>
-        <view class="dialog-close"
-              @tap="onClose"></view>
-      </view>
-    </van-popup>
-    <van-popup show="{{ showKF }}"
-               position="bottom"
-               @close="onClose">
-      <view class="kf-pop">
-        <text class="kf-pop-title">报名课程</text>
-        <image src="https://pub.file.k12.vip/tbzw/v2/baoming.gif"
-               class="kf-pop-img" />
-        <text class="kf-pop-text">点击下方按钮</text>
-        <text class="kf-pop-text red">回复“1”即可报名学习</text>
-        <button class="kf-pop-btn"
-                open-type="contact">
-          回复“1”立即报名
-        </button>
-      </view>
-    </van-popup>
-    <van-popup show="{{ showAddTeacher }}"
-               @close="onClose">
-      <view class="dialog teacher_add" wx:if="{{infoData.kfTeacherVO}}">
-        <view class="teacher_add_info">
-          <image class="teacher_add_avatar" src="{{infoData.kfTeacherVO.avatar}}" />
-          <text class="teahcer-add_name">{{infoData.kfTeacherVO.name}}</text>
+      <van-tabbar
+        active="0"
+        active-color="#58422B"
+        bind:change="onChangeTabbar"
+      >
+        <van-tabbar-item>
+          <image
+            slot="icon"
+            src="../assets/image/home-def.png"
+            mode="aspectFit"
+          />
+          <image
+            slot="icon-active"
+            src="../assets/image/home-pre.png"
+            mode="aspectFit"
+          />
+          首页
+        </van-tabbar-item>
+        <van-tabbar-item>
+          <image
+            class="tabbar-popup"
+            src="https://pub.file.k12.vip/composition/tabber-img.png"
+            mode="aspectFit"
+          />
+          <image
+            slot="icon"
+            src="../assets/image/sk-def.png"
+            mode="aspectFit"
+          />
+          <image
+            slot="icon-active"
+            src="../assets/image/sk-pre.png"
+            mode="aspectFit"
+          />
+          上课
+        </van-tabbar-item>
+        <van-tabbar-item dot="{{remindData.servicetip}}">
+          <image
+            slot="icon"
+            src="../assets/image/serve-def.png"
+            mode="aspectFit"
+          />
+          <image
+            slot="icon-active"
+            src="../assets/image/serve-pre.png"
+            mode="aspectFit"
+          />
+          服务
+        </van-tabbar-item>
+        <van-tabbar-item dot="{{remindData.uctip}}">
+          <image
+            slot="icon"
+            src="../assets/image/my-def.png"
+            mode="aspectFit"
+          />
+          <image
+            slot="icon-active"
+            src="../assets/image/my-pre.png"
+            mode="aspectFit"
+          />
+          我的
+        </van-tabbar-item>
+      </van-tabbar>
+      <van-popup show="{{ showAddress }}" @close="onClose">
+        <view class="dialog">
+          <view class="dialog-icon"></view>
+          <text class="dialog-title">礼包配送</text>
+          <text class="dialog-text">请您完善收货地址</text>
+          <text class="dialog-text">以便为您配送课程配套的“实物大礼包”</text>
+          <view class="dialog-btn" @tap="bindPerfect">去完善</view>
+          <view class="dialog-close" @tap="onClose"></view>
         </view>
-        <text class="teacher_add_text">
-          您好，我是您{{infoData.kfTeacherVO.courseName}}的辅导老师。添加我为微信好友，学习和使用产品的疑问都可以随时咨询我哟～
-        </text>
-        <view class="teacher_add_footer">
-          <button class="teacher_add_btn"
+      </van-popup>
+      <van-popup show="{{ showKF }}" position="bottom" @close="onClose">
+        <view class="kf-pop">
+          <text class="kf-pop-title">报名课程</text>
+          <image
+            src="https://pub.file.k12.vip/tbzw/v2/baoming.gif"
+            class="kf-pop-img"
+          />
+          <text class="kf-pop-text">点击下方按钮</text>
+          <text class="kf-pop-text red">回复“1”即可报名学习</text>
+          <button class="kf-pop-btn" open-type="contact">
+            回复“1”立即报名
+          </button>
+        </view>
+      </van-popup>
+      <van-popup show="{{ showAddTeacher }}" @close="onClose">
+        <view class="dialog teacher_add" wx:if="{{infoData.kfTeacherVO}}">
+          <view class="teacher_add_info">
+            <image
+              class="teacher_add_avatar"
+              src="{{infoData.kfTeacherVO.avatar}}"
+            />
+            <text class="teahcer-add_name">{{
+              infoData.kfTeacherVO.name
+            }}</text>
+          </view>
+          <text class="teacher_add_text">
+            您好，我是您{{
+              infoData.kfTeacherVO.courseName
+            }}的辅导老师。添加我为微信好友，学习和使用产品的疑问都可以随时咨询我哟～
+          </text>
+          <view class="teacher_add_footer">
+            <button
+              class="teacher_add_btn"
+              open-type="contact"
+              show-message-card="true"
+              send-message-title="{{infoData.kfTeacherVO.cardTitle}}"
+              send-message-img="{{infoData.kfTeacherVO.cardImg}}"
+              send-message-path="{{'/pages/index?teacherId=' + infoData.kfTeacherVO.id}}"
+              @tap="clickAddTeacher(1)"
+            >
+              加老师微信好友
+            </button>
+            <button class="teacher_add_btn" @tap="clickAddTeacher(2)">
+              我已添加，不再提醒
+            </button>
+          </view>
+          <view class="dialog-close" @tap="onClose"></view>
+        </view>
+      </van-popup>
+      <van-popup show="{{ showWelcome }}" @close="onClose">
+        <view class="welcome-pop">
+          <view class="welcome-pop-text">
+            初次见面，送您一份新人福利
+            <text class="welcome-pop-span">名师1对1指导作文</text>
+          </view>
+          <button
             open-type="contact"
+            class="welcome-pop-btn"
             show-message-card="true"
-            send-message-title="{{infoData.kfTeacherVO.cardTitle}}"
-            send-message-img="{{infoData.kfTeacherVO.cardImg}}"
-            send-message-path="{{'/pages/index?teacherId=' + infoData.kfTeacherVO.id}}"
-            @tap="clickAddTeacher(1)">加老师微信好友</button>
-          <button class="teacher_add_btn" @tap="clickAddTeacher(2)">我已添加，不再提醒</button>
+            send-message-title=""
+            send-message-path="{{'/pages/index?homeConfig='}}"
+            send-message-img=""
+          >
+            立即领取
+          </button>
         </view>
-        <view class="dialog-close"
-              @tap="onClose"></view>
-      </view>
-    </van-popup>
-    <login :showPopup.sync="showPopup"
-           :show.sync="showSelect"></login>
-    <error wx:if="{{isError}}"></error>
-    <load wx:if="{{loading}}"></load>
-    <praiseModal :isShow.sync="isShowPraise"
-                 typeProps="2"
-                 :dataInfo.sync="praiseItem"></praiseModal>
+      </van-popup>
+      <van-popup show="{{ showWork }}" @close="onClose">
+        <view class="welcome-pop work">
+          <view class="welcome-pop-text">
+            你好呀，小朋友。老师给你发来了课后作业讲解，快去看看吧！
+          </view>
+          <button
+            open-type="contact"
+            class="welcome-pop-btn"
+            show-message-card="true"
+            send-message-title=""
+            send-message-path="{{'/pages/index?homeConfig='}}"
+            send-message-img=""
+          >
+            去看看
+          </button>
+        </view>
+      </van-popup>
+      <login :showPopup.sync="showPopup" :show.sync="showSelect"></login>
+      <error wx:if="{{isError}}"></error>
+      <load wx:if="{{loading}}"></load>
+      <praiseModal
+        :isShow.sync="isShowPraise"
+        typeProps="2"
+        :dataInfo.sync="praiseItem"
+      ></praiseModal>
     </form>
   </view>
 </template>
@@ -303,6 +381,8 @@ export default class Home extends wepy.page {
   data = {
     loading: false,
     showAddTeacher: false,
+    showWelcome: false,
+    showWork: false,
     showTopImg: false,
     isError: false,
     empty: false,
@@ -340,6 +420,8 @@ export default class Home extends wepy.page {
       this.showAddTeacher = false
       this.showAddress = false
       this.isShowPraise = false
+      this.showWelcome = false
+      this.showWork = false
     },
     bindPerfect() {
       wx.navigateTo({ url: `/user/gift` })
@@ -390,6 +472,16 @@ export default class Home extends wepy.page {
     this.getHomePageInfo()
     this.getDayByMasterpiece()
     this.getHomeworkSquare()
+  }
+
+  initWelcome() {
+    let first = wx.getStorageSync('firstGift')
+    let { audioContext, playSound } = this.$parent.globalData
+    if (!first) {
+      wx.setStorageSync('firstGift', 1)
+      this.showWelcome = true
+      playSound(audioContext, 1)
+    }
   }
 
   // 作品点赞
@@ -445,7 +537,7 @@ export default class Home extends wepy.page {
           })
           return e
         })
-
+        this.initWelcome()
         this.$apply()
       })
       .catch(({ code }) => {
@@ -542,11 +634,49 @@ export default class Home extends wepy.page {
   onShareAppMessage() {}
 }
 </script>
-<style lang='scss'>
+<style lang="scss">
 @import '../assets/style/mixin.scss';
 .home {
   position: relative;
-
+  .welcome-pop {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-sizing: border-box;
+    padding: 50px 36px;
+    padding-top: 274px;
+    width: 602px;
+    height: 526px;
+    background: url('https://pub.file.k12.vip/tbzw/1.5/home/pop-img.png')
+      no-repeat;
+    background-size: 100%;
+    &.work {
+      height: 558px;
+      background-image: url('https://pub.file.k12.vip/tbzw/1.5/home/pop-img.png');
+    }
+    &-text {
+      font-size: 40px;
+      line-height: 56px;
+      color: #333333;
+    }
+    &-span {
+      font-size: 48px;
+      font-weight: 500;
+      color: #ff7c35;
+    }
+    &-btn {
+      @include flex-center;
+      margin-top: 12px;
+      align-self: flex-end;
+      width: 176px;
+      height: 66px;
+      background: rgba(255, 192, 0, 1);
+      box-shadow: 0px 4px 8px 0px rgba(255, 192, 0, 0.2);
+      border-radius: 31px;
+      font-size: 32px;
+      color: #fff;
+    }
+  }
   .container-scroll {
     padding: 32px;
     padding-bottom: 150px;

@@ -10,22 +10,33 @@
             <view class="classroom-info">
               <view class="classroom-text">
                 <text class="classroom-title">{{ lessonData.name }}</text>
-                <text class="classroom-subtitle">
+                <view class="classroom-subtitle">
                   《{{ lessonData.courseName }}》
-                </text>
+                </view>
               </view>
               <text class="classroom-num">{{ lessonData.uv }} 人已学</text>
             </view>
           </view>
         </view>
         <view class="classroom-list">
-          <button class="classroom-item">1号教室</button>
-          <button class="classroom-item">2号教室</button>
-          <button class="classroom-item">3号教室</button>
-          <button class="classroom-item">4号教室</button>
+          <button
+            wx:for="{{4}}"
+            wx:key="{{index}}"
+            class="classroom-item {{activeIndex == index && 'active'}}"
+            @tap="bindClickRoom({{index + 1}})"
+          >
+            {{ index + 1 }}号教室
+          </button>
+        </view>
+        <view class="classroom-banner">
+          <imgage class="classroom-banner-img" src="" />
         </view>
         <form report-submit="true" @submit="submit">
-          <button class="classroom-btn" form-type="submit" @tap="bindClickRoom">
+          <button
+            class="classroom-btn"
+            form-type="submit"
+            @tap="bindClickRoom({{0}})"
+          >
             快速进入教室
           </button>
         </form>
@@ -45,6 +56,7 @@ export default class Classroom extends wepy.page {
     mHeader
   }
   data = {
+    activeIndex: -1,
     lessonId: 0,
     lessonData: {},
     roomData: {}
@@ -58,13 +70,17 @@ export default class Classroom extends wepy.page {
     submit(e) {
       saveFormId(e.detail.formId)
     },
-    bindClickRoom() {
+    bindClickRoom(index) {
       let { playBtnAudio, btnAudioContext } = this.$parent.globalData
       playBtnAudio(btnAudioContext)
+      this.activeIndex = index - 1
       if (this.roomData && this.roomData.stage === 1) {
         wx.redirectTo({ url: '/pages/study?id=' + this.lessonId })
       } else {
-        wx.redirectTo({ url: '/pages/ready?id=' + this.lessonId })
+        let url = '/pages/joinRoom?id=' + this.lessonId
+        url += `&type=${index ? index : parseInt(Math.random() * 4 + 1)}`
+        console.log(url)
+        wx.redirectTo({ url })
       }
     }
   }
@@ -128,7 +144,7 @@ export default class Classroom extends wepy.page {
   &-btn {
     @include flex-center;
     position: fixed;
-    bottom: 48px;
+    bottom: 38px;
     left: 50%;
     width: 470px;
     height: 100px;
@@ -144,35 +160,42 @@ export default class Classroom extends wepy.page {
   }
   &-list {
     display: flex;
-    flex-wrap: wrap;
-    padding: 0 8px;
+    justify-content: center;
+    margin-top: 30px;
   }
   &-item {
-    margin: 0 39px;
-    margin-top: 48px;
-    width: 288px;
-    height: 312px;
-    background: rgba(255, 255, 255, 1);
-    box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.08);
-    border-radius: 16px;
-    &-img {
-      width: 288px;
-      height: 216px;
-      border-radius: 16px 16px 0px 0px;
-      opacity: 0.7951;
-      background: #ccc;
+    @include flex-center;
+    box-sizing: border-box;
+    margin: 0 12px;
+    width: 146px;
+    height: 56px;
+    background: #fff;
+    color: #ff7b34;
+    border: 2px solid rgba(255, 123, 52, 1);
+    border-radius: 14px;
+    font-size: 28px;
+    &.active {
+      border: none;
+      color: #fff;
+      background: linear-gradient(
+        90deg,
+        rgba(255, 142, 74, 1) 0%,
+        rgba(255, 122, 50, 1) 100%
+      );
+      box-shadow: 0px 4px 8px 0px rgba(255, 132, 62, 0.5);
     }
-    &-btn {
-      @include flex-center;
-      margin: 0 auto;
-      margin-top: 6px;
-      width: 164px;
-      height: 56px;
-      font-size: 24px;
-      color: rgba($color: #58422b, $alpha: 0.5);
-      border-radius: 32px;
-      border: 3px solid rgba(61, 53, 45, 0.1);
-    }
+  }
+  &-banner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 40px auto;
+    width: 650px;
+    height: 442px;
+    background: #ffffff;
+    box-shadow: 0px 4px 8px 8px rgba(176, 174, 167, 0.08);
+    border-radius: 24px;
+    border: 6px solid rgba(249, 207, 48, 1);
   }
   &-header {
     display: flex;
@@ -187,8 +210,8 @@ export default class Classroom extends wepy.page {
   }
   &-img {
     margin-right: 32px;
-    width: 180px;
-    height: 240px;
+    width: 158px;
+    height: 180px;
     box-shadow: 0px 0px 24px 0px rgba(236, 194, 96, 0.24);
     border-radius: 16px;
   }
@@ -201,6 +224,7 @@ export default class Classroom extends wepy.page {
   &-text {
     display: flex;
     flex-direction: column;
+    justify-content: flex-start;
   }
   &-title {
     font-size: 36px;

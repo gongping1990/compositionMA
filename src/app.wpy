@@ -10,14 +10,23 @@ button::after {
 .container-scroll {
   position: relative;
 }
+.yd-popup,
 .tabbar-popup {
   position: absolute;
   left: 50%;
   top: -50px;
   width: 187px;
   height: 60px;
-  transform: translateX(-50%);
+
   z-index: 999;
+}
+.tabbar-popup {
+  transform: translateX(-50%);
+}
+.yd-popup {
+  width: 110px;
+  height: 132px;
+  top: -132px;
 }
 .top-img {
   position: fixed;
@@ -30,6 +39,17 @@ button::after {
 button {
   padding: 0;
   margin: 0;
+}
+.animate-top {
+  animation: top 0.8s infinite;
+}
+@keyframes top {
+  0% {
+    transform: translate(-50%, 0);
+  }
+  100% {
+    transform: translate(-50%, -10%);
+  }
 }
 </style>
 
@@ -50,6 +70,7 @@ export default class extends wepy.app {
     pages: [
       'pages/index',
       'pages/lesson',
+      'pages/joinRoom',
       'pages/server',
       'pages/login',
       'pages/resetPwd',
@@ -131,9 +152,10 @@ export default class extends wepy.app {
       audioContext.play()
     },
     playSound(audioContext, index, src) {
-      audioContext.src = `https://pub.file.k12.vip/tbzw/v2/sound/sound_${index}.mp3`
       if (src) {
         audioContext.src = src
+      } else {
+        audioContext.src = `https://pub.file.k12.vip/tbzw/v2/sound/sound_${index}.mp3`
       }
       audioContext.stop()
       audioContext.play()

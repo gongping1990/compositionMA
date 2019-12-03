@@ -63,6 +63,9 @@ import mHeader from '../components/header'
 @connect({
   userInfo(state) {
     return state.user.userInfo
+  },
+  audioList(state) {
+    return state.user.audioList
   }
 })
 export default class Info extends wepy.page {
@@ -126,6 +129,7 @@ export default class Info extends wepy.page {
   }
 
   getMyChild() {
+    let { audioContext, playSound } = this.$parent.globalData
     api.user.getMyChild().then(({ data }) => {
       if (data.resultData) {
         let { nickname, grade, sex, puid, id } = data.resultData
@@ -137,6 +141,10 @@ export default class Info extends wepy.page {
           id
         }
       }
+      if (!data.resultData || !data.resultData.id) {
+        playSound(audioContext, 1, this.audioList[9].oathvfUrl)
+      }
+
       this.isLoad = true
       this.$apply()
     })
@@ -166,6 +174,15 @@ export default class Info extends wepy.page {
   onLoad() {}
   onShow() {
     this.getMyChild()
+  }
+  onHide() {
+    let { audioContext } = this.$parent.globalData
+    audioContext.stop()
+  }
+
+  onUnload() {
+    let { audioContext } = this.$parent.globalData
+    audioContext.stop()
   }
 }
 </script>

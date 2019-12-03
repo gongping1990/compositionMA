@@ -61,9 +61,16 @@
             wx:for="{{tabList}}"
             wx:key="{{index}}"
             @tap="clickTab({{index}})"
-            ><text>{{ item }}</text>
+          >
+            <text>{{ item }}</text>
             <view class="border"></view>
           </view>
+          <image
+            class="-tabs-popup animate-top"
+            src="https://pub.file.k12.vip/tbzw/1.5/home/msg1.png"
+            mode="aspectFit"
+            wx:if="{{ydType == 4}}"
+          />
         </view>
         <view class="work-list" wx:if="{{!tabActive}}">
           <view
@@ -194,10 +201,12 @@
         </van-tabbar-item>
         <van-tabbar-item>
           <image
-            class="tabbar-popup"
-            src="https://pub.file.k12.vip/composition/tabber-img.png"
+            class="yd-popup animate-top"
+            src="https://pub.file.k12.vip/tbzw/1.5/home/msg2.png"
             mode="aspectFit"
+            wx:if="{{ydType == 2}}"
           />
+
           <image
             slot="icon"
             src="../assets/image/sk-def.png"
@@ -296,22 +305,31 @@
           <view class="dialog-close" @tap="onClose"></view>
         </view>
       </van-popup>
-      <van-popup show="{{ showWelcome }}" @close="onClose">
+      <van-popup show="{{ showWelcome }}" closeable @close="onCloseWelcome">
         <view class="welcome-pop">
           <view class="welcome-pop-text">
             初次见面，送您一份新人福利
             <text class="welcome-pop-span">名师1对1指导作文</text>
           </view>
-          <button
-            open-type="contact"
-            class="welcome-pop-btn"
-            show-message-card="true"
-            send-message-title=""
-            send-message-path="{{'/pages/index?homeConfig='}}"
-            send-message-img=""
-          >
-            立即领取
-          </button>
+          <view class="welcome-pop-btn-wrap">
+            <button
+              class="welcome-pop-btn new cancel"
+              @tap="clickToLesson"
+            >
+              我已报名，去上课
+            </button>
+            <button
+              open-type="contact"
+              class="welcome-pop-btn new"
+              show-message-card="true"
+              send-message-title="{{bannerList[0].cardtitle}}"
+              send-message-path="{{'/pages/index?homeConfig=' + bannerList[0].sessionFrom}}"
+              send-message-img="{{bannerList[0].cardimgurl}}"
+            >
+              立即领取
+            </button>
+          </view>
+          <view class="welcome-pop-close" @tap="onCloseWelcome"></view>
         </view>
       </van-popup>
       <van-popup show="{{ showWork }}" @close="onClose">
@@ -320,15 +338,12 @@
             你好呀，小朋友。老师给你发来了课后作业讲解，快去看看吧！
           </view>
           <button
-            open-type="contact"
             class="welcome-pop-btn"
-            show-message-card="true"
-            send-message-title=""
-            send-message-path="{{'/pages/index?homeConfig='}}"
-            send-message-img=""
+            @tap="clickToCompletionOfWork"
           >
             去看看
           </button>
+          <view class="welcome-pop-close" @tap="onClose"></view>
         </view>
       </van-popup>
       <login :showPopup.sync="showPopup" :show.sync="showSelect"></login>
@@ -340,6 +355,12 @@
         :dataInfo.sync="praiseItem"
       ></praiseModal>
     </form>
+    <view class="-yd" wx:if="{{showYD}}" @tap="onClose">
+      <image
+        class="-yd-img"
+        src="https://pub.file.k12.vip/tbzw/1.5/home/yd-banner.png"
+      />
+    </view>
   </view>
 </template>
 <script>
@@ -366,6 +387,9 @@ dayjs.extend(relativeTime)
   },
   logined(state) {
     return state.user.logined
+  },
+  audioList(state) {
+    return state.user.audioList
   }
 })
 export default class Home extends wepy.page {
@@ -379,8 +403,10 @@ export default class Home extends wepy.page {
     }
   }
   data = {
+    ydType: 0,
     loading: false,
     showAddTeacher: false,
+    showYD: false,
     showWelcome: false,
     showWork: false,
     showTopImg: false,
@@ -394,6 +420,7 @@ export default class Home extends wepy.page {
     showSelect: false,
     isShowPraise: false,
     infoData: {},
+    latelyData: {},
     praiseItem: {},
     courseList: [],
     bannerList: [],
@@ -416,12 +443,26 @@ export default class Home extends wepy.page {
     tooltip
   }
   methods = {
+    clickToCompletionOfWork() {
+      wx.navigateTo({
+        url: `/user/completionOfWork?type=1&id=${this.latelyData.lessonId}`
+      })
+    },
+    clickToLesson() {
+      wx.redirectTo({ url: '/pages/lesson' });
+    },
     onClose() {
       this.showAddTeacher = false
       this.showAddress = false
       this.isShowPraise = false
       this.showWelcome = false
       this.showWork = false
+      this.showWelcome = false
+      this.showYD = false
+    },
+    onCloseWelcome() {
+      this.showWelcome = false
+      this.showYD = true
     },
     bindPerfect() {
       wx.navigateTo({ url: `/user/gift` })
@@ -467,6 +508,14 @@ export default class Home extends wepy.page {
     }
   }
 
+  // watch = {
+  //   logined(v) {
+  //     if(v) {
+  //       this.getLatelyDubbingByHome()
+  //     }
+  //   }
+  // }
+
   initPage() {
     this.loading = true
     this.getHomePageInfo()
@@ -477,10 +526,10 @@ export default class Home extends wepy.page {
   initWelcome() {
     let first = wx.getStorageSync('firstGift')
     let { audioContext, playSound } = this.$parent.globalData
-    if (!first) {
+    if (!first && !this.logined) {
       wx.setStorageSync('firstGift', 1)
       this.showWelcome = true
-      playSound(audioContext, 1)
+      playSound(audioContext, 1, this.audioList[0].oathvfUrl)
     }
   }
 
@@ -507,6 +556,19 @@ export default class Home extends wepy.page {
   bindKF() {
     api.user.bindKF({
       courseId: this.infoData.kfTeacherVO.courseId
+    })
+  }
+
+  getLatelyDubbingByHome() {
+    let { api, audioContext, playSound } = this.$parent.globalData
+    api.study.getLatelyDubbingByHome().then(({ data }) => {
+      this.latelyData = data.resultData
+      this.ydType = data.resultData.type
+      if (data.resultData.type == 8) {
+        this.showWork = true
+      }
+      playSound(audioContext, 1, data.resultData.oathvfUrl)
+      this.$apply()
     })
   }
 
@@ -538,6 +600,9 @@ export default class Home extends wepy.page {
           return e
         })
         this.initWelcome()
+        if (this.logined) {
+          this.getLatelyDubbingByHome()
+        }
         this.$apply()
       })
       .catch(({ code }) => {
@@ -614,12 +679,16 @@ export default class Home extends wepy.page {
 
   onShow() {
     this.initPage()
-    // wepy.$log.info('home info')
   }
 
   onHide() {
-    // wepy.$log.error('home error')
-    // wepy.$log.warn('home warn')
+    let { audioContext } = this.$parent.globalData
+    audioContext.stop()
+  }
+
+  onUnload() {
+    let { audioContext } = this.$parent.globalData
+    audioContext.stop()
   }
 
   onReachBottom() {
@@ -638,7 +707,25 @@ export default class Home extends wepy.page {
 @import '../assets/style/mixin.scss';
 .home {
   position: relative;
+  .-yd {
+    display: flex;
+    justify-content: center;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 3000;
+    &-img {
+      margin: 30px auto;
+      margin-top: 158px;
+      width: 698px;
+      height: 514px;
+    }
+  }
   .welcome-pop {
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -653,6 +740,16 @@ export default class Home extends wepy.page {
     &.work {
       height: 558px;
       background-image: url('https://pub.file.k12.vip/tbzw/1.5/home/pop-img.png');
+    }
+    &-close {
+      position: absolute;
+      left: 50%;
+      bottom: -132px;
+      width: 80px;
+      height: 80px;
+      background: url('https://pub.file.k12.vip/tbzw/1.5/home/close.png') no-repeat;
+      background-size: 100%;
+      transform: translateX(-50%);
     }
     &-text {
       font-size: 40px;
@@ -675,6 +772,22 @@ export default class Home extends wepy.page {
       border-radius: 31px;
       font-size: 32px;
       color: #fff;
+      &-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      &.new {
+        font-size: 26px;
+        width:250px;
+      }
+      &.cancel {
+        font-size: 26px;
+        background: #fff;
+        color: #999999;
+        box-sizing: border-box;
+        border:1px solid rgba(153,153,153,1);
+      }
     }
   }
   .container-scroll {
@@ -1025,11 +1138,12 @@ export default class Home extends wepy.page {
     }
   }
   .-tabs {
+    position: relative;
     display: flex;
     align-self: flex-start;
     margin-left: 10px;
-    margin-top: 40px;
-    margin-bottom: 37px;
+    padding-top: 40px;
+    padding-bottom: 37px;
     &-item {
       display: flex;
       align-items: center;
@@ -1055,6 +1169,13 @@ export default class Home extends wepy.page {
           transform: translateX(-50%);
         }
       }
+    }
+    &-popup {
+      position: absolute;
+      top: 0;
+      right: -110px;
+      width: 108px;
+      height: 132px;
     }
   }
   .course {

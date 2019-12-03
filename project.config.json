@@ -57,9 +57,9 @@
 			"list": [
 				{
 					"id": 0,
-					"name": "pages/classroom",
-					"pathName": "pages/classroom",
-					"query": "id=1139443331912044546",
+					"name": "pages/test",
+					"pathName": "pages/test",
+					"query": "id=1138721381526679554&lookback=1",
 					"scene": null
 				},
 				{

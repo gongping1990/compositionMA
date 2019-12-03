@@ -1,141 +1,152 @@
 <!--  -->
 <template>
-  <view class='container test'>
-    <mHeader title="随堂练习"
-             flag="4"></mHeader>
-    <view class="container-scroll"
-          style="margin-top:{{height}}px">
+  <view class="container test">
+    <mHeader title="随堂练习" flag="4"></mHeader>
+    <view class="container-scroll" style="margin-top:{{height}}px">
       <view class="header">
         <view class="header-left">
-          <image class="header-avatar"
-                 src="{{courseInfo.teacherHeadImage}}" />
-          <text class="header-title">{{courseInfo.teacherName}}</text>
+          <image class="header-avatar" src="{{courseInfo.teacherHeadImage}}" />
+          <text class="header-title">{{ courseInfo.teacherName }}</text>
           <text class="header-subtitle">写作老师</text>
         </view>
         <view class="header-right">
-          <view class="student {{item.status == 1 && 'success'}}"
-                wx:for="{{answerArr}}"
-                wx:key="{{index}}">
-            <image class="student-avatar"
-                   src="{{item.mateImg}}" />
+          <view
+            class="student {{item.status == 1 && 'success'}}"
+            wx:for="{{answerArr}}"
+            wx:key="{{index}}"
+          >
+            <image class="student-avatar" src="{{item.mateImg}}" />
             <view class="student-status">
-              {{item.status ? '已完成' : '答题中...'}}
+              {{ item.status ? '已完成' : '答题中...' }}
             </view>
-            <view class="student-flower"
-                  wx:if="{{index == 3}}">
+            <view class="student-flower" wx:if="{{index == 3}}">
               <flower :flower.sync="flower"></flower>
             </view>
           </view>
-
         </view>
       </view>
-      <view class="content"
-            style="height:calc(100vh - 254rpx - {{(height + 13) * 2}}rpx)">
-        <view class="question"
-              wx:if="{{showQuestion}}"
-              animation="{{questionAnimate}}">
+      <view
+        class="content"
+        style="height:calc(100vh - 254rpx - {{(height + 13) * 2}}rpx)"
+      >
+        <view
+          class="question"
+          wx:if="{{showQuestion}}"
+          animation="{{questionAnimate}}"
+        >
           <view class="step">
-            <view class="step-item {{stepIndex >= index && (item.isRight == 1 ? 'success' : (item.isRight == 2 && 'error')) }}"
-                  wx:for="{{questionArr}}"
-                  wx:key="{{index}}"></view>
+            <view
+              class="step-item {{stepIndex >= index && (item.isRight == 1 ? 'success' : (item.isRight == 2 && 'error')) }}"
+              wx:for="{{questionArr}}"
+              wx:key="{{index}}"
+            ></view>
           </view>
-          <view animation="{{itemAnimate}}"
-                wx:for="{{questionArr}}"
-                wx:key="{{index}}"
-                wx:if="{{index == stepIndex && !isSummary}}"
-                class="question-content">
-            <scroll-view scroll-y
-                         class="question-scroll"
-                         scroll-top="{{scrollTop}}">
+          <view
+            animation="{{itemAnimate}}"
+            wx:for="{{questionArr}}"
+            wx:key="{{index}}"
+            wx:if="{{index == stepIndex && !isSummary}}"
+            class="question-content"
+          >
+            <scroll-view
+              scroll-y
+              class="question-scroll"
+              scroll-top="{{scrollTop}}"
+            >
               <view class="chart-item">
-                <image class="chart-avatar"
-                       src="{{courseInfo.teacherHeadImage}}" />
+                <image
+                  class="chart-avatar"
+                  src="{{courseInfo.teacherHeadImage}}"
+                />
                 <view class="chart-right">
-                  <text class="chart-title">{{courseInfo.teacherName}}</text>
+                  <text class="chart-title">{{ courseInfo.teacherName }}</text>
                   <view class="chart-content-wrap">
-                    <view class="chart-content">{{item.name}}</view>
+                    <view class="chart-content">{{ item.name }}</view>
                   </view>
                 </view>
               </view>
               <view class="input-list">
-                <view class="input-item {{selectIndex == optionItem.mark && 'select'}} {{(setAnswerStatusEnd && (correctAnswer == optionItem.mark)) && 'success'}} {{setAnswerStatusEnd && ((selectIndex == optionItem.mark) && (correctAnswer != optionItem.mark)) && 'error'}}"
-                      wx:for="{{item.optionList}}"
-                      wx:key="{{index}}"
-                      wx:for-item="optionItem"
-                      @tap="bindClickInput({{optionItem.mark}})">
-                  {{optionItem.problem}}
+                <view
+                  class="input-item {{selectIndex == optionItem.mark && 'select'}} {{(setAnswerStatusEnd && (correctAnswer == optionItem.mark)) && 'success'}} {{setAnswerStatusEnd && ((selectIndex == optionItem.mark) && (correctAnswer != optionItem.mark)) && 'error'}}"
+                  wx:for="{{item.optionList}}"
+                  wx:key="{{index}}"
+                  wx:for-item="optionItem"
+                  @tap="bindClickInput({{optionItem.mark}})"
+                >
+                  {{ optionItem.problem }}
                 </view>
               </view>
-              <view class="chart-item"
-                    wx:if="{{showNextBtn && (isSuccess ? item.rightAudio : item.errorAudio )}}">
-                <image class="chart-avatar"
-                       src="{{courseInfo.teacherHeadImage}}" />
+              <view
+                class="chart-item"
+                wx:if="{{showNextBtn && (isSuccess ? item.rightAudio : item.errorAudio )}}"
+              >
+                <image
+                  class="chart-avatar"
+                  src="{{courseInfo.teacherHeadImage}}"
+                />
                 <view class="chart-right">
-                  <text class="chart-title">{{courseInfo.teacherName}}</text>
+                  <text class="chart-title">{{ courseInfo.teacherName }}</text>
                   <view class="chart-content-wrap">
-
-                    <view class="chart-content voice"
-                          @tap="bindClickVoice">
+                    <view class="chart-content voice" @tap="bindClickVoice">
                       <view class="icon {{paused && 'paused'}}"></view>
                     </view>
-                    <view class="chart-time">{{timeText}}</view>
+                    <view class="chart-time">{{ timeText }}</view>
                   </view>
                 </view>
               </view>
             </scroll-view>
-
           </view>
-          <scroll-view scroll-y
-                       scroll-top="{{summaryScrollTop}}"
-                       class="summary"
-                       wx:if="{{isSummary}}">
+          <scroll-view
+            scroll-y
+            scroll-top="{{summaryScrollTop}}"
+            class="summary"
+            wx:if="{{isSummary}}"
+          >
             <view class="summary-list">
-              <view class="chart-item summary-item {{summaryIndex >= index && summaryAnimateIndex >= index && 'show'}}"
-                    wx:if="{{summaryIndex >= index }}"
-                    wx:for="{{summaryArr}}"
-                    wx:key="{{index}}">
-                <image class="chart-avatar"
-                       src="{{courseInfo.teacherHeadImage}}" />
+              <view
+                class="chart-item summary-item {{summaryIndex >= index && summaryAnimateIndex >= index && 'show'}}"
+                wx:if="{{summaryIndex >= index }}"
+                wx:for="{{summaryArr}}"
+                wx:key="{{index}}"
+              >
+                <image
+                  class="chart-avatar"
+                  src="{{courseInfo.teacherHeadImage}}"
+                />
                 <view class="chart-right">
-                  <text class="chart-title">{{courseInfo.teacherName}}</text>
+                  <text class="chart-title">{{ courseInfo.teacherName }}</text>
                   <view class="chart-content-wrap">
-                    <view class="chart-content">{{item}}</view>
+                    <view class="chart-content">{{ item }}</view>
                   </view>
                 </view>
               </view>
             </view>
-
           </scroll-view>
         </view>
-        <view class="chart-item"
-              wx:if="{{!showQuestion}}"
-              animation="{{chartAnimate}}">
-          <image class="chart-avatar"
-                 src="{{courseInfo.teacherHeadImage}}" />
+        <view
+          class="chart-item"
+          wx:if="{{!showQuestion}}"
+          animation="{{chartAnimate}}"
+        >
+          <image class="chart-avatar" src="{{courseInfo.teacherHeadImage}}" />
           <view class="chart-right">
-            <text class="chart-title">{{courseInfo.teacherName}}</text>
+            <text class="chart-title">{{ courseInfo.teacherName }}</text>
             <view class="chart-content-wrap">
-
-              <view class="chart-content voice"
-                    @tap="bindClickVoice">
+              <view class="chart-content voice" @tap="bindClickVoice">
                 <view class="icon {{paused && 'paused'}}"></view>
               </view>
-              <view class="chart-time">{{timeText}}</view>
+              <view class="chart-time">{{ timeText }}</view>
             </view>
           </view>
         </view>
-        <form
-          report-submit="true"
-          @submit="submit"
-          >
-          <view class="question-btn-wrap"
-              wx:if="{{showQuestion}}">
+        <form report-submit="true" @submit="submit">
+          <view class="question-btn-wrap" wx:if="{{showQuestion}}">
             <button
               form-type="submit"
               class="question-btn"
               wx:if="{{!isSummary && !showNextBtn}}"
               @tap="clickStudy"
-              >
+            >
               确定
             </button>
             <button
@@ -143,28 +154,27 @@
               class="question-btn"
               wx:if="{{!isSummary && showNextBtn}}"
               @tap="clickNext"
-              >
-              {{stepIndex != questionArr.length - 1 ? '下一题' : '完成答题'}}
+            >
+              {{ stepIndex != questionArr.length - 1 ? '下一题' : '完成答题' }}
             </button>
             <button
               form-type="submit"
               class="question-btn"
               wx:if="{{setSummaryEnd}}"
               @tap="clickLinkHomeWork"
-              >
-             去完成课后作业
+            >
+              去完成课后作业
             </button>
           </view>
         </form>
-
       </view>
     </view>
-    <van-popup show="{{ showAlert }}"
-               overlay="{{false}}">
+    <van-popup show="{{ showAlert }}">
       <view class="dialog">
-        <image class="dialog-icon"
-               src="{{isSuccess ? 'https://pub.file.k12.vip/tbzw/v2/time/true.gif' : 'https://pub.file.k12.vip/tbzw/v2/time/fause.gif'}}" />
-        <text class="dialog-text {{isSuccess ? 'success' : 'error'}}">{{isSuccess ? '回答正确' : '回答错误'}}</text>
+        <image
+          class="dialog-icon"
+          src="{{isSuccess ? 'https://pub.file.k12.vip/tbzw/1.5/test/true.gif' : 'https://pub.file.k12.vip/tbzw/1.5/test/false.gif'}}"
+        />
       </view>
     </van-popup>
     <loading wx:if="{{loading}}"></loading>
@@ -271,9 +281,10 @@ export default class Example extends wepy.page {
       this.selectIndex = i
     },
     clickNext() {
+      let { audioContext, playSound } = this.$parent.globalData
       this.stop()
       if (this.stepIndex === this.questionArr.length - 1) {
-        let { audioContext, playSound } = this.$parent.globalData
+        
         playSound(audioContext, 6)
         this.changeLearnStage(3)
         this.setSummary()
@@ -282,6 +293,7 @@ export default class Example extends wepy.page {
         this.isSummary = true
         this.setSummaryIndex()
       } else {
+        playSound(audioContext, 1)
         this.changeQuestion()
       }
       this.scrollTop = 0
@@ -351,15 +363,11 @@ export default class Example extends wepy.page {
     let errorNum = answerArr[3].answerError
     if (errorNum) {
       arr.push(
-        `${answerArr[3].mateName}，恭喜你完成了随堂测验。用时${
-          this.anwserTimeText
-        }。你做错了${errorNum}道，不要灰心，来听听下面老师的错题分析，下次会更棒哦！`
+        `${answerArr[3].mateName}，恭喜你完成了随堂测验。用时${this.anwserTimeText}。你做错了${errorNum}道，不要灰心，来听听下面老师的错题分析，下次会更棒哦！`
       )
     } else {
       arr.push(
-        `${answerArr[3].mateName}，真棒，随堂测验你全部答对了。用时${
-          this.anwserTimeText
-        }。继续加油，保持优秀！`
+        `${answerArr[3].mateName}，真棒，随堂测验你全部答对了。用时${this.anwserTimeText}。继续加油，保持优秀！`
       )
     }
     questionArr.forEach((e, i) => {
@@ -407,7 +415,7 @@ export default class Example extends wepy.page {
         this.playAudio()
       }
       this.$apply()
-    }, 2000)
+    }, 4000)
   }
 
   // 模拟其他用户完成答题
@@ -649,32 +657,15 @@ export default class Example extends wepy.page {
   }
 }
 </script>
-<style lang='scss'>
+<style lang="scss">
 @import '../assets/style/mixin.scss';
 .test {
   position: relative;
   .dialog {
     @include flex-column-center;
-    box-sizing: border-box;
-    padding: 40px;
-    width: 320px;
-    height: 320px;
-    background: rgba(255, 255, 255, 0.9);
-    box-shadow: 0px 0px 24px 0px rgba(165, 124, 31, 0.1);
-    border-radius: 32px;
     &-icon {
-      margin-bottom: 36px;
-      width: 162px;
-      height: 162px;
-    }
-    &-text {
-      font-size: 36px;
-      &.success {
-        color: #39dda9;
-      }
-      &.error {
-        color: #ff7c76;
-      }
+      width: 750px;
+      height: 304px;
     }
   }
   .input {

@@ -88,6 +88,9 @@ const study = {
   },
   getPraiseById(params) {
     return request.get('/compositionv2/study/getPraiseById', params)
+  },
+  getLatelyDubbingByHome() {
+    return request.get('/compositionv2/homepage/getLatelyDubbingByHome')
   }
 }
 

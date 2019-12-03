@@ -1,5 +1,5 @@
-const path = require('path');
-var prod = process.env.NODE_ENV === 'production';
+const path = require('path')
+var prod = process.env.NODE_ENV === 'production'
 
 module.exports = {
   wpyExt: '.wpy',
@@ -43,9 +43,9 @@ module.exports = {
     baseUrl:
       process.env.NODE_ENV === 'production'
         ? 'https://huoke.prod.k12.vip'
-        : 'https://huoke.test.k12.vip'
+        : 'https://huoke.prod.k12.vip'
   }
-};
+}
 
 module.exports.plugins = {
   px2units: {
@@ -54,7 +54,7 @@ module.exports.plugins = {
       comment: 'no'
     }
   }
-};
+}
 
 if (prod) {
   // 压缩sass
@@ -77,5 +77,5 @@ if (prod) {
         }
       }
     }
-  };
+  }
 }

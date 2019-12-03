@@ -59,7 +59,7 @@ export default class Example extends wepy.page {
       total: ''
     },
     statusList: {
-      '1': '去补课',
+      '1': '去学习',
       '2': '开始学习',
       '3': '交作业',
       '4': '待开课',

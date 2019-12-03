@@ -1,0 +1,157 @@
+<!--  -->
+<template>
+  <view class="container joinRoom">
+    <mHeader title="进入教室"></mHeader>
+    <view class="container-scroll" style="margin-top:{{height}}px">
+      <view
+        class="joinRoom-content {{typeClass[type-1]}}"
+        style="height:calc(100vh - {{height}}px);background-image:url('https://pub.file.k12.vip/tbzw/1.5/classroom/room{{type}}.png')"
+      >
+        <view class="joinRoom-student">
+          <view
+            class="joinRoom-student-item {{show && 'show'}}"
+            style="transition-delay: {{index * 0.7}}s"
+            wx:for="{{mateInfo}}"
+            wx:key="{{index}}"
+          >
+            <image class="joinRoom-student-avatar" src="{{item.mateImg}}" />
+            <view class="joinRoom-student-name">{{ item.mateName }}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import { saveFormId } from '../utils'
+import mHeader from '../components/header'
+export default class Classroom extends wepy.page {
+  config = {
+    navigationBarTitleText: '进入教室'
+  }
+  components = {
+    mHeader
+  }
+  data = {
+    lessonId: 0,
+    type: 1,
+    typeClass: ['one', 'two', 'three', 'four'],
+    show: false,
+    mateInfo: []
+  }
+  computed = {
+    height() {
+      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+    }
+  }
+
+  initPage() {
+    this.joinRoom()
+  }
+
+  joinRoom() {
+    let { api } = this.$parent.globalData
+    api.study
+      .joinRoom({
+        lessonId: this.lessonId
+      })
+      .then(({ data }) => {
+        this.mateInfo = data.resultData.mateInfo
+        setTimeout(() => {
+          this.show = true
+          this.readyRoom()
+          this.$apply()
+        }, 500)
+        this.$apply()
+      })
+  }
+
+  readyRoom() {
+    setTimeout(() => {
+      wx.redirectTo({ url: '/pages/ready?id=' + this.lessonId })
+    }, 4000)
+  }
+
+  onLoad(option) {
+    this.lessonId = option.id
+    this.type = option.type
+  }
+
+  onShow() {
+    this.initPage()
+  }
+  onShareAppMessage() {
+    return {
+      title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
+      path: `/pages/index`,
+      imageUrl: 'https://pub.file.k12.vip/tbzw/v2/logo2.png'
+    }
+  }
+}
+</script>
+<style lang="scss">
+@import '../assets/style/mixin.scss';
+.joinRoom {
+  &-content {
+    background-repeat: no-repeat;
+    background-size: 100%;
+    background-position-y: bottom;
+    &.one {
+      background-color: #fff4df;
+    }
+    &.two {
+      background-color: #f4ffe1;
+    }
+  }
+  &-student {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 168px;
+    .one & {
+      @include flex-center;
+      justify-content: space-around;
+    }
+    .two & {
+      display: flex;
+      flex-wrap: wrap;
+    }
+    &-item {
+      @include flex-column-center;
+      opacity: 0;
+      transform: translateY(50%);
+      transition: all 0.7s;
+      &.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .two & {
+        margin-top: 64px;
+        &:nth-child(1) {
+          margin-left: 92px;
+        }
+        &:nth-child(2),
+        &:nth-child(4) {
+          margin-left: 284px;
+        }
+        &:nth-child(3) {
+          margin-left: 152px;
+        }
+      }
+    }
+    &-avatar {
+      margin-bottom: 12px;
+      width: 112px;
+      height: 112px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 1);
+    }
+    &-name {
+      @include text-overflow;
+      font-size: 28px;
+      color: #333333;
+    }
+  }
+}
+</style>

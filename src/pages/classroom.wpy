@@ -18,7 +18,12 @@
             </view>
           </view>
         </view>
-        <view class="classroom-list"> </view>
+        <view class="classroom-list">
+          <button class="classroom-item">1号教室</button>
+          <button class="classroom-item">2号教室</button>
+          <button class="classroom-item">3号教室</button>
+          <button class="classroom-item">4号教室</button>
+        </view>
         <form report-submit="true" @submit="submit">
           <button class="classroom-btn" form-type="submit" @tap="bindClickRoom">
             快速进入教室

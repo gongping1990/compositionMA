@@ -2,7 +2,8 @@ import { handleActions } from 'redux-actions'
 import {
   UPDATE_USERINFO,
   UPDATE_TAB_REMIND,
-  CHANGE_LOGIN_STATUS
+  CHANGE_LOGIN_STATUS,
+  UPDATE_AUDIO
 } from '../types/user'
 
 let userInfo = wx.getStorageSync('userInfo')
@@ -26,11 +27,18 @@ export default handleActions(
         ...state,
         logined: action.payload
       }
+    },
+    [UPDATE_AUDIO](state, action) {
+      return {
+        ...state,
+        audioList: action.payload
+      }
     }
   },
   {
     userInfo: userInfo || {},
     remindData: {},
-    logined: false
+    logined: false,
+    audioList: []
   }
 )

@@ -145,6 +145,14 @@ export default class extends wepy.app {
           payload: data.resultData
         })
       })
+    },
+    getListByDubbing() {
+      api.user.listByDubbing().then(({ data }) => {
+        store.dispatch({
+          type: 'UPDATE_AUDIO',
+          payload: data.resultData
+        })
+      })
     }
   }
 
@@ -179,6 +187,7 @@ export default class extends wepy.app {
   }
   onShow() {
     this.globalData.checkLogined()
+    this.globalData.getListByDubbing()
   }
 }
 </script>

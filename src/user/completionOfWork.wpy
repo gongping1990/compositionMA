@@ -1084,6 +1084,7 @@ export default class CompletionOfWorkNew extends wepy.page {
         font-weight: 500;
         color: #ffffff;
         line-height: 76px;
+        margin: 0 auto;
       }
 
       .-one {

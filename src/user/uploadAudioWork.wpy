@@ -1,12 +1,15 @@
 <template>
-  <view class="container">
+  <view class="container p-uploadAudioWork">
     <mHeader title="提交作业"></mHeader>
-    <view class="container-scroll p-uploadAudioWork" style="margin-top:{{height}}px">
+    <view class="container-scroll " style="margin-top:{{height}}px">
       <view class="p-uploadAudioWork-title">
-        {{lessonDetail.homeworkClaim}}
+        <view class="-title-left">{{ lessonDetail.homeworkClaim }}</view>
+        <view class="-title-right">
+          <image class="-img" src="https://pub.file.k12.vip/tbzw/1.5/work/img@2x.png"></image>
+        </view>
       </view>
       <view class="p-uploadAudioWork-content">
-        <rich-text nodes="{{lessonDetail.readContent}}" ></rich-text>
+        <rich-text class="-text" nodes="{{lessonDetail.readContent}}"></rich-text>
       </view>
 
       <view class="p-uploadAudioWork-sound">
@@ -46,11 +49,11 @@
 </template>
 
 <script>
-  import wepy from 'wepy'
-  import api from '../request/api'
-  import mHeader from '../components/header'
-  import ConfirmModal from '../components/confirmModal'
-  import loaded from '../components/loaded'
+  import wepy from 'wepy';
+  import api from '../request/api';
+  import mHeader from '../components/header';
+  import ConfirmModal from '../components/confirmModal';
+  import loaded from '../components/loaded';
 
   export default class UploadAudioWork extends wepy.page {
     config = {
@@ -67,7 +70,7 @@
     };
     computed = {
       height() {
-        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
       }
     };
 
@@ -91,185 +94,185 @@
       },
       textArray: {
         '1': '点我诵读',
-        '2': '你说我在听',
+        '2': '你说，我在听...',
         '3': '点我完成',
         '4': '点击试听',
         '5': '点击暂停'
       },
       imgArray: {
-        '1': 'https://pub.file.k12.vip/tbzw/1.3/course/tjzy_icon_record.png',
-        '2': 'https://pub.file.k12.vip/tbzw/1.3/course/read_gif.gif',
-        '3': 'https://pub.file.k12.vip/tbzw/1.3/course/read_gif.gif',
+        '1': 'https://pub.file.k12.vip/tbzw/1.5/gif/tjzy_icon_record.png',
+        '2': 'https://pub.file.k12.vip/tbzw/1.5/gif/read_gif.gif',
+        '3': 'https://pub.file.k12.vip/tbzw/1.5/gif/read_gif.gif',
         '4': 'https://pub.file.k12.vip/tbzw/1.3/course/tjzy_icon_play.png',
         '5': 'https://pub.file.k12.vip/tbzw/1.3/course/tjzy_icon_stop.png'
       }
     };
 
-    onShow () {
-      this.initRecorderAudio()
-      this.getLessonInfo()
+    onShow() {
+      this.initRecorderAudio();
+      this.getLessonInfo();
     }
 
     getLessonInfo() {
       api.study.getLessonDetail({
         lessonId: this.queryInfo.id
       }).then(res => {
-        this.lessonDetail = res.data.resultData
-      this.$apply()
-    })
-  };
+        this.lessonDetail = res.data.resultData;
+        this.$apply();
+      });
+    };
 
-    initPlayAudio (src) {
-      this.innerAudioContext = wx.createInnerAudioContext()
-      this.innerAudioContext.src = src
+    initPlayAudio(src) {
+      this.innerAudioContext = wx.createInnerAudioContext();
+      this.innerAudioContext.src = src;
 
       this.innerAudioContext.onPlay(() => {
-        console.log('监听开始播放')
-      })
+        console.log('监听开始播放');
+      });
 
       this.innerAudioContext.onPause(() => {
-        console.log('监听开始暂停')
-      })
+        console.log('监听开始暂停');
+      });
       this.innerAudioContext.onEnded(() => {
-        console.log('监听结束')
-        this.nowStatus = 4
-        this.$apply()
-      })
+        console.log('监听结束');
+        this.nowStatus = 4;
+        this.$apply();
+      });
     }
 
-    initRecorderAudio () {
-      this.recorderManager = wx.getRecorderManager()
+    initRecorderAudio() {
+      this.recorderManager = wx.getRecorderManager();
       this.recorderManager.onStart(() => {
-        console.log('监听开始录音')
-        this.nowStatus = 2
+        console.log('监听开始录音');
+        this.nowStatus = 2;
         setTimeout(() => {
-          this.nowStatus = 3
-          this.$apply()
-        }, 3000)
-        this.$apply()
-      })
+          this.nowStatus = 3;
+          this.$apply();
+        }, 3000);
+        this.$apply();
+      });
       this.recorderManager.onPause(() => {
-        console.log('监听暂停录音')
-      })
+        console.log('监听暂停录音');
+      });
       this.recorderManager.onStop((res) => {
-        this.nowStatus = 4
-        this.$apply()
-        this.initPlayAudio(res.tempFilePath)
-        this.fileAudioUrl = res.tempFilePath
-        this.duration = res.duration
-        console.log('监听结束事件', res)
-      })
+        this.nowStatus = 4;
+        this.$apply();
+        this.initPlayAudio(res.tempFilePath);
+        this.fileAudioUrl = res.tempFilePath;
+        this.duration = res.duration;
+        console.log('监听结束事件', res);
+      });
     }
 
     methods = {
-      changeStatus (num) {
+      changeStatus(num) {
         switch (+this.nowStatus) {
           case 1:
-            this.recorderManager.start(this.recorderOptions)
-            break
+            this.recorderManager.start(this.recorderOptions);
+            break;
           case 3:
-            this.recorderManager.stop()
-            break
+            this.recorderManager.stop();
+            break;
           case 4:
-            this.innerAudioContext.play()
-            this.nowStatus = 5
-            break
+            this.innerAudioContext.play();
+            this.nowStatus = 5;
+            break;
           case 5:
-            this.innerAudioContext.pause()
-            this.nowStatus = 4
-            break
+            this.innerAudioContext.pause();
+            this.nowStatus = 4;
+            break;
         }
       },
-      openModal () {
-        this.isOpenResultPopup = true
+      openModal() {
+        this.isOpenResultPopup = true;
       },
-      toSubmitAudio () {
-        let _self = this
-        if (_self.isSending) return
-        _self.isSending = true
+      toSubmitAudio() {
+        let _self = this;
+        if (_self.isSending) return;
+        _self.isSending = true;
         wx.showToast({
           icon: 'loading',
           title: '正在上传~'
-        })
+        });
 
         wx.uploadFile({
           url: 'https://huoke.prod.k12.vip/compositionv2/common/uploadPublicFile',
           filePath: _self.fileAudioUrl,
           name: 'file',
           header: { 'Content-Type': 'multipart/form-data' },
-          success: function (res) {
+          success: function(res) {
             if (res.statusCode !== 200) {
               wx.showModal({
                 title: '提示',
                 content: '上传失败',
                 showCancel: false
-              })
+              });
             } else {
-              let parmas = JSON.parse(res.data)
+              let parmas = JSON.parse(res.data);
               api.study.addHomework({
                 lessonId: _self.queryInfo.id,
                 duration: (_self.duration / 1000).toFixed(),
                 workAudio: parmas.resultData.url
               }).then(res => {
-                _self.isSending = false
-                wx.hideToast()  // 隐藏Toast
-                _self.$broadcast('show')
-                _self.$apply()
+                _self.isSending = false;
+                wx.hideToast();  // 隐藏Toast
+                _self.$broadcast('show');
+                _self.$apply();
               }, () => {
-                _self.isSending = false
-              })
+                _self.isSending = false;
+              });
             }
           },
-          fail: function (e) {
+          fail: function(e) {
             wx.showModal({
               title: '提示',
               content: '上传失败',
               showCancel: false
-            })
+            });
           },
-          complete: function () {
+          complete: function() {
 
           }
-        })
+        });
       },
-      toWorkDetail () {
-        this.isOpenPopup = false
-        wx.navigateTo({ url: `/user/completionOfWork?type=1&id=${this.queryInfo.id}` })
+      toWorkDetail() {
+        this.isOpenPopup = false;
+        wx.navigateTo({ url: `/user/completionOfWork?type=1&id=${this.queryInfo.id}` });
       }
     };
 
     events = {
-      changeOkStatus (bool) {
-        this.isOpenResultPopup = false
+      changeOkStatus(bool) {
+        this.isOpenResultPopup = false;
 
         if (bool === 'true') {
-          this.nowStatus = 1
+          this.nowStatus = 1;
         }
       },
       success() {
-        wx.navigateTo({ url: `/user/completionOfWork?type=1&id=${this.queryInfo.id}` })
+        wx.navigateTo({ url: `/user/completionOfWork?type=1&id=${this.queryInfo.id}` });
       }
     };
 
-    onLoad (query) {
-      this.queryInfo = query
+    onLoad(query) {
+      this.queryInfo = query;
     }
 
-    onUnload () {
-      this.recorderManager.stop()
+    onUnload() {
+      this.recorderManager.stop();
     }
 
     onHide() {
-      this.$broadcast('destroy')
-      this.recorderManager.stop()
+      this.$broadcast('destroy');
+      this.recorderManager.stop();
     }
 
-    onShareAppMessage () {
+    onShareAppMessage() {
       return {
         title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
         path: `/pages/index`,
         imageUrl: 'https://pub.file.k12.vip/tbzw/v2/logo2.png'
-      }
+      };
     }
   }
 </script>
@@ -277,26 +280,55 @@
   @import '../assets/style/mixin.scss';
 
   .p-uploadAudioWork {
-    border-top: 1px solid transparent;
+    height: 100vh;
+    background-color: #F6F7FA;
+    overflow: hidden;
 
     &-title {
-      margin: 32px 48px 48px;
-      padding: 32px;
-      background: rgba(255, 245, 209, 1);
-      border-radius: 16px;
-      font-size: 32px;
-      font-weight: 500;
-      color: rgba(209, 138, 59, 1);
+      display: flex;
+      width: 100%;
+      height: 294px;
+      background: linear-gradient(360deg, rgba(255, 192, 0, 1) 0%, rgba(255, 192, 0, 1) 100%);
+
+      .-title-left {
+        display: inline-block;
+        padding: 64px 18px 0 48px;
+        width: 398px;
+        font-size: 28px;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 1);
+        line-height: 40px;
+      }
+
+      .-title-right {
+        display: inline-block;
+        padding-top: 20px;
+
+        .-img {
+          width: 232px;
+          height: 250px;
+        }
+      }
     }
 
     &-content {
-      margin: 80px 70px 0;
-      max-height: 600px;
+      position: relative;
+      top: -34px;
+      box-sizing: border-box;
+      margin: 0 auto;
+      padding: 48px 64px;
+      width: 686px;
+      height: 488px;
       overflow-y: auto;
-      /*font-size:36px;*/
-      /*font-weight:600;*/
-      /*color:rgba(88,66,43,1);*/
-      /*line-height:100px;*/
+      background: rgba(255, 255, 255, 1);
+      box-shadow: 0px 0px 20px 4px rgba(145, 155, 139, 0.1);
+      border-radius: 24px;
+
+      .-text {
+        font-size:32px;
+        font-weight:500;
+        color:rgba(51,51,51,1);
+      }
     }
 
     &-sound {
@@ -318,10 +350,10 @@
           text-align: center;
 
           .-center-text {
-            font-size:24px;
-            font-weight:500;
+            font-size: 24px;
+            font-weight: 500;
             color: #D18A3B;
-            line-height:34px;
+            line-height: 34px;
           }
 
           .-center-img {
@@ -337,11 +369,11 @@
         }
 
         &-text {
-          height:34px;
-          font-size:24px;
-          font-weight:400;
-          color:rgba(88,66,43,1);
-          line-height:34px;
+          height: 34px;
+          font-size: 24px;
+          font-weight: 400;
+          color: rgba(88, 66, 43, 1);
+          line-height: 34px;
         }
       }
     }
@@ -385,8 +417,8 @@
         margin: 0 auto;
         width: 470px;
         height: 100px;
-        background:linear-gradient(90deg,rgba(254,179,18,1) 0%,rgba(255,192,0,1) 100%);
-        box-shadow:0px 2px 8px 4px rgba(255,181,76,0.4);
+        background: linear-gradient(90deg, rgba(254, 179, 18, 1) 0%, rgba(255, 192, 0, 1) 100%);
+        box-shadow: 0px 2px 8px 4px rgba(255, 181, 76, 0.4);
         border-radius: 50px;
         font-size: 32px;
         font-weight: 500;

@@ -7,6 +7,7 @@ import study from './study'
 import order from './order'
 import appointment from './appointment'
 import center from './center'
+import dubbing from './dubbing'
 
 export default {
   user,
@@ -16,5 +17,6 @@ export default {
   study,
   order,
   appointment,
-  center
+  center,
+  dubbing
 }

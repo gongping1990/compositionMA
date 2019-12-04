@@ -1,6 +1,6 @@
 <template>
   <view class="container">
-    <mHeader title="课后作业"></mHeader>
+    <mHeader title="课后作业" flag="4"></mHeader>
     <view class="container-scroll p-submitHomework"
           style="margin-top:{{height}}px">
       <form
@@ -303,7 +303,7 @@ export default class SubmitHomework extends wepy.page {
     workDetail: '',
     lessonDetail: '',
     cardDetail: '',
-    lessonId: '',
+    queryInfo: {},
     innerAudioContext: '',
     dataList: []
   }
@@ -326,7 +326,7 @@ export default class SubmitHomework extends wepy.page {
   getLessonInfo() {
     api.study
       .getLessonDetail({
-        lessonId: this.lessonId
+        lessonId: this.queryInfo.id
       })
       .then(res => {
         this.lessonDetail = res.data.resultData
@@ -348,7 +348,7 @@ export default class SubmitHomework extends wepy.page {
     this.isFetching = true
     api.study
       .viewMyHomework({
-        lessonId: this.lessonId
+        lessonId: this.queryInfo.id
       })
       .then(
         res => {
@@ -383,7 +383,7 @@ export default class SubmitHomework extends wepy.page {
       .listHomeworkByLesson({
         current: this.page.current,
         size: this.page.size,
-        lessonId: this.lessonId
+        lessonId: this.queryInfo.id
       })
       .then(
         ({ data }) => {
@@ -512,9 +512,9 @@ export default class SubmitHomework extends wepy.page {
     },
     openUrl(num) {
       if (num === 1) {
-        wx.navigateTo({ url: `/pages/study?id=${this.lessonId}&lookback=1` })
+        wx.navigateTo({ url: `/pages/study?id=${this.queryInfo.id}&lookback=1` })
       } else {
-        wx.navigateTo({ url: `/pages/test?id=${this.lessonId}&lookback=1` })
+        wx.navigateTo({ url: `/pages/test?id=${this.queryInfo.id}&lookback=1` })
       }
     },
     addLike(item) {
@@ -570,7 +570,7 @@ export default class SubmitHomework extends wepy.page {
           this.lessonDetail.homeworkType == 1
             ? 'uploadAudioWork'
             : 'uploadImgWork'
-        }?id=${this.lessonId}`
+        }?id=${this.queryInfo.id}`
       })
     },
     lookWorkDetail(data) {
@@ -606,11 +606,20 @@ export default class SubmitHomework extends wepy.page {
     },
     nextStep () {
       this.getAudio(6)
+    },
+    back () {
+      if (this.queryInfo.isFromLesson) {
+        wx.navigateBack()
+      } else {
+        wx.reLaunch({
+          url: '/pages/lesson'
+        })
+      }
     }
   }
 
   onLoad(query) {
-    this.lessonId = query.id
+    this.queryInfo = query
   }
 
   onShow() {
@@ -690,7 +699,7 @@ export default class SubmitHomework extends wepy.page {
           height: 40px;
           font-size: 28px;
           font-weight: 300;
-          color: #333333;
+          color: rgba(51,51,51,0.4);
           line-height: 40px;
         }
 

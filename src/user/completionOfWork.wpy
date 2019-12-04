@@ -75,7 +75,7 @@
         <image class="-footer-left-img" src="{{workDetail.replyTeacherImg}}"></image>
         <view class="-footer-left-text">
           <view>{{workDetail.replyTeacher}}</view>
-          <view class="-tip">{{workDetail.replyTime ? workDetail.replyTime : '请稍等，老师随后点评'}}</view>
+          <view class="-tip">{{workDetail.replyTime ? workDetail.replyTime : '老师随后为你点评，请留意微信通知'}}</view>
         </view>
       </view>
       <view class="-footer-center" wx:if="{{workDetail.replyTime && workDetail.replyAudio && !isOpenAudio}}"
@@ -111,12 +111,16 @@
           <image class="-footer-right-img"
                  src="https://pub.file.k12.vip/tbzw/1.3/course/icon-1.png"></image>
         </button>
-        <image @tap="openShareModal" class="-footer-right-img" wx:if="{{workDetail.homeworkType === 2 && workDetail.self}}"
+        <image @tap="openShareModal" class="-footer-right-img"
+               wx:if="{{workDetail.homeworkType === 2 && workDetail.self}}"
                src="https://pub.file.k12.vip/tbzw/1.3/course/icon-1.png"></image>
         <view class="-footer-right-wrap" @tap="addLike">
           <view class="-tip">{{workDetail.likenum}}</view>
           <image class="-footer-right-img -img-two" src="https://pub.file.k12.vip/tbzw/1.3/course/icon-2.png"></image>
         </view>
+      </view>
+      <view class="-footer-icon" wx:if="{{workDetail.replyRemind}}">
+        <image class="-footer-icon-img -footer-icon-ania" src="https://pub.file.k12.vip/2019/12/04/1202110438063345666.png"></image>
       </view>
     </view>
 
@@ -224,16 +228,16 @@
 </template>
 
 <script>
-  import wepy from 'wepy'
-import api from '../request/api'
-import dayjs from 'dayjs'
-import load from '../components/load'
-import mHeader from '../components/header'
-import lookImage from '../components/lookImage'
-import ConfirmModal from '../components/confirmModal'
-import getDateDiff from '../utils/getDateDiff'
+  import wepy from 'wepy';
+  import api from '../request/api';
+  import dayjs from 'dayjs';
+  import load from '../components/load';
+  import mHeader from '../components/header';
+  import lookImage from '../components/lookImage';
+  import ConfirmModal from '../components/confirmModal';
+  import getDateDiff from '../utils/getDateDiff';
 
-export default class CompletionOfWorkNew extends wepy.page {
+  export default class CompletionOfWorkNew extends wepy.page {
     config = {
       navigationBarTitleText: '作业详情',
       'usingComponents': {
@@ -250,7 +254,7 @@ export default class CompletionOfWorkNew extends wepy.page {
     };
     computed = {
       height() {
-        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
       }
     };
 
@@ -286,169 +290,186 @@ export default class CompletionOfWorkNew extends wepy.page {
     };
 
     initAudio(bool) {
-      this.myAudio = wx.createInnerAudioContext()
-      this.myAudio.src = bool ? this.workDetail.workAudio : this.workDetail.replyAudioAuthorUrl
+      this.myAudio = wx.createInnerAudioContext();
+      this.myAudio.src = bool ? this.workDetail.workAudio : this.workDetail.replyAudioAuthorUrl;
 
       this.myAudio.onPlay(() => {
-        console.log('start')
-      })
+        console.log('start');
+      });
 
       this.myAudio.onTimeUpdate(() => {
-        let duration = parseInt(this.myAudio.duration)
+        let duration = parseInt(this.myAudio.duration);
 
-        this.currentTime = (parseInt(this.myAudio.currentTime) / duration) * 100
-        this.$apply()
-      })
+        this.currentTime = (parseInt(this.myAudio.currentTime) / duration) * 100;
+        this.$apply();
+      });
       this.myAudio.onEnded(() => {
         if (!bool) {
-          this.isPlay = false
+          this.isPlay = false;
         } else {
-          this.isMyPlay = false
+          this.isMyPlay = false;
         }
-        this.$apply()
-      })
+        this.$apply();
+      });
     };
 
     timeToFormat(times) {
-      var result = '00 : 00'
-      var minute, second
+      var result = '00 : 00';
+      var minute, second;
       if (times > 0) {
-        minute = Math.floor(times / 60)
+        minute = Math.floor(times / 60);
         if (minute < 10) {
-          minute = '0' + minute
+          minute = '0' + minute;
         }
 
-        second = Math.floor((times - 60 * minute) % 60)
+        second = Math.floor((times - 60 * minute) % 60);
         if (second < 10) {
-          second = '0' + second
+          second = '0' + second;
         }
-        result = `${minute} : ${second}`
+        result = `${minute} : ${second}`;
       }
-      return result
+      return result;
     };
 
     getMyHomework() {
-      this.isFetching = true
+      this.isFetching = true;
       api.study.viewMyHomework({
         lessonId: this.queryInfo.id
       }).then(res => {
-        this.workDetail = res.data.resultData
-        this.workDetail.workTime = getDateDiff.getDateDiff(this.workDetail.workTime)
-        this.workDetail.workImg = this.workDetail.workImg && this.workDetail.workImg.split(',')
-        this.workDetail.workImgSrc = this.workDetail.workImgSrc && this.workDetail.workImgSrc.split(',')
-        this.workDetail.replyImg = this.workDetail.replyImg && this.workDetail.replyImg.split(',')
-        this.workDetail.duration = this.timeToFormat(this.workDetail.duration)
-        this.workDetail.replyDuration = this.timeToFormat(this.workDetail.replyDuration)
+        this.workDetail = res.data.resultData;
+        this.workDetail.workTime = getDateDiff.getDateDiff(this.workDetail.workTime);
+        this.workDetail.workImg = this.workDetail.workImg && this.workDetail.workImg.split(',');
+        this.workDetail.workImgSrc = this.workDetail.workImgSrc && this.workDetail.workImgSrc.split(',');
+        this.workDetail.replyImg = this.workDetail.replyImg && this.workDetail.replyImg.split(',');
+        this.workDetail.duration = this.timeToFormat(this.workDetail.duration);
+        this.workDetail.replyDuration = this.timeToFormat(this.workDetail.replyDuration);
+        this.workDetail.likeRemind && this.getAudio(8)
         if (this.workDetail.replyTime) {
-          this.workDetail.replyTime = getDateDiff.getDateDiff(this.workDetail.replyTime)
-          this.isReply = true
+          this.workDetail.replyTime = getDateDiff.getDateDiff(this.workDetail.replyTime);
+          this.isReply = true;
         } else {
-          this.isReply = false
+          this.isReply = false;
         }
-        this.initAudio(false)
-        this.isFetching = false
-        this.$apply()
+
+        this.initAudio(false);
+        this.isFetching = false;
+        this.$apply();
       }, () => {
-        this.isFetching = false
-        this.$apply()
-      })
+        this.isFetching = false;
+        this.$apply();
+      });
     };
 
     getOtherHomework() {
-      this.isFetching = true
+      this.isFetching = true;
       api.study.viewHomework({
         workId: this.queryInfo.id
       }).then(res => {
-        this.workDetail = res.data.resultData
-        this.workDetail.workTime = getDateDiff.getDateDiff(this.workDetail.workTime)
-        this.workDetail.workImg = this.workDetail.workImg && this.workDetail.workImg.split(',')
-        this.workDetail.workImgSrc = this.workDetail.workImgSrc && this.workDetail.workImgSrc.split(',')
-        this.workDetail.replyImg = this.workDetail.replyImg && this.workDetail.replyImg.split(',')
-        this.workDetail.duration = this.timeToFormat(this.workDetail.duration)
-        this.workDetail.replyDuration = this.timeToFormat(this.workDetail.replyDuration)
+        this.workDetail = res.data.resultData;
+        this.workDetail.workTime = getDateDiff.getDateDiff(this.workDetail.workTime);
+        this.workDetail.workImg = this.workDetail.workImg && this.workDetail.workImg.split(',');
+        this.workDetail.workImgSrc = this.workDetail.workImgSrc && this.workDetail.workImgSrc.split(',');
+        this.workDetail.replyImg = this.workDetail.replyImg && this.workDetail.replyImg.split(',');
+        this.workDetail.duration = this.timeToFormat(this.workDetail.duration);
+        this.workDetail.replyDuration = this.timeToFormat(this.workDetail.replyDuration);
         if (this.workDetail.replyTime) {
-          this.workDetail.replyTime = getDateDiff.getDateDiff(this.workDetail.replyTime)
-          this.isReply = true
+          this.workDetail.replyTime = getDateDiff.getDateDiff(this.workDetail.replyTime);
+          this.isReply = true;
         } else {
-          this.isReply = false
+          this.isReply = false;
         }
-        this.isCompliment = this.workDetail.otherLike
-        this.isFetching = false
-        this.initAudio(false)
-        this.$apply()
+        this.isCompliment = this.workDetail.otherLike;
+        this.isFetching = false;
+        this.initAudio(false);
+        this.$apply();
       }, () => {
-        this.isFetching = false
-        this.$apply()
-      })
+        this.isFetching = false;
+        this.$apply();
+      });
     };
 
+    getAudio(num) {
+      api.dubbing.getDubbingByType({
+        type: num
+      }).then(res => {
+        let data = res.data.resultData
+        this.playGuideAudio(data.oathvfUrl)
+        this.$apply();
+      });
+    };
+
+    playGuideAudio(src) {
+      let { audioContext, playSound } = this.$parent.globalData;
+      playSound(audioContext, 1, src);
+    }
+
     methods = {
-      changeSlider (event) {
-        this.currentTime = (event.detail.value / 100) * this.myAudio.duration
-        this.myAudio.seek(this.currentTime)
+      changeSlider(event) {
+        this.currentTime = (event.detail.value / 100) * this.myAudio.duration;
+        this.myAudio.seek(this.currentTime);
       },
       backPre() {
-        wx.navigateBack()
+        wx.navigateBack();
       },
       scrollToFn() {
-        let that = this
+        let that = this;
         wx.createSelectorQuery().select('#scorllCompletion').boundingClientRect(function(rect) {
           if (rect) {
             wx.pageScrollTo({
               scrollTop: rect.height
-            })
+            });
           }
-        }).exec()
+        }).exec();
       },
       openShareModal() {
-        this.isOpenPopup = false
-        this.isOpenShareModal = !this.isOpenShareModal
+        this.isOpenPopup = false;
+        this.isOpenShareModal = !this.isOpenShareModal;
       },
       openPoster() {
         wx.navigateTo({
           url: `/pages/sharePoster?id=${this.workDetail.id}`
-        })
+        });
       },
       praiseTeacher() {
-        this.isShowImage = false
-        this.isOpenPopup = true
+        this.isShowImage = false;
+        this.isOpenPopup = true;
       },
       enlargeImage(idx, list) {
-        this.imgIndex = idx
-        this.itemUrl = list
-        this.isShowImage = true
+        this.imgIndex = idx;
+        this.itemUrl = list;
+        this.isShowImage = true;
       },
       shareFriend() {
-        this.getMyHomework()
+        this.getMyHomework();
       },
       resultHomework() {
-        this.isShowConfirm = true
+        this.isShowConfirm = true;
       },
       changeAudioStatus() {
-        this.isMyPlay = false
-        !this.isOpenAudio && this.myAudio.destroy()
-        !this.isOpenAudio && this.initAudio(false)
+        this.isMyPlay = false;
+        !this.isOpenAudio && this.myAudio.destroy();
+        !this.isOpenAudio && this.initAudio(false);
         if (this.isPlay) {
-          this.isPlay = false
-          this.myAudio.pause()
+          this.isPlay = false;
+          this.myAudio.pause();
         } else {
-          this.isPlay = true
-          this.myAudio.play()
+          this.isPlay = true;
+          this.myAudio.play();
         }
-        this.isOpenAudio = true
+        this.isOpenAudio = true;
       },
       changeMyAudioStatus() {
-        this.isOpenAudio = false
-        this.currentTime = 0
-        this.isPlay = false
-        this.myAudio.destroy()
-        this.initAudio(true)
+        this.isOpenAudio = false;
+        this.currentTime = 0;
+        this.isPlay = false;
+        this.myAudio.destroy();
+        this.initAudio(true);
         if (this.isMyPlay) {
-          this.isMyPlay = false
-          this.myAudio.pause()
+          this.isMyPlay = false;
+          this.myAudio.pause();
         } else {
-          this.isMyPlay = true
-          this.myAudio.play()
+          this.isMyPlay = true;
+          this.myAudio.play();
         }
       },
       addLike() {
@@ -456,112 +477,115 @@ export default class CompletionOfWorkNew extends wepy.page {
           wx.showToast({
             icon: 'none',
             title: '不能给自己点赞哟~'
-          })
+          });
         } else {
           if (this.workDetail.otherLike) {
             return wx.showToast({
               icon: 'none',
               title: '已经点过赞啦~'
-            })
+            });
           }
           api.study.addLike({
             workId: this.queryInfo.id
           })
             .then(() => {
-              this.isZan = true
+              this.isZan = true;
               setTimeout(() => {
-                this.startLikeAnimation()
-              }, 500)
+                this.startLikeAnimation();
+              }, 500);
 
               setTimeout(() => {
-                this.getOtherHomework()
-                this.$apply()
-              }, 900)
-            })
+                this.getOtherHomework();
+                this.$apply();
+              }, 900);
+            });
         }
       },
       bindClickMessage(e) {
-        this.stumsg = e.detail.value
+        this.stumsg = e.detail.value;
       },
       submitEvaluate() {
         if (!this.isActive) {
           return wx.showToast({
             icon: 'none',
             title: '请选择对老师评价的标签哦~'
-          })
+          });
         }
         api.study.evaluationToTeacher({
           id: this.workDetail.id,
           evaluation: this.isActive,
           stumsg: this.stumsg
         }).then(() => {
-          this.isEvaluate = true
+          this.isEvaluate = true;
           if (this.queryInfo.type === '1') {
-            this.getMyHomework()
+            this.getMyHomework();
           } else {
-            this.getOtherHomework()
+            this.getOtherHomework();
           }
-          this.$apply()
-        })
+          this.$apply();
+        });
       },
       choiceTab(num) {
-        this.isActive = num
+        this.isActive = num;
       },
       changePopup() {
         if (this.queryInfo.type === '1' && this.isOpenPopup) {
-          this.getMyHomework()
+          this.getMyHomework();
         } else {
-          this.getOtherHomework()
+          this.getOtherHomework();
         }
-        this.isOpenPopup = !this.isOpenPopup
+        this.isOpenPopup = !this.isOpenPopup;
       }
     };
 
     events = {
       changePopupStatus() {
-        this.isShowImage = false
+        this.isShowImage = false;
       },
       changeOkStatus(bool) {
-        this.isShowConfirm = false
+        this.isShowConfirm = false;
 
         if (bool === 'true') {
           wx.navigateTo({
             url: `/user/${this.workDetail.homeworkType == 1 ? 'uploadAudioWork' : 'uploadImgWork'}?id=${this.workDetail.lessonId}`
-          })
+          });
         }
       }
     };
 
     startLikeAnimation() {
-      const base = 270 / 414
-      const bgBase = 13865 / 414
-      const width = 276
-      let height = width * base
-      let time = (1000 * 0.75) / 51
-      let bgHeight = parseInt(width * bgBase)
+      const base = 270 / 414;
+      const bgBase = 13865 / 414;
+      const width = 276;
+      let height = width * base;
+      let time = (1000 * 0.75) / 51;
+      let bgHeight = parseInt(width * bgBase);
       setTimeout(() => {
         if (this.backgroundY < bgHeight) {
-          this.backgroundY += height
-          this.startLikeAnimation()
+          this.backgroundY += height;
+          this.startLikeAnimation();
         } else {
-          this.backgroundY = 0
+          this.backgroundY = 0;
         }
-        this.$apply()
-      }, time)
+        this.$apply();
+      }, time);
     }
 
     onLoad(query) {
-      this.queryInfo = query
+      this.queryInfo = query;
       if (query.type === '1') {
-        this.getMyHomework()
+        this.getMyHomework();
+        if (this.queryInfo.isPlayAudio) {
+          this.getAudio(7)
+        }
       } else {
-        this.getOtherHomework()
+        this.getOtherHomework();
       }
-      this.$apply()
+      this.$apply();
     }
 
     onUnload() {
-      this.myAudio.destroy()
+      this.myAudio.destroy();
     }
 
     onShareAppMessage(type) {
@@ -569,7 +593,7 @@ export default class CompletionOfWorkNew extends wepy.page {
         title: this.queryInfo.type === '1' ? `我已坚持学习${this.workDetail.learnDay}天，刚完成今天的作业，请给我点个赞吧` : `快来给@${this.workDetail.nickname}点个赞，TA已坚持学习了${this.workDetail.learnDay}天`,
         path: `/pages/shareHomework?id=${this.workDetail.id}`,
         imageUrl: this.workDetail.homeworkType === 1 ? '' : this.workDetail.workImg[0]
-      }
+      };
     }
   }
 </script>
@@ -849,14 +873,14 @@ export default class CompletionOfWorkNew extends wepy.page {
 
         .-prossage {
           margin-right: 40px;
-          width:351px;
+          width: 351px;
 
           &-btn {
-            width:27px;
-            height:27px;
-            background:rgba(255,215,3,1);
-            box-shadow:0px 10px 25px 0px rgba(255,91,0,0.48);
-            border-radius:50%;
+            width: 27px;
+            height: 27px;
+            background: rgba(255, 215, 3, 1);
+            box-shadow: 0px 10px 25px 0px rgba(255, 91, 0, 0.48);
+            border-radius: 50%;
           }
         }
       }
@@ -922,6 +946,21 @@ export default class CompletionOfWorkNew extends wepy.page {
 
         .-img-two {
           margin-left: 5px;
+        }
+      }
+
+      .-footer-icon {
+        position: absolute;
+        top: -90px;
+        left: 282px;
+
+        &-ania {
+          @include g-animation-icon;
+        }
+
+        &-img {
+          width: 110px;
+          height: 132px;
         }
       }
     }

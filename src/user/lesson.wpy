@@ -12,6 +12,7 @@
           <form report-submit="true" @submit="submit">
             <view
               wx:for="{{dataList}}"
+              key="index"
               class="lesson-item van-hairline--bottom"
             >
               <view class="lesson-info">
@@ -140,7 +141,7 @@ export default class Example extends wepy.page {
       } else if (data.stage === 2) {
         wx.navigateTo({ url: '/pages/test?id=' + data.lessonId })
       } else {
-        wx.navigateTo({ url: '/user/submitHomework?id=' + data.lessonId })
+        wx.navigateTo({ url: `/user/submitHomework?id=${data.lessonId}&isFromLesson=true` })
       }
     }
   }

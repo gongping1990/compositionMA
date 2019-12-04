@@ -1,12 +1,12 @@
 <template>
-  <view class="container ">
+  <view class="container p-uploadImgWork">
     <mHeader title="提交作业"></mHeader>
-    <view
-      class="container-scroll p-uploadImgWork"
-      style="margin-top:{{height}}px"
-    >
+    <view class="container-scroll" style="margin-top:{{height}}px">
       <view class="p-uploadImgWork-title">
-        {{ lessonDetail.homeworkClaim }}
+        <view class="-title-left">{{ lessonDetail.homeworkClaim }}</view>
+        <view class="-title-right">
+          <image class="-img" src="https://pub.file.k12.vip/tbzw/1.5/work/img@2x.png"></image>
+        </view>
       </view>
       <view class="p-uploadImgWork-content">
         <view class="-upload-wrap">
@@ -23,7 +23,7 @@
             @tap="uploadSeting"
             wx:if="{{workImgList.length<3}}"
           >
-            <van-icon name="plus" size="24px" color="#58422B" />
+            <image class="-icon" src="https://pub.file.k12.vip/2019/12/03/1201687557944774657.png"></image>
           </view>
         </view>
 
@@ -51,312 +51,358 @@
       </view>
     </van-popup> -->
     <loaded></loaded>
+
+    <camera :isShow.sync="isShowCamera"></camera>
   </view>
 </template>
 
 <script>
-import wepy from 'wepy'
-import api from '../request/api'
-import { saveFormId } from '../utils'
-import mHeader from '../components/header'
-import loaded from '../components/loaded'
+  import wepy from 'wepy';
+  import api from '../request/api';
+  import { saveFormId } from '../utils';
+  import mHeader from '../components/header';
+  import loaded from '../components/loaded';
+  import camera from '../components/camera';
 
-export default class UploadImgWork extends wepy.page {
-  config = {
-    navigationBarTitleText: '提交作业',
-    usingComponents: {
-      'van-icon': '../vant/icon/index',
-      'van-popup': '../vant/popup/index'
+  export default class UploadImgWork extends wepy.page {
+    config = {
+      navigationBarTitleText: '提交作业',
+      usingComponents: {
+        'van-icon': '../vant/icon/index',
+        'van-popup': '../vant/popup/index'
+      }
+    };
+    components = {
+      mHeader,
+      camera,
+      loaded
+    };
+    computed = {
+      height() {
+        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
+      }
+    };
+
+    data = {
+      isOpenPopup: false,
+      isShowCamera: false,
+      isSending: false,
+      queryInfo: '',
+      lessonDetail: '',
+      workImgList: []
+    };
+
+    getLessonInfo() {
+      api.study
+        .getLessonDetail({
+          lessonId: this.queryInfo.id
+        })
+        .then(res => {
+          this.lessonDetail = res.data.resultData;
+          this.$apply();
+        });
     }
-  }
-  components = {
-    mHeader,
-    loaded
-  }
-  computed = {
-    height() {
-      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
-    }
-  }
 
-  data = {
-    isOpenPopup: false,
-    isSending: false,
-    queryInfo: '',
-    lessonDetail: '',
-    workImgList: []
-  }
+    uploadImgFn(fileUrl) {
+      let _self = this;
+      if (_self.isSending) return;
+      _self.isSending = true;
+      wx.showToast({
+        icon: 'loading',
+        duration: 100000,
+        title: '正在上传中~'
+      });
 
-  getLessonInfo() {
-    api.study
-      .getLessonDetail({
-        lessonId: this.queryInfo.id
-      })
-      .then(res => {
-        this.lessonDetail = res.data.resultData
-        this.$apply()
-      })
-  }
-
-  uploadImgFn(fileUrl) {
-    let _self = this
-    if (_self.isSending) return
-    _self.isSending = true
-    wx.showToast({
-      icon: 'loading',
-      duration: 100000,
-      title: '正在上传中~'
-    })
-
-    wx.uploadFile({
-      url: 'https://huoke.prod.k12.vip/compositionv2/common/uploadPublicFile',
-      filePath: fileUrl,
-      name: 'file',
-      header: { 'Content-Type': 'multipart/form-data' },
-      success: function(res) {
-        if (res.statusCode !== 200) {
+      wx.uploadFile({
+        url: 'https://huoke.prod.k12.vip/compositionv2/common/uploadPublicFile',
+        filePath: fileUrl,
+        name: 'file',
+        header: { 'Content-Type': 'multipart/form-data' },
+        success: function(res) {
+          if (res.statusCode !== 200) {
+            wx.showModal({
+              title: '提示',
+              content: '上传失败',
+              showCancel: false
+            });
+          } else {
+            let parmas = JSON.parse(res.data);
+            _self.workImgList.push(parmas.resultData.url);
+            wx.showToast({
+              icon: 'success',
+              title: '上传成功~'
+            });
+          }
+          _self.isSending = false;
+          _self.$apply();
+        },
+        fail: function(e) {
+          wx.hideToast();
           wx.showModal({
             title: '提示',
             content: '上传失败',
             showCancel: false
-          })
-        } else {
-          let parmas = JSON.parse(res.data)
-          _self.workImgList.push(parmas.resultData.url)
-          wx.showToast({
-            icon: 'success',
-            title: '上传成功~'
-          })
+          });
+        },
+        complete: function() {
         }
-        _self.isSending = false
-        _self.$apply()
-      },
-      fail: function(e) {
-        wx.hideToast()
-        wx.showModal({
-          title: '提示',
-          content: '上传失败',
-          showCancel: false
-        })
-      },
-      complete: function() {}
-    })
-  }
+      });
+    }
 
-  methods = {
-    submit(e) {
-      saveFormId(e.detail.formId)
-    },
-    toWorkDetail() {
-      this.isOpenPopup = false
-      wx.navigateTo({
-        url: `/user/completionOfWork?type=1&id=${this.queryInfo.id}`
-      })
-    },
-    delImg(index) {
-      this.workImgList.splice(index, 1)
-    },
-    uploadSeting() {
-      let _self = this
+    methods = {
+      submit(e) {
+        saveFormId(e.detail.formId);
+      },
+      toWorkDetail() {
+        this.isOpenPopup = false;
+        wx.navigateTo({
+          url: `/user/completionOfWork?type=1&id=${this.queryInfo.id}`
+        });
+      },
+      delImg(index) {
+        this.workImgList.splice(index, 1);
+      },
+      uploadSeting() {
+        let _self = this;
 
-      wx.chooseImage({
-        count: 1, // 默认9
-        sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
-        sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
-        success: function(res) {
-          // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
-          _self.uploadImgFn(res.tempFilePaths[0])
+        this.isShowCamera = true
+        // wx.chooseImage({
+        //   count: 1, // 默认9
+        //   sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+        //   sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+        //   success: function(res) {
+        //     // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
+        //     _self.uploadImgFn(res.tempFilePaths[0]);
+        //   }
+        // });
+
+        // wx.navigateTo({
+        //   url: `/user/camera?id=${this.queryInfo.id}`
+        // });
+      },
+
+      submitWork() {
+        if (this.isSending) return;
+
+        if (!this.workImgList.length) {
+          return wx.showToast({
+            icon: 'none',
+            title: '请上传作业图片~'
+          });
         }
-      })
-    },
 
-    submitWork() {
-      if (this.isSending) return
-
-      if (!this.workImgList.length) {
-        return wx.showToast({
-          icon: 'none',
-          title: '请上传作业图片~'
-        })
+        api.study
+          .addHomework({
+            lessonId: this.queryInfo.id,
+            workImg: this.workImgList
+          })
+          .then(
+            res => {
+              this.isSending = false;
+              this.$broadcast('show');
+              this.$apply();
+            },
+            () => {
+              this.isSending = false;
+            }
+          );
       }
+    };
 
-      api.study
-        .addHomework({
-          lessonId: this.queryInfo.id,
-          workImg: this.workImgList
-        })
-        .then(
-          res => {
-            this.isSending = false
-            this.$broadcast('show')
-            this.$apply()
-          },
-          () => {
-            this.isSending = false
-          }
-        )
+    events = {
+      success() {
+        wx.navigateTo({
+          url: `/user/completionOfWork?type=1&id=${this.queryInfo.id}&isPlayAudio=true`
+        });
+      },
+      successImg(data) {
+        this.uploadImgFn(data[0]);
+      },
+      closeCamera () {
+        this.isShowCamera = false
+      }
+    };
+
+    onLoad(query) {
+      this.queryInfo = query;
+      if(this.queryInfo.imgUrl) {
+        this.uploadImgFn(this.queryInfo.imgUrl)
+      }
+      this.getLessonInfo();
+    }
+
+    onHide() {
+      this.$broadcast('destroy');
     }
   }
-
-  events = {
-    success() {
-      wx.navigateTo({
-        url: `/user/completionOfWork?type=1&id=${this.queryInfo.id}`
-      })
-    }
-  }
-
-  onLoad(query) {
-    this.queryInfo = query
-    this.getLessonInfo()
-  }
-
-  onHide() {
-    this.$broadcast('destroy')
-  }
-}
 </script>
 <style lang="scss">
-@import '../assets/style/mixin.scss';
+  @import '../assets/style/mixin.scss';
 
-.p-uploadImgWork {
-  border-top: 1px solid transparent;
-  &-title {
-    margin: 32px 48px 48px;
-    padding: 32px;
-    background: rgba(255, 245, 209, 1);
-    border-radius: 16px;
-    font-size: 32px;
-    font-weight: 500;
-    color: rgba(209, 138, 59, 1);
-  }
+  .p-uploadImgWork {
+    height: 100vh;
+    background-color: #F6F7FA;
+    overflow: hidden;
 
-  &-content {
-    margin: 0 32px;
-    padding: 48px 32px;
-    border-radius: 24px;
-    border: 2px dashed rgba(88, 66, 43, 0.3);
-
-    .-upload-wrap {
+    &-title {
       display: flex;
-    }
-
-    .-upload-list {
-      position: relative;
-      margin-right: 8px;
-      width: 202px;
-      height: 202px;
-      border-radius: 8px;
-      border: 1px solid rgba(33, 37, 38, 0.05);
-    }
-
-    .-upload-img {
       width: 100%;
-      height: 100%;
+      height: 294px;
+      background: linear-gradient(360deg, rgba(255, 192, 0, 1) 0%, rgba(255, 192, 0, 1) 100%);
+
+      .-title-left {
+        display: inline-block;
+        padding: 64px 18px 0 48px;
+        width: 398px;
+        font-size: 28px;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 1);
+        line-height: 40px;
+      }
+
+      .-title-right {
+        display: inline-block;
+        padding-top: 20px;
+
+        .-img {
+          width: 232px;
+          height: 250px;
+        }
+      }
     }
 
-    .-upload-add {
-      @include flex-center;
-      width: 202px;
-      height: 202px;
-      background: rgba(246, 245, 245, 1);
-      border-radius: 8px;
-      border: 1px solid rgba(88, 66, 43, 0.05);
+    &-content {
+      box-sizing: border-box;
+      position: relative;
+      top: -34px;
+      margin: 0 32px;
+      padding: 48px 32px;
+      height:358px;
+      background:rgba(255,255,255,1);
+      box-shadow:0px 0px 20px 4px rgba(145,155,139,0.1);
+      border-radius:24px;
+
+      .-upload-wrap {
+        display: flex;
+      }
+
+      .-upload-list {
+        position: relative;
+        margin-right: 8px;
+        width: 202px;
+        height: 202px;
+        border-radius: 8px;
+        border: 1px solid rgba(33, 37, 38, 0.05);
+      }
+
+      .-upload-img {
+        border-radius: 8px;
+        width: 100%;
+        height: 100%;
+      }
+
+      .-upload-add {
+        @include flex-center;
+        width:202px;
+        height:204px;
+        background:rgba(242,242,242,1);
+        border-radius:8px;
+        border:1px solid rgba(223,223,223,1);
+
+        .-icon {
+          width: 94px;
+          height: 90px;
+        }
+      }
+
+      .-upload-icon {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 32px;
+        height: 32px;
+      }
+
+      .-upload-tip {
+        text-align: center;
+        margin-top: 24px;
+        font-size: 24px;
+        font-weight: 400;
+        color: #999999;
+        line-height: 34px;
+      }
     }
 
-    .-upload-icon {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      width: 32px;
-      height: 32px;
+    &-footer {
+      position: fixed;
+      bottom: 48px;
+      width: 100%;
+
+      .-footer-btn {
+        margin: 0 auto;
+        text-align: center;
+        width: 686px;
+        height: 104px;
+        background: rgba(255, 192, 0, 1);
+        border-radius: 52px;
+        font-size: 32px;
+        font-weight: 500;
+        color: #ffffff;
+        line-height: 104px;
+      }
     }
 
-    .-upload-tip {
+    &-popup {
       text-align: center;
-      margin-top: 24px;
-      font-size: 24px;
-      font-weight: 400;
-      color: rgba(88, 66, 43, 0.4);
-      line-height: 34px;
-    }
-  }
-
-  &-footer {
-    position: fixed;
-    bottom: 48px;
-    width: 100%;
-
-    .-footer-btn {
       margin: 0 auto;
-      text-align: center;
-      width: 470px;
-      height: 100px;
-      background: linear-gradient(
-        90deg,
-        rgba(254, 179, 18, 1) 0%,
-        rgba(255, 192, 0, 1) 100%
-      );
-      box-shadow: 0px 2px 8px 4px rgba(255, 181, 76, 0.4);
-      border-radius: 50px;
-      font-size: 32px;
-      font-weight: 500;
-      color: #ffffff;
-      line-height: 100px;
+      width: 590px;
+      height: 460px;
+      background: rgba(255, 255, 255, 1);
+      border-radius: 32px;
+
+      .-popup-icon {
+        position: absolute;
+        top: -92px;
+        left: 210px;
+        width: 184px;
+        height: 184px;
+      }
+
+      .-popup-title {
+        padding-top: 124px;
+        height: 50px;
+        font-size: 36px;
+        font-weight: 500;
+        color: rgba(88, 66, 43, 1);
+        line-height: 50px;
+      }
+
+      .-popup-text {
+        margin: 16px 0 48px;
+        height: 40px;
+        font-size: 28px;
+        font-weight: 300;
+        color: rgba(88, 66, 43, 0.5);
+        line-height: 40px;
+      }
+
+      .-popup-btn {
+        text-align: center;
+        margin: 0 auto;
+        width: 470px;
+        height: 100px;
+        background: linear-gradient(
+            90deg,
+            rgba(254, 179, 18, 1) 0%,
+            rgba(255, 192, 0, 1) 100%
+        );
+        box-shadow: 0px 2px 8px 4px rgba(255, 181, 76, 0.4);
+        border-radius: 50px;
+        font-size: 32px;
+        font-weight: 500;
+        color: #ffffff;
+        line-height: 100px;
+      }
     }
   }
-
-  &-popup {
-    text-align: center;
-    margin: 0 auto;
-    width: 590px;
-    height: 460px;
-    background: rgba(255, 255, 255, 1);
-    border-radius: 32px;
-
-    .-popup-icon {
-      position: absolute;
-      top: -92px;
-      left: 210px;
-      width: 184px;
-      height: 184px;
-    }
-
-    .-popup-title {
-      padding-top: 124px;
-      height: 50px;
-      font-size: 36px;
-      font-weight: 500;
-      color: rgba(88, 66, 43, 1);
-      line-height: 50px;
-    }
-
-    .-popup-text {
-      margin: 16px 0 48px;
-      height: 40px;
-      font-size: 28px;
-      font-weight: 300;
-      color: rgba(88, 66, 43, 0.5);
-      line-height: 40px;
-    }
-
-    .-popup-btn {
-      text-align: center;
-      margin: 0 auto;
-      width: 470px;
-      height: 100px;
-      background: linear-gradient(
-        90deg,
-        rgba(254, 179, 18, 1) 0%,
-        rgba(255, 192, 0, 1) 100%
-      );
-      box-shadow: 0px 2px 8px 4px rgba(255, 181, 76, 0.4);
-      border-radius: 50px;
-      font-size: 32px;
-      font-weight: 500;
-      color: #ffffff;
-      line-height: 100px;
-    }
-  }
-}
 </style>

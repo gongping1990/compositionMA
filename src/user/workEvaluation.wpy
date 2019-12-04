@@ -89,7 +89,7 @@ export default class Notice extends wepy.page {
 
   methods = {
     toWorkDetail (data) {
-      wx.navigateTo({ url: `/user/completionOfWork?type=2&id=${data.workId}` })
+      wx.navigateTo({ url: `/user/completionOfWork?type=1&id=${data.lessonId}` })
     },
     bindLoadItem (data) {
       if (this.dataList.length < this.page.total) {

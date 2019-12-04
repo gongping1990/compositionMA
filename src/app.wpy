@@ -133,7 +133,6 @@ export default class extends wepy.app {
     systemInfo: null,
     headHeight: 46,
     audioContext: null,
-    btnAudioContext: null,
     audioReadyIndex: 1,
     audioReadyArr: [1, 2, 3, 5, 6, 7],
     show(that, param, opacity) {
@@ -146,10 +145,6 @@ export default class extends wepy.app {
       animation.opacity(opacity).step()
       // 设置动画
       that[param] = animation.export()
-    },
-    playBtnAudio(audioContext) {
-      audioContext.stop()
-      audioContext.play()
     },
     playSound(audioContext, index, src) {
       if (src) {
@@ -187,13 +182,9 @@ export default class extends wepy.app {
   onLaunch(options) {
     const that = this
     let audioContext = wx.createInnerAudioContext()
-    let btnAudioContext = wx.createInnerAudioContext()
     audioContext.volume = 0.3
     audioContext.obeyMuteSwitch = false
-    btnAudioContext.src = 'https://pub.file.k12.vip/tbzw/1.5/medio/btnAudio.mp3'
-    audioContext.obeyMuteSwitch = false
     this.globalData.audioContext = audioContext
-    this.globalData.btnAudioContext = btnAudioContext
     wx.setKeepScreenOn({
       keepScreenOn: true
     })

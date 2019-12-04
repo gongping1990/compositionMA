@@ -9,12 +9,17 @@
       >
         <view class="joinRoom-student">
           <view
-            class="joinRoom-student-item {{show && 'show'}}"
-            style="transition-delay: {{index * 0.7}}s"
+            class="joinRoom-student-item"
             wx:for="{{mateInfo}}"
             wx:key="{{index}}"
           >
-            <image class="joinRoom-student-avatar" src="{{item.mateImg}}" />
+            <view class="joinRoom-student-img">
+              <image
+                class="joinRoom-student-avatar {{show && 'show'}}"
+                style="transition-delay: {{index * 0.8}}s"
+                src="{{item.mateImg}}"
+              />
+            </view>
             <view class="joinRoom-student-name">{{ item.mateName }}</view>
           </view>
         </view>
@@ -119,13 +124,6 @@ export default class Classroom extends wepy.page {
     }
     &-item {
       @include flex-column-center;
-      opacity: 0;
-      transform: translateY(50%);
-      transition: all 0.7s;
-      &.show {
-        opacity: 1;
-        transform: translateY(0);
-      }
       .two & {
         margin-top: 64px;
         &:nth-child(1) {
@@ -140,15 +138,31 @@ export default class Classroom extends wepy.page {
         }
       }
     }
-    &-avatar {
+    &-img {
       margin-bottom: 12px;
       width: 112px;
       height: 112px;
       border-radius: 50%;
+      background: url('https://pub.file.k12.vip/tbzw/1.5/classroom/avatar.gif')
+        no-repeat;
+      background-size: 100%;
+    }
+    &-avatar {
+      opacity: 0;
+      box-sizing: border-box;
+      width: 112px;
+      height: 112px;
       border: 2px solid rgba(255, 255, 255, 1);
+      border-radius: 50%;
+      transition: all 0.7s;
+      &.show {
+        opacity: 1;
+      }
     }
     &-name {
       @include text-overflow;
+      text-align: center;
+      width: 120px;
       font-size: 28px;
       color: #333333;
     }

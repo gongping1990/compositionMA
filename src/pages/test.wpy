@@ -242,6 +242,8 @@ export default class Example extends wepy.page {
       saveFormId(e.detail.formId)
     },
     clickLinkHomeWork() {
+      let { audioContext, playSound } = this.$parent.globalData
+      playSound(audioContext, 1)
       wx.redirectTo({ url: '/user/submitHomework?id=' + this.lessonId })
     },
     clickStudy() {
@@ -284,7 +286,6 @@ export default class Example extends wepy.page {
       let { audioContext, playSound } = this.$parent.globalData
       this.stop()
       if (this.stepIndex === this.questionArr.length - 1) {
-        
         playSound(audioContext, 6)
         this.changeLearnStage(3)
         this.setSummary()

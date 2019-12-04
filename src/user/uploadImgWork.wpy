@@ -1,12 +1,15 @@
 <template>
-  <view class="container ">
+  <view class="container p-uploadImgWork">
     <mHeader title="提交作业"></mHeader>
-    <view
-      class="container-scroll p-uploadImgWork"
-      style="margin-top:{{height}}px"
-    >
+    <view class="container-scroll" style="margin-top:{{height}}px">
       <view class="p-uploadImgWork-title">
-        {{ lessonDetail.homeworkClaim }}
+        <view class="-title-left">{{ lessonDetail.homeworkClaim }}</view>
+        <view class="-title-right">
+          <image
+            class="-img"
+            src="https://pub.file.k12.vip/tbzw/1.5/work/img@2x.png"
+          ></image>
+        </view>
       </view>
       <view class="p-uploadImgWork-content">
         <view class="-upload-wrap">
@@ -23,7 +26,10 @@
             @tap="uploadSeting"
             wx:if="{{workImgList.length<3}}"
           >
-            <van-icon name="plus" size="24px" color="#58422B" />
+            <image
+              class="-icon"
+              src="https://pub.file.k12.vip/2019/12/03/1201687557944774657.png"
+            ></image>
           </view>
         </view>
 
@@ -51,6 +57,8 @@
       </view>
     </van-popup> -->
     <loaded></loaded>
+
+    <camera :isShow.sync="isShowCamera"></camera>
   </view>
 </template>
 
@@ -60,6 +68,7 @@ import api from '../request/api'
 import { saveFormId } from '../utils'
 import mHeader from '../components/header'
 import loaded from '../components/loaded'
+import camera from '../components/camera'
 
 export default class UploadImgWork extends wepy.page {
   config = {
@@ -71,6 +80,7 @@ export default class UploadImgWork extends wepy.page {
   }
   components = {
     mHeader,
+    camera,
     loaded
   }
   computed = {
@@ -81,6 +91,7 @@ export default class UploadImgWork extends wepy.page {
 
   data = {
     isOpenPopup: false,
+    isShowCamera: false,
     isSending: false,
     queryInfo: '',
     lessonDetail: '',
@@ -159,18 +170,25 @@ export default class UploadImgWork extends wepy.page {
     uploadSeting() {
       let _self = this
 
-      wx.chooseImage({
-        count: 1, // 默认9
-        sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
-        sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
-        success: function(res) {
-          // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
-          _self.uploadImgFn(res.tempFilePaths[0])
-        }
-      })
+      this.isShowCamera = true
+      // wx.chooseImage({
+      //   count: 1, // 默认9
+      //   sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+      //   sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+      //   success: function(res) {
+      //     // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
+      //     _self.uploadImgFn(res.tempFilePaths[0]);
+      //   }
+      // });
+
+      // wx.navigateTo({
+      //   url: `/user/camera?id=${this.queryInfo.id}`
+      // });
     },
 
     submitWork() {
+      let { audioContext, playSound } = this.$parent.globalData
+      playSound(audioContext, 1)
       if (this.isSending) return
 
       if (!this.workImgList.length) {
@@ -201,13 +219,22 @@ export default class UploadImgWork extends wepy.page {
   events = {
     success() {
       wx.navigateTo({
-        url: `/user/completionOfWork?type=1&id=${this.queryInfo.id}`
+        url: `/user/completionOfWork?type=1&id=${this.queryInfo.id}&isPlayAudio=true`
       })
+    },
+    successImg(data) {
+      this.uploadImgFn(data[0])
+    },
+    closeCamera() {
+      this.isShowCamera = false
     }
   }
 
   onLoad(query) {
     this.queryInfo = query
+    if (this.queryInfo.imgUrl) {
+      this.uploadImgFn(this.queryInfo.imgUrl)
+    }
     this.getLessonInfo()
   }
 
@@ -220,22 +247,51 @@ export default class UploadImgWork extends wepy.page {
 @import '../assets/style/mixin.scss';
 
 .p-uploadImgWork {
-  border-top: 1px solid transparent;
+  height: 100vh;
+  background-color: #f6f7fa;
+  overflow: hidden;
+
   &-title {
-    margin: 32px 48px 48px;
-    padding: 32px;
-    background: rgba(255, 245, 209, 1);
-    border-radius: 16px;
-    font-size: 32px;
-    font-weight: 500;
-    color: rgba(209, 138, 59, 1);
+    display: flex;
+    width: 100%;
+    height: 294px;
+    background: linear-gradient(
+      360deg,
+      rgba(255, 192, 0, 1) 0%,
+      rgba(255, 192, 0, 1) 100%
+    );
+
+    .-title-left {
+      display: inline-block;
+      padding: 64px 18px 0 48px;
+      width: 398px;
+      font-size: 28px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 1);
+      line-height: 40px;
+    }
+
+    .-title-right {
+      display: inline-block;
+      padding-top: 20px;
+
+      .-img {
+        width: 232px;
+        height: 250px;
+      }
+    }
   }
 
   &-content {
+    box-sizing: border-box;
+    position: relative;
+    top: -34px;
     margin: 0 32px;
     padding: 48px 32px;
+    height: 358px;
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0px 0px 20px 4px rgba(145, 155, 139, 0.1);
     border-radius: 24px;
-    border: 2px dashed rgba(88, 66, 43, 0.3);
 
     .-upload-wrap {
       display: flex;
@@ -251,6 +307,7 @@ export default class UploadImgWork extends wepy.page {
     }
 
     .-upload-img {
+      border-radius: 8px;
       width: 100%;
       height: 100%;
     }
@@ -258,10 +315,15 @@ export default class UploadImgWork extends wepy.page {
     .-upload-add {
       @include flex-center;
       width: 202px;
-      height: 202px;
-      background: rgba(246, 245, 245, 1);
+      height: 204px;
+      background: rgba(242, 242, 242, 1);
       border-radius: 8px;
-      border: 1px solid rgba(88, 66, 43, 0.05);
+      border: 1px solid rgba(223, 223, 223, 1);
+
+      .-icon {
+        width: 94px;
+        height: 90px;
+      }
     }
 
     .-upload-icon {
@@ -277,7 +339,7 @@ export default class UploadImgWork extends wepy.page {
       margin-top: 24px;
       font-size: 24px;
       font-weight: 400;
-      color: rgba(88, 66, 43, 0.4);
+      color: #999999;
       line-height: 34px;
     }
   }
@@ -290,19 +352,14 @@ export default class UploadImgWork extends wepy.page {
     .-footer-btn {
       margin: 0 auto;
       text-align: center;
-      width: 470px;
-      height: 100px;
-      background: linear-gradient(
-        90deg,
-        rgba(254, 179, 18, 1) 0%,
-        rgba(255, 192, 0, 1) 100%
-      );
-      box-shadow: 0px 2px 8px 4px rgba(255, 181, 76, 0.4);
-      border-radius: 50px;
+      width: 686px;
+      height: 104px;
+      background: rgba(255, 192, 0, 1);
+      border-radius: 52px;
       font-size: 32px;
       font-weight: 500;
       color: #ffffff;
-      line-height: 100px;
+      line-height: 104px;
     }
   }
 

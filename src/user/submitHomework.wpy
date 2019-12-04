@@ -1,6 +1,6 @@
 <template>
   <view class="container">
-    <mHeader title="课后作业"></mHeader>
+    <mHeader title="课后作业" flag="4"></mHeader>
     <view class="container-scroll p-submitHomework"
           style="margin-top:{{height}}px">
       <form
@@ -39,7 +39,7 @@
                 @tap="changeTab({{'1'}})">
             <view class="-text">我的作业</view>
           </view>
-          <view class="-down-text {{tabActive === '2' ? '-active' : ''}}"
+          <view class="-down-text -down-text-two {{tabActive === '2' ? '-active' : ''}}"
                 @tap="changeTab({{'2'}})">
             <view class="-text">同学作业</view>
           </view>
@@ -48,15 +48,15 @@
 
       <view class="p-submitHomework-center"
             wx:if="{{tabActive === '1'}}">
-        <view class="-center-blackboard">
+        <view class="-center-blackboard {{cardDetail.todayCard ? '-center-blackboard-jr' : ''}}">
           <view class="-center-blackboard-title">课后作业</view>
           <text class="-center-blackboard-content">{{lessonDetail.homeworkClaim}}</text>
         </view>
 
         <view class="-center-mask"
               wx:if="{{isSuccessWork}}">
-          <image class="-mask-img"
-                 src="https://pub.file.k12.vip/tbzw/khzy/success.png"></image>
+          <image class="-center-mask-img"
+                 src="https://pub.file.k12.vip/tbzw/1.5/work/wc-icon.png"></image>
         </view>
 
         <view class="-center-work"
@@ -65,9 +65,9 @@
             <view class="-top-left">
               <image class="-top-left-img"
                      src="{{workDetail.stuImg}}"></image>
+              <view class="-top-left-name">{{workDetail.nickname}}</view>
             </view>
             <view class="-top-right">
-              <view class="-top-right-name">{{workDetail.nickname}}</view>
               <view class="-top-right-time">{{workDetail.workTime}}</view>
             </view>
           </view>
@@ -91,17 +91,18 @@
               <view class="-reply-time">{{workDetail.duration}}</view>
             </view>
           </view>
-          <view class="-center-work-footer">
-            <view class="-center-work-footer-wrap">
-              <image class="-img"
-                     src="https://pub.file.k12.vip/tbzw/1.3/course/dianzan2.png"></image>
-              <text>{{workDetail.likenum}}</text>
-            </view>
+          <view class="-center-work-footer -footer-my">
             <view class="-center-work-footer-wrap"
                   @tap="lookWorkDetail({{workDetail}})">
               <image class="-img"
-                     src="https://pub.file.k12.vip/tbzw/1.3/course/zybz-icon-review.png"></image>
+                     src="https://pub.file.k12.vip/tbzw/1.5/work/zybz-icon-review@2x.png"></image>
               <text>看点评</text>
+            </view>
+
+            <view class="-center-work-footer-wrap">
+              <image class="-img"
+                     src="https://pub.file.k12.vip/tbzw/1.5/work/zpbz_icon_givealike@2x.png"></image>
+              <text>{{workDetail.likenum}}</text>
             </view>
           </view>
         </view>
@@ -140,9 +141,9 @@
               <view class="-top-left">
                 <image class="-top-left-img"
                        src="{{item.stuImg}}"></image>
+                <view class="-top-left-name">{{item.nickname}}</view>
               </view>
               <view class="-top-right">
-                <view class="-top-right-name">{{item.nickname}}</view>
                 <view class="-top-right-time">{{item.workTime}}</view>
               </view>
             </view>
@@ -171,6 +172,13 @@
 
             <view class="-center-work-footer">
               <view class="-center-work-footer-wrap"
+                    @tap="lookWorkDetail({{item}})">
+                <image class="-img"
+                       src="https://pub.file.k12.vip/tbzw/1.5/work/zybz-icon-review@2x.png"></image>
+                <text>看点评</text>
+              </view>
+
+              <view class="-center-work-footer-wrap"
                     @tap="addLike({{item}})">
                 <view class="-texiao"
                       wx:if="{{dataItem.id === item.id}}"
@@ -178,17 +186,11 @@
                 </view>
                 <image class="-img {{dataItem.id === item.id ? '-icon-animation' : ''}}"
                        wx:if="{{!item.otherLike}}"
-                       src="https://pub.file.k12.vip/tbzw/1.3/course/dianzan2.png"></image>
+                       src="https://pub.file.k12.vip/tbzw/1.5/work/zpbz_icon_givealike@2x.png"></image>
                 <image class="-img"
                        wx:if="{{item.otherLike}}"
                        src="https://pub.file.k12.vip/tbzw/1.3/course/dianzan.png"></image>
                 <text>{{item.likenum}}</text>
-              </view>
-              <view class="-center-work-footer-wrap"
-                    @tap="lookWorkDetail({{item}})">
-                <image class="-img"
-                       src="https://pub.file.k12.vip/tbzw/1.3/course/zybz-icon-review.png"></image>
-                <text>看点评</text>
               </view>
             </view>
           </view>
@@ -222,12 +224,12 @@
         <view class="-popup-look-content">
           <view @tap="openUrl({{1}})">
             <image class="-popup-look-img"
-                   src="https://pub.file.k12.vip/2019/06/06/1136558111751163906.png"></image>
+                   src="https://pub.file.k12.vip/tbzw/1.5/work/icon-course@2x.png"></image>
             <view>回看课程</view>
           </view>
           <view @tap="openUrl({{2}})">
             <image class="-popup-look-img"
-                   src="https://pub.file.k12.vip/2019/06/06/1136558295600091137.png"></image>
+                   src="https://pub.file.k12.vip/tbzw/1.5/work/icon-jc.png"></image>
             <view>随堂检测</view>
           </view>
         </view>
@@ -240,6 +242,7 @@
                 @click="changePopup"/>
     </van-popup>
     <load wx:if="{{isFetching}}"></load>
+    <workPageTip :isShow.sync="isShowHelpTip"></workPageTip>
   </view>
 </template>
 
@@ -252,6 +255,7 @@ import { connect } from 'wepy-redux'
 import mHeader from '../components/header'
 import load from '../components/load'
 import lookImage from '../components/lookImage'
+import workPageTip from '../components/workPageTip'
 
 @connect({
   userInfo(state) {
@@ -269,6 +273,7 @@ export default class SubmitHomework extends wepy.page {
   components = {
     mHeader,
     lookImage,
+    workPageTip,
     load
   }
   computed = {
@@ -292,23 +297,41 @@ export default class SubmitHomework extends wepy.page {
     isFetching: false,
     isOpenPopup: false,
     isShowImage: false,
+    isShowHelpTip: false,
     isCard: false,
     isPlay: false,
     workDetail: '',
     lessonDetail: '',
     cardDetail: '',
-    lessonId: '',
+    queryInfo: {},
     innerAudioContext: '',
     dataList: []
+  }
+
+  getAudio(num) {
+    api.dubbing.getDubbingByType({
+      type: num
+    }).then(res => {
+      let data = res.data.resultData
+      this.playGuideAudio(data.oathvfUrl)
+      this.$apply();
+    });
+  };
+
+  playGuideAudio(src) {
+    let { audioContext, playSound } = this.$parent.globalData;
+    playSound(audioContext, 1, src);
   }
 
   getLessonInfo() {
     api.study
       .getLessonDetail({
-        lessonId: this.lessonId
+        lessonId: this.queryInfo.id
       })
       .then(res => {
         this.lessonDetail = res.data.resultData
+        this.isShowHelpTip = this.lessonDetail.remindSubmit
+        this.isShowHelpTip && this.getAudio(5)
         this.$apply()
       })
   }
@@ -325,7 +348,7 @@ export default class SubmitHomework extends wepy.page {
     this.isFetching = true
     api.study
       .viewMyHomework({
-        lessonId: this.lessonId
+        lessonId: this.queryInfo.id
       })
       .then(
         res => {
@@ -360,7 +383,7 @@ export default class SubmitHomework extends wepy.page {
       .listHomeworkByLesson({
         current: this.page.current,
         size: this.page.size,
-        lessonId: this.lessonId
+        lessonId: this.queryInfo.id
       })
       .then(
         ({ data }) => {
@@ -489,9 +512,9 @@ export default class SubmitHomework extends wepy.page {
     },
     openUrl(num) {
       if (num === 1) {
-        wx.navigateTo({ url: `/pages/study?id=${this.lessonId}&lookback=1` })
+        wx.navigateTo({ url: `/pages/study?id=${this.queryInfo.id}&lookback=1` })
       } else {
-        wx.navigateTo({ url: `/pages/test?id=${this.lessonId}&lookback=1` })
+        wx.navigateTo({ url: `/pages/test?id=${this.queryInfo.id}&lookback=1` })
       }
     },
     addLike(item) {
@@ -542,12 +565,14 @@ export default class SubmitHomework extends wepy.page {
       this.isOpenPopup = !this.isOpenPopup
     },
     submitWork() {
+      let { audioContext, playSound } = this.$parent.globalData
+      playSound(audioContext, 1)
       wx.navigateTo({
         url: `/user/${
           this.lessonDetail.homeworkType == 1
             ? 'uploadAudioWork'
             : 'uploadImgWork'
-        }?id=${this.lessonId}`
+        }?id=${this.queryInfo.id}`
       })
     },
     lookWorkDetail(data) {
@@ -579,11 +604,24 @@ export default class SubmitHomework extends wepy.page {
   events = {
     changePopupStatus() {
       this.isShowImage = false
+      this.isShowHelpTip = false
+    },
+    nextStep () {
+      this.getAudio(6)
+    },
+    back () {
+      if (this.queryInfo.isFromLesson) {
+        wx.navigateBack()
+      } else {
+        wx.reLaunch({
+          url: '/pages/lesson'
+        })
+      }
     }
   }
 
   onLoad(query) {
-    this.lessonId = query.id
+    this.queryInfo = query
   }
 
   onShow() {
@@ -654,7 +692,7 @@ export default class SubmitHomework extends wepy.page {
           /*height: 50px;*/
           font-size: 36px;
           font-weight: 500;
-          color: rgba(88, 66, 43, 1);
+          color: #333333;
           line-height: 50px;
         }
 
@@ -663,7 +701,7 @@ export default class SubmitHomework extends wepy.page {
           height: 40px;
           font-size: 28px;
           font-weight: 300;
-          color: rgba(88, 66, 43, 0.5);
+          color: rgba(51,51,51,0.4);
           line-height: 40px;
         }
 
@@ -678,10 +716,11 @@ export default class SubmitHomework extends wepy.page {
 
         .-btn {
           @include flex-center;
-          width: 160px;
-          height: 46px;
-          background: rgba(34, 234, 171, 1);
-          border-radius: 22px;
+          width:166px;
+          height:56px;
+          background:rgba(254,182,13,1);
+          box-shadow:0px 4px 8px 0px rgba(232,175,0,0.54);
+          border-radius:28px;
           font-size: 24px;
           font-family: PingFangSC-Medium;
           font-weight: 500;
@@ -690,22 +729,23 @@ export default class SubmitHomework extends wepy.page {
         }
 
         .-icon {
-          margin-right: 4px;
-          width: 24px;
-          height: 24px;
+          margin-right: 6px;
+          width: 30px;
+          height: 30px;
         }
       }
     }
 
     &-down {
       display: flex;
-      justify-content: space-between;
+      /*justify-content: space-between;*/
       align-items: center;
-      padding: 0 230px;
+      padding: 0 58px;
+      margin-top: 6px;
       border-bottom: 1px solid #f5f5f5;
 
       .-down-text {
-        padding: 34px 0 24px 0;
+        padding: 34px 0 18px 0;
         height: 40px;
         font-size: 28px;
         font-weight: 400;
@@ -717,6 +757,10 @@ export default class SubmitHomework extends wepy.page {
           transform: translateX(-20px);
           width: 120px;
         }
+      }
+
+      .-down-text-two {
+        margin-left: 104px;
       }
 
       .-active {
@@ -732,10 +776,10 @@ export default class SubmitHomework extends wepy.page {
     top: -70px;
 
     .-center-blackboard {
-      @include bg('/khzy/hb.png');
+      @include bg('/1.5/work/board@2x.png');
       margin: 0 auto;
-      width: 622px;
-      height: 368px;
+      width: 654px;
+      height: 426px;
 
       &-title {
         @include flex-center;
@@ -760,9 +804,7 @@ export default class SubmitHomework extends wepy.page {
 
       &-content {
         display: inline-block;
-        width: 500px;
-        margin-top: 12px;
-        margin-left: 62px;
+        margin: 0 64px;
         font-size: 24px;
         font-weight: 500;
         color: rgba(255, 255, 255, 0.9);
@@ -771,38 +813,38 @@ export default class SubmitHomework extends wepy.page {
       }
     }
 
+    .-center-blackboard-jr {
+      @include bg('/1.5/work/board-jr.png');
+    }
+
     .-center-mask {
       position: absolute;
-      top: 40px;
-      left: 100px;
-      margin: 0 auto;
-      width: 550px;
-      height: 290px;
-      background-color: rgba(0, 0, 0, 0.4);
-      border-radius: 20px;
-      text-align: right;
+      top: 30px;
+      right: 80px;
 
-      .-mask-img {
+      &-img {
         margin-top: 36px;
         margin-right: 40px;
-        width: 218px;
-        height: 218px;
+        width: 148px;
+        height: 66px;
       }
     }
 
     .-center-work {
       position: relative;
       margin-top: 54px;
-      border-top: 10px solid #f6f5f4;
+      /*border-top: 10px solid #f6f5f4;*/
 
       &-my {
         margin-top: 48px !important;
       }
 
+
       &-top {
         display: flex;
         align-items: center;
-        padding-left: 32px;
+        justify-content: space-between;
+        padding: 0 48px;
         margin: 0 0 32px;
 
         .-top-left {
@@ -814,73 +856,71 @@ export default class SubmitHomework extends wepy.page {
             height: 56px;
             border-radius: 50%;
           }
+
+          &-name {
+            height:44px;
+            font-size:32px;
+            font-weight:500;
+            color:rgba(51,51,51,1);
+            line-height:44px;
+          }
         }
 
         .-top-right {
-          &-name {
-            height: 40px;
-            font-size: 28px;
-            font-weight: 500;
-            color: rgba(88, 66, 43, 1);
-            line-height: 40px;
-          }
-
           &-time {
-            height: 28px;
-            font-size: 20px;
-            font-weight: 400;
-            color: rgba(88, 66, 43, 0.5);
-            line-height: 28px;
+            height:32px;
+            font-size:22px;
+            font-weight:400;
+            color:rgba(153,153,153,1);
+            line-height:32px;
           }
         }
       }
 
       &-down {
         display: flex;
-        padding-left: 32px;
-        padding-bottom: 24px;
-        border-bottom: 3px solid #f6f5f4;
+        padding-left: 112px;
+        padding-bottom: 28px;
 
         &-img {
-          margin-right: 12px;
-          width: 220px;
-          height: 220px;
+          margin-right: 30px;
+          width: 198px;
+          height: 198px;
         }
 
         &-audio {
           @include flex-center;
           justify-content: space-between;
-          padding: 20px 32px;
-          width: 488px;
-          background: linear-gradient(
-            90deg,
-            rgba(254, 179, 18, 1) 0%,
-            rgba(255, 192, 0, 1) 100%
-          );
-          box-shadow: 0px 2px 8px 4px rgba(255, 181, 76, 0.4);
-          border-radius: 36px;
+          width:352px;
+          height:60px;
+          background:linear-gradient(90deg,rgba(255,192,1,1) 0%,rgba(254,179,18,1) 100%);
+          border-radius:0px 32px 32px 32px;
 
           .-reply-icon {
+            margin: 18px 0 16px 28px;
+
             .icon {
-              @include bg('/1.3/course/icon-play.png');
-              width: 42px;
-              height: 32px;
+              background: url('https://pub.file.k12.vip/2019/12/04/1202071888211087362.png');
+              background-size: 100%;
+              width: 32px;
+              height: 26px;
             }
 
             .playIcon {
-              background: url('https://pub.file.k12.vip/2019/09/16/1173531855166513154.gif');
+              background: url('https://pub.file.k12.vip/2019/12/04/1202108006889558018.gif');
               background-size: 100%;
-              width: 42px;
-              height: 32px;
+              width: 32px;
+              height: 26px;
             }
           }
 
           .-reply-time {
-            height: 26px;
-            font-size: 19px;
+            margin: 14px 30px 16px 0;
+            height: 30px;
+            font-size: 21px;
             font-weight: 600;
             color: #ffffff;
-            line-height: 26px;
+            line-height: 30px;
           }
         }
       }
@@ -888,8 +928,8 @@ export default class SubmitHomework extends wepy.page {
       &-footer {
         position: relative;
         display: flex;
-        padding-bottom: 20px;
-        height: 66px;
+        justify-content: flex-end;
+        padding: 0 48px 22px;
         line-height: 66px;
         font-size: 24px;
         font-weight: 600;
@@ -897,25 +937,23 @@ export default class SubmitHomework extends wepy.page {
         line-height: 32px;
 
         &-wrap {
-          width: 50%;
           @include flex-center;
-
-          .-texiao {
-            @include texiao;
-            left: 40px;
-            bottom: 25px;
-          }
-
-          .-icon-animation {
-            @include texiao-icon;
-          }
+          margin-right: 32px;
 
           .-img {
-            margin-right: 8px;
-            width: 40px;
-            height: 40px;
+            margin-right: 14px;
+            width: 32px;
+            height: 32px;
+          }
+
+          &:last-child{
+            margin-right: 0;
           }
         }
+      }
+
+      .-footer-my {
+        padding-bottom: 0;
       }
     }
 
@@ -1004,25 +1042,20 @@ export default class SubmitHomework extends wepy.page {
 
   &-footer {
     position: absolute;
-    bottom: 42px;
+    bottom: 0px;
     width: 100%;
 
     .-footer-btn {
       margin: 0 auto;
       text-align: center;
-      width: 470px;
-      height: 100px;
-      background: linear-gradient(
-        90deg,
-        rgba(254, 179, 18, 1) 0%,
-        rgba(255, 192, 0, 1) 100%
-      );
-      box-shadow: 0px 2px 8px 4px rgba(255, 181, 76, 0.4);
-      border-radius: 50px;
+      width:622px;
+      height:104px;
+      background:rgba(255,192,0,1);
+      border-radius:52px;
       font-size: 32px;
       font-weight: 500;
       color: #ffffff;
-      line-height: 100px;
+      line-height: 104px;
     }
   }
 
@@ -1104,9 +1137,9 @@ export default class SubmitHomework extends wepy.page {
       justify-content: space-between;
       align-items: center;
       padding: 0 110px;
-      font-size: 24px;
+      font-size: 32px;
       font-weight: 500;
-      color: rgba(88, 66, 43, 1);
+      color: #666666;
     }
 
     .-popup-look-img {

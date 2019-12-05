@@ -1,131 +1,124 @@
 {
-	"description": "项目配置文件",
-	"packOptions": {
-		"ignore": []
-	},
-	"setting": {
-		"urlCheck": false,
-		"es6": true,
-		"postcss": false,
-		"minified": false,
-		"newFeature": true,
-		"nodeModules": true,
-		"autoAudits": false,
-		"checkInvalidKey": true,
-		"checkSiteMap": true,
-		"uploadWithSourceMap": true,
-		"babelSetting": {
-			"ignore": [],
-			"disablePlugins": [],
-			"outputPath": ""
-		}
-	},
-	"compileType": "miniprogram",
-	"libVersion": "2.8.0",
-	"appid": "wx2a0a77e396535475",
-	"projectname": "chinese-wepy",
-	"miniprogramRoot": "dist/",
-	"cloudfunctionTemplateRoot": "",
-	"debugOptions": {
-		"hidedInDevtools": []
-	},
-	"scripts": {},
-	"simulatorType": "wechat",
-	"simulatorPluginLibVersion": {},
-	"condition": {
-		"search": {
-			"current": -1,
-			"list": []
-		},
-		"conversation": {
-			"current": -1,
-			"list": []
-		},
-		"plugin": {
-			"current": -1,
-			"list": []
-		},
-		"game": {
-			"list": []
-		},
-		"gamePlugin": {
-			"current": -1,
-			"list": []
-		},
-		"miniprogram": {
-			"current": -1,
-			"list": [
-				{
-					"id": -1,
-					"name": "user/submitHomework",
-					"pathName": "user/submitHomework",
-					"query": "id=1173513977189851138",
-					"scene": null
-				},
-				{
-					"id": -1,
-					"name": "pages/sharePoster",
-					"pathName": "pages/sharePoster",
-					"query": "id=1173848797161070593",
-					"scene": null
-				},
-				{
-					"id": -1,
-					"name": "user/recognitionNotice",
-					"pathName": "user/recognitionNotice",
-					"query": "",
-					"scene": null
-				},
-				{
-					"id": -1,
-					"name": "user/submitHomework1",
-					"pathName": "user/submitHomework",
-					"query": "id=1134359706941546498",
-					"scene": null
-				},
-				{
-					"id": -1,
-					"name": "user/submitHomework(yinp)",
-					"pathName": "user/submitHomework",
-					"query": "id=1138721381526679554",
-					"scene": null
-				},
-				{
-					"id": -1,
-					"name": "user/uploadImgWork",
-					"pathName": "user/uploadImgWork",
-					"query": "id=1173513977189851138",
-					"scene": null
-				},
-				{
-					"id": -1,
-					"name": "user/uploadAudioWork",
-					"pathName": "user/uploadAudioWork",
-					"query": "id=1138721381526679554",
-					"scene": null
-				},
-				{
-					"id": -1,
-					"name": "user/completionOfWork",
-					"pathName": "user/completionOfWork",
-					"query": "type=1&id=1134359706941546498",
-					"scene": null
-				},
-				{
-					"id": 8,
-					"name": "user/completionOfWork2",
-					"pathName": "user/completionOfWork",
-					"query": "type=1&id=1173513977189851138&isPlayAudio=true",
-					"scene": null
-				},
-				{
-					"id": 9,
-					"name": "pages/study",
-					"pathName": "pages/study",
-					"query": "id=1156154606599417858",
-					"scene": null
-				}
-			]
-		}
-	}
+  "description": "项目配置文件",
+  "packOptions": {
+    "ignore": []
+  },
+  "setting": {
+    "urlCheck": false,
+    "es6": true,
+    "postcss": false,
+    "minified": false,
+    "newFeature": true,
+    "nodeModules": true,
+    "autoAudits": false,
+    "checkInvalidKey": true,
+    "checkSiteMap": true,
+    "uploadWithSourceMap": true,
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
+    }
+  },
+  "compileType": "miniprogram",
+  "libVersion": "2.8.0",
+  "appid": "wx2a0a77e396535475",
+  "projectname": "chinese-wepy",
+  "miniprogramRoot": "dist/",
+  "cloudfunctionTemplateRoot": "",
+  "debugOptions": {
+    "hidedInDevtools": []
+  },
+  "scripts": {},
+  "simulatorType": "wechat",
+  "simulatorPluginLibVersion": {},
+  "condition": {
+    "search": {
+      "current": -1,
+      "list": []
+    },
+    "conversation": {
+      "current": -1,
+      "list": []
+    },
+    "plugin": {
+      "current": -1,
+      "list": []
+    },
+    "game": {
+      "list": []
+    },
+    "gamePlugin": {
+      "current": -1,
+      "list": []
+    },
+    "miniprogram": {
+      "current": -1,
+      "list": [
+        {
+          "id": -1,
+          "name": "user/submitHomework",
+          "pathName": "user/submitHomework",
+          "query": "id=1173513977189851138",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "pages/sharePoster",
+          "pathName": "pages/sharePoster",
+          "query": "id=1173848797161070593",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "user/recognitionNotice",
+          "pathName": "user/recognitionNotice",
+          "query": "",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "user/submitHomework1",
+          "pathName": "user/submitHomework",
+          "query": "id=1134359706941546498",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "user/submitHomework(yinp)",
+          "pathName": "user/submitHomework",
+          "query": "id=1138721381526679554",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "user/uploadImgWork",
+          "pathName": "user/uploadImgWork",
+          "query": "id=1173513977189851138",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "user/uploadAudioWork",
+          "pathName": "user/uploadAudioWork",
+          "query": "id=1138721381526679554",
+          "scene": null
+        },
+        {
+          "id": -1,
+          "name": "user/completionOfWork",
+          "pathName": "user/completionOfWork",
+          "query": "type=1&id=1134359706941546498",
+          "scene": null
+        },
+        {
+          "id": 8,
+          "name": "user/completionOfWork2",
+          "pathName": "user/completionOfWork",
+          "query": "type=1&id=1173513977189851138&isPlayAudio=true",
+          "scene": null
+        }
+      ]
+    }
+  }
 }

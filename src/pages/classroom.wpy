@@ -31,7 +31,13 @@
         <view class="classroom-banner">
           <image
             class="classroom-banner-img"
+            src="https://pub.file.k12.vip/tbzw/1.5/classroom/cover1.png"
+            wx:if="{{!activeIndex}}"
+          />
+          <image
+            class="classroom-banner-img"
             src="https://pub.file.k12.vip/tbzw/1.5/classroom/cover{{activeIndex}}.png"
+            wx:else
           />
           <view class="classroom-banner-text">
             —— {{ activeIndex }}号教室 ——

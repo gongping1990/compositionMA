@@ -3,12 +3,12 @@
     <form report-submit="true" @submit="submit">
       <mHeader flag="0"></mHeader>
       <tooltip></tooltip>
-      <scroll-view 
-        class="container-scroll" 
-        scroll-y="true" 
+      <scroll-view
+        class="container-scroll"
+        scroll-y="true"
         scroll-top="{{scrollTop}}"
-        style="margin-top:{{height}}px; height:calc(100vh - {{height + 50}}px)" 
-        bindscroll="bindscroll" 
+        style="margin-top:{{height}}px; height:calc(100vh - {{height + 50}}px)"
+        bindscroll="bindscroll"
         bindscrolltolower="bindscrolltolower"
       >
         <swiper autoplay id="banner" class="banner" circular>
@@ -315,7 +315,7 @@
           <view class="dialog-close" @tap="onClose"></view>
         </view>
       </van-popup>
-      <van-popup show="{{ showWelcome }}" closeable @close="onCloseWelcome">
+      <van-popup class="welcome-pop-wrap" show="{{ showWelcome }}" closeable @close="onCloseWelcome">
         <view class="welcome-pop">
           <view class="welcome-pop-text">
             初次见面，送您一份新人福利
@@ -332,9 +332,9 @@
               open-type="contact"
               class="welcome-pop-btn new"
               show-message-card="true"
-              send-message-title="{{bannerList[0].cardtitle}}"
-              send-message-path="{{'/pages/index?homeConfig=' + bannerList[0].sessionFrom}}"
-              send-message-img="{{bannerList[0].cardimgurl}}"
+              send-message-title="点击卡片下方链接领取课程"
+              send-message-path="/pages/index?homeConfig=newUserWelfare"
+              send-message-img="https://pub.file.k12.vip/tbzw/1.5/gif/cover.jpg"
             >
               立即领取
             </button>
@@ -342,7 +342,7 @@
           <view class="welcome-pop-close" @tap="onCloseWelcome"></view>
         </view>
       </van-popup>
-      <van-popup show="{{ showWork }}" @close="onClose">
+      <van-popup class="welcome-pop-wrap" show="{{ showWork }}" @close="onClose">
         <view class="welcome-pop work">
           <view class="welcome-pop-text">
             你好呀，小朋友。老师给你发来了课后作业讲解，快去看看吧！
@@ -410,7 +410,7 @@ export default class Home extends wepy.page {
       'van-tabbar': '../vant/tabbar/index',
       'van-tabbar-item': '../vant/tabbar-item/index',
       'van-popup': '../vant/popup/index'
-      
+
     }
   }
   data = {
@@ -625,9 +625,11 @@ export default class Home extends wepy.page {
           })
           return e
         })
-        
+
         if (this.logined) {
-          this.getLatelyDubbingByHome()
+          if(!(ata.resultData.hasgift || this.showAddTeacher || data.resultData.awardsPop)) {
+            this.getLatelyDubbingByHome()
+          }
         } else {
           this.initWelcome()
         }
@@ -1167,7 +1169,7 @@ export default class Home extends wepy.page {
     position: relative;
     display: flex;
     align-self: flex-start;
-    
+
     &.relative {
       top: auto !important;
     }

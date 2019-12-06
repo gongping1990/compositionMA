@@ -9,7 +9,7 @@
       <cover-view class="camera-cover">
         <cover-image
           class="camera-cover-icon"
-          src="https://pub.file.k12.vip/tbzw/1.5/home/camera-icon.png"
+          src="https://pub.file.k12.vip/2019/12/06/1202780137163984897.png"
           wx:if="{{showIcon}}"
           @tap="closeIcon"
         />
@@ -114,10 +114,24 @@
       }
     }
     events = {}
-    watch = {}
-    onLoad(query) {
-      this.queryInfo = query
+    watch = {
+      isShow: (_n)=> {
+        console.log(_n)
+        _n && this.hideIcon()
+        !_n && this.openIcon()
+      }
     }
+    hideIcon() {
+      setTimeout(() => {
+        this.showIcon = false
+        this.$apply()
+      }, 3000);
+    }
+    openIcon () {
+      this.showIcon = true
+      this.cameraImg = ''
+    }
+    onLoad() {}
   }
 </script>
 <style lang="scss">
@@ -130,6 +144,8 @@
     bottom: 0;
     width: 100%;
     height: 100vh;
+    background: #fff;
+
     &-img {
       position: fixed;
       left: 0;
@@ -139,20 +155,34 @@
     }
     &-cover {
       display: flex;
-      flex-direction: column;
-      align-items: center;
+      /*flex-direction: column;*/
+      align-items: flex-end;
       position: fixed;
       left: 0;
       right: 0;
-      bottom: 90px;
+      bottom: 0;
+      height: 350px;
       z-index: 9;
+
       &-icon {
-        width: 554px;
+        position: absolute;
+        left: 16%;
+        top: 0;
+        margin: 0 auto;
+        width: 516px;
+        height: 154px;
+        z-index: 100;
+
       }
+
       &-control {
         position: relative;
+        display: flex;
+        align-items: center;
+        background-color: #333333;
         width: 100%;
-        height: 132px;
+        height: 224px;
+        line-height: 224px;
       }
       &-tj,
       &-cancel,
@@ -161,12 +191,12 @@
       }
       &-tj,
       &-cancel {
-        bottom: 10px;
+        /*bottom: 10px;*/
         display: flex;
         align-items: center;
         left: 84px;
-        width: 100px;
-        height: 110px;
+        /*width: 100px;*/
+        /*height: 110px;*/
         font-size: 32px;
         color: #fff;
         background-color: transparent;
@@ -178,7 +208,7 @@
       }
       &-confirm {
         box-sizing: initial;
-        top: 0;
+        top: 50rpx;
         left: 50%;
         width: 88px;
         height: 88px;

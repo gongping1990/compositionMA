@@ -416,7 +416,7 @@ export default class Example extends wepy.page {
         this.playAudio()
       }
       this.$apply()
-    }, 4000)
+    }, 2000)
   }
 
   // 模拟其他用户完成答题

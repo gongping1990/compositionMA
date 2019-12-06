@@ -482,6 +482,7 @@ export default class Home extends wepy.page {
       this.isFixed = e.detail.scrollTop >= this.bannerHeight
     },
     clickToCompletionOfWork() {
+      this.showWork = false
       wx.navigateTo({
         url: `/user/completionOfWork?type=1&id=${this.latelyData.lessonId}`
       })
@@ -1246,8 +1247,8 @@ export default class Home extends wepy.page {
     }
     &-popup {
       position: absolute;
-      top: 0;
-      right: -110px;
+      top: -30px;
+      left: 450px;
       width: 108px;
       height: 132px;
     }

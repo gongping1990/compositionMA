@@ -142,7 +142,6 @@ export default class Example extends wepy.page {
         courseId: this.courseId
       })
       .then(({ data }) => {
-        this.loading = false
         this.year = data.resultData.year
         this.month = data.resultData.month
         this.timeList = data.resultData.yearList
@@ -153,6 +152,7 @@ export default class Example extends wepy.page {
   }
 
   getList() {
+    this.loading = true
     api.study
       .listLessonCatalogByCourse({
         year: this.year,
@@ -160,6 +160,7 @@ export default class Example extends wepy.page {
         courseId: this.courseId
       })
       .then(({ data }) => {
+        this.loading = false
         this.dataList = data.resultData
         this.show = false
         this.scrollTop = this.scrollTop ? 0 : 1

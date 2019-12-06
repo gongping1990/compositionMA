@@ -325,7 +325,7 @@ export default class Lesson extends wepy.page {
             e.week = weekArr[e.week - 1]
             e.lessonlist = e.lessonlist.map(_e => {
               let stateArr = [
-                '补课',
+                '去学习',
                 '开始学习',
                 '交作业',
                 '待开课',

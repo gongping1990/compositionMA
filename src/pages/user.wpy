@@ -107,9 +107,6 @@ import login from '../components/login'
   userInfo(state) {
     return state.user.userInfo
   },
-  remindData(state) {
-    return state.user.remindData
-  },
   logined(state) {
     return state.user.logined
   }
@@ -230,12 +227,6 @@ export default class User extends wepy.page {
     login() {
       this.getBottomTipsVO()
       this.getUCRemindVO()
-    },
-    remindData(n) {
-      if (this.logined && !n.hasChild) {
-        wx.setStorageSync('redirect', '/pages/user')
-        wx.redirectTo({ url: '/user/info' })
-      }
     }
   }
 

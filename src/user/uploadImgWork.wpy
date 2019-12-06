@@ -3,7 +3,7 @@
     <mHeader title="提交作业"></mHeader>
     <view class="container-scroll" style="margin-top:{{height}}px">
       <view class="p-uploadImgWork-title">
-        <view class="-title-left">{{ lessonDetail.homeworkClaim }}</view>
+        <text class="-title-left">{{ lessonDetail.homeworkClaim }}</text>
         <view class="-title-right">
           <image
             class="-img"
@@ -263,7 +263,7 @@ export default class UploadImgWork extends wepy.page {
 
     .-title-left {
       display: inline-block;
-      padding: 64px 18px 0 48px;
+      padding: 44px 18px 0 48px;
       width: 398px;
       font-size: 28px;
       font-weight: 500;

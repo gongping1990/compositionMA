@@ -92,7 +92,6 @@ export default class extends wepy.app {
       {
         root: 'user',
         pages: [
-          'camera',
           'info',
           'teacher',
           'child',

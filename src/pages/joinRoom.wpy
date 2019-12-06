@@ -73,7 +73,6 @@ export default class Classroom extends wepy.page {
   }
 
   readyRoom() {
-    return
     setTimeout(() => {
       wx.redirectTo({ url: '/pages/ready?id=' + this.lessonId })
     }, 4000)

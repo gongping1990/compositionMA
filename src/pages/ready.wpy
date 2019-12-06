@@ -83,7 +83,7 @@ export default class Example extends wepy.page {
     time: 3,
     loading: true,
     isReady: false,
-    showContinueDiaolig: true,
+    showContinueDiaolig: false,
     timeText: '00:00',
     showDownTime: false,
     paused: false
@@ -465,16 +465,16 @@ export default class Example extends wepy.page {
       visibility: visible;
     }
     &-img {
-      width: 100%;
-      height: 350px;
-      background: url('https://pub.file.k12.vip/tbzw/1.5/classroom/loding.gif')
+      width: 320px;
+      height: 202px;
+      background: url('https://pub.file.k12.vip/tbzw/1.5/classroom/loading-sz.gif')
         no-repeat;
       background-size: 100%;
     }
     &-bar {
       position: relative;
       width: 582px;
-      height: 38px;
+      height: 14px;
       background: rgba(255, 245, 213, 1);
       border-radius: 19px;
       border: 4px solid rgba(255, 255, 255, 1);

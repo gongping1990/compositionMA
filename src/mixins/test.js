@@ -21,12 +21,7 @@ export default class testMixin extends wepy.mixin {
           wx.redirectTo({ url: '/pages/server' })
           break
         case 3:
-          if (this.logined && !this.remindData.hasChild) {
-            wx.setStorageSync('redirect', '/pages/user')
-            wx.redirectTo({ url: '/user/info' })
-          } else {
-            wx.redirectTo({ url: '/pages/user' })
-          }
+          wx.redirectTo({ url: '/pages/user' })
           break
       }
     }

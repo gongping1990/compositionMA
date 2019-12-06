@@ -56,10 +56,10 @@
 			"current": -1,
 			"list": [
 				{
-					"id": -1,
-					"name": "user/submitHomework",
-					"pathName": "user/submitHomework",
-					"query": "id=1173513977189851138",
+					"id": 0,
+					"name": "user/lesson",
+					"pathName": "user/lesson",
+					"query": "id=1174986675030867970",
 					"scene": null
 				},
 				{
@@ -120,9 +120,9 @@
 				},
 				{
 					"id": 9,
-					"name": "pages/ready",
-					"pathName": "pages/ready",
-					"query": "id=1156154467512979458",
+					"name": "pages/study",
+					"pathName": "pages/study",
+					"query": "id=1177187312586203137",
 					"scene": null
 				}
 			]

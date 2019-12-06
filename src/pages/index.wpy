@@ -214,7 +214,7 @@
             class="yd-popup animate-top"
             src="https://pub.file.k12.vip/tbzw/1.5/home/msg2.png"
             mode="aspectFit"
-            wx:if="{{ydType == 2}}"
+            wx:if="{{ydType == 2 || ydType == 3}}"
           />
 
           <image

@@ -91,6 +91,15 @@ const study = {
   },
   getLatelyDubbingByHome() {
     return request.get('/compositionv2/homepage/getLatelyDubbingByHome')
+  },
+  listDateByCourse(params) {
+    return request.get('/compositionv2/center/listDateByCourse', params)
+  },
+  listLessonCatalogByCourse(params) {
+    return request.get(
+      '/compositionv2/center/listLessonCatalogByCourse',
+      params
+    )
   }
 }
 

@@ -373,7 +373,7 @@
       >
         <image
           class="-yd-img banner"
-          src="https://pub.file.k12.vip/tbzw/1.5/home/yd2.png"
+          src="https://pub.file.k12.vip/tbzw/1.5/home/yd3.png"
         />
       </button>
 
@@ -770,11 +770,10 @@ export default class Home extends wepy.page {
       height: 514px;
       &.banner {
         position: fixed;
-        bottom: 100px;
-        right: 26px;
-        width: 672px;
-        height: 438px;
-        margin: 0;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
       }
     }
   }

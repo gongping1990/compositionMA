@@ -3,7 +3,7 @@
   <view class="container info">
     <mHeader flag="4" title="完善学籍信息"></mHeader>
     <view class="container-scroll info-content" style="margin-top:{{height}}px">
-      <text class="info-msg">为了给您匹配适合的课程，请填写以下信息</text>
+      <!--<text class="info-msg">为了给您匹配适合的课程，请填写以下信息</text>-->
       <view class="info-sex">
         <view
           class="info-sex-item {{form.sex == 1 && 'active'}}"
@@ -50,7 +50,7 @@
         </view>
       </view>
       <button class="info-btn" @tap="bindSubmit">确认</button>
-      <text class="info-text">确认后就可以查看孩子的课表咯~</text>
+      <!--<text class="info-text">确认后就可以查看孩子的课表咯~</text>-->
     </view>
   </view>
 </template>

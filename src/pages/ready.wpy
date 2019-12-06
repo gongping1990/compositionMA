@@ -494,6 +494,7 @@ export default class Example extends wepy.page {
       }
     }
     &-text {
+      margin-bottom: 100px;
       margin-top: 10px;
       font-size: 32px;
       color: #fff;

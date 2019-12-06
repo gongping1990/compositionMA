@@ -102,6 +102,13 @@ export default class Example extends wepy.page {
   }
   events = {}
   watch = {}
+
+  hideIcon() {
+    setTimeout(() => {
+      this.showIcon = false
+      this.$apply()
+    }, 3000);
+  }
   onLoad(query) {
     this.queryInfo = query
   }
@@ -112,6 +119,17 @@ export default class Example extends wepy.page {
       imageUrl: 'https://pub.file.k12.vip/tbzw/v2/logo2.png'
     }
   }
+  onShow () {
+    this.hideIcon()
+  }
+  onHide() {
+    this.showIcon = true
+    this.cameraImg = ''
+  }
+  onUnload() {
+    this.showIcon = true
+    this.cameraImg = ''
+  }
 }
 </script>
 <style lang="scss">
@@ -119,6 +137,7 @@ export default class Example extends wepy.page {
 .camera {
   width: 100%;
   height: 100vh;
+  background: #fff;
   &-img {
     position: fixed;
     left: 0;

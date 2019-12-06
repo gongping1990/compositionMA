@@ -41,7 +41,7 @@
         </view>
       </view>
     </view>
-    <van-popup show="{{ true }}"
+    <van-popup show="{{ show }}"
                overlay="{{false}}"
                position="bottom">
       <view class="popup">
@@ -73,7 +73,7 @@
 
           </view>
         </view>
-        <view class="result-wrap {{startAnimated && 'animation'}} {{animate && 'show'}} {{'a' + correctNum}}">
+        <view class="result-wrap {{showResult && 'animation'}} {{'a' + correctNum}}">
           <view class="result-header">
             <view class="result-title">恭喜以下{{correctNum}}位同学</view>
             <view class="result-header-icon"></view>
@@ -90,7 +90,7 @@
           </view>
         </view>
         <view class="popup-content"
-              wx:if="{{false}}">
+              wx:if="{{!showResult}}">
           <text class="popup-content-title">{{questionData.name}}</text>
           <view class="input-list">
             <view class="input-item {{selectIndex == item.mark && 'select'}} {{(setAnswerStatusEnd && (correctAnswer == item.mark)) && 'success'}} {{setAnswerStatusEnd && ((selectIndex == item.mark) && (correctAnswer != item.mark)) && 'error'}}"
@@ -134,7 +134,6 @@
       </view>
     </van-popup>
     <loading wx:if="{{loading}}"></loading>
-    <flowerAnimation></flowerAnimation>
   </view>
 </template>
 <script>
@@ -145,7 +144,6 @@ import flower from '../components/flower'
 import flower1 from '../components/flower1'
 import flower2 from '../components/flower2'
 import flower3 from '../components/flower3'
-import flowerAnimation from '../components/flowerAnimation'
 export default class Example extends wepy.page {
   config = {
     navigationBarTitleText: '',
@@ -154,8 +152,6 @@ export default class Example extends wepy.page {
     }
   }
   data = {
-    startAnimated: false,
-    animate: false,
     lessonId: 0,
     videoContext: null,
     isLookBack: 0,
@@ -205,8 +201,7 @@ export default class Example extends wepy.page {
     flower,
     flower1,
     flower2,
-    flower3,
-    flowerAnimation
+    flower3
   }
   watch = {
     isPlay(n) {
@@ -224,8 +219,6 @@ export default class Example extends wepy.page {
   }
   methods = {
     bindClickReset() {
-      this.animate = true
-      this.$broadcast('start')
       this.showContinueDiaolig = false
       this.getLessonRoom(1)
     },
@@ -318,15 +311,11 @@ export default class Example extends wepy.page {
     back() {
       this.videoContext.pause()
       this.showDialog = true
-    },
-    animateEnd() {
-      this.startAnimated = true
     }
   }
   computed = {
     formatAnswerArr() {
       let arr = this.answerArr.filter(e => {
-        e.answer = 1
         return e.answer === 1
       })
       return arr
@@ -687,7 +676,6 @@ export default class Example extends wepy.page {
       @include bg('/sk/icon-flower.png');
       position: absolute;
       bottom: -(81px / 2);
-      top: auto;
       left: 50%;
       width: 75px;
       height: 81px;
@@ -724,12 +712,9 @@ export default class Example extends wepy.page {
     }
 
     &-wrap {
-      &.show {
+      &.animation {
         visibility: visible;
         height: auto;
-      }
-      &.animation {
-
         .result-header {
           background-position-y: 0;
         }
@@ -741,22 +726,22 @@ export default class Example extends wepy.page {
           width: 340px;
         }
         .icon-1 {
-          animation: icon-1 1.2s backwards;
+          animation: icon-1 2s 1s backwards;
         }
         .icon-2 {
-          animation: icon-2 1.3s backwards;
+          animation: icon-2 1.4s 1.6s backwards;
         }
         &.a3 {
           .icon-3 {
-            animation: icon-3 1.4s backwards;
+            animation: icon-3 1.3s 1.7s backwards;
           }
         }
         &.a4 {
           .icon-3 {
-            animation: icon-4 1.4s backwards;
+            animation: icon-4 1.3s 1.7s backwards;
           }
           .icon-4 {
-            animation: icon-5 1.5s backwards;
+            animation: icon-5 1.2s 1.8s backwards;
           }
         }
       }
@@ -910,13 +895,15 @@ export default class Example extends wepy.page {
         transform: translateX(-50%);
       }
       &.success {
+        border-color: #39dda9;
         .popup-student-status {
-          background:linear-gradient(180deg,rgba(15,218,130,1) 0%,rgba(0,209,118,1) 100%);
+          background: #39dda9;
         }
       }
       &.error {
+        border-color: #ff7c76;
         .popup-student-status {
-          background: #FF6136;
+          background: #ff7c76;
         }
       }
       &.fq {
@@ -1030,13 +1017,18 @@ export default class Example extends wepy.page {
 @keyframes icon-1 {
   0% {
     left: 188px;
-    bottom: 500px;
-    opacity: 0;
+    bottom: -500px;
+    transform: scale(2);
   }
-  10% {
+  20% {
     left: 188px;
-    bottom: 500px;
-    opacity: 1;
+    bottom: 0;
+    transform: scale(2);
+  }
+  30% {
+    left: 188px;
+    bottom: 0;
+    transform: scale(1);
   }
   100% {
     left: 50%;
@@ -1047,12 +1039,12 @@ export default class Example extends wepy.page {
 @keyframes icon-2 {
   0% {
     left: -40px;
-    bottom: 500px;
-    opacity: 0
+    bottom: 0;
+    opacity: 0;
   }
   10% {
     left: -40px;
-    bottom: 500px;
+    bottom: 0;
     opacity: 1;
   }
   100% {
@@ -1062,11 +1054,11 @@ export default class Example extends wepy.page {
 }
 @keyframes icon-3 {
   0% {
-    bottom: 680px;
+    bottom: 170px;
     opacity: 0;
   }
   10% {
-    bottom: 680px;
+    bottom: 170px;
     opacity: 1;
   }
   100% {
@@ -1076,12 +1068,12 @@ export default class Example extends wepy.page {
 @keyframes icon-4 {
   0% {
     left: 188px;
-    bottom: 680px;
+    bottom: 170px;
     opacity: 0;
   }
   10% {
-    left: 188px;
-    bottom: 680px;
+    eft: -188px;
+    bottom: 170px;
     opacity: 1;
   }
   100% {
@@ -1092,12 +1084,12 @@ export default class Example extends wepy.page {
 @keyframes icon-5 {
   0% {
     left: -40px;
-    bottom: 680px;
+    bottom: 170px;
     opacity: 0;
   }
   10% {
     eft: -40px;
-    bottom: 680px;
+    bottom: 170px;
     opacity: 1;
   }
   100% {

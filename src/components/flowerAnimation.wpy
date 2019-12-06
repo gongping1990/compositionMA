@@ -1,7 +1,7 @@
 <!--  -->
 <template>
-  <view class="hua" wx:if="{{show}}">
-    <view class="hua-img" id="hua"></view>
+  <view class="hua {{num && 'show'}}">
+    <view class="hua-img to-{{num}}"></view>
   </view>
 </template>
 <script>
@@ -11,19 +11,32 @@ export default class Flower extends wepy.component {
     flower: Number
   };
   data = {
-    show: false,
-    width: 0
+    num: 0,
+    total: 55,
+    time: 2000 / 55
   };
-  components = {};
-  methods = {};
+  events = {
+    start() {
+      this.start()
+    }
+  };
   start() {
-    setInterval(() => {
-      this.show = !this.show
-      this.$apply();
-    }, 6000);
+    this.requestAnimationFrame()
   }
-  onLoad() {
-    this.start()
+  requestAnimationFrame() {
+
+    let {num, total, time} = this
+    if(num == total) {
+      this.num = 0
+      this.$emit('animateEnd')
+      this.$apply()
+      return
+    }
+    this.num += 1
+    this.$apply()
+    setTimeout(() => {
+      this.requestAnimationFrame()
+    }, time);
   }
 }
 </script>
@@ -37,12 +50,25 @@ export default class Flower extends wepy.component {
   top: 0;
   bottom: 0;
   background: rgba($color: #000000, $alpha: 0.7);
+  visibility: hidden;
   z-index: 1000;
+  &.show {
+    visibility: visible;
+  }
   &-img {
     width: 100%;
     height: 400px;
-    background: url('https://pub.file.k12.vip/tbzw/1.5/gif/hua.gif') no-repeat;
+    background: url('https://pub.file.k12.vip/tbzw/1.5/gif/hua1.png') no-repeat;
     background-size: 100%;
+    background-position-x: 0;
+
+  }
+  @for $i from 0 through 56
+  {
+      .to-#{$i}
+      {
+        background-position-y: -(400px * $i);
+      }
   }
 }
 </style>

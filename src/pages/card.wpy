@@ -343,7 +343,7 @@ export default class Example extends wepy.page {
 
     &-flex {
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
       margin: 0 48px;
     }

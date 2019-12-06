@@ -120,8 +120,8 @@
 				},
 				{
 					"id": 9,
-					"name": "pages/study",
-					"pathName": "pages/study",
+					"name": "pages/joinRoom",
+					"pathName": "pages/joinRoom",
 					"query": "id=1156154467512979458",
 					"scene": null
 				}

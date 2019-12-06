@@ -315,7 +315,7 @@
           <view class="dialog-close" @tap="onClose"></view>
         </view>
       </van-popup>
-      <van-popup class="welcome-pop-wrap" show="{{ showWelcome }}" closeable @close="onCloseWelcome">
+      <van-popup custom-style="top: 42%" show="{{ showWelcome }}" closeable @close="onCloseWelcome">
         <view class="welcome-pop">
           <view class="welcome-pop-text">
             初次见面，送您一份新人福利
@@ -342,7 +342,7 @@
           <view class="welcome-pop-close" @tap="onCloseWelcome"></view>
         </view>
       </van-popup>
-      <van-popup class="welcome-pop-wrap" show="{{ showWork }}" @close="onClose">
+      <van-popup custom-style="top: 42%" show="{{ showWork }}" @close="onClose">
         <view class="welcome-pop work">
           <view class="welcome-pop-text">
             你好呀，小朋友。老师给你发来了课后作业讲解，快去看看吧！
@@ -766,6 +766,9 @@ export default class Home extends wepy.page {
     background: url('https://pub.file.k12.vip/tbzw/1.5/home/pop-img.png')
       no-repeat;
     background-size: 100%;
+    &-wrap {
+      top: 42%;
+    }
     &.work {
       height: 558px;
       background-image: url('https://pub.file.k12.vip/tbzw/1.5/home/pop-img.png');

@@ -41,7 +41,7 @@
         </view>
       </view>
     </view>
-    <van-popup show="{{ true }}"
+    <van-popup show="{{ show }}"
                overlay="{{false}}"
                position="bottom">
       <view class="popup">
@@ -73,10 +73,9 @@
 
           </view>
         </view>
-        <view class="result-wrap {{startAnimated && 'animation'}} {{animate && 'show'}} {{'a' + correctNum}}">
+        <view class="result-wrap {{startAnimated && 'animation'}} {{showResult && 'show'}} {{'a' + correctNum}}">
           <view class="result-header">
-            <view class="result-title">恭喜以下{{correctNum}}位同学</view>
-            <view class="result-header-icon"></view>
+            <view class="result-title">恭喜以下<view class="result-title-span">{{correctNum}}位</view>同学</view>
           </view>
           <view class="result-list">
             <view class="result-item"
@@ -90,7 +89,7 @@
           </view>
         </view>
         <view class="popup-content"
-              wx:if="{{false}}">
+              wx:if="{{!showResult}}">
           <text class="popup-content-title">{{questionData.name}}</text>
           <view class="input-list">
             <view class="input-item {{selectIndex == item.mark && 'select'}} {{(setAnswerStatusEnd && (correctAnswer == item.mark)) && 'success'}} {{setAnswerStatusEnd && ((selectIndex == item.mark) && (correctAnswer != item.mark)) && 'error'}}"
@@ -224,8 +223,7 @@ export default class Example extends wepy.page {
   }
   methods = {
     bindClickReset() {
-      this.animate = true
-      this.$broadcast('start')
+      this.videoContext.seek(500)
       this.showContinueDiaolig = false
       this.getLessonRoom(1)
     },
@@ -326,7 +324,6 @@ export default class Example extends wepy.page {
   computed = {
     formatAnswerArr() {
       let arr = this.answerArr.filter(e => {
-        e.answer = 1
         return e.answer === 1
       })
       return arr
@@ -418,6 +415,7 @@ export default class Example extends wepy.page {
     setTimeout(() => {
       playSound(audioContext, 5)
       this.showResult = true
+      this.$broadcast('start')
       this.answerArr.forEach((e, i) => {
         if (e.answer === 1) {
           this.answerArr[i].flower += 1
@@ -434,7 +432,7 @@ export default class Example extends wepy.page {
         this.show = false
         this.reset()
         this.$apply()
-      }, 4000)
+      }, 6000)
     }, 3000)
     this.$apply()
   }
@@ -445,6 +443,7 @@ export default class Example extends wepy.page {
     this.time = 0
     this.randomTime = 0
     this.answerEnd = false
+    this.startAnimated = false
     this.showResult = false
     this.imitateEnd = false
     this.setAnswerStatusEnd = false
@@ -649,32 +648,27 @@ export default class Example extends wepy.page {
     }
     &-header {
       @include flex-column-center;
-      @include bg('/sk/image1.png');
+      justify-content: flex-start;
       margin: 32px 0;
       width: 100%;
-      height: 234px;
-      background-position-y: 100%;
-      transition: all 0.5s;
-      &-icon {
-        @include bg('/sk/image2.png');
-        width: 262px;
-        height: 64px;
-        opacity: 0;
-        transform: scale(1.5);
-        transform-origin: 50% 0%;
-        transition: all 1s;
+      &-img {
+        width: 100%;
       }
     }
     &-title {
+      @include flex-center;
       margin-bottom: 16px;
       width: 0;
-      font-size: 44px;
+      font-size: 28px;
       font-weight: 500;
       color: #58422b;
       line-height: 60px;
       overflow: hidden;
       white-space: nowrap;
       transition: all 1s;
+      &-span {
+        color: #FB762F;
+      }
     }
     &-list {
       @include flex-center;
@@ -1030,12 +1024,12 @@ export default class Example extends wepy.page {
 @keyframes icon-1 {
   0% {
     left: 188px;
-    bottom: 500px;
+    bottom: 300px;
     opacity: 0;
   }
   10% {
     left: 188px;
-    bottom: 500px;
+    bottom: 300px;
     opacity: 1;
   }
   100% {
@@ -1047,12 +1041,12 @@ export default class Example extends wepy.page {
 @keyframes icon-2 {
   0% {
     left: -40px;
-    bottom: 500px;
+    bottom: 300px;
     opacity: 0
   }
   10% {
     left: -40px;
-    bottom: 500px;
+    bottom: 300px;
     opacity: 1;
   }
   100% {
@@ -1062,11 +1056,11 @@ export default class Example extends wepy.page {
 }
 @keyframes icon-3 {
   0% {
-    bottom: 680px;
+    bottom: 480px;
     opacity: 0;
   }
   10% {
-    bottom: 680px;
+    bottom: 480px;
     opacity: 1;
   }
   100% {
@@ -1076,12 +1070,12 @@ export default class Example extends wepy.page {
 @keyframes icon-4 {
   0% {
     left: 188px;
-    bottom: 680px;
+    bottom: 480px;
     opacity: 0;
   }
   10% {
     left: 188px;
-    bottom: 680px;
+    bottom: 480px;
     opacity: 1;
   }
   100% {
@@ -1092,12 +1086,12 @@ export default class Example extends wepy.page {
 @keyframes icon-5 {
   0% {
     left: -40px;
-    bottom: 680px;
+    bottom: 480px;
     opacity: 0;
   }
   10% {
     eft: -40px;
-    bottom: 680px;
+    bottom: 480px;
     opacity: 1;
   }
   100% {

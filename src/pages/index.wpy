@@ -537,7 +537,9 @@ export default class Home extends wepy.page {
   // watch = {
   //   logined(v) {
   //     if(v) {
-  //       this.getLatelyDubbingByHome()
+  //       if(!(this.showAddress  || this.showAddTeacher || this.isShowPraise)) {
+  //           this.getLatelyDubbingByHome()
+  //       }
   //     }
   //   }
   // }
@@ -625,9 +627,8 @@ export default class Home extends wepy.page {
           })
           return e
         })
-
         if (this.logined) {
-          if(!(ata.resultData.hasgift || this.showAddTeacher || data.resultData.awardsPop)) {
+          if(!(data.resultData.hasgift || data.resultData.remindAddTeacher || data.resultData.awardsPop)) {
             this.getLatelyDubbingByHome()
           }
         } else {

@@ -250,7 +250,7 @@
         }
       },
       success() {
-        wx.navigateTo({ url: `/user/completionOfWork?type=1&id=${this.queryInfo.id}` });
+        wx.navigateTo({ url: `/user/completionOfWork?type=1&id=${this.queryInfo.id}&isPlayAudio=true` });
       }
     };
 

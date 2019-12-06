@@ -19,7 +19,7 @@
           <form report-submit="true" @submit="submit">
             <view
               wx:for="{{dataList}}"
-              key="index"
+              wx:key="{{index}}"
               class="lesson-item van-hairline--bottom"
             >
               <view class="lesson-info">
@@ -55,13 +55,13 @@
         <view class="lesson-popup-list">
           <view class="lesson-popup-text">年份</view>
           <view class="lesson-popup-item-wrap">
-            <view class="lesson-popup-item {{index == activeYear && 'active'}}" wx:for="{{timeList}}" wx:key="{{index}}"  @tap="binClickYear({{item}}, {{index}})">{{item.year}}年</view>
+            <view class="lesson-popup-item {{index == activeYear && 'active'}}" wx:for="{{timeList}}" wx:key="{{index}}"  @tap="bindClickYear({{item}}, {{index}})">{{item.year}}年</view>
           </view>
         </view>
         <view class="lesson-popup-list">
           <view class="lesson-popup-text">月份</view>
           <view class="lesson-popup-item-wrap">
-            <view class="lesson-popup-item {{item.month == month && 'active'}}" wx:for="{{timeList[activeYear].monthList}}" wx:key="{{index}}" @tap="binClickMonth({{item}})">{{item.des}}</view>
+            <view class="lesson-popup-item {{item.month == month && 'active'}}" wx:for="{{timeList[activeYear].monthList}}" wx:key="{{index}}" @tap="bindClickMonth({{item}})">{{item.des}}</view>
           </view>
         </view>
       </view>
@@ -169,12 +169,12 @@ export default class Example extends wepy.page {
     onClose() {
       this.show = false
     },
-    binClickYear(item, index) {
-      this.activeYear = item.year
+    bindClickYear(item, index) {
+      this.activeYear = index
       this.year = item.year
       this.month = 0
     },
-    binClickMonth(item) {
+    bindClickMonth(item) {
       this.month = item.month
       this.getList()
     },

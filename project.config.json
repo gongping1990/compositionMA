@@ -59,7 +59,7 @@
 					"id": 0,
 					"name": "user/lesson",
 					"pathName": "user/lesson",
-					"query": "id=1174986675030867970",
+					"query": "id=1133673190743896065",
 					"scene": null
 				},
 				{
@@ -120,9 +120,9 @@
 				},
 				{
 					"id": 9,
-					"name": "pages/study",
-					"pathName": "pages/study",
-					"query": "id=1177187312586203137",
+					"name": "pages/joinRoom",
+					"pathName": "pages/joinRoom",
+					"query": "id=1174147802335821825&type=4",
 					"scene": null
 				}
 			]

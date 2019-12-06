@@ -49,7 +49,6 @@
         {{ time ? '开始上课（' + time + '）s' : '开始上课' }}
       </button>
     </form>
-    <loading wx:if="{{loading}}"></loading>
     <view class="loading-progress {{showDownTime && 'show'}}">
       <view class="loading-progress-img"></view>
       <view class="loading-progress-bar ">
@@ -63,7 +62,6 @@
 import wepy from 'wepy'
 import { saveFormId } from '../utils'
 import mHeader from '@/components/header'
-import loading from '@/components/loading'
 export default class Example extends wepy.page {
   config = {
     navigationBarTitleText: '',
@@ -89,8 +87,7 @@ export default class Example extends wepy.page {
     paused: false
   }
   components = {
-    mHeader,
-    loading
+    mHeader
   }
   methods = {
     submit(e) {

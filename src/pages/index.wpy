@@ -1207,7 +1207,7 @@ export default class Home extends wepy.page {
       left: 0;
       top: 0;
       right: 0;
-      z-index: 100;
+      z-index: 1000;
       background: #fff;
     }
     &-wrap {
@@ -1247,7 +1247,7 @@ export default class Home extends wepy.page {
     &-popup {
       position: absolute;
       top: -30px;
-      left: 450px;
+      left: 500px;
       width: 108px;
       height: 132px;
     }

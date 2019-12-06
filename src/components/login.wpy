@@ -92,6 +92,9 @@ export default class Example extends wepy.component {
         wx.hideLoading()
         this.show = false
         let { resultData } = data
+        if(resultData.needAuth) {
+          wx.navigateTo({ url: '/pages/authorize' });
+        }
         wepy.$store.dispatch({ type: 'UPDATE_USERINFO', payload: resultData })
         wepy.$store.dispatch({ type: 'CHANGE_LOGIN_STATUS', payload: true })
         this.$emit('login')

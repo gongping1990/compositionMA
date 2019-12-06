@@ -1,0 +1,468 @@
+<template>
+  <view class="choice">
+    <image class="choice-img" src="{{question.topicImage}}" wx:if="{{question.topicImage}}" />
+    <text class="choice-title">{{
+      question.name
+    }}</text>
+    <view class="choice-input-list" wx:if="{{question.qetype == 1}}">
+      <view
+        class="choice-input-wrap"
+        wx:for="{{question.optionList}}"
+        wx:key="{{item.mark}}"
+        @tap="bindClickInput({{item.mark}})"
+      >
+
+        <view
+          class="choice-input-item success"
+          wx:if="{{setAnswerStatusEnd && (correctAnswer == item.mark)}}"
+        >
+          {{ item.mark }}. {{ item.problem }}
+        </view>
+        <view
+          class="choice-input-item error"
+          wx:elif="{{setAnswerStatusEnd && (selectIndex == item.mark && correctAnswer != item.mark)}}"
+        >
+          {{ item.mark }}. {{ item.problem }}
+        </view>
+        <view
+          class="choice-input-item select"
+          wx:elif="{{selectIndex == item.mark}}"
+        >
+          {{ item.mark }}. {{ item.problem }}
+        </view>
+        <view class="choice-input-item" wx:else>
+          {{ item.mark }}. {{ item.problem }}
+        </view>
+      </view>
+    </view>
+    <view class="choice-input-list img" wx:if="{{question.qetype == 2}}">
+      <view
+        class="choice-input-wrap"
+        wx:for="{{question.optionList}}"
+        wx:key="{{item.mark}}"
+        @tap="bindClickInput({{item.mark}})"
+      >
+        <view
+          class="choice-input-item-img success"
+          wx:if="{{setAnswerStatusEnd && (correctAnswer == item.mark)}}"
+        >
+          <view class="choice-input-tag">{{ item.mark }}</view>
+          <image class="choice-input-img" src="{{item.problem}}" />
+        </view>
+        <view
+          class="choice-input-item-img error"
+          wx:elif="{{setAnswerStatusEnd && (selectIndex == item.mark && correctAnswer != item.mark)}}"
+        >
+          <view class="choice-input-tag">{{ item.mark }}</view>
+          <image class="choice-input-img" src="{{item.problem}}" />
+        </view>
+        <view
+          class="choice-input-item-img select"
+          wx:elif="{{selectIndex == item.mark}}"
+        >
+          <view class="choice-input-tag">{{ item.mark }}</view>
+          <image class="choice-input-img" src="{{item.problem}}" />
+        </view>
+        <view class="choice-input-item-img" wx:else>
+          <view class="choice-input-tag">{{ item.mark }}</view>
+          <image class="choice-input-img" src="{{item.problem}}" />
+        </view>
+      </view>
+    </view>
+    <view class="choice-sentence" wx:if="{{question.qetype == 3}}">
+      <view class="choice-sentence-content">
+        <text class="choice-sentence-text {{item.selected && 'show'}} {{setAnswerStatusEnd && (correctAnswer == selectIndex ? 'success' : 'error')}}"
+          wx:for="{{sentenceFormatData}}"
+          wx:key="{{index}}"
+        >{{item.problem}}</text>
+      </view>
+      <view class="choice-sentence-list">
+        <view class="choice-sentence-item {{item.selected && 'hide'}}"
+          wx:for="{{sentenceData}}"
+          wx:key="{{item.mark}}"
+          @tap="bindClickSentence({{item}}, {{index}})"
+        >{{item.problem}}</view>
+      </view>
+    </view>
+    <view class="choice-sort" wx:if="{{question.qetype == 4}}">
+      <view class="choice-sort-dy {{setAnswerStatusEnd && (correctAnswer == selectIndex ? 'success' : 'error')}}">
+        <view
+          class="choice-sort-dy-item sort-{{index + 1}}"
+          wx:for="{{question.optionList}}"
+          wx:key="{{item.mark}}"
+        ></view>
+      </view>
+      <view class="choice-sort-list">
+        <view
+          class="choice-sort-item sort-{{index + 4}} {{item.selected && 'sort-' + item.index}}"
+          style="z-index: {{item.index}}"
+          wx:for="{{sentenceData}}"
+          wx:key="{{item.mark}}"
+          @tap="bindClickSentence({{item}}, {{index}})"
+        >
+          <view class="choice-sort-tag">
+            {{index + 1}}
+          </view>
+          <image src="{{item.problem}}" class="choice-sort-item-img" />
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import api from '../request/api'
+import dayjs from 'dayjs'
+export default class Example extends wepy.component {
+  props = {
+    question: {
+      type: Object,
+      default: () => ({})
+    },
+    selectIndex: {
+      type: String | Number
+    },
+    setAnswerStatusEnd: {
+      type: Boolean
+    },
+    correctAnswer: {
+      type: String
+    }
+  }
+  data = {
+    selectedIndex: 1,
+    sentenceData: [],
+    sentenceArr: []
+  }
+  components = {}
+  methods = {
+    bindClickInput(i) {
+      this.index = i
+      this.$emit('bindClickInput', i)
+    },
+    bindClickSentence(item, i) {
+      if(item.selected) return
+      this.sentenceData[i].index = this.selectedIndex
+      this.sentenceData[i].selected = true
+      this.sentenceArr.push(item.mark)
+      this.selectedIndex += 1
+      this.$emit('bindClickInput', this.sentenceArr.join(''))
+    },
+    bindClickSort(item, i) {
+      if(item.selected) return
+      this.sentenceData[i].index = this.selectedIndex
+      this.sentenceData[i].selected = true
+      this.sentenceArr.push(item.mark)
+      this.selectedIndex += 1
+      this.$emit('bindClickInput', this.sentenceArr.join(''))
+    }
+  }
+  events = {
+    reset() {
+      console.log('reset')
+      this.selectedIndex = 1
+      this.sentenceData = []
+      this.sentenceArr = []
+    }
+  }
+  watch = {
+    question(v) {
+      this.sentenceData = v.optionList.map((e,i) => {
+        e.selected = !!e.selected
+        e.index === undefined &&  (e.index = 10)
+        return e
+      })
+      this.$apply()
+    }
+  }
+  computed = {
+    sentenceFormatData() {
+      let arr = [...this.sentenceData]
+      arr = arr.sort((a, b) => {
+        return a.index - b.index
+      })
+      console.log(arr)
+      return arr
+    }
+  }
+}
+</script>
+<style lang="scss">
+@import '../assets/style/mixin.scss';
+.choice {
+  width: 100%;
+  &-sort {
+    position: relative;
+    height: 480px;
+    margin-top: 53px;
+    margin-left: 19px;
+    &-dy {
+      width:620px;
+      height:220px;
+      background:rgba(255,255,255,1);
+      border:4px solid rgba(236,238,242,1);
+      box-shadow:0px 2px 0px 0px rgba(236,238,242,1);
+      border-radius:20px;
+      &-item {
+        position: absolute;
+        width:180px;
+        height:180px;
+        background:rgba(236,238,242,1);
+        border-radius:20px;
+      }
+      &.success {
+        border-color: #08d67d;
+        &::after {
+          @include bg('/1.5/study/y-suc.png');
+          content: '';
+          position: absolute;
+          right: -36px;
+          top: -36px;
+          width: 83px;
+          height: 83px;
+        }
+      }
+      &.error {
+        border-color: #ff7b33;
+        &::after {
+          @include bg('/1.5/study/y-err.png');
+          content: '';
+          position: absolute;
+          right: -36px;
+          top: -36px;
+          width: 83px;
+          height: 83px;
+        }
+      }
+    }
+    &-item {
+      position: absolute;
+      width:190px;
+      height:190px;
+      background:rgba(254,203,200,1);
+      box-shadow:3px 3px 16px 0px rgba(182,183,206,0.2);
+      border-radius:20px;
+      transition: all 0.3s ease-out;
+      &-img {
+        width: 100%;
+        height: 100%;
+        border-radius:20px;
+      }
+    }
+    &-tag {
+      @include flex-center;
+      position: absolute;
+      left: 12px;
+      top: 12px;
+      width:40px;
+      height:40px;
+      background:rgba(255,255,255,1);
+      box-shadow:0px 2px 0px 0px rgba(236,238,242,1);
+      border-radius:50%;
+      font-size: 26px;
+      color: #666;
+    }
+  }
+  &-sentence {
+    position: relative;
+    &-content {
+      margin: 32px 0;
+      height: 130px;
+      border-bottom: 2px solid #ECEEF2;
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 64px;
+        height: 2px;
+        background-color: #ECEEF2;
+        transform: translateY(-50%);
+      }
+    }
+    &-text {
+      opacity: 0;
+      margin-right: 25px;
+      color: #FFC000;
+      font-size: 32px;
+      font-weight: 500;
+      line-height: 70px;
+      transition: all 0.3s;
+      &.show {
+        opacity: 1;
+      }
+      &.success {
+        color: #08d67d
+      }
+      &.error {
+        color: #ff7b33;
+      }
+    }
+    &-list {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    &-item {
+      @include flex-center;
+      opacity: 1;
+      margin-right: 32px;
+      padding: 0 16px;
+      height: 72px;
+      background:rgba(255,255,255,1);
+      border:3px solid rgba(236,238,242,1);
+      box-shadow:0px 2px 0px 0px rgba(236,238,242,1);
+      border-radius:20px;
+      transition: all 0.3s;
+      &.hide {
+        opacity: 0;
+      }
+    }
+  }
+  &-img {
+    display: block;
+    margin: 0 auto;
+    margin-bottom: 30px;
+    width:500px;
+    height:300px;
+    background:rgba(255,255,255,1);
+    box-shadow:0px 0px 30px 0px rgba(182,183,206,0.4);
+    border-radius:20px;
+  }
+  &-title {
+    font-size: 36px;
+    line-height: 50px;
+  }
+  &-input {
+    &-list.img {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    &-tag {
+      @include flex-center;
+      position: absolute;
+      left: 16px;
+      top: 16px;
+      width:44px;
+      height:44px;
+      background:rgba(255,255,255,1);
+      box-shadow:0px 2px 0px 0px rgba(236,238,242,1);
+      border-radius:8px;
+      font-size: 26px;
+      color: #666;
+      font-weight: 600;
+    }
+    &-img {
+      width: 100%;
+      height: 100%;
+      border-radius:20px;
+    }
+    &-item-img {
+      position: relative;
+      margin-top: 32px;
+      width:399px;
+      height:243px;
+      background:rgba(255,255,255,1);
+      border:4px solid rgba(236,238,242,1);
+      border-radius:20px;
+      &.select {
+        border-color: #FFC000;
+      }
+      &.success {
+        border-color: #08d67d;
+        overflow: initial;
+        &::after {
+          @include bg('/1.5/study/y-suc.png');
+          content: '';
+          position: absolute;
+          right: -30px;
+          top: -30px;
+          width: 83px;
+          height: 83px;
+        }
+      }
+      &.error {
+        border-color: #ff7b33;
+        overflow: initial;
+        &::after {
+          @include bg('/1.5/study/y-err.png');
+          content: '';
+          position: absolute;
+          right: -30px;
+          top: -30px;
+          width: 83px;
+          height: 83px;
+        }
+      }
+    }
+    &-item {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-sizing: border-box;
+      margin-top: 25px;
+      padding: 0 45px;
+      width: 100%;
+      min-height: 80px;
+      font-size: 32px;
+      color: #333333;
+      border-radius: 40px;
+      background: #fff;
+      border: 4px solid #eceef2;
+      &.select {
+        color: #ffc000;
+        border-color: #ffc000;
+      }
+      &.success {
+        color: #fff;
+        border-color: #08d67d;
+        background: #08d67d;
+        &::after {
+          @include bg('/1.5/study/input-suc.png');
+          content: '';
+          position: absolute;
+          right: 49px;
+          top: 50%;
+          width: 50px;
+          height: 50px;
+          transform: translateY(-50%);
+        }
+      }
+      &.error {
+        color: #fff;
+        border-color: #ff7b33;
+        background: #ff7b33;
+        &::after {
+          @include bg('/1.5/study/input-err.png');
+          content: '';
+          position: absolute;
+          right: 49px;
+          top: 50%;
+          width: 50px;
+          height: 50px;
+          transform: translateY(-50%);
+        }
+      }
+    }
+  }
+  @for $i from 1 through 6
+  {
+    $num: $i - 1;
+    .sort-#{$i} {
+      @if $i >= 4{
+        top: 290px;
+        left: ($i - 4) * (190px + 30px);
+        width: 190px;
+        height: 190px;
+      } @else {
+        top: 25px !important;
+        left: $num * 180px + $i * 21px !important;
+        width: 180px !important;
+        height: 180px !important;
+      }
+    }
+  }
+}
+</style>

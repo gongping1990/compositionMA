@@ -21,7 +21,7 @@
 		}
 	},
 	"compileType": "miniprogram",
-	"libVersion": "2.8.0",
+	"libVersion": "2.9.4",
 	"appid": "wx2a0a77e396535475",
 	"projectname": "chinese-wepy",
 	"miniprogramRoot": "dist/",
@@ -57,9 +57,9 @@
 			"list": [
 				{
 					"id": 0,
-					"name": "user/lesson",
-					"pathName": "user/lesson",
-					"query": "id=1173505182493532161",
+					"name": "pages/test",
+					"pathName": "pages/test",
+					"query": "id=1134359706941546498",
 					"scene": null
 				},
 				{

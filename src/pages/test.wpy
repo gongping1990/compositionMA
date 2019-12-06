@@ -17,10 +17,22 @@
           >
             <image class="student-avatar" src="{{item.mateImg}}" />
             <view class="student-status">
-              {{ item.status ? '已完成' : '答题中...' }}
+              {{ item.status ? '已完成  ' : '答题中...'}}
             </view>
-            <view class="student-flower" wx:if="{{index == 3}}">
-              <flower :flower.sync="flower"></flower>
+            <view class="student-flower">
+              <flower :flower.sync="flowerOne" wx:if="{{index == 0}}"> </flower>
+              <flower1
+                :flower.sync="flowerTwo"
+                wx:if="{{index == 1}}"
+              ></flower1>
+              <flower2
+                :flower.sync="flowerThree"
+                wx:if="{{index == 2}}"
+              ></flower2>
+              <flower3
+                :flower.sync="flowerFour"
+                wx:if="{{index == 3}}"
+              ></flower3>
             </view>
           </view>
         </view>
@@ -186,6 +198,9 @@ import { saveFormId } from '../utils'
 import mHeader from '@/components/header'
 import loading from '@/components/loading'
 import flower from '@/components/flower'
+import flower1 from '../components/flower1'
+import flower2 from '../components/flower2'
+import flower3 from '../components/flower3'
 export default class Example extends wepy.page {
   config = {
     navigationBarTitleText: '',
@@ -200,7 +215,7 @@ export default class Example extends wepy.page {
     lessonId: 0,
     summaryIndex: 0,
     summaryAnimateIndex: 0,
-    stepIndex: 0,
+    stepIndex: -1,
     aduioContext: null,
     showAlert: false,
     isSuccess: false,
@@ -230,12 +245,19 @@ export default class Example extends wepy.page {
     setSummaryEnd: false,
     flower: 0,
     paused: false,
-    showNextBtn: false
+    showNextBtn: false,
+    flowerOne: 0,
+    flowerTwo: 0,
+    flowerThree: 0,
+    flowerFour: 0
   }
   components = {
     mHeader,
     loading,
-    flower
+    flower,
+    flower1,
+    flower2,
+    flower3
   }
   methods = {
     submit(e) {
@@ -285,6 +307,7 @@ export default class Example extends wepy.page {
     clickNext() {
       let { audioContext, playSound } = this.$parent.globalData
       this.stop()
+      this.changeLearnInfo(2)
       if (this.stepIndex === this.questionArr.length - 1) {
         playSound(audioContext, 6)
         this.changeLearnStage(3)
@@ -297,6 +320,7 @@ export default class Example extends wepy.page {
         playSound(audioContext, 1)
         this.changeQuestion()
       }
+
       this.scrollTop = 0
       this.showNextBtn = false
     }
@@ -310,9 +334,10 @@ export default class Example extends wepy.page {
   }
   watch = {
     stepIndex(n) {
-      if (n === this.questionArr.length - 1) {
-        this.imitateReady()
-      }
+      let type = (n === this.questionArr.length - 1) ? 2 : 1
+      setTimeout(() => {
+        this.imitateReady(type)
+      }, 4000)
     }
   }
   computed = {
@@ -333,6 +358,24 @@ export default class Example extends wepy.page {
         return '00分00秒'
       }
     }
+  }
+
+  changeLearnInfo(stage) {
+    if (this.lookback) {
+      return
+    }
+    let { api } = this.$parent.globalData
+    let mate = this.answerArr.map(e => {
+      let obj = {}
+      obj.testCorrectNum = e.flower
+      obj.mateId = e.mateId
+      return obj
+    })
+    api.study.changeLearnInfo({
+      id: this.roomData.id,
+      mate,
+      stage
+    })
   }
 
   play() {
@@ -420,13 +463,20 @@ export default class Example extends wepy.page {
   }
 
   // 模拟其他用户完成答题
-  imitateReady() {
+  imitateReady(type) {
+    let numArr = ['One', 'Two', 'Three']
+    let isErr = parseInt(Math.random() * 6)
     let { answerArr } = this
     let random = parseInt(Math.random() * 3)
-    this.answerArr[random].status = 1
-    if (!(answerArr[0].status && answerArr[1].status && answerArr[2].status)) {
+    if (isErr && !this.answerArr[random].isAnswer) {
+      this.answerArr[random].flower += 1
+      this[`flower${numArr[random]}`] = this.answerArr[random].flower
+    }
+    this.answerArr[random].isAnswer = 1
+    type == 2 && (this.answerArr[random].status = 1)
+    if (!(answerArr[0].isAnswer && answerArr[1].isAnswer && answerArr[2].isAnswer)) {
       setTimeout(() => {
-        this.imitateReady()
+        this.imitateReady(type)
         this.$apply()
       }, 600)
     } else {
@@ -440,7 +490,7 @@ export default class Example extends wepy.page {
       this.alertSuccess()
       this.questionArr[this.stepIndex].isRight = 1
       this.answerArr[3].flower += 1
-      this.flower += 1
+      this.flowerFour = this.answerArr[3].flower
     } else {
       this.questionArr[this.stepIndex].isRight = 2
       this.answerArr[3].answerError += 1
@@ -477,7 +527,12 @@ export default class Example extends wepy.page {
       this.stepIndex += 1
       this.answerEnd = false
       this.selectIndex = -1
+      this.readyEnd = false
       this.correctAnswer = this.questionArr[this.stepIndex].answer
+      this.answerArr = this.answerArr.map(e => {
+        e.isAnswer = 0
+        return e
+      })
       this.app.show(this, 'itemAnimate', 1)
       this.$apply()
     }, 500)
@@ -486,6 +541,7 @@ export default class Example extends wepy.page {
   initQuestion() {
     this.showQuestion = true
     this.correctAnswer = this.questionArr[0].answer
+    this.stepIndex = 0
     this.app.show(this, 'questionAnimate', 1)
     this.timer = setInterval(() => {
       if (this.publishEnd) {
@@ -519,6 +575,7 @@ export default class Example extends wepy.page {
   }
 
   reset() {
+    this.stepIndex = -1
     this.selectIndex = -1
     this.readyEnd = false
     this.isSuccess = false
@@ -533,7 +590,6 @@ export default class Example extends wepy.page {
       e.flower = 0
       return e
     })
-    this.setRandomTime()
   }
 
   formatTimeText() {
@@ -562,11 +618,15 @@ export default class Example extends wepy.page {
         this.answerArr = this.mateInfo.map(e => {
           e.status = 0
           e.answer = 0
+          e.isAnswer = 0
           e.answerError = 0
-          e.flower = this.lookback ? 0 : e.correctNum
+          e.flower = this.lookback ? 0 : e.testCorrectNum
           return e
         })
-        this.flower = this.answerArr[3].flower
+        this.flowerOne = this.answerArr[0].flower
+        this.flowerTwo = this.answerArr[1].flower
+        this.flowerThree = this.answerArr[2].flower
+        this.flowerFour = this.answerArr[3].flower
         this.$apply()
       })
   }

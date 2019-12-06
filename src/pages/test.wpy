@@ -177,7 +177,7 @@
         />
       </view>
     </van-popup>
-    <loading wx:if="{{loading}}"></loading>
+    <loading></loading>
   </view>
 </template>
 <script>
@@ -585,7 +585,7 @@ export default class Example extends wepy.page {
           return e
         })
         setTimeout(() => {
-          this.loading = false
+          this.$broadcast('hide')
           if (this.lookback) {
             this.initQuestion()
           } else {
@@ -634,6 +634,7 @@ export default class Example extends wepy.page {
     })
   }
   onShow() {
+    this.$broadcast('show')
     // wepy.$log.info('test info')
     this.getClassInfo()
     this.getLessonRoom()

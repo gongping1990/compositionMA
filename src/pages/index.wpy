@@ -1193,6 +1193,7 @@ export default class Home extends wepy.page {
       height: 156px;
       padding-top: 40px;
       padding-bottom: 37px;
+      padding-left: 20px;
     }
     &-item {
       display: flex;

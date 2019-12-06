@@ -343,7 +343,7 @@
         this.workDetail.replyImg = this.workDetail.replyImg && this.workDetail.replyImg.split(',');
         this.workDetail.duration = this.timeToFormat(this.workDetail.duration);
         this.workDetail.replyDuration = this.timeToFormat(this.workDetail.replyDuration);
-        this.workDetail.likeRemind && this.getAudio(8)
+        this.workDetail.likeRemind && this.getAudio(9)
         if (this.workDetail.replyTime) {
           this.workDetail.replyTime = getDateDiff.getDateDiff(this.workDetail.replyTime);
           this.isReply = true;

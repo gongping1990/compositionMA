@@ -10,9 +10,6 @@ button::after {
 .container-scroll {
   position: relative;
 }
-.van-popup {
-  top: 42% !important;
-}
 .yd-popup,
 .tabbar-popup {
   position: absolute;

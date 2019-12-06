@@ -85,7 +85,7 @@ export default class Example extends wepy.page {
     isReady: false,
     showContinueDiaolig: false,
     timeText: '00:00',
-    showDownTime: false,
+    showDownTime: true,
     paused: false
   }
   components = {
@@ -210,7 +210,7 @@ export default class Example extends wepy.page {
       .then(({ data }) => {
         this.courseInfo = data.resultData
         setTimeout(() => {
-          this.loading = false
+          this.showDownTime = false
           this.initAudio(data.resultData.guideAudio)
           this.$apply()
         }, 1000)

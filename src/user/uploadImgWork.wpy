@@ -262,8 +262,9 @@ export default class UploadImgWork extends wepy.page {
     );
 
     .-title-left {
-      display: inline-block;
-      padding: 44px 18px 0 48px;
+      display: flex;
+      align-items: center;
+      padding: 20px 18px 35px 48px;
       width: 398px;
       font-size: 28px;
       font-weight: 500;

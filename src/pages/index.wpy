@@ -329,17 +329,13 @@
               我已报名，去上课
             </button>
             <button
-              open-type="contact"
               class="welcome-pop-btn new"
-              show-message-card="true"
-              send-message-title="点击卡片下方链接领取课程"
-              send-message-path="/pages/index?homeConfig=newUserWelfare"
-              send-message-img="https://pub.file.k12.vip/tbzw/1.5/gif/cover.jpg"
+              @tap="onCloseWelcome({{1}})"
             >
               立即领取
             </button>
           </view>
-          <view class="welcome-pop-close" @tap="onCloseWelcome"></view>
+          <view class="welcome-pop-close" @tap="onCloseWelcome({{0}})"></view>
         </view>
       </van-popup>
       <van-popup custom-style="top: 42%" show="{{ showWork }}" @close="onClose">
@@ -365,11 +361,28 @@
         :dataInfo.sync="praiseItem"
       ></praiseModal>
     </form>
-    <view class="-yd" wx:if="{{showYD}}" @tap="onClose">
+    <view class="-yd" wx:if="{{showBannderYd || showYD}}" @tap="onClose">
+      <button
+        open-type="contact"
+        class="-yd-btn"
+        wx:if="{{showBannderYd}}"
+        show-message-card="true"
+        send-message-title="点击卡片下方链接领取课程"
+        send-message-path="/pages/index?homeConfig=newUserWelfare"
+        send-message-img="https://pub.file.k12.vip/tbzw/1.5/gif/cover.jpg"
+      >
+        <image
+          class="-yd-img banner"
+          src="https://pub.file.k12.vip/tbzw/1.5/home/yd2.png"
+        />
+      </button>
+
       <image
         class="-yd-img"
         src="https://pub.file.k12.vip/tbzw/1.5/home/yd-banner.png"
+        wx:else
       />
+
     </view>
   </view>
 </template>
@@ -418,6 +431,7 @@ export default class Home extends wepy.page {
     loading: false,
     showAddTeacher: false,
     showYD: false,
+    showBannderYd: false,
     showWelcome: false,
     showWork: false,
     showTopImg: false,
@@ -483,10 +497,11 @@ export default class Home extends wepy.page {
       this.showWork = false
       this.showWelcome = false
       this.showYD = false
+      this.showBannderYd = false
     },
-    onCloseWelcome() {
+    onCloseWelcome(index) {
       this.showWelcome = false
-      this.showYD = true
+      index ? this.showBannderYd = true : this.showYD = true
     },
     bindPerfect() {
       wx.navigateTo({ url: `/user/gift` })
@@ -752,6 +767,14 @@ export default class Home extends wepy.page {
       margin-top: 158px;
       width: 698px;
       height: 514px;
+      &.banner {
+        position: fixed;
+        bottom: 100px;
+        right: 26px;
+        width: 672px;
+        height: 438px;
+        margin: 0;
+      }
     }
   }
   .welcome-pop {
@@ -1193,6 +1216,7 @@ export default class Home extends wepy.page {
       height: 156px;
       padding-top: 40px;
       padding-bottom: 37px;
+      padding-left: 20px;
     }
     &-item {
       display: flex;

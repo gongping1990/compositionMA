@@ -66,6 +66,7 @@
         </view>
       </view>
     </van-popup>
+    <load wx:if="{{loading}}"></load>
   </view>
 </template>
 <script>
@@ -73,6 +74,7 @@ import wepy from 'wepy'
 import api from '../request/api'
 import { saveFormId } from '../utils'
 import mHeader from '../components/header'
+import load from '../components/load'
 
 export default class Example extends wepy.page {
   config = {
@@ -110,6 +112,7 @@ export default class Example extends wepy.page {
       '6': '周六',
       '7': '周日'
     },
+    loading: true,
     activeYear: 0,
     activeMonth: 0,
     show: false,
@@ -121,7 +124,8 @@ export default class Example extends wepy.page {
     month: 0
   }
   components = {
-    mHeader
+    mHeader,
+    load
   }
 
   onLoad(query) {
@@ -138,6 +142,7 @@ export default class Example extends wepy.page {
         courseId: this.courseId
       })
       .then(({ data }) => {
+        this.loading = false
         this.year = data.resultData.year
         this.month = data.resultData.month
         this.timeList = data.resultData.yearList
@@ -175,6 +180,7 @@ export default class Example extends wepy.page {
       this.month = 0
     },
     bindClickMonth(item) {
+      this.loading = true
       this.month = item.month
       this.getList()
     },

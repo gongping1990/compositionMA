@@ -3,7 +3,7 @@
   <image class="top-img"
          @tap="close"
          wx:if="{{isShowTip && !first}}"
-         src="https://pub.file.k12.vip/composition/top-img.png" />
+         src="https://pub.file.k12.vip/tbzw/1.5/home/top-img.png" />
 </template>
 <script>
 import wepy from 'wepy'

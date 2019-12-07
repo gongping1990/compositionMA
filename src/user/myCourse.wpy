@@ -64,7 +64,7 @@ export default class Example extends wepy.page {
   methods = {
     toCourseDetail(data) {
       if (this.logined && !this.remindData.hasChild) {
-        wx.setStorageSync('redirect', 'user/myCourse')
+        wx.setStorageSync('redirect', '/user/myCourse')
         wx.redirectTo({ url: '/user/info' })
         return
       }

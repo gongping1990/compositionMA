@@ -1,0 +1,297 @@
+<template>
+  <view class="container p-errorBook">
+    <mHeader title="错题本"></mHeader>
+    <view class="container-scroll" style="margin-top:{{height}}px">
+      <view class="p-errorBook-tab">
+        <view
+          class="-tab-text {{tabActive === '1' ? '-active' : ''}}"
+          @tap="changeTab({{'1'}})"
+        >
+          <view class="-text">待纠正</view>
+        </view>
+        <view
+          class="-tab-text {{tabActive === '2' ? '-active' : ''}}"
+          @tap="changeTab({{'2'}})"
+        >
+          <view class="-text">已纠正</view>
+        </view>
+      </view>
+      <view class="p-errorBook-list">
+        <repeat for="{{dataList}}" key="index" index="index" item="item">
+          <view class="p-errorBook-item">
+            <view class="-item-icon {{tabActive === '2' ? '-item-color' : ''}}"></view>
+            <view class="-item-content">
+              <view class="-item-content-title">{{item.name}}</view>
+              <view class="-item-content-des">{{item.des}}</view>
+            </view>
+          </view>
+        </repeat>
+      </view>
+
+      <view class="p-errorBook-footer" wx:if="{{tabActive === '1' && dataList.length}}">
+        <button
+          form-type="submit"
+          class="-footer-btn"
+          @tap="lookAll()"
+        >
+          开始纠正
+        </button>
+      </view>
+
+
+      <view wx:if="{{!dataList.length}}">
+        <emptyState :emptyInfo.sync="emptyOption"></emptyState>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import api from '../request/api';
+  import { saveFormId } from '../utils';
+  import mHeader from '../components/header';
+  import emptyState from '../components/emptyState';
+
+  export default class MyWork extends wepy.page {
+    config = {
+      navigationBarTitleText: '错题本'
+    };
+    components = {
+      mHeader,
+      emptyState
+    };
+    computed = {
+      height() {
+        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
+      }
+    };
+
+    data = {
+      tabActive: '1',
+      isShow: false,
+      queryInfo: {},
+      dataList: [
+        {
+          name: '你从图中，看到了什么？',
+          des: '钢铁是真么样连城的'
+        },
+        {
+          name: '你从图中，看到了什么？',
+          des: '钢铁是真么样连城的'
+        },
+        {
+          name: '你从图中，看到了什么？',
+          des: '钢铁是真么样连城的'
+        },
+        {
+          name: '你从图中，看到了什么？',
+          des: '钢铁是真么样连城的'
+        },
+        {
+          name: '你从图中，看到了什么？',
+          des: '钢铁是真么样连城的'
+        },
+        {
+          name: '你从图中，看到了什么？',
+          des: '钢铁是真么样连城的'
+        },
+        {
+          name: '你从图中，看到了什么？',
+          des: '钢铁是真么样连城的'
+        },
+        {
+          name: '你从图中，看到了什么？',
+          des: '钢铁是真么样连城的'
+        },
+        {
+          name: '你从图中，看到了什么？',
+          des: '钢铁是真么样连城的'
+        },
+        {
+          name: '你从图中，看到了什么？',
+          des: '钢铁是真么样连城的'
+        },
+        {
+          name: '你从图中，看到了什么？',
+          des: '钢铁是真么样连城的'
+        },
+        {
+          name: '你从图中，看到了什么？',
+          des: '钢铁是真么样连城的'
+        }
+      ],
+      emptyOption: {
+        url: 'https://pub.file.k12.vip/tbzw/v2/empty/wtj.png',
+        text: '真棒，你没有需要上交的作业！'
+      }
+    };
+
+    getList(num) {
+      api.study
+        .listExistWorkByPage({
+          courseId: this.queryInfo.id,
+          existwork: this.tabActive !== '1'
+        })
+        .then(({ data }) => {
+          if (num) {
+            this.dataList = data.resultData;
+          } else {
+            this.dataList = data.resultData.slice(0, 2);
+          }
+
+          this.$apply();
+        });
+    }
+
+    methods = {
+      submit(e) {
+        saveFormId(e.detail.formId);
+      },
+      lookAll() {
+        this.getList(1);
+        this.isShow = true;
+      },
+      changeTab(num) {
+        // this.dataList = [];
+        // this.dataListOne = [];
+        this.tabActive = num;
+        // this.emptyOption = {
+        //   url: `https://pub.file.k12.vip/tbzw/v2/empty/${
+        //     this.tabActive === '1' ? 'wtj' : 'ytj'
+        //     }.png`,
+        //   text:
+        //     this.tabActive === '1'
+        //       ? '真棒，你没有需要上交的作业！'
+        //       : '你还没有交过作业，上课后别忘记交作业哦！'
+        // };
+        // this.isShow = false;
+        // this.getList();
+      },
+      workDetail(item) {
+        if (this.tabActive === '1') {
+          wx.navigateTo({ url: `/user/submitHomework?id=${item.lessonId}` });
+        } else {
+          wx.navigateTo({
+            url: `/user/completionOfWork?type=1&id=${item.lessonId}`
+          });
+        }
+      }
+    };
+
+    events = {};
+
+    onLoad(query) {
+      // this.queryInfo = query
+      // this.getList()
+    }
+
+    onShareAppMessage() {
+      return {
+        title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
+        path: `/pages/index`,
+        imageUrl: 'https://pub.file.k12.vip/tbzw/v2/logo2.png'
+      };
+    }
+  }
+</script>
+
+<style lang="scss">
+  @import '../assets/style/mixin.scss';
+
+  .p-errorBook {
+    &-tab {
+      display: flex;
+      align-items: center;
+      padding: 32px;
+
+      .-tab-text {
+        @include flex-center;
+        margin-right: 24px;
+        padding: 0 24px;
+        height: 64px;
+        font-size: 26px;
+        font-weight: 500;
+        color: #fff;
+        background: #dbd9e2;
+        border-radius: 12px;
+      }
+
+      .-active {
+        background: linear-gradient(
+            90deg,
+            rgba(64, 127, 255, 1) 0%,
+            rgba(46, 110, 255, 1) 100%
+        );
+      }
+    }
+
+    &-list {
+      margin-bottom: 220px;
+    }
+
+    &-item {
+      display: flex;
+      align-items: center;
+      box-sizing: border-box;
+      margin: 0 auto 30px;
+      padding: 41px 0 41px 21px;
+      width:686px;
+      /*height:160px;*/
+      background:rgba(255,255,255,1);
+      box-shadow:0px 0px 50px 0px rgba(216,215,234,0.5);
+      border-radius:10px;
+
+      .-item-icon {
+        margin-right: 36px;
+        width:18px;
+        height:18px;
+        background:rgba(255,123,51,1);
+        border-radius:50%;
+      }
+
+      .-item-color {
+        background: #08D67D;
+      }
+
+      .-item-content {
+
+        &-title {
+          font-size:30px;
+          font-family:PingFang SC;
+          font-weight:bold;
+          color:rgba(71,73,88,1);
+          margin-bottom: 21px;
+        }
+
+        &-des {
+          font-size:28px;
+          font-weight:500;
+          color:rgba(168,168,175,1);
+        }
+      }
+    }
+
+    &-footer {
+      position: fixed;
+      height: 180px;
+      bottom: 0;
+      background-color: #ffffff;
+      width: 100%;
+      margin: 0 auto;
+
+      .-footer-btn {
+        text-align: center;
+        margin: 40px auto 0;
+        width: 620px;
+        height: 98px;
+        background: rgba(8, 214, 125, 1);
+        border-radius: 49px;
+        line-height: 98px;
+        font-size: 36px;
+        font-weight: bold;
+        color: rgba(255, 255, 255, 1);
+      }
+    }
+  }
+</style>

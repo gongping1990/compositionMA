@@ -124,6 +124,27 @@
 					"pathName": "pages/test",
 					"query": "id=1174147802335821825&type=4",
 					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "pages/user",
+					"pathName": "pages/user",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": 11,
+					"name": "user/learningReport",
+					"pathName": "user/learningReport",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": 12,
+					"name": "user/errorBook",
+					"pathName": "user/errorBook",
+					"query": "",
+					"scene": null
 				}
 			]
 		}

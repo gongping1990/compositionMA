@@ -1,24 +1,27 @@
 <template>
-  <view class="container p-errorBook">
+  <view class="container">
     <mHeader title="错题本"></mHeader>
-    <view class="container-scroll" style="margin-top:{{height}}px">
-      <view class="p-errorBook-tab">
-        <view
-          class="-tab-text {{tabActive === '1' ? '-active' : ''}}"
-          @tap="changeTab({{'1'}})"
-        >
-          <view class="-text">待纠正</view>
+    <view class="container-scroll p-errorBook" style="margin-top:{{height}}px">
+      <scroll-view class="p-errorBook-list"
+                   @scrolltolower="bindLoadItem"
+                   scroll-y
+                   scroll-with-animation>
+        <view class="p-errorBook-tab">
+          <view
+            class="-tab-text {{tabActive === '1' ? '-active' : ''}}"
+            @tap="changeTab({{'1'}})"
+          >
+            <view class="-text">待纠正</view>
+          </view>
+          <view
+            class="-tab-text {{tabActive === '2' ? '-active' : ''}}"
+            @tap="changeTab({{'2'}})"
+          >
+            <view class="-text">已纠正</view>
+          </view>
         </view>
-        <view
-          class="-tab-text {{tabActive === '2' ? '-active' : ''}}"
-          @tap="changeTab({{'2'}})"
-        >
-          <view class="-text">已纠正</view>
-        </view>
-      </view>
-      <view class="p-errorBook-list">
-        <repeat for="{{dataList}}" key="index" index="index" item="item">
-          <view class="p-errorBook-item">
+        <repeat for="{{dataList}}" key="index" index="index" item="item" wx:if="{{dataList.length}}">
+          <view class="p-errorBook-item" @tap="toWrokDetail({{item}})">
             <view class="-item-icon {{tabActive === '2' ? '-item-color' : ''}}"></view>
             <view class="-item-content">
               <view class="-item-content-title">{{item.name}}</view>
@@ -26,22 +29,17 @@
             </view>
           </view>
         </repeat>
-      </view>
+      </scroll-view>
 
       <view class="p-errorBook-footer" wx:if="{{tabActive === '1' && dataList.length}}">
-        <button
-          form-type="submit"
-          class="-footer-btn"
-          @tap="lookAll()"
-        >
+        <button form-type="submit" class="-footer-btn" @tap="toWrokDetail()">
           开始纠正
         </button>
       </view>
 
-
-      <view wx:if="{{!dataList.length}}">
-        <emptyState :emptyInfo.sync="emptyOption"></emptyState>
-      </view>
+      <!--<view wx:if="{{!dataList.length}}">-->
+        <!--<emptyState :emptyInfo.sync="emptyOption"></emptyState>-->
+      <!--</view>-->
     </view>
   </view>
 </template>
@@ -68,59 +66,14 @@
     };
 
     data = {
+      page: {
+        current: 1,
+        size: 10,
+        total: ''
+      },
       tabActive: '1',
-      isShow: false,
       queryInfo: {},
-      dataList: [
-        {
-          name: '你从图中，看到了什么？',
-          des: '钢铁是真么样连城的'
-        },
-        {
-          name: '你从图中，看到了什么？',
-          des: '钢铁是真么样连城的'
-        },
-        {
-          name: '你从图中，看到了什么？',
-          des: '钢铁是真么样连城的'
-        },
-        {
-          name: '你从图中，看到了什么？',
-          des: '钢铁是真么样连城的'
-        },
-        {
-          name: '你从图中，看到了什么？',
-          des: '钢铁是真么样连城的'
-        },
-        {
-          name: '你从图中，看到了什么？',
-          des: '钢铁是真么样连城的'
-        },
-        {
-          name: '你从图中，看到了什么？',
-          des: '钢铁是真么样连城的'
-        },
-        {
-          name: '你从图中，看到了什么？',
-          des: '钢铁是真么样连城的'
-        },
-        {
-          name: '你从图中，看到了什么？',
-          des: '钢铁是真么样连城的'
-        },
-        {
-          name: '你从图中，看到了什么？',
-          des: '钢铁是真么样连城的'
-        },
-        {
-          name: '你从图中，看到了什么？',
-          des: '钢铁是真么样连城的'
-        },
-        {
-          name: '你从图中，看到了什么？',
-          des: '钢铁是真么样连城的'
-        }
-      ],
+      dataList: [],
       emptyOption: {
         url: 'https://pub.file.k12.vip/tbzw/v2/empty/wtj.png',
         text: '真棒，你没有需要上交的作业！'
@@ -129,17 +82,26 @@
 
     getList(num) {
       api.study
-        .listExistWorkByPage({
+        .listWrongSubject({
+          current: this.page.current,
+          size: this.page.size,
           courseId: this.queryInfo.id,
-          existwork: this.tabActive !== '1'
+          correct: this.tabActive === '2'
         })
         .then(({ data }) => {
-          if (num) {
-            this.dataList = data.resultData;
-          } else {
-            this.dataList = data.resultData.slice(0, 2);
+          this.dataList = [...this.dataList, ...data.resultData.records];
+          this.page.total = data.resultData.total;
+          if (this.queryInfo.oldTotal > this.page.total) {
+            wx.showToast({
+              title: `已纠正${this.queryInfo.oldTotal - this.page.total}到题`, // 提示的内容,
+              icon: 'none', // 图标,
+              duration: 2000, // 延迟时间,
+            })
           }
-
+          wx.setStorage({
+            key: "errorTotal",
+            data: this.page.total
+          })
           this.$apply();
         });
     }
@@ -148,14 +110,17 @@
       submit(e) {
         saveFormId(e.detail.formId);
       },
-      lookAll() {
-        this.getList(1);
-        this.isShow = true;
+      bindLoadItem(data) {
+        console.log('加载更多...');
+        if (this.dataList.length < this.page.total) {
+          this.page.current++;
+          this.getList();
+        }
       },
       changeTab(num) {
-        // this.dataList = [];
-        // this.dataListOne = [];
+        this.dataList = [];
         this.tabActive = num;
+        this.page.current = 1
         // this.emptyOption = {
         //   url: `https://pub.file.k12.vip/tbzw/v2/empty/${
         //     this.tabActive === '1' ? 'wtj' : 'ytj'
@@ -166,24 +131,19 @@
         //       : '你还没有交过作业，上课后别忘记交作业哦！'
         // };
         // this.isShow = false;
-        // this.getList();
+        this.getList();
       },
-      workDetail(item) {
-        if (this.tabActive === '1') {
-          wx.navigateTo({ url: `/user/submitHomework?id=${item.lessonId}` });
-        } else {
-          wx.navigateTo({
-            url: `/user/completionOfWork?type=1&id=${item.lessonId}`
-          });
-        }
+      toWrokDetail(item) {
+        wx.navigateTo({ url: `/user/submitHomework?id=${item.lessonId}` });
       }
     };
 
     events = {};
 
     onLoad(query) {
-      // this.queryInfo = query
-      // this.getList()
+      this.queryInfo = query;
+      this.queryInfo.oldTotal = wx.getStorageSync('errorTotal') || 0
+      this.getList();
     }
 
     onShareAppMessage() {
@@ -200,6 +160,8 @@
   @import '../assets/style/mixin.scss';
 
   .p-errorBook {
+    overflow: hidden;
+
     &-tab {
       display: flex;
       align-items: center;
@@ -227,27 +189,28 @@
     }
 
     &-list {
-      margin-bottom: 220px;
+      overflow-y: auto;
+      height: calc(100vh - 300px);
     }
 
     &-item {
       display: flex;
       align-items: center;
       box-sizing: border-box;
-      margin: 0 auto 30px;
+      margin:  0 auto 30px;
       padding: 41px 0 41px 21px;
-      width:686px;
+      width: 686px;
       /*height:160px;*/
-      background:rgba(255,255,255,1);
-      box-shadow:0px 0px 50px 0px rgba(216,215,234,0.5);
-      border-radius:10px;
+      background: rgba(255, 255, 255, 1);
+      box-shadow: 0px 0px 50px 0px rgba(216, 215, 234, 0.5);
+      border-radius: 10px;
 
       .-item-icon {
         margin-right: 36px;
-        width:18px;
-        height:18px;
-        background:rgba(255,123,51,1);
-        border-radius:50%;
+        width: 18px;
+        height: 18px;
+        background: rgba(255, 123, 51, 1);
+        border-radius: 50%;
       }
 
       .-item-color {
@@ -257,17 +220,17 @@
       .-item-content {
 
         &-title {
-          font-size:30px;
-          font-family:PingFang SC;
-          font-weight:bold;
-          color:rgba(71,73,88,1);
+          font-size: 30px;
+          font-family: PingFang SC;
+          font-weight: bold;
+          color: rgba(71, 73, 88, 1);
           margin-bottom: 21px;
         }
 
         &-des {
-          font-size:28px;
-          font-weight:500;
-          color:rgba(168,168,175,1);
+          font-size: 28px;
+          font-weight: 500;
+          color: rgba(168, 168, 175, 1);
         }
       }
     }

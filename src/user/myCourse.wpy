@@ -16,7 +16,7 @@
               共{{ item.lessons }}节|已学{{ item.studys }}节
             </text>
             <text class="course-text" wx:if="{{queryInfo.isErrorBook}}">
-              共500道
+              共{{item.wrongSubject}}道
             </text>
           </view>
         </view>

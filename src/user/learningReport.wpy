@@ -7,15 +7,15 @@
         <view class="-list-1"></view>
         <view class="-list-2">
           <image class="-list-2-headImg"
-                 src="{{userInfo.headimgurl}}"
+                 src="{{dataInfo.stuAvatar}}"
                  mode="widthFix"></image>
           <view class="-list-2-content">
             <image class="-content-icon1"
                    src="https://pub.file.k12.vip/tbzw/1.5/new/taiy1.png"
                    mode="widthFix"></image>
             <view class="-content-text">
-              <view>恭喜小乖兽完成了</view>
-              <view class="-two">第1课的学习</view>
+              <view>恭喜{{dataInfo.stuName}}完成了</view>
+              <view class="-two">{{dataInfo.lessonName}}的学习</view>
             </view>
             <image class="-content-icon2"
                    src="https://pub.file.k12.vip/tbzw/1.5/new/tai2.png"
@@ -25,13 +25,15 @@
             <image class="-down-img"
                    src="https://pub.file.k12.vip/2019/06/10/1138025597113749505.png"></image>
             <view class="-down-right">
-              <view class="-down-right-name">我做了一个大胆的实验</view>
-              <view class="-down-right-text">乐小狮作文乐小狮作文乐小狮作文乐小狮作文</view>
+              <view class="-down-right-name">{{dataInfo.lessonName}}</view>
+              <view class="-down-right-text">{{dataInfo.courseName}}</view>
             </view>
           </view>
         </view>
         <view class="-list-3">
-          <view class="-list-3-content"></view>
+          <image class="-list-3-content"
+                 src="{{levelObj[dataInfo.level]}}"
+                 mode="widthFix"></image>
         </view>
         <view class="-list-4">
           <view class="-list-4-item -list-4-top">
@@ -39,21 +41,23 @@
             <view class="-item-one">小红花</view>
             <view class="-item-one">评级</view>
           </view>
-          <repeat for="{{userList}}"
+          <repeat for="{{dataInfo.mates}}"
                   key="index"
                   index="index"
                   item="item">
             <view class="-list-4-item">
               <image class="-item-img"
-                     src="{{item.headImgUrl}}"
+                     src="{{item.stuAvatar}}"
                      mode="widthFix"></image>
               <view class="-item-center">
                 <image class="-item-imgTwo"
                        src="https://pub.file.k12.vip/tbzw/1.5/new/xhh.png"
                        mode="widthFix"></image>
-                <text class="-item-num">X5</text>
+                <text class="-item-num">X{{item.correct}}</text>
               </view>
-              <view class="-item-img"></view>
+              <image class="-item-imgThree"
+                     src="{{levelListObj[item.level]}}"
+                     mode="widthFix"></image>
             </view>
           </repeat>
         </view>
@@ -63,22 +67,22 @@
             <view class="-top-tab">
               <view class="-top-tab-item">
                 <view class="-item-title">课中问答</view>
-                <view class="-item-btn">2/3</view>
+                <view class="-item-btn">{{dataInfo.learnCorrect}} / {{dataInfo.learnTotal}}</view>
               </view>
               <view class="-top-tab-item">
                 <view class="-item-title">随堂检测</view>
-                <view class="-item-btn">2/10</view>
+                <view class="-item-btn">{{dataInfo.testCorrect}} / {{dataInfo.testTotal}}</view>
               </view>
             </view>
           </view>
           <view class="-list-5-down">
             <view class="-down-btn">本课学习收获</view>
-            <repeat for="{{keynote}}"
+            <repeat for="{{dataInfo.learncontent}}"
                     key="index"
                     index="index"
                     item="item">
               <view class="-down-noteItem">
-                <view class="-down-noteItem-name">{{item.name}}</view>
+                <view class="-down-noteItem-name">{{item.value}}</view>
                 <image class="-down-noteItem-img"
                        src="https://pub.file.k12.vip/tbzw/1.5/new/gou.png"
                        mode="widthFix"></image>
@@ -93,10 +97,10 @@
                   autoplay="{{swiperOptions.autoplay}}"
                   interval="{{swiperOptions.interval}}"
                   duration="{{swiperOptions.duration}}">
-            <block wx:for="{{userList}}" wx:key="{{index}}" class="-swiper-block">
+            <block wx:for="{{dataInfo.keynotes}}" wx:key="{{index}}" class="-swiper-block">
               <swiper-item>
                 <image class="-swiper-img"
-                       src="{{item.headImgUrl}}"></image>
+                       src="{{item}}"></image>
               </swiper-item>
             </block>
           </swiper>
@@ -104,18 +108,18 @@
         <view class="-list-7">
           <view class="-list-7-name">
             小乖兽已坚持学习
-            <text class="-text-color">23</text>
+            <text class="-text-color">{{dataInfo.learnDays}}</text>
             天
           </view>
           <view class="-list-7-tip">学会了</view>
           <view class="-list-7-wrap">
             <view>
-              <text class="-btn-num">35</text>
+              <text class="-btn-num">{{dataInfo.skill}}</text>
               天
               <view class="-btn-text">写作技巧</view>
             </view>
             <view>
-              <text class="-btn-num">135</text>
+              <text class="-btn-num">{{dataInfo.material}}</text>
               天
               <view class="-btn-text">名家素材</view>
             </view>
@@ -126,7 +130,7 @@
         <view class="-footer-top">去打卡</view>
         <view class="-footer-down">
           <view class="-footer-downBtn -footer-co" @tap="toJumpCard">打卡记录</view>
-          <view class="-footer-downBtn -footer-ct">分享</view>
+          <button class="-footer-downBtn -footer-ct" open-type="share">分享</button>
         </view>
       </view>
     </view>
@@ -136,44 +140,22 @@
 <script>
   import wepy from 'wepy';
   import api from '../request/api';
-  import { connect } from 'wepy-redux';
   import mHeader from '../components/header';
 
-  @connect({
-    userInfo(state) {
-      return state.user.userInfo;
-    }
-  })
   export default class LearningReport extends wepy.page {
     data = {
       dataInfo: {},
-      userList: [
-        {
-          headImgUrl: 'https://pub.file.k12.vip/2019/12/11/1204693378253205506.jpg',
-          num: 3
-        },
-        {
-          headImgUrl: 'https://pub.file.k12.vip/2019/12/11/1204693378253205506.jpg',
-          num: 3
-        },
-        {
-          headImgUrl: 'https://pub.file.k12.vip/2019/12/11/1204693378253205506.jpg',
-          num: 3
-        },
-        {
-          headImgUrl: 'https://pub.file.k12.vip/2019/12/11/1204693378253205506.jpg',
-          num: 3
-        }
-      ],
-      keynote: [
-        {
-          name: '1.课程重点1'
-        },{
-          name: '2.课程重点2课程重点2课程重点2'
-        },{
-          name: '2.课程课程重点3课程重点3重点3'
-        }
-      ],
+      cardDetail: {},
+      levelObj: {
+        '1': 'https://pub.file.k12.vip/tbzw/1.5/baogao/h1.png',
+        '2': 'https://pub.file.k12.vip/tbzw/1.5/baogao/h2.png',
+        '3': 'https://pub.file.k12.vip/tbzw/1.5/baogao/h3.png'
+      },
+      levelListObj: {
+        '1': 'https://pub.file.k12.vip/tbzw/1.5/baogao/x_h1.png',
+        '2': 'https://pub.file.k12.vip/tbzw/1.5/baogao/x_h2.png',
+        '3': 'https://pub.file.k12.vip/tbzw/1.5/baogao/x_h3.png'
+      },
       swiperOptions: {
         indicatorDots: true,
         indicatorActiveColor: '#FFDBA9',
@@ -200,11 +182,21 @@
       }
     };
 
+    getCardInfo() {
+      api.study.countCard().then(res => {
+        this.cardDetail = res.data.resultData;
+        this.cardDetail.time = dayjs(+res.data.timestamp).format('YYYY-MM-DD');
+        this.$apply();
+      });
+    }
+
     getLearnReport() {
       api.study.getLearnReport({
         lessonId: '1139442473879080962'
       }).then(({ data }) => {
         this.dataInfo = data.resultData;
+        this.dataInfo.keynotes = JSON.parse(this.dataInfo.keynotes)
+        this.dataInfo.learncontent = JSON.parse(this.dataInfo.learncontent)
         this.$apply();
       });
     }
@@ -214,6 +206,7 @@
 
     onShow() {
       this.getLearnReport();
+      this.getCardInfo();
     }
 
     onShareAppMessage() {
@@ -261,10 +254,10 @@
         &-content {
           display: flex;
           justify-content: center;
-          width: 443px;
-          margin: 0 auto 44px;
+          /*width: 443px;*/
+          margin: 0 auto;
           padding-bottom: 45px;
-          border-bottom: 4px dashed #FFE5C7;
+
 
           .-content-icon1 {
             margin: 0 17px 17px 0;
@@ -292,9 +285,11 @@
         }
 
         &-down {
+          border-top: 4px dashed #FFE5C7;
           display: flex;
           width: 443px;
           margin: 0 auto;
+          padding-top: 44px;
 
           .-down-img {
             margin-right: 51px;
@@ -331,11 +326,9 @@
         background-size: 100%;
 
         &-content {
-          margin: 239px auto 0;
-          width: 274px;
-          height: 274px;
-          background: rgba(255, 200, 31, 1);
-          border-radius: 50%;
+          margin: 166px auto 0;
+          width: 429px;
+          height: 429px;
         }
       }
 
@@ -384,6 +377,11 @@
               right: -70px;
               top: 30%;
             }
+          }
+
+          .-item-imgThree {
+            width: 87px;
+            height: 99px;
           }
         }
 

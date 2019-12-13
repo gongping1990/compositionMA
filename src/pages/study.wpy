@@ -244,7 +244,6 @@ export default class Example extends wepy.page {
   methods = {
     bindClickReset() {
       this.showContinueDiaolig = false
-      this.videoContext.seek(26)
       this.getLessonRoom(1)
     },
     bindClickCancel() {
@@ -331,7 +330,6 @@ export default class Example extends wepy.page {
           this.show = true
           this.isPlay = false
           this.time = data.answerTime
-          this.time = 10000
           this.baseTime = data.answerTime
           this.setRandomTime()
           setTimeout(() => {
@@ -541,7 +539,6 @@ export default class Example extends wepy.page {
         e.flower = !this.isLookBack ? e.correctNum : 0
         return e
       })
-
       this.flowerOne = this.answerArr[0].flower
       this.flowerTwo = this.answerArr[1].flower
       this.flowerThree = this.answerArr[2].flower
@@ -902,7 +899,7 @@ export default class Example extends wepy.page {
     &-btn {
       @include flex-center;
       margin: 0 auto;
-      margin-top: 102px;
+      margin-top: 52px;
       margin-bottom: 48px;
       width: 620px;
       height: 108px;

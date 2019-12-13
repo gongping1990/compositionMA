@@ -23,15 +23,15 @@ export default class Flower extends wepy.component {
   events = {};
   watch = {
     flower (n, o) {
-      if (!o) {
-        this.num = this.flower
-      } else if (n > 1) {
+      if (n > 1) {
         this.showAnimation = true
         setTimeout(() => {
           this.num += 1
           this.showAnimation = false
           this.$apply()
         }, 500)
+      } else {
+        this.num = n
       }
       this.$apply()
     }

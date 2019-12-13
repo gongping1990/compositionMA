@@ -312,6 +312,7 @@ export default class Example extends wepy.component {
       opacity: 1;
       margin-right: 32px;
       padding: 0 16px;
+      margin-bottom: 16px;
       height: 72px;
       background:rgba(255,255,255,1);
       border:3px solid rgba(236,238,242,1);

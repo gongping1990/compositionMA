@@ -53,7 +53,7 @@
                 <image class="-item-imgTwo"
                        src="https://pub.file.k12.vip/tbzw/1.5/new/xhh.png"
                        mode="widthFix"></image>
-                <text class="-item-num">X{{item.correct}}</text>
+                <text  class="-item-num">X<text class="-item-numTwo">{{item.correct}}</text></text>
               </view>
               <image class="-item-imgThree"
                      src="{{levelListObj[item.level]}}"
@@ -424,8 +424,13 @@
 
             .-item-num {
               position: absolute;
+              font-size: 25px;
               right: -70px;
               top: 30%;
+            }
+
+            .-item-numTwo {
+              font-size: 38px;
             }
           }
 

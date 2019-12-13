@@ -443,7 +443,6 @@ export default class Example extends wepy.page {
     this.setAnswerStatusEnd = true
 
     setTimeout(() => {
-      playSound(audioContext, 5)
       this.showResult = true
       this.$broadcast('start')
       this.answerArr.forEach((e, i) => {

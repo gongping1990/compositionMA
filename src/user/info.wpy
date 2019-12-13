@@ -56,7 +56,7 @@
 </template>
 <script>
 import wepy from 'wepy'
-import { connect } from 'wepy-redux'
+import { connect, getStore } from 'wepy-redux'
 import api from '../request/api'
 import mHeader from '../components/header'
 
@@ -68,6 +68,7 @@ import mHeader from '../components/header'
     return state.user.audioList
   }
 })
+
 export default class Info extends wepy.page {
   config = {
     navigationBarTitleText: ''
@@ -166,9 +167,19 @@ export default class Info extends wepy.page {
         title: '信息已完善', //提示的内容,
         icon: 'none' //图标
       })
+      this.getBottomTipsVO()
       wx.redirectTo({ url: path })
       this.$apply()
     })
+  }
+
+  getBottomTipsVO() {
+    api.center
+      .getBottomTipsVO()
+      .then(({ data }) => {
+        getStore().dispatch({ type: 'UPDATE_TAB_REMIND', payload: data.resultData })
+      })
+      .catch(e => {})
   }
 
   onLoad() {}

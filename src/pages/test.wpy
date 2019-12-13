@@ -646,10 +646,11 @@ export default class Example extends wepy.page {
           e.flower = 0
           return e
         })
-        this.flowerOne = this.answerArr[0].flower
-        this.flowerTwo = this.answerArr[1].flower
-        this.flowerThree = this.answerArr[2].flower
-        this.flowerFour = this.answerArr[3].flower
+        console.log(this.answerArr)
+        this.flowerOne = 0
+        this.flowerTwo = 0
+        this.flowerThree = 0
+        this.flowerFour = 0
         this.$apply()
       })
   }

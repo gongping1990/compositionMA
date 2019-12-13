@@ -343,7 +343,7 @@
 
           .-down-img {
             margin-right: 51px;
-            width: 167px;
+            min-width: 167px;
             height: 213px;
             border-radius: 13px;
           }
@@ -446,9 +446,9 @@
         display: inline-block;
         box-sizing: border-box;
         width: 100%;
-        height: 900px;
-        padding: 0 125px;
-        background: url('https://pub.file.k12.vip/tbzw/1.5/new/5@2x.png') no-repeat;
+        height: 1092px;
+        padding: 0 121px;
+        background: url('https://pub.file.k12.vip/2019/12/13/1205387915921469442.png') no-repeat;
         background-size: 100%;
 
         &-top {
@@ -515,12 +515,17 @@
           .-down-noteItem {
             @include flex-center;
             justify-content: space-between;
-            margin-bottom: 41px;
+            margin-bottom: 9px;
 
             &-name {
-              @include text-overflow(400px);
+              width:459px;
+              min-height:119px;
+              box-sizing: border-box;
+              padding: 11px 23px;
+              background:rgba(255,243,218,1);
+              border-radius:13px;
               text-align: left;
-              font-size: 32px;
+              font-size: 28px;
               font-weight: bold;
               color: rgba(102, 58, 31, 1);
             }

@@ -550,19 +550,10 @@
           });
         }
       },
-      addMyCard() {
-        api.study.addCard().then(({ data }) => {
-          this.cardDetail.continuousdays = data.resultData.continuousdays;
-          this.cardDetail.totaldays = data.resultData.totaldays;
-          this.isCard = true;
-          this.isOpenPopup = true;
-          this.getCardInfo();
-          this.$apply();
-        });
-      },
+
       toJump() {
         wx.navigateTo({
-          url: `/user/learningReport`
+          url: `/user/learningReport?lessonId=${this.queryInfo.id}`
         });
       },
       changePopup(num) {

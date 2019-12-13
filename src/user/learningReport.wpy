@@ -127,25 +127,47 @@
         </view>
       </view>
       <view class="p-learningReport-footer">
-        <view class="-footer-top">去打卡</view>
         <view class="-footer-down">
-          <view class="-footer-downBtn -footer-co" @tap="toJumpCard">打卡记录</view>
+          <view class="-footer-downBtn -footer-co"
+                wx:if="{{cardDetail.todayCard || !cardDetail.todayLearned || !dataInfo.cancard}}"
+                @tap="toJumpCard">打卡记录</view>
+          <view class="-footer-downBtn -footer-co"
+                wx:if="{{!cardDetail.todayCard && cardDetail.todayLearned && dataInfo.cancard}}"
+                @tap="addMyCard">去打卡</view>
           <button class="-footer-downBtn -footer-ct" open-type="share">分享</button>
         </view>
       </view>
     </view>
+    <successFlowerTemplate :isShow.sync="isShowFlower" :option.sync="flowerOption"></successFlowerTemplate>
   </view>
 </template>
 
 <script>
   import wepy from 'wepy';
   import api from '../request/api';
+  import dayjs from 'dayjs';
   import mHeader from '../components/header';
+  import successFlowerTemplate from '../components/successFlowerTemplate';
 
   export default class LearningReport extends wepy.page {
+    config = {
+      navigationBarTitleText: '学情报告',
+      usingComponents: {
+        'van-icon': '../vant/icon/index',
+        'van-popup': '../vant/popup/index'
+      }
+    };
     data = {
+      flowerOption: {
+        oneText: '完成上课和随堂练习',
+        flowerNum: 0,
+        twoText: '赶快去完成课后作业吧',
+        path: ''
+      },
       dataInfo: {},
+      queryInfo: {},
       cardDetail: {},
+      isShowFlower: false,
       levelObj: {
         '1': 'https://pub.file.k12.vip/tbzw/1.5/baogao/h1.png',
         '2': 'https://pub.file.k12.vip/tbzw/1.5/baogao/h2.png',
@@ -165,12 +187,22 @@
       }
     };
     components = {
-      mHeader
+      mHeader,
+      successFlowerTemplate
     };
     methods = {
       toJumpCard() {
         wx.navigateTo({
           url: `/pages/card`
+        });
+      },
+      addMyCard() {
+        api.study.addCard().then(({ data }) => {
+          this.cardDetail.continuousdays = data.resultData.continuousdays;
+          this.cardDetail.totaldays = data.resultData.totaldays;
+          this.isShowFlower = true;
+          this.getCardInfo()
+          this.$apply();
         });
       }
     };
@@ -186,22 +218,39 @@
       api.study.countCard().then(res => {
         this.cardDetail = res.data.resultData;
         this.cardDetail.time = dayjs(+res.data.timestamp).format('YYYY-MM-DD');
+        this.isShowFlower && this.getSorceByRecordSource();
         this.$apply();
       });
     }
 
     getLearnReport() {
       api.study.getLearnReport({
-        lessonId: '1139442473879080962'
+        lessonId: this.queryInfo.lessonId
       }).then(({ data }) => {
         this.dataInfo = data.resultData;
-        this.dataInfo.keynotes = JSON.parse(this.dataInfo.keynotes)
-        this.dataInfo.learncontent = JSON.parse(this.dataInfo.learncontent)
+        this.dataInfo.keynotes = JSON.parse(this.dataInfo.keynotes);
+        this.dataInfo.learncontent = JSON.parse(this.dataInfo.learncontent);
         this.$apply();
       });
     }
 
-    onLoad() {
+    getSorceByRecordSource() {
+      api.center.getSorceByRecordSource({
+        lessonId: this.queryInfo.lessonId,
+        source: 2
+      }).then(({ data }) => {
+        this.flowerOption = {
+          oneText: this.cardDetail.time,
+          flowerNum: data.resultData.count,
+          twoText: `累计打卡${this.cardDetail.totaldays}天，连续打卡${this.cardDetail.continuousdays}天`,
+          path: ''
+        },
+          this.$apply();
+      });
+    }
+
+    onLoad(data) {
+      this.queryInfo = data;
     }
 
     onShow() {
@@ -226,7 +275,7 @@
 
     &-list {
       text-align: center;
-      margin-bottom: 170px;
+      margin-bottom: 90px;
 
       .-list-1 {
         width: 100%;
@@ -258,7 +307,6 @@
           margin: 0 auto;
           padding-bottom: 45px;
 
-
           .-content-icon1 {
             margin: 0 17px 17px 0;
             width: 31px;
@@ -277,6 +325,8 @@
             font-weight: 500;
 
             .-two {
+              margin: 0 auto;
+              @include text-overflow(500px);
               margin-top: 24px;
               font-size: 47px;
               font-weight: bold;
@@ -470,9 +520,9 @@
             &-name {
               @include text-overflow(400px);
               text-align: left;
-              font-size:32px;
-              font-weight:bold;
-              color:rgba(102,58,31,1);
+              font-size: 32px;
+              font-weight: bold;
+              color: rgba(102, 58, 31, 1);
             }
 
             &-img {
@@ -561,24 +611,11 @@
       box-sizing: border-box;
       bottom: 0;
       width: 100%;
-      height: 267px;
+      height: 167px;
       padding: 30px 32px 0;
       background: rgba(255, 255, 255, 1);
       box-shadow: 0px -7px 10px 0px rgba(101, 167, 41, 0.44);
       border-radius: 67px 67px 0px 0px;
-
-      .-footer-top {
-        text-align: center;
-        margin: 0 auto 18px;
-        width: 100%;
-        height: 93px;
-        background: rgba(255, 123, 51, 1);
-        border-radius: 47px;
-        font-size: 40px;
-        line-height: 93px;
-        font-weight: bold;
-        color: rgba(255, 255, 255, 1);
-      }
 
       .-footer-down {
         @include flex-center;

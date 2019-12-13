@@ -173,7 +173,7 @@
               form-type="submit"
               class="question-btn"
               wx:if="{{setSummaryEnd}}"
-              @tap="clickLinkHomeWork"
+              @tap="choiceOpenFlower"
             >
               去完成课后作业
             </button>
@@ -190,6 +190,8 @@
       </view>
     </van-popup>
     <loading></loading>
+
+    <successFlowerTemplate :isShow.sync="isOpenFlower" :option.sync="flowerOption"></successFlowerTemplate>
   </view>
 </template>
 <script>
@@ -201,6 +203,8 @@ import flower from '@/components/flower'
 import flower1 from '../components/flower1'
 import flower2 from '../components/flower2'
 import flower3 from '../components/flower3'
+import successFlowerTemplate from '../components/successFlowerTemplate';
+
 export default class Example extends wepy.page {
   config = {
     navigationBarTitleText: '',
@@ -209,6 +213,12 @@ export default class Example extends wepy.page {
     }
   }
   data = {
+    flowerOption: {
+      oneText: '完成上课和随堂练习',
+      flowerNum: 0,
+      twoText: '赶快去完成课后作业吧',
+      path: ''
+    },
     loading: true,
     summaryScrollTop: 0,
     scrollTop: 0,
@@ -227,6 +237,7 @@ export default class Example extends wepy.page {
     readyEnd: false,
     setAnswerStatusEnd: false,
     publishEnd: false,
+    isOpenFlower: false,
     currentTime: 0,
     duration: 0,
     timeText: '00:00',
@@ -257,17 +268,22 @@ export default class Example extends wepy.page {
     flower,
     flower1,
     flower2,
-    flower3
+    flower3,
+    successFlowerTemplate
   }
   methods = {
     submit(e) {
       saveFormId(e.detail.formId)
     },
-    clickLinkHomeWork() {
-      let { audioContext, playSound } = this.$parent.globalData
-      playSound(audioContext, 1)
-      wx.redirectTo({ url: '/user/submitHomework?id=' + this.lessonId })
+    choiceOpenFlower () {
+      if (this.roomData.stage === 2) {
+        this.isOpenFlower = true
+        this.getSorceByRecordSource()
+      } else {
+        this.clickLinkHomeWork()
+      }
     },
+
     clickStudy() {
       if (this.answerEnd) {
         return
@@ -399,6 +415,13 @@ export default class Example extends wepy.page {
     this.isSuccess = true
     this.changeAlertVisible()
   }
+
+  clickLinkHomeWork() {
+    let { audioContext, playSound } = this.$parent.globalData
+    playSound(audioContext, 1)
+    wx.redirectTo({ url: '/user/submitHomework?id=' + this.lessonId })
+  }
+
   // 设置答题完成后的总结
   setSummary() {
     let numText = ['一', '二', '三', '四', '五']
@@ -664,6 +687,19 @@ export default class Example extends wepy.page {
       id: this.roomData.id,
       stage: type
     })
+  }
+
+  // 获取小红花
+  getSorceByRecordSource() {
+    let { api } = this.$parent.globalData
+    api.center.getSorceByRecordSource({
+      lessonId: this.lessonId,
+      source: 3
+    }).then(({ data }) => {
+      this.flowerOption.flowerNum = data.resultData.count;
+      this.flowerOption.path = `/user/submitHomework?id=${this.lessonId}`
+      this.$apply();
+    });
   }
 
   onLoad(option) {

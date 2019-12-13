@@ -283,7 +283,6 @@ export default class Example extends wepy.page {
       let { questionData, selectIndex } = this
       let { audioContext, playSound } = this.$parent.globalData
       playSound(audioContext, 1)
-      console.log(selectIndex)
       if (this.questionData.qetype >= 3) {
         if(selectIndex.length < questionData.optionList.length) {
           wx.showToast({

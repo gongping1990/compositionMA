@@ -21,6 +21,9 @@ const center = {
   },
   getBottomTipsVO(params) {
     return request.get('/compositionv2/center/getBottomTipsVO', params)
+  },
+  getSorceByRecordSource(params) {
+    return request.get('/compositionv2/center/getSorceByRecordSource', params)
   }
 }
 

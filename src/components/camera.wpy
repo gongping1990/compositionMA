@@ -110,13 +110,11 @@
         })
       },
       error(e) {
-        console.log(e.detail)
       }
     }
     events = {}
     watch = {
       isShow: (_n)=> {
-        console.log(_n)
         _n && this.hideIcon()
         !_n && this.openIcon()
       }

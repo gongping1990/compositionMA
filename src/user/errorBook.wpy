@@ -111,7 +111,6 @@
         saveFormId(e.detail.formId);
       },
       bindLoadItem(data) {
-        console.log('加载更多...');
         if (this.dataList.length < this.page.total) {
           this.page.current++;
           this.getList();

@@ -163,7 +163,6 @@ export default class Example extends wepy.component {
   }
   events = {
     reset() {
-      console.log('reset')
       this.selectedIndex = 1
       this.sentenceData = []
       this.sentenceArr = []
@@ -185,7 +184,6 @@ export default class Example extends wepy.component {
       arr = arr.sort((a, b) => {
         return a.index - b.index
       })
-      console.log(arr)
       return arr
     }
   }

@@ -180,13 +180,13 @@ export default class User extends wepy.page {
         name: '我的孩子',
         url: 'https://pub.file.k12.vip/tbzw/1.4/my_child.png'
       },
-      {
-        id: 5,
-        num: 0,
-        isBuy: true,
-        name: '我的错题',
-        url: 'https://pub.file.k12.vip/tbzw/1.5/new/ctb.png'
-      },
+      // {
+      //   id: 5,
+      //   num: 0,
+      //   isBuy: true,
+      //   name: '我的错题',
+      //   url: 'https://pub.file.k12.vip/tbzw/1.5/new/ctb.png'
+      // },
       {
         id: 3,
         name: '我的礼包',

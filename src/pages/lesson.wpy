@@ -3,7 +3,7 @@
     <mHeader title="我的课程表"
              flag="0"></mHeader>
     <view class="container-scroll"
-          style="margin-top:{{height}}px;height: calc(100vh - {{height}}px)">
+          style="margin-top:{{height}}px;height: calc(100vh - {{height}}px)" wx:if="{{remindData.hasChild}}">
 
       <view class="no-login"
             wx:if="{{!logined}}">
@@ -364,6 +364,11 @@ export default class Lesson extends wepy.page {
 
   onShow() {
     if (this.logined) {
+      if (!this.remindData.hasChild) {
+        wx.setStorageSync('redirect', '/user/lesson')
+        wx.redirectTo({ url: '/user/info' })
+        return
+      }
       this.getAttendClassCatalog()
     }
   }

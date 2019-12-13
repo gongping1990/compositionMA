@@ -16,22 +16,26 @@
           class="choice-input-item success"
           wx:if="{{setAnswerStatusEnd && (correctAnswer == item.mark)}}"
         >
-          {{ item.mark }}. {{ item.problem }}
+          <text class="choice-input-item-left">{{ item.mark }}. </text>
+          <text class="choice-input-item-right">{{ item.problem }}</text>
         </view>
         <view
           class="choice-input-item error"
           wx:elif="{{setAnswerStatusEnd && (selectIndex == item.mark && correctAnswer != item.mark)}}"
         >
-          {{ item.mark }}. {{ item.problem }}
+          <text class="choice-input-item-left">{{ item.mark }}. </text>
+          <text class="choice-input-item-right">{{ item.problem }}</text>
         </view>
         <view
           class="choice-input-item select"
           wx:elif="{{selectIndex == item.mark}}"
         >
-          {{ item.mark }}. {{ item.problem }}
+          <text class="choice-input-item-left">{{ item.mark }}. </text>
+          <text class="choice-input-item-right">{{ item.problem }}</text>
         </view>
         <view class="choice-input-item" wx:else>
-          {{ item.mark }}. {{ item.problem }}
+          <text class="choice-input-item-left">{{ item.mark }}. </text>
+          <text class="choice-input-item-right">{{ item.problem }}</text>
         </view>
       </view>
     </view>
@@ -399,13 +403,11 @@ export default class Example extends wepy.component {
     &-item {
       position: relative;
       display: flex;
-      align-items: center;
-      justify-content: space-between;
       box-sizing: border-box;
       margin-top: 25px;
-      padding: 0 45px;
+      padding: 14rpx 45px;
+      padding-right: 120px;
       width: 100%;
-      min-height: 80px;
       font-size: 32px;
       color: #333333;
       border-radius: 40px;

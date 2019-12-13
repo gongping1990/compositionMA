@@ -95,6 +95,15 @@ const study = {
   listDateByCourse(params) {
     return request.get('/compositionv2/center/listDateByCourse', params)
   },
+  getLearnReport(params) {
+    return request.get('/compositionv2/study/getLearnReport', params)
+  },
+  listWrongSubject(params) {
+    return request.get('/compositionv2/study/listWrongSubject', params)
+  },
+  saveWrongSubject(params) {
+    return request.post('/compositionv2/study/saveWrongSubject', params)
+  },
   listLessonCatalogByCourse(params) {
     return request.get(
       '/compositionv2/center/listLessonCatalogByCourse',

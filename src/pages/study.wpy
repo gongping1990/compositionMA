@@ -122,7 +122,7 @@
           wx:if="{{!showResult}}"
         >
           <text class="popup-msg-title">{{answerArr[3].answer == 1 ? '回答正确' : answerArr[3].status == 2 ? '你已放弃作答' : '回答错误'}}</text>
-          <text class="popup-msg-text">{{answerArr[3].answer == 1 ? '真棒！' : answerArr[3].status == 2 ? '' : correctAnswer}}</text>
+          <text class="popup-msg-text">{{answerArr[3].answer == 1 ? '真棒！' : answerArr[3].status == 2 ? '' : '正确答案：' + correctAnswer}}</text>
         </view>
       </view>
     </van-popup>
@@ -157,7 +157,6 @@
 <script>
 import wepy from 'wepy'
 import choiceQuestion from '../components/choiceQuestion'
-import textQuestion from '../components/textQuestion'
 import mHeader from '../components/header'
 import loading from '../components/loading'
 import flower from '../components/flower'
@@ -226,8 +225,7 @@ export default class Example extends wepy.page {
     flower2,
     flower3,
     flowerAnimation,
-    choiceQuestion,
-    textQuestion
+    choiceQuestion
   }
   watch = {
     isPlay(n) {
@@ -246,6 +244,7 @@ export default class Example extends wepy.page {
   methods = {
     bindClickReset() {
       this.showContinueDiaolig = false
+      this.videoContext.seek(26)
       this.getLessonRoom(1)
     },
     bindClickCancel() {
@@ -331,8 +330,8 @@ export default class Example extends wepy.page {
           this.showDialog = false
           this.show = true
           this.isPlay = false
-           this.time = data.answerTime
-          // this.time = 10000
+          this.time = data.answerTime
+          this.time = 10000
           this.baseTime = data.answerTime
           this.setRandomTime()
           setTimeout(() => {

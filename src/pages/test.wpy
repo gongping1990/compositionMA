@@ -643,7 +643,7 @@ export default class Example extends wepy.page {
           e.answer = 0
           e.isAnswer = 0
           e.answerError = 0
-          e.flower = this.lookback ? 0 : e.testCorrectNum
+          e.flower = 0
           return e
         })
         this.flowerOne = this.answerArr[0].flower

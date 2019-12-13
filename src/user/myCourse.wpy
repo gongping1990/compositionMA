@@ -12,8 +12,11 @@
           <image class="course-cover" src="{{item.coverphoto}}" />
           <view class="course-info">
             <text class="course-title">{{ item.name }}</text>
-            <text class="course-text">
+            <text class="course-text" wx:if="{{!queryInfo.isErrorBook}}">
               共{{ item.lessons }}节|已学{{ item.studys }}节
+            </text>
+            <text class="course-text" wx:if="{{queryInfo.isErrorBook}}">
+              共{{item.wrongSubject}}道
             </text>
           </view>
         </view>
@@ -44,7 +47,8 @@ export default class Example extends wepy.page {
     }
   }
   data = {
-    dataList: []
+    dataList: [],
+    queryInfo: {}
   }
   components = {
     mHeader
@@ -52,6 +56,10 @@ export default class Example extends wepy.page {
 
   onShow() {
     this.getList()
+  }
+
+  onLoad(query) {
+    this.queryInfo = query
   }
 
   getList() {
@@ -64,11 +72,13 @@ export default class Example extends wepy.page {
   methods = {
     toCourseDetail(data) {
       if (this.logined && !this.remindData.hasChild) {
-        wx.setStorageSync('redirect', 'user/myCourse')
+        wx.setStorageSync('redirect', '/user/myCourse')
         wx.redirectTo({ url: '/user/info' })
         return
       }
-      wx.navigateTo({ url: `/user/lesson?id=${data.courseId}` })
+      wx.navigateTo({
+        url: `/user/${!this.queryInfo.isErrorBook ? 'lesson' : 'errorBook'}?id=${data.courseId}`
+      })
     }
   }
   events = {}

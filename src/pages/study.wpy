@@ -441,6 +441,7 @@ export default class Example extends wepy.page {
       this.answerArr[3].answer = 3
     }
     this.setAnswerStatusEnd = true
+    this.saveWrongSubject(this.selectIndex === this.correctAnswer, this.questionData.id)
 
     setTimeout(() => {
       this.showResult = true
@@ -489,6 +490,17 @@ export default class Example extends wepy.page {
   // 初始化请求
   initPage() {
     this.getClassInfo()
+  }
+
+  saveWrongSubject(correct, qid) {
+    if (this.isLookBack) {
+      return
+    }
+    let { api } = this.$parent.globalData
+    api.study.saveWrongSubject({
+      correct,
+      qid
+    })
   }
 
   // 更新课程状态

@@ -109,6 +109,9 @@ const study = {
       '/compositionv2/center/listLessonCatalogByCourse',
       params
     )
+  },
+  saveWrongSubject(params) {
+    return request.post('/compositionv2/study/saveWrongSubject', params)
   }
 }
 

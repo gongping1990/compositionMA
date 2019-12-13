@@ -90,7 +90,7 @@
             </repeat>
           </view>
         </view>
-        <view class="-list-6">
+        <view class="-list-6" v-if="dataInfo.keynotes.length">
           <swiper class="-list-6-swiper"
                   indicator-dots="{{swiperOptions.indicatorDots}}"
                   indicator-active-color="{{swiperOptions.indicatorActiveColor}}"
@@ -134,7 +134,7 @@
           <view class="-footer-downBtn -footer-co"
                 wx:if="{{!cardDetail.todayCard && cardDetail.todayLearned && dataInfo.cancard}}"
                 @tap="addMyCard">去打卡</view>
-          <button class="-footer-downBtn -footer-ct" open-type="share">分享</button>
+          <!--<button class="-footer-downBtn -footer-ct" open-type="share">分享</button>-->
         </view>
       </view>
     </view>
@@ -275,7 +275,7 @@
 
     &-list {
       text-align: center;
-      margin-bottom: 90px;
+      margin-bottom: 80px;
 
       .-list-1 {
         width: 100%;
@@ -616,8 +616,8 @@
       box-sizing: border-box;
       bottom: 0;
       width: 100%;
-      height: 167px;
-      padding: 30px 32px 0;
+      /*height: 167px;*/
+      padding: 30px 32px;
       background: rgba(255, 255, 255, 1);
       box-shadow: 0px -7px 10px 0px rgba(101, 167, 41, 0.44);
       border-radius: 67px 67px 0px 0px;
@@ -629,7 +629,7 @@
 
       .-footer-downBtn {
         text-align: center;
-        width: 333px;
+        width: 686px;
         height: 93px;
         border-radius: 47px;
         line-height: 93px;

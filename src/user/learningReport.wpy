@@ -90,7 +90,7 @@
             </repeat>
           </view>
         </view>
-        <view class="-list-6" v-if="dataInfo.keynotes.length">
+        <view class="-list-6" wx:if="{{dataInfo.keynotes.length}}">
           <swiper class="-list-6-swiper"
                   indicator-dots="{{swiperOptions.indicatorDots}}"
                   indicator-active-color="{{swiperOptions.indicatorActiveColor}}"
@@ -228,9 +228,10 @@
         lessonId: this.queryInfo.lessonId
       }).then(({ data }) => {
         this.dataInfo = data.resultData;
-        this.dataInfo.keynotes = JSON.parse(this.dataInfo.keynotes);
-        this.dataInfo.learncontent = JSON.parse(this.dataInfo.learncontent);
+        this.dataInfo.keynotes = this.dataInfo.keynotes ? JSON.parse(this.dataInfo.keynotes) : [];
+        this.dataInfo.learncontent = this.dataInfo.learncontent && JSON.parse(this.dataInfo.learncontent);
         this.$apply();
+        console.log(this.dataInfo,1)
       });
     }
 

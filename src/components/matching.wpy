@@ -1,0 +1,336 @@
+<template>
+  <view class="matching">
+    <view class="matching-left">
+      <view
+        class="matching-item"
+        wx:for="{{leftAnswer}}"
+        wx:key="{{index}}"
+        @tap="clickAnswerColumn({{0}}, {{item}}, {{index}})"
+      >
+        <view
+          class="selected"
+          wx:if="{{(leftActive == item.key || selectAnswer[item.key]) && !end}}"
+        >
+          <!-- <image class="matching-item-img" /> -->
+          <text>{{ leftActive }}</text>
+        </view>
+        <view
+          class="error"
+          wx:elif="{{selectAnswer[item.key] !== item.answer && end}}"
+        >
+          <!-- <image class="matching-item-img" /> -->
+          <text>{{ leftActive }}</text>
+        </view>
+        <view
+          class="success"
+          wx:elif="{{selectAnswer[item.key] === item.answer && end}}"
+        >
+          <!-- <image class="matching-item-img" /> -->
+          <text>{{ leftActive }}</text>
+        </view>
+        <view wx:else>
+          <!-- <image class="matching-item-img" /> -->
+          <text>{{ leftActive }}</text>
+        </view>
+        <!-- <view class="error">
+          <text>{{ leftActive }}</text>
+        </view>
+        <view class="success">
+          <text>{{ leftActive }}</text>
+        </view> -->
+      </view>
+    </view>
+    <view class="matching-center">
+      <view
+        class="matching-line {{item}}"
+        wx:for="{{lineArr}}"
+        wx:key="{{index}}"
+      ></view>
+    </view>
+    <view class="matching-right">
+      <view
+        class="matching-item"
+        wx:for="{{rightAnswer}}"
+        wx:key="{{index}}"
+        @tap="clickAnswerColumn({{1}}, {{item}}, {{index}})"
+      >
+        <view
+          class="selected"
+          wx:if="{{(rightActive == item.key || selectAnswer[item.key]) && !end}}"
+        >
+          <!-- <image class="matching-item-img" /> -->
+          <text>{{ leftActive }}</text>
+        </view>
+        <view
+          class="error"
+          wx:elif="{{selectAnswer[item.key] !== item.answer && end}}"
+        >
+          <!-- <image class="matching-item-img" /> -->
+          <text>{{ leftActive }}</text>
+        </view>
+        <view
+          class="success"
+          wx:elif="{{selectAnswer[item.key] === item.answer && end}}"
+        >
+          <!-- <image class="matching-item-img" /> -->
+          <text>{{ leftActive }}</text>
+        </view>
+        <view wx:else>
+          <!-- <image class="matching-item-img" /> -->
+          <text>{{ leftActive }}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+export default class Matching extends wepy.component {
+  props = {}
+  data = {
+    end: false,
+    leftAnswer: [
+      {
+        key: 'LA',
+        answer: 'RB',
+        seleced: ''
+      },
+      {
+        key: 'LB',
+        answer: 'RC',
+        seleced: ''
+      },
+      {
+        key: 'LC',
+        answer: 'RA',
+        seleced: ''
+      }
+    ],
+    rightAnswer: [
+      {
+        key: 'RA',
+        answer: 'LC',
+        seleced: ''
+      },
+      {
+        key: 'RB',
+        answer: 'LA',
+        seleced: ''
+      },
+      {
+        key: 'RC',
+        answer: 'LB',
+        seleced: ''
+      }
+    ],
+    rightAnswerObj: {
+      RC: 'LB',
+      LB: 'RC',
+      RB: 'LA',
+      LA: 'RB',
+      RA: 'LC',
+      LC: 'RA'
+    },
+    selectAnswer: {},
+    prevCol: -1,
+    leftActive: '',
+    rightActive: ''
+  }
+  methods = {
+    /**
+     * 点击选项
+     * @params type [number] 0: left 1:right
+     */
+    clickAnswerColumn(type, item, index) {
+      let { prevCol, selectAnswer } = this
+      const isPrevCol = type === prevCol
+      const hasKey = selectAnswer.hasOwnProperty(item.key)
+      let activeName = type ? 'rightActive' : 'leftActive'
+      let reverseActiveName = type ? 'leftActive' : 'rightActive'
+      if (hasKey && this.selectAnswer[item.key]) return
+      if (!isPrevCol && this[reverseActiveName]) {
+        this.selectAnswer[this[reverseActiveName]] = item.key
+        this.selectAnswer[item.key] = this[reverseActiveName]
+        this[activeName] = ''
+        this[reverseActiveName] = ''
+      } else {
+        this.selectAnswer[item.key] = 0
+        this[activeName] = item.key
+      }
+      if (!isPrevCol) {
+        this.prevCol = type
+      }
+
+      this.$apply()
+    }
+  }
+  events = {}
+  watch = {}
+  computed = {
+    lineArr() {
+      let { selectAnswer, rightAnswerObj, end } = this
+      let arr = new Set()
+      let values = Object.values(selectAnswer)
+      for (let key in selectAnswer) {
+        let isLeft = key.indexOf('L') !== -1
+        if (selectAnswer[key]) {
+          let value = isLeft
+            ? `${key} ${selectAnswer[key]}`
+            : `${selectAnswer[key]} ${key}`
+          if (end) {
+            value = `${value} ${
+              rightAnswerObj[key] == selectAnswer[key] ? 'success' : 'error'
+            }`
+          }
+          arr.add(value)
+        }
+      }
+      console.log(arr)
+      return [...arr]
+    }
+  }
+  onLoad() {
+    setTimeout(() => {
+      this.end = true
+      this.$apply()
+    }, 10000)
+  }
+}
+</script>
+<style lang="scss">
+@import '../assets/style/mixin.scss';
+@mixin tag($path) {
+  @include bg($path);
+  content: '';
+  left: 4px;
+  top: 4px;
+  position: absolute;
+  width: 56px;
+  height: 56px;
+  z-index: 10;
+}
+.matching {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  &-left,
+  &-right {
+    position: relative;
+    z-index: 2;
+  }
+  &-center {
+    position: relative;
+    width: 166px;
+    overflow: hidden;
+    z-index: 1;
+  }
+  &-item {
+    margin-bottom: 48px;
+    width: 220px;
+    height: 220px;
+    & > view {
+      position: relative;
+      box-sizing: border-box;
+      width: 220px;
+      height: 220px;
+      box-shadow: 0px 6px 0px 0px rgba(134, 132, 255, 1);
+      border-radius: 40px;
+      border: 8px solid #fff;
+      &.selected {
+        border-color: #ffc001;
+      }
+      &.error {
+        border-color: #ff7c53;
+        &::before {
+          @include tag('/1.8/video/sp_icon_cw.png');
+        }
+      }
+      &.success {
+        border-color: #08d67d;
+        &::before {
+          @include tag('/1.8/video/sp_icon_zq.png');
+        }
+      }
+    }
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    &-img {
+      width: 100%;
+      height: 100%;
+    }
+  }
+  &-line {
+    position: absolute;
+    left: 50%;
+    width: 600px;
+    height: 8px;
+    background: #ffc001;
+    transform: translate(-50%, -50%);
+    &.success {
+      background: #08d67d;
+    }
+    &.error {
+      background: #ff7c53;
+    }
+  }
+
+  @each $left in LA, LB, LC {
+    .#{$left} {
+      @if $left == LA {
+        top: 110px;
+      }
+      @if $left == LB {
+        top: 378px;
+      }
+      @if $left == LC {
+        top: 646px;
+      }
+    }
+    @each $right in RA, RB, RC {
+      .#{$left}.#{$right} {
+        @if $left == LA {
+          @if $right == RA {
+            transform: translate(-50%, -50%) rotate(0);
+          }
+          @if $right == RB {
+            top: 240px;
+            transform: translate(-50%, -50%) rotate(60deg);
+          }
+          @if $right == RC {
+            top: 360px;
+            transform: translate(-50%, -50%) rotate(74deg);
+          }
+        }
+        @if $left == LB {
+          @if $right == RA {
+            top: 250px;
+            transform: translate(-50%, -50%) rotate(-60deg);
+          }
+          @if $right == RB {
+            transform: translate(-50%, -50%) rotate(0);
+          }
+          @if $right == RC {
+            top: 520px;
+            transform: translate(-50%, -50%) rotate(60deg);
+          }
+        }
+        @if $left == LC {
+          @if $right == RA {
+            top: 380px;
+            transform: translate(-50%, -50%) rotate(-74deg);
+          }
+          @if $right == RB {
+            top: 520px;
+            transform: translate(-50%, -50%) rotate(-60deg);
+          }
+          @if $right == RC {
+            transform: translate(-50%, -50%) rotate(0);
+          }
+        }
+      }
+    }
+  }
+}
+</style>

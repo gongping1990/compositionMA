@@ -57,15 +57,15 @@
 			"list": [
 				{
 					"id": 0,
-					"name": "pages/study",
-					"pathName": "pages/study",
+					"name": "pages/lesson",
+					"pathName": "pages/lesson",
 					"query": "id=1134359706941546498",
 					"scene": null
 				},
 				{
-					"id": -1,
-					"name": "pages/sharePoster",
-					"pathName": "pages/sharePoster",
+					"id": 1,
+					"name": "pages/detail",
+					"pathName": "pages/detail",
 					"query": "id=1173848797161070593",
 					"scene": null
 				},
@@ -141,9 +141,16 @@
 				},
 				{
 					"id": 12,
-					"name": "user/errorBook",
-					"pathName": "user/errorBook",
-					"query": "id=1133673190743896065",
+					"name": "user/lesson",
+					"pathName": "user/lesson",
+					"query": "id=1175008437676421121",
+					"scene": null
+				},
+				{
+					"id": 13,
+					"name": "pages/video",
+					"pathName": "pages/video",
+					"query": "id=1173848797161070593",
 					"scene": null
 				}
 			]

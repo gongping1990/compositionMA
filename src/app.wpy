@@ -69,7 +69,10 @@ export default class extends wepy.app {
   config = {
     pages: [
       'pages/index',
+      'pages/detail',
       'pages/lesson',
+      'pages/video',
+      'pages/lessonDetail',
       'pages/joinRoom',
       'pages/server',
       'pages/login',
@@ -79,6 +82,7 @@ export default class extends wepy.app {
       'pages/classroom',
       'pages/ready',
       'pages/study',
+      'pages/picture',
       'pages/test',
       'pages/user',
       'pages/praiseOfWorks',
@@ -86,7 +90,8 @@ export default class extends wepy.app {
       'pages/subscribe',
       'pages/authorize',
       'pages/enroll',
-      'pages/sharePoster'
+      'pages/sharePoster',
+      'pages/result'
     ],
     subPackages: [
       {

@@ -1,0 +1,220 @@
+<template>
+  <view class="container video">
+    <mHeader
+      title=""
+      bgColor="transparent"
+      :showBtn.sync="showBtn"
+      flag="3"
+    ></mHeader>
+    <van-popup show="{{ show }}" overlay="{{true}}" position="bottom">
+      <view class="video-popup">
+        <view class="video-time">
+          <view class="video-circle">
+            <van-circle
+              size="{{46}}"
+              value="{{30}}"
+              layer-color="#fff"
+              color="#FFC001"
+            >
+              <view class="video-circle-text">3</view>
+            </van-circle>
+          </view>
+        </view>
+        <view class="video-content">
+          <view class="video-title">
+            <view class="video-audio"></view>
+            <text>他想做什么他想做什么他想做什么他想做什么他想做什么</text>
+          </view>
+          <matching></matching>
+          <!-- <recorder></recorder> -->
+          <!-- <view class="choice">
+            <view class="choice-item selected">
+              <image class="choice-item-img" src="" />
+              <view class="choice-item-tag">
+                A
+              </view>
+            </view>
+            <view class="choice-item">
+              <image class="choice-item-img" src="" />
+              <view class="choice-item-tag">
+                A
+              </view>
+            </view>
+            <view class="choice-item">
+              <image class="choice-item-img" src="" />
+              <view class="choice-item-tag">
+                A
+              </view>
+            </view>
+          </view> -->
+        </view>
+      </view>
+    </van-popup>
+    <dialog
+      wx:if="{{showDialog}}"
+      :text.sync="dialogText"
+      @cancle.user="cancle"
+      @confirm.user="confirm"
+    ></dialog>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import mHeader from '../components/header'
+import recorder from '../components/recorder'
+import matching from '../components/matching'
+import dialog from '../components/dialog'
+export default class Example extends wepy.page {
+  config = {
+    navigationBarTitleText: '',
+    usingComponents: {
+      'van-popup': '../vant/popup/index',
+      'van-circle': '../vant/circle/index'
+    }
+  }
+  data = {
+    showBtn: false,
+    show: true,
+    showDialog: false,
+    choiceSeleced: '',
+    dialogText: '确定要退出上课吗？'
+  }
+  components = {
+    mHeader,
+    recorder,
+    matching,
+    dialog
+  }
+  methods = {
+    clickConfirm() {
+      console.log(121313)
+    },
+    cancle() {
+      console.log(1)
+    },
+    confirm() {
+      console.log(2)
+    }
+  }
+  events = {}
+  watch = {}
+  computed = {}
+  onLoad() {}
+  onShow() {}
+}
+</script>
+<style lang="scss">
+@import '../assets/style/mixin.scss';
+
+@mixin tag($path) {
+  @include bg($path);
+  content: '';
+  left: 4px;
+  top: 4px;
+  position: absolute;
+  width: 68px;
+  height: 68px;
+  z-index: 10;
+}
+
+.video {
+  &-content {
+    padding: 144px 80px 60px;
+  }
+  &-title {
+    display: flex;
+    align-items: center;
+    margin-bottom: 50px;
+    text {
+      max-width: 502px;
+      font-size: 34px;
+      color: #fff;
+      line-height: 46px;
+    }
+  }
+  &-audio {
+    @include bg('/1.8/video/sp_icon.png');
+    margin-right: 24px;
+    width: 64px;
+    height: 64px;
+  }
+  &-popup {
+    position: relative;
+    width: 750px;
+    background: rgba(162, 173, 255, 1);
+    border-radius: 48px 48px 0px 0px;
+  }
+  &-time {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 112px;
+    height: 112px;
+    background: #fff;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+  }
+  &-circle {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -45%);
+    &-text {
+      font-size: 48px;
+      color: #ffc001;
+      font-weight: bold;
+    }
+  }
+  .choice {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    &-item {
+      position: relative;
+      box-sizing: border-box;
+      margin-right: 62px;
+      margin-bottom: 60px;
+      width: 264px;
+      height: 264px;
+      box-shadow: 0px 6px 0px 0px rgba(134, 132, 255, 1);
+      border-radius: 40px;
+      border: 8px solid rgba(255, 255, 255, 1);
+      &.selected {
+        border-color: #ffc001;
+      }
+      &.error {
+        border-color: #ff7c53;
+        &::before {
+          @include tag('/1.8/video/sp_icon_cw.png');
+        }
+      }
+      &.success {
+        border-color: #08d67d;
+        &::before {
+          @include tag('/1.8/video/sp_icon_zq.png');
+        }
+      }
+      &:nth-child(2n) {
+        margin-right: 0;
+      }
+      &-img {
+        width: 264px;
+        height: 264px;
+      }
+      &-tag {
+        @include flex-center;
+        position: absolute;
+        left: 8px;
+        top: 8px;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 1);
+        font-size: 32px;
+        color: #333;
+        font-weight: bold;
+      }
+    }
+  }
+}
+</style>

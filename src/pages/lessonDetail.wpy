@@ -1,0 +1,205 @@
+<template>
+  <view class="container lessonDetail">
+    <mHeader title="课时详情" flag="0"></mHeader>
+    <view
+      class="container-scroll"
+      style="margin-top:{{height}}px;height: calc(100vh - {{height}}px)"
+    >
+      <view class="lessonDetail-header">
+        <view class="lessonDetail-header-left">
+          <view class="lessonDetail-header-title">蔡伦造纸</view>
+          <view class="lessonDetail-header-num">23451人已学</view>
+          <view class="lessonDetail-header-flower">
+            <view class="lessonDetail-header-icon"></view>
+            x 23
+          </view>
+        </view>
+        <view class="lessonDetail-header-cover"></view>
+      </view>
+      <scroll-view
+        scroll-y
+        scroll-with-animation
+        style="height: calc(100vh - {{height + 175}}px)"
+      >
+        <view class="lessonDetail-scroll">
+          <view
+            class="lessonDetail-item disabled {{item.class}}"
+            wx:for="{{itemArr}}"
+            wx:key="{{index}}"
+          >
+            <image src="{{item.icon}}" class="lessonDetail-item-cover" />
+            <view class="lessonDetail-item-content">
+              <view class="lessonDetail-item-title">{{ item.title }}</view>
+              <view class="lessonDetail-item-flower">
+                <view class="lessonDetail-item-flower-icon"></view>
+                <view class="lessonDetail-item-flower-icon empty"></view>
+              </view>
+            </view>
+            <view class="lessonDetail-item-icon"></view>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import mHeader from '../components/header'
+export default class Example extends wepy.page {
+  config = {
+    navigationBarTitleText: ''
+  }
+  data = {
+    itemArr: [
+      {
+        icon: 'https://pub.file.k12.vip/tbzw/1.8/lesson/jc-icon.png',
+        title: '知识小剧场',
+        class: 'jc'
+      },
+      {
+        icon: 'https://pub.file.k12.vip/tbzw/1.8/lesson/kt-icon.png',
+        title: '知识小剧场',
+        class: 'kt'
+      },
+      {
+        icon: 'https://pub.file.k12.vip/tbzw/1.8/lesson/jn-icon.png',
+        title: '知识小剧场',
+        class: 'jn'
+      },
+      {
+        icon: 'https://pub.file.k12.vip/tbzw/1.8/lesson/bp-icon.png',
+        title: '知识小剧场',
+        class: 'bp'
+      }
+    ]
+  }
+  components = {
+    mHeader
+  }
+  methods = {}
+  events = {}
+  watch = {}
+  computed = {
+    height() {
+      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+    }
+  }
+  onLoad() {}
+  onShow() {}
+}
+</script>
+<style lang="scss">
+@import '../assets/style/mixin.scss';
+.lessonDetail {
+  &-header {
+    display: flex;
+    justify-content: space-between;
+    box-sizing: border-box;
+    padding: 0 60px;
+    padding-top: 60px;
+    height: 350px;
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0px 0px 60px 0px rgba(206, 210, 218, 1);
+    border-radius: 0px 0px 60px 60px;
+    &-title {
+      margin-bottom: 27px;
+      font-size: 42px;
+      font-weight: bold;
+      color: #333;
+    }
+    &-num {
+      font-size: 28px;
+      color: #999;
+    }
+    &-flower {
+      @include flex-center;
+      margin-top: 34px;
+      width: 200px;
+      height: 70px;
+      background: rgba(255, 195, 46, 1);
+      border-radius: 35px;
+      font-size: 36px;
+      color: #fff;
+      font-weight: 500;
+    }
+    &-icon {
+      @include bg('/1.8/lesson/flower-icon.png');
+      margin-right: 13px;
+      width: 44px;
+      height: 54px;
+    }
+    &-cover {
+      width: 200px;
+      height: 250px;
+      border-radius: 30px;
+    }
+  }
+  &-scroll {
+    padding: 50px;
+  }
+  &-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    padding: 40px;
+    margin-bottom: 32px;
+    width: 650px;
+    height: 200px;
+    background: rgba(99, 196, 255, 1);
+    border-radius: 50px;
+    &.kt {
+      background: #98de39;
+    }
+    &.jn {
+      background: #ff698c;
+    }
+    &.bp {
+      background: #ff7d54;
+    }
+    &.disabled {
+      background: #e2eaf1;
+    }
+    &-cover {
+      width: 74px;
+      height: 101px;
+    }
+    &-content {
+      flex: 1;
+      margin-left: 36px;
+      margin-right: 90px;
+    }
+    &-title {
+      margin-bottom: 12px;
+      font-size: 36px;
+      font-weight: 500;
+      color: #fff;
+      .disabled & {
+        color: #91a5ae;
+      }
+    }
+    &-flower {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      &-icon {
+        @include bg('/1.8/lesson/h.png');
+        margin-right: 10px;
+        width: 49px;
+        height: 51px;
+        &.empty {
+          @include bg('/1.8/lesson/h-empty.png');
+        }
+      }
+    }
+    &-icon {
+      @include bg('/1.8/lesson/right.png');
+      width: 61px;
+      height: 65px;
+      .disabled & {
+        @include bg('/1.8/lesson/suo.png');
+      }
+    }
+  }
+}
+</style>

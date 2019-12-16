@@ -1,97 +1,118 @@
 <template>
   <view class="container lesson">
-    <mHeader title="我的课程表"
-             flag="0"></mHeader>
-    <view class="container-scroll"
-          style="margin-top:{{height}}px;height: calc(100vh - {{height}}px)">
-
-      <view class="no-login"
-            wx:if="{{!logined}}">
-        <image class="no-login-icon"
-               src="https://pub.file.k12.vip/tbzw/1.3/login/lion_bg.png" />
+    <mHeader title="我的课程表" flag="0"></mHeader>
+    <view
+      class="container-scroll"
+      style="margin-top:{{height}}px;height: calc(100vh - {{height}}px)"
+    >
+      <view class="no-login" wx:if="{{!logined}}">
+        <image
+          class="no-login-icon"
+          src="https://pub.file.k12.vip/tbzw/1.3/login/lion_bg.png"
+        />
         <text class="no-login-title">请登陆后查看本周课表~</text>
-        <button class="no-login-btn"
-                @tap="clickLoginBtn">立即登录</button>
+        <button class="no-login-btn" @tap="clickLoginBtn">立即登录</button>
       </view>
-      <view class="empty"
-            wx:if="{{!isBuy && remindData.hasChild}}">
+      <view class="empty" wx:if="{{!isBuy && remindData.hasChild}}">
         <text class="empty-title">你还没有报名课程哦~</text>
         <text class="empty-text">我们为你推荐了其他小朋友都在学的动画课程</text>
-        <button class="empty-btn"
-                wx:for="{{recommendList}}"
-                wx:key="{{index}}"
-                open-type="contact"
-                show-message-card="true"
-                send-message-title="{{item.cardtitle}}"
-                send-message-path="{{'/pages/index?homeConfig=' + item.sessionFrom}}"
-                send-message-img="{{item.cardimgurl}}">
-          <image class="empty-btn-img"
-                 src="{{item.coverphoto}}" />
+        <button
+          class="empty-btn"
+          wx:for="{{recommendList}}"
+          wx:key="{{index}}"
+          open-type="contact"
+          show-message-card="true"
+          send-message-title="{{item.cardtitle}}"
+          send-message-path="{{'/pages/index?homeConfig=' + item.sessionFrom}}"
+          send-message-img="{{item.cardimgurl}}"
+        >
+          <image class="empty-btn-img" src="{{item.coverphoto}}" />
         </button>
       </view>
       <view wx:if="{{remindData.hasChild}}">
         <view class="lesson-header">
           <view class="lesson-tab">
-            <view class="lesson-tab-item {{nowWeek && 'active'}}"
-                  @tap="clickTab({{true}})">
+            <view
+              class="lesson-tab-item {{nowWeek && 'active'}}"
+              @tap="clickTab({{true}})"
+            >
               本周课表
             </view>
-            <view class="lesson-tab-item {{!nowWeek && 'active'}} "
-                  @tap="clickTab({{false}})">
+            <view
+              class="lesson-tab-item {{!nowWeek && 'active'}} "
+              @tap="clickTab({{false}})"
+            >
               上周课表
             </view>
           </view>
-          <view class="lesson-all"
-                @tap="clickAllBtn">全部课程<view class="lesson-all-icon"></view>
+          <view class="lesson-all" @tap="clickAllBtn">
+            全部课程
+            <view class="lesson-all-icon"></view>
           </view>
         </view>
-        <scroll-view class="lesson-scroll"
-                     style="height: calc(100vh - {{height * 2 + 150 }}rpx)"
-                     scroll-y
-                     scroll-with-animation
-                     scroll-into-view="{{scrollView}}">
-          <view class="lesson-scroll-empty"
-                wx:if="{{isEmpty}}">
-            <image class="lesson-scroll-empty-img"
-                   src="https://pub.file.k12.vip/tbzw/1.3/lion.png" />
+        <scroll-view
+          class="lesson-scroll"
+          style="height: calc(100vh - {{height * 2 + 150 }}rpx)"
+          scroll-y
+          scroll-with-animation
+          scroll-into-view="{{scrollView}}"
+          @scroll="onScroll"
+        >
+          <view class="lesson-scroll-empty" wx:if="{{isEmpty}}">
+            <image
+              class="lesson-scroll-empty-img"
+              src="https://pub.file.k12.vip/tbzw/1.3/lion.png"
+            />
             <text class="lesson-scroll-empty-text">本周没有要学习的课程</text>
             <view class="lesson-scroll-empty-btn-wrap">
-              <view class="lesson-scroll-empty-btn"
-                    @tap="clickEmptyBtn({{0}})">查看我的课程</view>
-              <view class="lesson-scroll-empty-btn sub"
-                    @tap="clickEmptyBtn({{1}})">报名更多课程</view>
+              <view class="lesson-scroll-empty-btn" @tap="clickEmptyBtn({{0}})">
+                查看我的课程
+              </view>
+              <view
+                class="lesson-scroll-empty-btn sub"
+                @tap="clickEmptyBtn({{1}})"
+              >
+                报名更多课程
+              </view>
             </view>
           </view>
           <view class="lesson-scroll-wrap">
-            <form
-              report-submit="true"
-              @submit="submit"
+            <form report-submit="true" @submit="submit">
+              <view
+                class="lesson-content"
+                id="{{item.isToday ? 'today' : ''}}"
+                wx:for="{{catalogData}}"
+                wx:key="{{item.lessonId}}"
               >
-              <view class="lesson-content"
-                  id="{{item.isToday ? 'today' : ''}}"
-                  wx:for="{{catalogData}}"
-                  wx:key="{{item.lessonId}}">
                 <view class="lesson-time">
-                  <text class="lesson-time-title">{{item.isToday ? '今日': item.week}}</text>
-                  <text class="lesson-time-text">{{item.dayTime}}</text>
+                  <text class="lesson-time-title">{{
+                    item.isToday ? '今日' : item.week
+                  }}</text>
+                  <text class="lesson-time-text">{{ item.dayTime }}</text>
                 </view>
                 <view class="lesson-list">
-                  <view class="lesson-item"
-                        wx:for="{{item.lessonlist}}"
-                        wx:for-item="lessonItem"
-                        wx:key="{{lessonItem.id}}">
-                    <image class="lesson-cover"
-                          src="{{lessonItem.coverphoto}}" />
+                  <view
+                    class="lesson-item"
+                    wx:for="{{item.lessonlist}}"
+                    wx:for-item="lessonItem"
+                    wx:key="{{lessonItem.id}}"
+                  >
+                    <image
+                      class="lesson-cover"
+                      src="{{lessonItem.coverphoto}}"
+                    />
                     <view class="lesson-info">
-                      <text class="lesson-title">{{lessonItem.name}}</text>
+                      <text class="lesson-title">{{ lessonItem.name }}</text>
                       <view class="lesson-footer">
-                        <text class="lesson-num">{{lessonItem.learnNum}}人已学</text>
+                        <text class="lesson-num"
+                          >{{ lessonItem.learnNum }}人已学</text
+                        >
                         <button
                           class="lesson-btn {{lessonItem.stateClass}}"
                           form-type="submit"
                           @tap="bindClickBtn({{lessonItem}})"
-                          >
-                          {{lessonItem.stateText}}
+                        >
+                          {{ lessonItem.stateText }}
                         </button>
                       </view>
                     </view>
@@ -101,52 +122,106 @@
             </form>
           </view>
         </scroll-view>
+        <view class="lesson-msg {{showMsg && 'show'}}">
+          <view class="lesson-msg-icon"></view>
+          <view class="lesson-msg-content">
+            <view class="lesson-msg-text"> 12月13日的课程你忘记学习咯</view>
+            <view class="lesson-msg-btn">去学习</view>
+          </view>
+        </view>
       </view>
-
+      <!-- <view class="_listen">
+        <view class="_listen-header">
+          <view class="_listen-header-left">
+            <view class="_listen-header-title">
+              历史名人小传 (1-4年级）
+            </view>
+            <view class="_listen-header-progress">
+              <view class="_listen-header-bar"></view>
+            </view>
+          </view>
+          <image class="_listen-cover" />
+        </view>
+        <scroll-view
+          class="_listen-scroll"
+          style="height: calc(100vh - {{height * 2 + 350 }}rpx)"
+          scroll-y
+          scroll-with-animation
+        >
+          <view class="_listen-item">
+            <view class="_listen-item-left">
+              <view class="_listen-item-title">蔡伦造纸</view>
+              <view class="_listen-item-text">12月9日 | 233人已学</view>
+            </view>
+            <view class="_listen-item-right">
+              <view class="_listen-item-flower">
+                <view class="_listen-item-flower-icon"></view>
+                x 5
+              </view>
+              <button
+                class="lesson-btn _listen-btn"
+                form-type="submit"
+                @tap="bindClickBtn({{lessonItem}})"
+              >
+                {{ lessonItem.stateText }}
+              </button>
+            </view>
+          </view>
+        </scroll-view>
+      </view> -->
     </view>
-    <van-tabbar active="1"
-                active-color="#58422B"
-                z-index="{{100}}"
-                bind:change="onChangeTabbar">
+    <van-tabbar
+      active="1"
+      active-color="#58422B"
+      z-index="{{100}}"
+      bind:change="onChangeTabbar"
+    >
       <van-tabbar-item>
-        <image slot="icon"
-               src="../assets/image/home-def.png"
-               mode="aspectFit" />
-        <image slot="icon-active"
-               src="../assets/image/home-pre.png"
-               mode="aspectFit" />
+        <image
+          slot="icon"
+          src="../assets/image/home-def.png"
+          mode="aspectFit"
+        />
+        <image
+          slot="icon-active"
+          src="../assets/image/home-pre.png"
+          mode="aspectFit"
+        />
         首页
       </van-tabbar-item>
       <van-tabbar-item>
-        <image slot="icon"
-               src="../assets/image/sk-def.png"
-               mode="aspectFit" />
-        <image slot="icon-active"
-               src="../assets/image/sk-pre.png"
-               mode="aspectFit" />
+        <image slot="icon" src="../assets/image/sk-def.png" mode="aspectFit" />
+        <image
+          slot="icon-active"
+          src="../assets/image/sk-pre.png"
+          mode="aspectFit"
+        />
         上课
       </van-tabbar-item>
       <van-tabbar-item dot="{{remindData.servicetip}}">
-        <image slot="icon"
-               src="../assets/image/serve-def.png"
-               mode="aspectFit" />
-        <image slot="icon-active"
-               src="../assets/image/serve-pre.png"
-               mode="aspectFit" />
+        <image
+          slot="icon"
+          src="../assets/image/serve-def.png"
+          mode="aspectFit"
+        />
+        <image
+          slot="icon-active"
+          src="../assets/image/serve-pre.png"
+          mode="aspectFit"
+        />
         服务
       </van-tabbar-item>
       <van-tabbar-item dot="{{remindData.uctip}}">
-        <image slot="icon"
-               src="../assets/image/my-def.png"
-               mode="aspectFit" />
-        <image slot="icon-active"
-               src="../assets/image/my-pre.png"
-               mode="aspectFit" />
+        <image slot="icon" src="../assets/image/my-def.png" mode="aspectFit" />
+        <image
+          slot="icon-active"
+          src="../assets/image/my-pre.png"
+          mode="aspectFit"
+        />
         我的
       </van-tabbar-item>
     </van-tabbar>
-    <login :showPopup.sync="showPopup"
-           :show.sync="showSelect"></login>
+    <login :showPopup.sync="showPopup" :show.sync="showSelect"></login>
     <load wx:if="{{loading}}"></load>
     <error wx:if="{{isError}}"></error>
   </view>
@@ -162,6 +237,9 @@ import mHeader from '../components/header'
 import login from '../components/login'
 import load from '../components/load'
 import error from '../components/error'
+
+let timer = 1
+
 @connect({
   logined(state) {
     return state.user.logined
@@ -200,7 +278,8 @@ export default class Lesson extends wepy.page {
     catalogData: {},
     titleScrollTopArr: [],
     recommendList: [],
-    nowWeek: true
+    nowWeek: true,
+    showMsg: true
   }
 
   computed = {
@@ -225,6 +304,14 @@ export default class Lesson extends wepy.page {
   }
 
   methods = {
+    onScroll() {
+      this.showMsg = false
+      clearTimeout(timer)
+      timer = setTimeout(() => {
+        this.showMsg = true
+        this.$apply()
+      }, 2000)
+    },
     submit(e) {
       saveFormId(e.detail.formId)
     },
@@ -387,6 +474,7 @@ export default class Lesson extends wepy.page {
 .lesson {
   position: relative;
   color: #58422b;
+
   &-content {
     padding: 0 32px;
     display: flex;
@@ -659,6 +747,147 @@ export default class Lesson extends wepy.page {
           margin-top: 39px;
         }
       }
+    }
+  }
+  &-msg {
+    position: fixed;
+    box-sizing: border-box;
+    padding-left: 110px;
+    right: 32px;
+    bottom: 200px;
+    width: 112px;
+    height: 110px;
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0px 0px 60px 0px rgba(206, 210, 218, 1);
+    border-radius: 55px;
+    z-index: 100;
+    overflow: hidden;
+    transition: all 0.3s;
+    &.show {
+      width: 687px;
+    }
+    &-content {
+      display: inline-flex;
+      align-items: center;
+      justify-content: space-between;
+      box-sizing: border-box;
+      padding-right: 27px;
+      width: 560px;
+      height: 110px;
+      margin-left: 19px;
+    }
+    &-icon {
+      @include bg('/1.8/lesson/tx.png');
+      position: absolute;
+      left: 5px;
+      top: 4px;
+      width: 102px;
+      height: 102px;
+    }
+    &-text {
+      font-size: 28px;
+      color: #333;
+      font-weight: 500;
+    }
+    &-btn {
+      @include flex-center;
+      width: 140px;
+      height: 60px;
+      background: rgba(255, 195, 46, 1);
+      border-radius: 30px;
+      font-size: 28px;
+      color: #fff;
+      font-weight: 500;
+    }
+  }
+  ._listen {
+    position: relative;
+    background: #f7f8fa;
+    &-header {
+      display: flex;
+      justify-content: space-between;
+      box-sizing: border-box;
+      padding: 70px 49px;
+      height: 350px;
+      background: rgba(255, 192, 0, 1);
+      border-radius: 0px 0px 60px 60px;
+      &-left {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 386px;
+      }
+      &-title {
+        font-size: 60px;
+        color: #fff;
+      }
+      &-progress {
+        position: relative;
+        width: 360px;
+        height: 20px;
+        background: rgba(255, 208, 64, 1);
+        border-radius: 10px;
+      }
+      &-bar {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 40%;
+        height: 100%;
+        background: rgba(255, 255, 255, 1);
+        border-radius: 10px;
+      }
+    }
+    &-scroll {
+      box-sizing: border-box;
+      padding: 12px 32px;
+      padding-bottom: 130px;
+    }
+    &-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-sizing: border-box;
+      margin-top: 32px;
+      padding: 0 49px;
+      width: 100%;
+      height: 180px;
+      background: rgba(255, 255, 255, 1);
+      box-shadow: 0px 0px 60px 0px rgba(237, 239, 243, 1);
+      border-radius: 20px;
+      &-title {
+        margin-bottom: 20px;
+        font-size: 30px;
+        color: #333;
+        font-weight: bold;
+      }
+      &-text {
+        font-size: 28px;
+        color: #333;
+      }
+      &-flower {
+        @include flex-center;
+        color: #ff7a32;
+        font-size: 48px;
+        font-weight: bold;
+        &-icon {
+          @include bg('/1.8/lesson/flower.png');
+          margin-right: 15px;
+          width: 66px;
+          height: 80px;
+        }
+      }
+    }
+    &-btn {
+      width: 180px;
+      height: 60px;
+      border-radius: 30px;
+    }
+    &-cover {
+      width: 168px;
+      height: 200px;
+      background: rgba(255, 255, 255, 1);
+      border-radius: 20px;
     }
   }
 }

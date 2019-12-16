@@ -1,0 +1,106 @@
+<template>
+  <view class="dialog">
+    <view class="dialog-content">
+      <view class="dialog-icon"></view>
+      <view class="dialog-text">{{ text }}</view>
+      <view class="dialog-footer">
+        <view class="dialog-btn cancle" @tap="cancle">{{ cancleText }}</view>
+        <view class="dialog-btn confirm" @tap="confirm">{{ confirmText }}</view>
+      </view>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+export default class Example extends wepy.component {
+  props = {
+    text: {
+      type: String,
+      default: ''
+    },
+    cancleText: {
+      type: String,
+      default: '确定退出'
+    },
+    confirmText: {
+      type: String,
+      default: '继续学习'
+    }
+  }
+  data = {}
+  components = {}
+  methods = {
+    cancle() {
+      this.$emit('cancle')
+    },
+    confirm() {
+      this.$emit('confirm')
+    }
+  }
+  events = {}
+  watch = {}
+  computed = {}
+  onLoad() {}
+}
+</script>
+<style lang="scss">
+@import '../assets/style/mixin.scss';
+.dialog {
+  @include flex-center;
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 1000;
+  &-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    box-sizing: border-box;
+    padding: 34px 48px;
+    padding-top: 166px;
+    width: 602px;
+    height: 424px;
+    background: rgba(255, 255, 255, 1);
+    border-radius: 40px;
+  }
+  &-icon {
+    @include bg('/1.8/lesson/pop.png');
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 210px;
+    height: 210px;
+    transform: translate(-50%, -50%);
+  }
+  &-text {
+    text-align: center;
+    font-size: 32px;
+    color: #666;
+  }
+  &-footer {
+    @include flex-center;
+    width: 100%;
+  }
+  &-btn {
+    @include flex-center;
+    flex: 1;
+    height: 88px;
+    background: rgba(255, 255, 255, 1);
+    border-radius: 44px;
+    border: 2px solid rgba(221, 221, 221, 1);
+    &.confirm {
+      border-color: #ffc000;
+      background: #ffc000;
+      color: #fff;
+    }
+    &:last-child {
+      margin-left: 30px;
+    }
+  }
+}
+</style>

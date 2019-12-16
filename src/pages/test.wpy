@@ -326,7 +326,6 @@ export default class Example extends wepy.page {
       this.changeLearnInfo(2)
       if (this.stepIndex === this.questionArr.length - 1) {
         playSound(audioContext, 6)
-        this.changeLearnStage(3)
         this.setSummary()
         this.answerArr[3].status = 1
         this.publishEnd = true
@@ -418,6 +417,7 @@ export default class Example extends wepy.page {
 
   clickLinkHomeWork() {
     let { audioContext, playSound } = this.$parent.globalData
+    this.changeLearnStage(3)
     playSound(audioContext, 1)
     wx.redirectTo({ url: '/user/submitHomework?id=' + this.lessonId })
   }
@@ -683,6 +683,7 @@ export default class Example extends wepy.page {
 
   // 更新课程状态
   changeLearnStage(type) {
+    if(this.lookback) return
     let { api } = this.$parent.globalData
     api.study.changeLearnStage({
       id: this.roomData.id,
@@ -699,6 +700,7 @@ export default class Example extends wepy.page {
     }).then(({ data }) => {
       this.flowerOption.flowerNum = data.resultData.count;
       this.flowerOption.path = `/user/submitHomework?id=${this.lessonId}`
+      this.changeLearnStage(3)
       this.$apply();
     });
   }

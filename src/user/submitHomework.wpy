@@ -48,16 +48,13 @@
 
         <view class="p-submitHomework-center"
               wx:if="{{tabActive === '1'}}">
-          <view class="-center-blackboard {{lessonDetail.istoday ? '-center-blackboard-jr' : ''}}">
-            <view class="-center-blackboard-title">课后作业</view>
+          <view class="-center-blackboard">
+            <view class="-center-blackboard-title">{{lessonDetail.istoday ? '今日作业' : '课后作业'}}</view>
             <text class="-center-blackboard-content">{{lessonDetail.homeworkClaim}}</text>
+            <view class="-center-blackboard-ok" wx:if="{{isSuccessWork}}">已完成</view>
           </view>
 
-          <view class="-center-mask"
-                wx:if="{{isSuccessWork}}">
-            <image class="-center-mask-img"
-                   src="https://pub.file.k12.vip/tbzw/1.5/work/wc-icon.png"></image>
-          </view>
+
 
           <view class="-center-work"
                 wx:if="{{isSuccessWork}}">
@@ -775,57 +772,47 @@
       top: -70px;
 
       .-center-blackboard {
-        @include bg('/1.5/work/board@2x.png');
+        position: relative;
+        background: url("https://pub.file.k12.vip/2019/12/16/1206478572177993729.png");
+        background-size: 100%;
         margin: 0 auto;
-        width: 654px;
-        height: 426px;
+        width: 679px;
+        height: 393px;
 
         &-title {
           @include flex-center;
-          padding-top: 56px;
+          padding-top: 11px;
           height: 50px;
-          font-size: 36px;
-          font-family: PingFangSC-Semibold;
-          font-weight: 600;
-          color: rgba(255, 255, 255, 0.9);
+          font-size:30px;
+          font-weight:bold;
+          color:rgba(255,255,255,1);
+          text-shadow:0px 5px 0px rgba(254,109,13,0.2);
           line-height: 50px;
-        }
-
-        &-name {
-          margin-top: 8px;
-          margin-left: 62px;
-          height: 34px;
-          font-size: 24px;
-          font-weight: 500;
-          color: rgba(255, 255, 255, 0.9);
-          line-height: 34px;
         }
 
         &-content {
           display: inline-block;
-          margin: 0 64px;
-          font-size: 24px;
+          margin: 40px 64px 0;
+          font-size: 28px;
           font-weight: 500;
           color: rgba(255, 255, 255, 0.9);
-          line-height: 34px;
+          line-height: 40px;
           overflow: hidden;
         }
-      }
 
-      .-center-blackboard-jr {
-        @include bg('/1.5/work/board-jr.png');
-      }
-
-      .-center-mask {
-        position: absolute;
-        top: 30px;
-        right: 80px;
-
-        &-img {
-          margin-top: 36px;
-          margin-right: 40px;
-          width: 148px;
-          height: 66px;
+        &-ok {
+          position: absolute;
+          bottom: 43px;
+          left: 35px;
+          text-align: center;
+          width:121px;
+          height:44px;
+          background:rgba(34,206,183,1);
+          border-radius:0 20px 0 20px;
+          font-size:24px;
+          font-weight:bold;
+          color:rgba(255,255,255,1);
+          line-height: 44px;
         }
       }
 

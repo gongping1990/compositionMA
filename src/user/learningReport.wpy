@@ -2,143 +2,157 @@
 <template>
   <view class='container p-learningReport'>
     <mHeader title="学情报告"></mHeader>
-    <view class="container-scroll" style="margin-top:{{height}}px">
-      <view class="p-learningReport-list">
-        <view class="-list-1"></view>
-        <view class="-list-2">
-          <image class="-list-2-headImg"
-                 src="{{dataInfo.stuAvatar}}"
-                 mode="widthFix"></image>
-          <view class="-list-2-content">
-            <image class="-content-icon1"
-                   src="https://pub.file.k12.vip/tbzw/1.5/new/taiy1.png"
+    <scroll-view class="item-scroll"
+                 scroll-y
+                 bindscroll="bindscroll"
+                 scroll-with-animation>
+      <view class="container-scroll" style="margin-top:{{height}}px">
+        <view class="p-learningReport-list">
+          <view class="-list-1"></view>
+          <view class="-list-2">
+            <image class="-list-2-headImg"
+                   src="{{dataInfo.stuAvatar}}"
                    mode="widthFix"></image>
-            <view class="-content-text">
-              <view>恭喜{{dataInfo.stuName}}完成了</view>
-              <view class="-two">{{dataInfo.lessonName}}的学习</view>
-            </view>
-            <image class="-content-icon2"
-                   src="https://pub.file.k12.vip/tbzw/1.5/new/tai2.png"
-                   mode="widthFix"></image>
-          </view>
-          <view class="-list-2-down">
-            <image class="-down-img"
-                   src="https://pub.file.k12.vip/2019/06/10/1138025597113749505.png"></image>
-            <view class="-down-right">
-              <view class="-down-right-name">{{dataInfo.lessonName}}</view>
-              <view class="-down-right-text">{{dataInfo.courseName}}</view>
-            </view>
-          </view>
-        </view>
-        <view class="-list-3">
-          <image class="-list-3-content"
-                 src="{{levelObj[dataInfo.level]}}"
-                 mode="widthFix"></image>
-        </view>
-        <view class="-list-4">
-          <view class="-list-4-item -list-4-top">
-            <view class="-item-one">排名</view>
-            <view class="-item-one">小红花</view>
-            <view class="-item-one">评级</view>
-          </view>
-          <repeat for="{{dataInfo.mates}}"
-                  key="index"
-                  index="index"
-                  item="item">
-            <view class="-list-4-item">
-              <image class="-item-img"
-                     src="{{item.stuAvatar}}"
+            <view class="-list-2-content">
+              <image class="-content-icon1"
+                     src="https://pub.file.k12.vip/tbzw/1.5/new/taiy1.png"
                      mode="widthFix"></image>
-              <view class="-item-center">
-                <image class="-item-imgTwo"
-                       src="https://pub.file.k12.vip/tbzw/1.5/new/xhh.png"
-                       mode="widthFix"></image>
-                <text  class="-item-num">X<text class="-item-numTwo">{{item.correct}}</text></text>
+              <view class="-content-text">
+                <view>恭喜{{dataInfo.stuName}}完成了</view>
+                <view class="-two">{{dataInfo.lessonName}}的学习</view>
               </view>
-              <image class="-item-imgThree"
-                     src="{{levelListObj[item.level]}}"
+              <image class="-content-icon2"
+                     src="https://pub.file.k12.vip/tbzw/1.5/new/tai2.png"
                      mode="widthFix"></image>
             </view>
-          </repeat>
-        </view>
-        <view class="-list-5">
-          <view class="-list-5-top">
-            <view class="-top-btn">本课成绩单</view>
-            <view class="-top-tab">
-              <view class="-top-tab-item">
-                <view class="-item-title">课中问答</view>
-                <view class="-item-btn">{{dataInfo.learnCorrect}} / {{dataInfo.learnTotal}}</view>
-              </view>
-              <view class="-top-tab-item">
-                <view class="-item-title">随堂检测</view>
-                <view class="-item-btn">{{dataInfo.testCorrect}} / {{dataInfo.testTotal}}</view>
+            <view class="-list-2-down">
+              <image class="-down-img"
+                     src="https://pub.file.k12.vip/2019/06/10/1138025597113749505.png"></image>
+              <view class="-down-right">
+                <view class="-down-right-name">{{dataInfo.lessonName}}</view>
+                <view class="-down-right-text">{{dataInfo.courseName}}</view>
               </view>
             </view>
           </view>
-          <view class="-list-5-down">
-            <view class="-down-btn">本课学习收获</view>
-            <repeat for="{{dataInfo.learncontent}}"
+          <view class="-list-3">
+            <image class="-list-3-content"
+                   src="{{levelObj[dataInfo.level]}}"
+                   mode="widthFix"></image>
+          </view>
+          <view class="-list-4">
+            <view class="-list-4-item -list-4-top">
+              <view class="-item-one">排名</view>
+              <view class="-item-one">小红花</view>
+              <view class="-item-one">评级</view>
+            </view>
+            <repeat for="{{dataInfo.mates}}"
                     key="index"
                     index="index"
                     item="item">
-              <view class="-down-noteItem">
-                <view class="-down-noteItem-name">{{item.value}}</view>
-                <image class="-down-noteItem-img"
-                       src="https://pub.file.k12.vip/tbzw/1.5/new/gou.png"
+              <view class="-list-4-item">
+                <image class="-item-img"
+                       src="{{item.stuAvatar}}"
+                       mode="widthFix"></image>
+                <view class="-item-center">
+                  <image class="-item-imgTwo"
+                         src="https://pub.file.k12.vip/tbzw/1.5/new/xhh.png"
+                         mode="widthFix"></image>
+                  <text class="-item-num">X
+                    <text class="-item-numTwo">{{item.correct}}</text>
+                  </text>
+                </view>
+                <image class="-item-imgThree"
+                       src="{{levelListObj[item.level]}}"
                        mode="widthFix"></image>
               </view>
             </repeat>
           </view>
-        </view>
-        <view class="-list-6" wx:if="{{dataInfo.keynotes.length}}">
-          <swiper class="-list-6-swiper"
-                  indicator-dots="{{swiperOptions.indicatorDots}}"
-                  indicator-active-color="{{swiperOptions.indicatorActiveColor}}"
-                  autoplay="{{swiperOptions.autoplay}}"
-                  interval="{{swiperOptions.interval}}"
-                  duration="{{swiperOptions.duration}}">
-            <block wx:for="{{dataInfo.keynotes}}" wx:key="{{index}}" class="-swiper-block">
-              <swiper-item>
-                <image class="-swiper-img"
-                       src="{{item}}"></image>
-              </swiper-item>
-            </block>
-          </swiper>
-        </view>
-        <view class="-list-7">
-          <view class="-list-7-name">
-            小乖兽已坚持学习
-            <text class="-text-color">{{dataInfo.learnDays}}</text>
-            天
+          <view class="-list-5">
+            <view class="-list-5-top">
+              <view class="-top-btn">本课成绩单</view>
+              <view class="-top-tab">
+                <view class="-top-tab-item">
+                  <view class="-item-title">课中问答</view>
+                  <view class="-item-btn">{{dataInfo.learnCorrect}} / {{dataInfo.learnTotal}}</view>
+                </view>
+                <view class="-top-tab-item">
+                  <view class="-item-title">随堂检测</view>
+                  <view class="-item-btn">{{dataInfo.testCorrect}} / {{dataInfo.testTotal}}</view>
+                </view>
+              </view>
+            </view>
+            <view class="-list-5-down">
+              <view class="-down-btn">本课学习收获</view>
+              <repeat for="{{dataInfo.learncontent}}"
+                      key="index"
+                      index="index"
+                      item="item">
+                <view class="-down-noteItem">
+                  <view class="-down-noteItem-name">{{item.value}}</view>
+                  <image class="-down-noteItem-img"
+                         src="https://pub.file.k12.vip/tbzw/1.5/new/gou.png"
+                         mode="widthFix"></image>
+                </view>
+              </repeat>
+            </view>
           </view>
-          <view class="-list-7-tip">学会了</view>
-          <view class="-list-7-wrap">
-            <view>
-              <text class="-btn-num">{{dataInfo.skill}}</text>
+          <view class="-list-6" wx:if="{{dataInfo.keynotes.length}}">
+            <swiper class="-list-6-swiper"
+                    indicator-dots="{{swiperOptions.indicatorDots}}"
+                    indicator-active-color="{{swiperOptions.indicatorActiveColor}}"
+                    autoplay="{{swiperOptions.autoplay}}"
+                    interval="{{swiperOptions.interval}}"
+                    duration="{{swiperOptions.duration}}">
+              <block wx:for="{{dataInfo.keynotes}}" wx:key="{{index}}" class="-swiper-block">
+                <swiper-item>
+                  <image class="-swiper-img"
+                         src="{{item}}"></image>
+                </swiper-item>
+              </block>
+            </swiper>
+          </view>
+          <view class="-list-7">
+            <view class="-list-7-name">
+              小乖兽已坚持学习
+              <text class="-text-color">{{dataInfo.learnDays}}</text>
               天
-              <view class="-btn-text">写作技巧</view>
             </view>
-            <view>
-              <text class="-btn-num">{{dataInfo.material}}</text>
-              天
-              <view class="-btn-text">名家素材</view>
+            <view class="-list-7-tip">学会了</view>
+            <view class="-list-7-wrap">
+              <view>
+                <text class="-btn-num">{{dataInfo.skill}}</text>
+                天
+                <view class="-btn-text">写作技巧</view>
+              </view>
+              <view>
+                <text class="-btn-num">{{dataInfo.material}}</text>
+                天
+                <view class="-btn-text">名家素材</view>
+              </view>
             </view>
+          </view>
+        </view>
+        <view class="p-learningReport-footer">
+          <view class="-footer-down">
+            <view class="-footer-downBtn -footer-co"
+                  wx:if="{{cardDetail.todayCard || !cardDetail.todayLearned || !dataInfo.cancard}}"
+                  @tap="toJumpCard">打卡记录
+            </view>
+            <view class="-footer-downBtn -footer-co"
+                  wx:if="{{!cardDetail.todayCard && cardDetail.todayLearned && dataInfo.cancard}}"
+                  @tap="addMyCard">去打卡
+            </view>
+            <!--<button class="-footer-downBtn -footer-ct" open-type="share">分享</button>-->
           </view>
         </view>
       </view>
-      <view class="p-learningReport-footer">
-        <view class="-footer-down">
-          <view class="-footer-downBtn -footer-co"
-                wx:if="{{cardDetail.todayCard || !cardDetail.todayLearned || !dataInfo.cancard}}"
-                @tap="toJumpCard">打卡记录</view>
-          <view class="-footer-downBtn -footer-co"
-                wx:if="{{!cardDetail.todayCard && cardDetail.todayLearned && dataInfo.cancard}}"
-                @tap="addMyCard">去打卡</view>
-          <!--<button class="-footer-downBtn -footer-ct" open-type="share">分享</button>-->
-        </view>
-      </view>
-    </view>
+    </scroll-view>
     <successFlowerTemplate :isShow.sync="isShowFlower" :option.sync="flowerOption"></successFlowerTemplate>
+    <van-popup show="{{isOpenModal}}" class="p-learningReport-popup" @close="closePopup">
+      <view class="-popup-content">
+        <image class="-popup-content-img" src="https://pub.file.k12.vip/2019/12/16/1206397160674439170.png"></image>
+      </view>
+    </van-popup>
   </view>
 </template>
 
@@ -167,7 +181,9 @@
       dataInfo: {},
       queryInfo: {},
       cardDetail: {},
+      isOpenModal: false,
       isShowFlower: false,
+      storageOpen: false,
       levelObj: {
         '1': 'https://pub.file.k12.vip/tbzw/1.5/baogao/h1.png',
         '2': 'https://pub.file.k12.vip/tbzw/1.5/baogao/h2.png',
@@ -191,6 +207,15 @@
       successFlowerTemplate
     };
     methods = {
+      bindscroll(e) {
+        if (e.detail.scrollTop > 2000 && !this.storageOpen && this.dataInfo.keynotes.length) {
+          this.isOpenModal = this.dataInfo.remindNotes;
+          this.storageOpen = true;
+        }
+      },
+      closePopup() {
+        this.isOpenModal = false;
+      },
       toJumpCard() {
         wx.navigateTo({
           url: `/pages/card`
@@ -201,7 +226,7 @@
           this.cardDetail.continuousdays = data.resultData.continuousdays;
           this.cardDetail.totaldays = data.resultData.totaldays;
           this.isShowFlower = true;
-          this.getCardInfo()
+          this.getCardInfo();
           this.$apply();
         });
       }
@@ -230,8 +255,9 @@
         this.dataInfo = data.resultData;
         this.dataInfo.keynotes = this.dataInfo.keynotes ? JSON.parse(this.dataInfo.keynotes) : [];
         this.dataInfo.learncontent = this.dataInfo.learncontent && JSON.parse(this.dataInfo.learncontent);
+
         this.$apply();
-        console.log(this.dataInfo,1)
+        console.log(this.dataInfo, 1);
       });
     }
 
@@ -249,6 +275,14 @@
           this.$apply();
       });
     }
+
+    // onPageScroll(e) {
+    //   console.log(e.scrollTop,1)
+    //   if (e.scrollTop > 1000 && !this.storageOpen) {
+    //     this.isOpenModal = this.dataInfo.remindNotes
+    //     this.storageOpen = true
+    //   }
+    // }
 
     onLoad(data) {
       this.queryInfo = data;
@@ -274,9 +308,13 @@
 
   .p-learningReport {
 
+    .item-scroll {
+      height: calc(100vh - 80px);
+      margin-bottom: 80px;
+    }
+
     &-list {
       text-align: center;
-      margin-bottom: 80px;
 
       .-list-1 {
         width: 100%;
@@ -524,12 +562,12 @@
             margin-bottom: 9px;
 
             &-name {
-              width:459px;
-              min-height:119px;
+              width: 459px;
+              min-height: 119px;
               box-sizing: border-box;
               padding: 11px 23px;
-              background:rgba(255,243,218,1);
-              border-radius:13px;
+              background: rgba(255, 243, 218, 1);
+              border-radius: 13px;
               text-align: left;
               font-size: 28px;
               font-weight: bold;
@@ -650,6 +688,19 @@
 
       .-footer-ct {
         background-color: #FFC81F;
+      }
+    }
+
+    &-popup {
+      .-popup-content {
+        margin: 0 auto;
+        width: 455px;
+        height: 370px;
+
+        &-img {
+          width: 100%;
+          height: 100%;
+        }
       }
     }
   }

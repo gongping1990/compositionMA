@@ -109,7 +109,7 @@
         </view>
         <view class="-list-7">
           <view class="-list-7-name">
-            小乖兽已坚持学习
+            {{dataInfo.stuName}}已坚持学习
             <text class="-text-color">{{dataInfo.learnDays}}</text>
             天
           </view>

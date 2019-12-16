@@ -3,7 +3,7 @@
     <mHeader title="我的课程表"
              flag="0"></mHeader>
     <view class="container-scroll"
-          style="margin-top:{{height}}px;height: calc(100vh - {{height}}px)" wx:if="{{remindData.hasChild}}">
+          style="margin-top:{{height}}px;height: calc(100vh - {{height}}px)">
 
       <view class="no-login"
             wx:if="{{!logined}}">
@@ -14,7 +14,7 @@
                 @tap="clickLoginBtn">立即登录</button>
       </view>
       <view class="empty"
-            wx:if="{{!isBuy}}">
+            wx:if="{{!isBuy && remindData.hasChild}}">
         <text class="empty-title">你还没有报名课程哦~</text>
         <text class="empty-text">我们为你推荐了其他小朋友都在学的动画课程</text>
         <button class="empty-btn"
@@ -29,7 +29,7 @@
                  src="{{item.coverphoto}}" />
         </button>
       </view>
-      <view>
+      <view wx:if="{{remindData.hasChild}}">
         <view class="lesson-header">
           <view class="lesson-tab">
             <view class="lesson-tab-item {{nowWeek && 'active'}}"

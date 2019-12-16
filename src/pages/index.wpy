@@ -195,6 +195,7 @@
         active="0"
         active-color="#58422B"
         bind:change="onChangeTabbar"
+        wx:if="{{systemConfig.param == '0'}}"
       >
         <van-tabbar-item>
           <image
@@ -452,6 +453,7 @@ export default class Home extends wepy.page {
     bannerList: [],
     workList: [],
     hotList: [],
+    systemConfig: {},
     workCurrent: 1,
     hotCurrent: 1,
     workTotal: 10,
@@ -562,6 +564,7 @@ export default class Home extends wepy.page {
 
   initPage() {
     this.loading = true
+    this.getSystemConfigType()
     this.getHomePageInfo()
     this.getDayByMasterpiece()
     this.getHomeworkSquare()
@@ -600,6 +603,17 @@ export default class Home extends wepy.page {
   bindKF() {
     api.user.bindKF({
       courseId: this.infoData.kfTeacherVO.courseId
+    })
+  }
+  getSystemConfigType() {
+    let { api } = this.$parent.globalData
+    api.center.getSystemConfigType({
+      type: 1
+    }).then(({data}) => {
+      this.systemConfig = data.resultData
+      if(!this.logined && data.resultData.param == '0') {
+        this.initWelcome()
+      }
     })
   }
 
@@ -647,8 +661,6 @@ export default class Home extends wepy.page {
           if(!(data.resultData.hasgift || data.resultData.remindAddTeacher || data.resultData.awardsPop)) {
             this.getLatelyDubbingByHome()
           }
-        } else {
-          this.initWelcome()
         }
         setTimeout(() => {
           const query = wx.createSelectorQuery()

@@ -23,7 +23,7 @@
           </view>
           <view class="-list-2-down">
             <image class="-down-img"
-                   src="https://pub.file.k12.vip/2019/06/10/1138025597113749505.png"></image>
+                   src="{{dataInfo.coverphoto}}"></image>
             <view class="-down-right">
               <view class="-down-right-name">{{dataInfo.lessonName}}</view>
               <view class="-down-right-text">{{dataInfo.courseName}}</view>

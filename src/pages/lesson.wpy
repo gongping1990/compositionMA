@@ -29,7 +29,7 @@
           <image class="empty-btn-img" src="{{item.coverphoto}}" />
         </button>
       </view>
-      <view wx:if="{{remindData.hasChild}}">
+      <view wx:if="{{remindData.hasChild && !showTry}}">
         <view class="lesson-header">
           <view class="lesson-tab">
             <view
@@ -104,9 +104,9 @@
                     <view class="lesson-info">
                       <text class="lesson-title">{{ lessonItem.name }}</text>
                       <view class="lesson-footer">
-                        <text class="lesson-num"
-                          >{{ lessonItem.learnNum }}人已学</text
-                        >
+                        <text class="lesson-num">
+                          {{ lessonItem.learnNum }}人已学
+                        </text>
                         <button
                           class="lesson-btn {{lessonItem.stateClass}}"
                           form-type="submit"
@@ -122,25 +122,33 @@
             </form>
           </view>
         </scroll-view>
-        <view class="lesson-msg {{showMsg && 'show'}}">
+        <view
+          class="lesson-msg {{showMsg && 'show'}}"
+          wx:if="{{learnRemindData.lessonId}}"
+        >
           <view class="lesson-msg-icon"></view>
           <view class="lesson-msg-content">
-            <view class="lesson-msg-text"> 12月13日的课程你忘记学习咯</view>
-            <view class="lesson-msg-btn">去学习</view>
+            <view class="lesson-msg-text">
+              {{ formatTime }}的课程你忘记学习咯
+            </view>
+            <view class="lesson-msg-btn" @tap="clickContinueLearn">去学习</view>
           </view>
         </view>
       </view>
-      <!-- <view class="_listen">
+      <view class="_listen" wx:else>
         <view class="_listen-header">
           <view class="_listen-header-left">
             <view class="_listen-header-title">
-              历史名人小传 (1-4年级）
+              {{ tryData.coursename }}
             </view>
             <view class="_listen-header-progress">
-              <view class="_listen-header-bar"></view>
+              <view
+                class="_listen-header-bar"
+                style="width: {{tryData.learns /tryData.total * 100 }}%"
+              ></view>
             </view>
           </view>
-          <image class="_listen-cover" />
+          <image src="{{tryData.verticalCover}}" class="_listen-cover" />
         </view>
         <scroll-view
           class="_listen-scroll"
@@ -148,27 +156,34 @@
           scroll-y
           scroll-with-animation
         >
-          <view class="_listen-item">
+          <view
+            class="_listen-item"
+            wx:for="{{tryData.lessonlist}}"
+            wx:key="{{item.id}}"
+          >
             <view class="_listen-item-left">
-              <view class="_listen-item-title">蔡伦造纸</view>
-              <view class="_listen-item-text">12月9日 | 233人已学</view>
+              <view class="_listen-item-title">{{ item.name }}</view>
+              <view class="_listen-item-text">
+                {{ item.learnDate }} | {{ item.learnNum }}人已学
+              </view>
             </view>
             <view class="_listen-item-right">
-              <view class="_listen-item-flower">
+              <view class="_listen-item-flower" wx:if="{{item.state == 5}}">
                 <view class="_listen-item-flower-icon"></view>
-                x 5
+                x {{ item.score }}
               </view>
               <button
-                class="lesson-btn _listen-btn"
+                class="lesson-btn _listen-btn {{item.stateClass}}"
                 form-type="submit"
-                @tap="bindClickBtn({{lessonItem}})"
+                wx:else
+                @tap="bindClickBtn({{item}})"
               >
-                {{ lessonItem.stateText }}
+                {{ item.stateText }}
               </button>
             </view>
           </view>
         </scroll-view>
-      </view> -->
+      </view>
     </view>
     <van-tabbar
       active="1"
@@ -268,6 +283,7 @@ export default class Lesson extends wepy.page {
   }
 
   data = {
+    showTry: false,
     isError: false,
     loading: false,
     showPopup: false,
@@ -276,6 +292,8 @@ export default class Lesson extends wepy.page {
     isBuy: true,
     scrollView: '',
     catalogData: {},
+    tryData: {},
+    learnRemindData: {},
     titleScrollTopArr: [],
     recommendList: [],
     nowWeek: true,
@@ -285,6 +303,14 @@ export default class Lesson extends wepy.page {
   computed = {
     height() {
       return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+    },
+    formatTime() {
+      let { date } = this.learnRemindData
+      if (date) {
+        return dayjs(date).format('MM月DD日')
+      } else {
+        return ''
+      }
     }
   }
 
@@ -304,6 +330,7 @@ export default class Lesson extends wepy.page {
   }
 
   methods = {
+    clickContinueLearn() {},
     onScroll() {
       this.showMsg = false
       clearTimeout(timer)
@@ -333,23 +360,27 @@ export default class Lesson extends wepy.page {
       this.listCompositionWeekLesson()
     },
     bindClickBtn(lesson) {
-      if (!lesson.stage) {
-        if (lesson.state !== 4) {
-          wx.navigateTo({ url: '/pages/classroom?id=' + lesson.id })
+      if (lesson.category == 1) {
+        if (!lesson.stage) {
+          if (lesson.state !== 4) {
+            wx.navigateTo({ url: '/pages/classroom?id=' + lesson.id })
+          } else {
+            wx.showToast({
+              title: '课程尚未开始，先看看其他课程吧！', // 提示的内容,
+              icon: 'none', // 图标,
+              duration: 2000, // 延迟时间,
+              mask: true
+            })
+          }
+        } else if (lesson.stage === 1) {
+          wx.navigateTo({ url: '/pages/study?id=' + lesson.id })
+        } else if (lesson.stage === 2) {
+          wx.navigateTo({ url: '/pages/test?id=' + lesson.id })
         } else {
-          wx.showToast({
-            title: '课程尚未开始，先看看其他课程吧！', // 提示的内容,
-            icon: 'none', // 图标,
-            duration: 2000, // 延迟时间,
-            mask: true
-          })
+          wx.navigateTo({ url: '/user/submitHomework?id=' + lesson.id })
         }
-      } else if (lesson.stage === 1) {
-        wx.navigateTo({ url: '/pages/study?id=' + lesson.id })
-      } else if (lesson.stage === 2) {
-        wx.navigateTo({ url: '/pages/test?id=' + lesson.id })
       } else {
-        wx.navigateTo({ url: '/user/submitHomework?id=' + lesson.id })
+        wx.navigateTo({ url: '/pages/lessonDetail?id=' + lesson.id })
       }
     }
   }
@@ -358,6 +389,38 @@ export default class Lesson extends wepy.page {
     login() {
       this.getAttendClassCatalog()
     }
+  }
+  getRestrictCourseLesson(courseId) {
+    let { api } = this.$parent.globalData
+    api.study
+      .getRestrictCourseLesson({
+        courseId
+      })
+      .then(({ data }) => {
+        this.tryData = data.resultData
+        this.tryData.lessonlist = this.tryData.lessonlist.map(e => {
+          var time = []
+          let stateArr = [
+            '去学习',
+            '开始学习',
+            '交作业',
+            '待开课',
+            '回看',
+            '预约上课'
+          ]
+          let classArr = ['bk', 'sk', 'jzy', 'dkk', 'hk', 'yy']
+          e.stateText =
+            e.showOpenTime && e.state == 4
+              ? e.openTime + '开课'
+              : stateArr[e.state - 1]
+          e.stateClass = classArr[e.state - 1]
+          time = e.learnDate.split('/')
+          e.learnDate = time[1] + '月' + time[2] + '日'
+          return e
+        })
+        this.showTry = true
+        this.$apply()
+      })
   }
 
   // 检查是否购买，并返回推荐课程
@@ -369,7 +432,9 @@ export default class Lesson extends wepy.page {
       .then(({ data }) => {
         this.isError = false
         this.loading = false
-        if (!data.resultData.hasBuy) {
+        if (data.resultData.restrict) {
+          this.getRestrictCourseLesson(data.resultData.courseId)
+        } else if (!data.resultData.hasBuy) {
           this.isBuy = false
           this.recommendList = data.resultData.recommenList.map(e => {
             e.sessionFrom = JSON.stringify({
@@ -390,6 +455,14 @@ export default class Lesson extends wepy.page {
         }
         this.$apply()
       })
+  }
+
+  getLearnRemind() {
+    console.log('dsa')
+    let { api } = this.$parent.globalData
+    api.study.getLearnRemind().then(({ data }) => {
+      this.learnRemindData = data.resultData || {}
+    })
   }
 
   // 获取课程目录
@@ -434,6 +507,7 @@ export default class Lesson extends wepy.page {
         }
         this.isEmpty = !this.catalogData.length
         this.scrollView = ''
+        this.getLearnRemind()
         setTimeout(() => {
           this.scrollView = 'today'
           this.$apply()

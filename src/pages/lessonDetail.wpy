@@ -1,20 +1,27 @@
 <template>
   <view class="container lessonDetail">
-    <mHeader title="课时详情" flag="0"></mHeader>
+    <mHeader title="课时详情" flag="1"></mHeader>
     <view
       class="container-scroll"
       style="margin-top:{{height}}px;height: calc(100vh - {{height}}px)"
     >
       <view class="lessonDetail-header">
         <view class="lessonDetail-header-left">
-          <view class="lessonDetail-header-title">蔡伦造纸</view>
-          <view class="lessonDetail-header-num">23451人已学</view>
+          <view class="lessonDetail-header-title">{{
+            lessonData.lessonName
+          }}</view>
+          <view class="lessonDetail-header-num">
+            {{ lessonData.learnNum }}人已学
+          </view>
           <view class="lessonDetail-header-flower">
             <view class="lessonDetail-header-icon"></view>
-            x 23
+            x {{ lessonData.score }}
           </view>
         </view>
-        <view class="lessonDetail-header-cover"></view>
+        <image
+          class="lessonDetail-header-cover"
+          src="{{lessonData.coverphoto}}"
+        />
       </view>
       <scroll-view
         scroll-y
@@ -23,19 +30,34 @@
       >
         <view class="lessonDetail-scroll">
           <view
-            class="lessonDetail-item disabled {{item.class}}"
-            wx:for="{{itemArr}}"
+            class="lessonDetail-item {{!item.unlocked && 'disabled'}}"
+            style="background: {{item.colouratla}}"
+            wx:for="{{lessonData.checkPointList}}"
             wx:key="{{index}}"
+            @tap="bindClickItem({{item}})"
           >
             <image src="{{item.icon}}" class="lessonDetail-item-cover" />
             <view class="lessonDetail-item-content">
-              <view class="lessonDetail-item-title">{{ item.title }}</view>
+              <view class="lessonDetail-item-title">{{ item.name }}</view>
               <view class="lessonDetail-item-flower">
-                <view class="lessonDetail-item-flower-icon"></view>
-                <view class="lessonDetail-item-flower-icon empty"></view>
+                <view
+                  wx:for="{{item.flowerTotal}}"
+                  wx:for-item="flower"
+                  wx:key="{{index}}"
+                >
+                  <view
+                    class="lessonDetail-item-flower-icon empty"
+                    wx:if="{{index >= item.flower}}"
+                  >
+                  </view>
+                  <view class="lessonDetail-item-flower-icon" wx:else> </view>
+                </view>
               </view>
             </view>
-            <view class="lessonDetail-item-icon"></view>
+            <view
+              class="lessonDetail-item-icon"
+              wx:if="{{item.passed || !item.unlocked}}"
+            ></view>
           </view>
         </view>
       </scroll-view>
@@ -50,33 +72,22 @@ export default class Example extends wepy.page {
     navigationBarTitleText: ''
   }
   data = {
-    itemArr: [
-      {
-        icon: 'https://pub.file.k12.vip/tbzw/1.8/lesson/jc-icon.png',
-        title: '知识小剧场',
-        class: 'jc'
-      },
-      {
-        icon: 'https://pub.file.k12.vip/tbzw/1.8/lesson/kt-icon.png',
-        title: '知识小剧场',
-        class: 'kt'
-      },
-      {
-        icon: 'https://pub.file.k12.vip/tbzw/1.8/lesson/jn-icon.png',
-        title: '知识小剧场',
-        class: 'jn'
-      },
-      {
-        icon: 'https://pub.file.k12.vip/tbzw/1.8/lesson/bp-icon.png',
-        title: '知识小剧场',
-        class: 'bp'
-      }
-    ]
+    lessonId: 0,
+    lessonData: {}
   }
   components = {
     mHeader
   }
-  methods = {}
+  methods = {
+    bindClickItem(item) {
+      if (!item.unlocked) return
+      if (item.type == 1) {
+        wx.navigateTo({ url: '/pages/picture?id=' + item.id })
+      } else {
+        wx.navigateTo({ url: '/pages/video?id=' + item.id })
+      }
+    }
+  }
   events = {}
   watch = {}
   computed = {
@@ -84,8 +95,24 @@ export default class Example extends wepy.page {
       return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
     }
   }
-  onLoad() {}
-  onShow() {}
+
+  getThreeLessonInfo() {
+    let { api } = this.$parent.globalData
+    api.study
+      .getThreeLessonInfo({
+        lessonId: this.lessonId
+      })
+      .then(({ data }) => {
+        this.lessonData = data.resultData
+        this.$apply()
+      })
+  }
+  onLoad(option) {
+    this.lessonId = option.id
+  }
+  onShow() {
+    this.getThreeLessonInfo()
+  }
 }
 </script>
 <style lang="scss">
@@ -102,6 +129,8 @@ export default class Example extends wepy.page {
     box-shadow: 0px 0px 60px 0px rgba(206, 210, 218, 1);
     border-radius: 0px 0px 60px 60px;
     &-title {
+      @include text-overflow;
+      width: 400px;
       margin-bottom: 27px;
       font-size: 42px;
       font-weight: bold;
@@ -158,7 +187,7 @@ export default class Example extends wepy.page {
       background: #ff7d54;
     }
     &.disabled {
-      background: #e2eaf1;
+      background: #e2eaf1 !important;
     }
     &-cover {
       width: 74px;

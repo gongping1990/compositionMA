@@ -110,8 +110,35 @@ const study = {
       params
     )
   },
-  saveWrongSubject(params) {
-    return request.post('/compositionv2/study/saveWrongSubject', params)
+  getRestrictCourseLesson(params) {
+    return request.get('/compositionv2/study/getRestrictCourseLesson', params)
+  },
+  getLearnRemind() {
+    return request.get('/compositionv2/study/getLearnRemind')
+  },
+  getThreeLessonInfo(params) {
+    return request.get('/compositionv2/lesson/getThreeLessonInfo', params)
+  },
+  getThreeLearnInfo(params) {
+    return request.get('/compositionv2/lesson/getThreeLearnInfo', params)
+  },
+  getThreeLearnResult(params) {
+    return request.get('/compositionv2/lesson/getThreeLearnResult', params)
+  },
+  startPoint(params) {
+    return request.post('/compositionv2/stucheckpoint/startPoint', params)
+  },
+  endPoint(params) {
+    return request.post('/compositionv2/stucheckpoint/endPoint', params)
+  },
+  resetPoint(params) {
+    return request.post('/compositionv2/stucheckpoint/resetPoint', params)
+  },
+  updateAnswer(params) {
+    return request.post('/compositionv2/stucheckpoint/updateAnswer', params)
+  },
+  updatePoint(params) {
+    return request.post('/compositionv2/stucheckpoint/updatePoint', params)
   }
 }
 

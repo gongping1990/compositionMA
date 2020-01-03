@@ -6,6 +6,21 @@
       :showBtn.sync="showBtn"
       flag="3"
     ></mHeader>
+    <view @tap="bindClickVideo">
+      <video
+        class="video-contorl"
+        id="video"
+        style="height:{{isIpx ? 'calc(100vh - 68rpx' : '100vh'}}"
+        show-center-play-btn="{{false}}"
+        enable-progress-gesture="{{progressEnable}}"
+        loop="{{false}}"
+        controls="{{controls}}"
+        show-play-btn="{{false}}"
+        @ended="bindended"
+        @timeupdate="bindtimeupdate"
+        src="{{learnData.authContentUrl}}"
+      ></video>
+    </view>
     <van-popup show="{{ show }}" overlay="{{true}}" position="bottom">
       <view class="video-popup">
         <view class="video-time">
@@ -50,12 +65,31 @@
         </view>
       </view>
     </van-popup>
-    <dialog
-      wx:if="{{showDialog}}"
-      :text.sync="dialogText"
-      @cancle.user="cancle"
-      @confirm.user="confirm"
-    ></dialog>
+    <view class="_c-dialog" wx:if="{{showDialog}}">
+      <view class="_c-dialog-content">
+        <view class="_c-dialog-icon"></view>
+        <view class="_c-dialog-text">
+          你上次已经学习到{{ progressTimeText }}是否要继续？
+        </view>
+        <view class="_c-dialog-footer">
+          <view class="_c-dialog-btn cancle" @tap="cancle">从头开始</view>
+          <view class="_c-dialog-btn confirm" @tap="confirm">继续学习</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="_c-dialog" wx:if="{{showBack}}">
+      <view class="_c-dialog-content">
+        <view class="_c-dialog-icon"></view>
+        <view class="_c-dialog-text">
+          确定要退出上课吗？
+        </view>
+        <view class="_c-dialog-footer">
+          <view class="_c-dialog-btn cancle" @tap="cancleBack">确认退出</view>
+          <view class="_c-dialog-btn confirm" @tap="confirmBack">继续学习</view>
+        </view>
+      </view>
+    </view>
   </view>
 </template>
 <script>
@@ -63,7 +97,6 @@ import wepy from 'wepy'
 import mHeader from '../components/header'
 import recorder from '../components/recorder'
 import matching from '../components/matching'
-import dialog from '../components/dialog'
 export default class Example extends wepy.page {
   config = {
     navigationBarTitleText: '',
@@ -74,33 +107,189 @@ export default class Example extends wepy.page {
   }
   data = {
     showBtn: false,
-    show: true,
+    show: false,
     showDialog: false,
+    showBack: false,
+    progressEnable: false,
+    controls: false,
+    isPlay: true,
+    isEnd: false,
+    isLookBack: false,
+    currentTime: 0,
     choiceSeleced: '',
-    dialogText: '确定要退出上课吗？'
+    dialogText: '',
+    learnData: {},
+    pointData: {}
   }
   components = {
     mHeader,
     recorder,
-    matching,
-    dialog
+    matching
   }
   methods = {
     clickConfirm() {
       console.log(121313)
     },
+    cancleBack() {
+      wx.navigateBack()
+    },
     cancle() {
-      console.log(1)
+      this.resetPoint()
+    },
+    confirmBack() {
+      this.showBack = false
+      this.videoContext.play()
     },
     confirm() {
-      console.log(2)
+      this.videoContext.seek(this.pointData.ctime)
+      this.videoContext.play()
+      this.showDialog = false
+    },
+    bindended() {
+      this.isEnd = true
+      this.endPoint()
+    },
+    bindtimeupdate(event) {
+      let { currentTime } = event.detail
+      if (this.currentTime !== parseInt(currentTime)) {
+        // let data = this.courseInfo.qaMap[this.currentTime]
+        this.currentTime = parseInt(currentTime)
+        if (!(this.currentTime % 5)) {
+          this.updatePoint()
+        }
+        // if (data && data.anEnum === 1) {
+        //   this.questionData = data
+        //   this.questionArr = data.optionList
+        //   this.showDialog = false
+        //   this.show = true
+        //   this.isPlay = false
+        //   this.time = data.answerTime
+        //   this.baseTime = data.answerTime
+        //   this.setRandomTime()
+        //   setTimeout(() => {
+        //     this.downTime()
+        //   }, 1000)
+        // }
+        // if (data && data.anEnum === 2) {
+        //   this.correctAnswer = data.answer
+        //   this.setAnswerStatus()
+        // }
+      }
+    },
+    bindClickVideo() {
+      this.showBtn = true
+      clearTimeout(this.setTimeOut)
+      this.setTimeOut = setTimeout(() => {
+        this.showBtn = false
+      }, 3000)
     }
   }
-  events = {}
-  watch = {}
-  computed = {}
-  onLoad() {}
-  onShow() {}
+  events = {
+    back() {
+      this.videoContext.pause()
+      this.showBack = true
+    }
+  }
+  watch = {
+    isPlay(n) {
+      if (n) {
+        this.videoContext.play()
+      } else {
+        console.log(1)
+        this.videoContext.pause()
+      }
+    }
+  }
+  computed = {
+    isIpx() {
+      return this.$parent.globalData.isIpx
+    },
+    progressTimeText() {
+      let { ctime } = this.pointData
+      if (ctime) {
+        let minute = 0
+        let second = 0
+        let time = ctime
+        minute = parseInt(time / 60)
+        second = time % 60
+        minute = minute < 10 ? '0' + minute : minute
+        second = second < 10 ? '0' + second : second
+        return `${minute}分${second}秒`
+      } else {
+        return '00分00秒'
+      }
+    }
+  }
+  getThreeLearnInfo() {
+    let { api } = this.$parent.globalData
+    api.study
+      .getThreeLearnInfo({
+        pointId: this.pointId
+      })
+      .then(({ data }) => {
+        this.learnData = data.resultData
+        this.startPoint()
+        this.$apply()
+      })
+  }
+  startPoint() {
+    let { api } = this.$parent.globalData
+    api.study
+      .startPoint({
+        cpId: this.learnData.id,
+        lessonId: this.learnData.lessonId
+      })
+      .then(({ data }) => {
+        let { type } = this.learnData
+        this.pointData = data.resultData
+        if (data.resultData.resume) {
+          this.showDialog = true
+        } else {
+          setTimeout(() => {
+            this.videoContext.play()
+          }, 1000)
+        }
+        this.$apply()
+      })
+  }
+  resetPoint() {
+    let { api } = this.$parent.globalData
+    api.study
+      .resetPoint({
+        id: this.pointData.id
+      })
+      .then(({ data }) => {
+        this.showDialog = false
+        this.videoContext.seek(0)
+        this.videoContext.play()
+        this.$apply()
+      })
+  }
+  updatePoint() {
+    let { api } = this.$parent.globalData
+    api.study.updatePoint({
+      ctime: this.currentTime,
+      id: this.pointData.id
+    })
+  }
+  endPoint() {
+    let { api } = this.$parent.globalData
+    api.study
+      .endPoint({
+        id: this.pointData.id
+      })
+      .then(({ data }) => {
+        wx.redirectTo({ url: '/pages/result?id=' + this.pointId })
+      })
+  }
+
+  onLoad(option) {
+    this.pointId = option.id
+    this.videoContext = wx.createVideoContext('video')
+  }
+  onShow() {
+    this.getThreeLearnInfo()
+  }
 }
 </script>
 <style lang="scss">
@@ -118,6 +307,10 @@ export default class Example extends wepy.page {
 }
 
 .video {
+  &-contorl {
+    width: 100vw;
+    height: 100vh;
+  }
   &-content {
     padding: 144px 80px 60px;
   }

@@ -57,15 +57,15 @@
 			"list": [
 				{
 					"id": 0,
-					"name": "pages/lesson",
-					"pathName": "pages/lesson",
+					"name": "pages/study",
+					"pathName": "pages/study",
 					"query": "id=1134359706941546498",
 					"scene": null
 				},
 				{
-					"id": 1,
-					"name": "pages/detail",
-					"pathName": "pages/detail",
+					"id": -1,
+					"name": "pages/sharePoster",
+					"pathName": "pages/sharePoster",
 					"query": "id=1173848797161070593",
 					"scene": null
 				},
@@ -84,10 +84,10 @@
 					"scene": null
 				},
 				{
-					"id": -1,
+					"id": 4,
 					"name": "user/submitHomework(yinp)",
 					"pathName": "user/submitHomework",
-					"query": "id=1138721381526679554",
+					"query": "id=  1178509668885610497",
 					"scene": null
 				},
 				{
@@ -141,16 +141,30 @@
 				},
 				{
 					"id": 12,
-					"name": "user/lesson",
-					"pathName": "user/lesson",
-					"query": "id=1175008437676421121",
+					"name": "literacy/l_uploadImgWork",
+					"pathName": "literacy/l_uploadImgWork",
+					"query": "id=1178580314148048897",
 					"scene": null
 				},
 				{
 					"id": 13,
-					"name": "pages/video",
-					"pathName": "pages/video",
-					"query": "id=1173848797161070593",
+					"name": "literacy/l_submitHomework",
+					"pathName": "literacy/l_submitHomework",
+					"query": "id= 1178580314148048897",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "literacy/l_uploadAudioWork",
+					"pathName": "literacy/l_uploadAudioWork",
+					"query": "id=1178580314148048897",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "literacy/l_submitHomework",
+					"pathName": "literacy/l_submitHomework",
+					"query": "id=1178580314148048897&isFromUpload=true",
 					"scene": null
 				}
 			]

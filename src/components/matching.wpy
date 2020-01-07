@@ -3,41 +3,31 @@
     <view class="matching-left">
       <view
         class="matching-item"
-        wx:for="{{leftAnswer}}"
+        wx:for="{{questionData.leftList}}"
         wx:key="{{index}}"
         @tap="clickAnswerColumn({{0}}, {{item}}, {{index}})"
       >
         <view
           class="selected"
-          wx:if="{{(leftActive == item.key || selectAnswer[item.key]) && !end}}"
+          wx:if="{{(leftActive == item.index || selectAnswer[item.index]) && !end}}"
         >
-          <!-- <image class="matching-item-img" /> -->
-          <text>{{ leftActive }}</text>
+          <image class="matching-item-img" src="{{item.value}}" />
         </view>
         <view
           class="error"
-          wx:elif="{{selectAnswer[item.key] !== item.answer && end}}"
+          wx:elif="{{selectAnswer[item.index] !== item.links && end}}"
         >
-          <!-- <image class="matching-item-img" /> -->
-          <text>{{ leftActive }}</text>
+          <image class="matching-item-img" src="{{item.value}}" />
         </view>
         <view
           class="success"
-          wx:elif="{{selectAnswer[item.key] === item.answer && end}}"
+          wx:elif="{{selectAnswer[item.index] === item.links && end}}"
         >
-          <!-- <image class="matching-item-img" /> -->
-          <text>{{ leftActive }}</text>
+          <image class="matching-item-img" src="{{item.value}}" />
         </view>
         <view wx:else>
-          <!-- <image class="matching-item-img" /> -->
-          <text>{{ leftActive }}</text>
+          <image class="matching-item-img" src="{{item.value}}" />
         </view>
-        <!-- <view class="error">
-          <text>{{ leftActive }}</text>
-        </view>
-        <view class="success">
-          <text>{{ leftActive }}</text>
-        </view> -->
       </view>
     </view>
     <view class="matching-center">
@@ -50,34 +40,30 @@
     <view class="matching-right">
       <view
         class="matching-item"
-        wx:for="{{rightAnswer}}"
+        wx:for="{{questionData.rigtList}}"
         wx:key="{{index}}"
         @tap="clickAnswerColumn({{1}}, {{item}}, {{index}})"
       >
         <view
           class="selected"
-          wx:if="{{(rightActive == item.key || selectAnswer[item.key]) && !end}}"
+          wx:if="{{(rightActive == item.index || selectAnswer[item.index]) && !end}}"
         >
-          <!-- <image class="matching-item-img" /> -->
-          <text>{{ leftActive }}</text>
+          <image class="matching-item-img" src="{{item.value}}" />
         </view>
         <view
           class="error"
-          wx:elif="{{selectAnswer[item.key] !== item.answer && end}}"
+          wx:elif="{{selectAnswer[item.index] !== item.links && end}}"
         >
-          <!-- <image class="matching-item-img" /> -->
-          <text>{{ leftActive }}</text>
+          <image class="matching-item-img" src="{{item.value}}" />
         </view>
         <view
           class="success"
-          wx:elif="{{selectAnswer[item.key] === item.answer && end}}"
+          wx:elif="{{selectAnswer[item.index] === item.links && end}}"
         >
-          <!-- <image class="matching-item-img" /> -->
-          <text>{{ leftActive }}</text>
+          <image class="matching-item-img" src="{{item.value}}" />
         </view>
         <view wx:else>
-          <!-- <image class="matching-item-img" /> -->
-          <text>{{ leftActive }}</text>
+          <image class="matching-item-img" src="{{item.value}}" />
         </view>
       </view>
     </view>
@@ -86,51 +72,11 @@
 <script>
 import wepy from 'wepy'
 export default class Matching extends wepy.component {
-  props = {}
+  props = {
+    questionData: Object
+  }
   data = {
     end: false,
-    leftAnswer: [
-      {
-        key: 'LA',
-        answer: 'RB',
-        seleced: ''
-      },
-      {
-        key: 'LB',
-        answer: 'RC',
-        seleced: ''
-      },
-      {
-        key: 'LC',
-        answer: 'RA',
-        seleced: ''
-      }
-    ],
-    rightAnswer: [
-      {
-        key: 'RA',
-        answer: 'LC',
-        seleced: ''
-      },
-      {
-        key: 'RB',
-        answer: 'LA',
-        seleced: ''
-      },
-      {
-        key: 'RC',
-        answer: 'LB',
-        seleced: ''
-      }
-    ],
-    rightAnswerObj: {
-      RC: 'LB',
-      LB: 'RC',
-      RB: 'LA',
-      LA: 'RB',
-      RA: 'LC',
-      LC: 'RA'
-    },
     selectAnswer: {},
     prevCol: -1,
     leftActive: '',
@@ -144,18 +90,18 @@ export default class Matching extends wepy.component {
     clickAnswerColumn(type, item, index) {
       let { prevCol, selectAnswer } = this
       const isPrevCol = type === prevCol
-      const hasKey = selectAnswer.hasOwnProperty(item.key)
+      const hasKey = selectAnswer.hasOwnProperty(item.index)
       let activeName = type ? 'rightActive' : 'leftActive'
       let reverseActiveName = type ? 'leftActive' : 'rightActive'
-      if (hasKey && this.selectAnswer[item.key]) return
+      if (hasKey && this.selectAnswer[item.index]) return
       if (!isPrevCol && this[reverseActiveName]) {
-        this.selectAnswer[this[reverseActiveName]] = item.key
-        this.selectAnswer[item.key] = this[reverseActiveName]
+        this.selectAnswer[this[reverseActiveName]] = item.index
+        this.selectAnswer[item.index] = this[reverseActiveName]
         this[activeName] = ''
         this[reverseActiveName] = ''
       } else {
-        this.selectAnswer[item.key] = 0
-        this[activeName] = item.key
+        this.selectAnswer[item.index] = 0
+        this[activeName] = item.index
       }
       if (!isPrevCol) {
         this.prevCol = type
@@ -164,11 +110,29 @@ export default class Matching extends wepy.component {
       this.$apply()
     }
   }
-  events = {}
-  watch = {}
+  events = {
+    matchingEnd() {
+      this.end = true
+      setTimeout(() => {
+        this.end = false
+      }, 4000)
+    }
+  }
+  watch = {
+    selectAnswer(n) {
+      let { leftList } = this.questionData
+      let keys = Object.keys(n)
+      let anwserLength = keys.length / 2
+      this.$emit('selected', n)
+      if (anwserLength == leftList.length) {
+        this.$emit('end')
+      }
+    }
+  }
   computed = {
     lineArr() {
-      let { selectAnswer, rightAnswerObj, end } = this
+      let { linkAnswerMap } = this.questionData
+      let { selectAnswer, end } = this
       let arr = new Set()
       let values = Object.values(selectAnswer)
       for (let key in selectAnswer) {
@@ -179,21 +143,14 @@ export default class Matching extends wepy.component {
             : `${selectAnswer[key]} ${key}`
           if (end) {
             value = `${value} ${
-              rightAnswerObj[key] == selectAnswer[key] ? 'success' : 'error'
+              linkAnswerMap[key] == selectAnswer[key] ? 'success' : 'error'
             }`
           }
           arr.add(value)
         }
       }
-      console.log(arr)
       return [...arr]
     }
-  }
-  onLoad() {
-    setTimeout(() => {
-      this.end = true
-      this.$apply()
-    }, 10000)
   }
 }
 </script>
@@ -236,6 +193,7 @@ export default class Matching extends wepy.component {
       box-shadow: 0px 6px 0px 0px rgba(134, 132, 255, 1);
       border-radius: 40px;
       border: 8px solid #fff;
+      overflow: hidden;
       &.selected {
         border-color: #ffc001;
       }

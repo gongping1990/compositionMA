@@ -1,11 +1,22 @@
 <template>
   <view class="ly">
-    <image class="ly-img" mode="widthFix" src="" />
+    <image
+      class="ly-img"
+      mode="widthFix"
+      src="{{questionData.imgUrl}}"
+      wx:if="{{questionData.imgUrl}}"
+    />
     <view class="ly-control">
       <view class="ly-control-item tj " @tap="clickPlay">
         <view class="tj-icon {{icon}}"></view>
         <text>{{
-          !type ? '开始录音' : type == 1 ? '点我提交' : '上传成功 '
+          !type
+            ? '开始录音'
+            : type == 1
+            ? '点我提交'
+            : type == 2
+            ? '上传中..'
+            : '上传成功 '
         }}</text>
       </view>
     </view>
@@ -23,7 +34,9 @@ const options = {
   frameSize: 50
 }
 export default class Recorder extends wepy.component {
-  props = {}
+  props = {
+    questionData: Object
+  }
   data = {
     type: 0
   }
@@ -41,22 +54,32 @@ export default class Recorder extends wepy.component {
       }
     }
   }
-  events = {}
+  events = {
+    recorderUploadSuccess() {
+      this.type = 3
+    },
+    recorderStop() {
+      RecorderManager.stop()
+      setTimeout(() => {
+        this.type = 0
+      }, 4000)
+    }
+  }
   watch = {}
   computed = {
     icon() {
       let { type } = this
-      return !type ? '' : type === 1 ? 'play' : 'pause'
+      return !type ? '' : type < 3 ? 'play' : 'pause'
     }
   }
   onLoad() {
     RecorderManager.onStart(() => {
-      console.log('play')
+      this.$emit('start')
       this.type = 1
       this.$apply()
     })
     RecorderManager.onStop(res => {
-      console.log('stop', res)
+      this.$emit('stop', res)
       this.type = 2
       this.$apply()
     })

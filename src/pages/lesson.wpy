@@ -330,7 +330,18 @@ export default class Lesson extends wepy.page {
   }
 
   methods = {
-    clickContinueLearn() {},
+    clickContinueLearn() {
+      let lesson = this.learnRemindData
+      if (lesson.category == 1) {
+        if (!lesson.stage) {
+          wx.navigateTo({ url: '/pages/classroom?id=' + lesson.lessonId })
+        } else if (lesson.stage === 1) {
+          wx.navigateTo({ url: '/pages/study?id=' + lesson.lessonId })
+        }
+      } else {
+        wx.navigateTo({ url: '/pages/lessonDetail?id=' + lesson.lessonId })
+      }
+    },
     onScroll() {
       this.showMsg = false
       clearTimeout(timer)

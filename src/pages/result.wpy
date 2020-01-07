@@ -19,7 +19,9 @@
       </view>
       <view class="result-footer">
         <view class="result-btn cancle" @tap="tryAgain">再看一遍</view>
-        <view class="result-btn confirm">继续上课</view>
+        <view class="result-btn confirm" @tap="continueStudy">
+          {{ resultData.hasNext ? '继续上课' : '完成学习' }}
+        </view>
       </view>
     </view>
   </view>
@@ -46,14 +48,17 @@ export default class Result extends wepy.page {
       })
     },
     continueStudy() {
-      let {
-        nextIsWork,
-        nextType,
-        nextPointId,
-        homeworkType,
-        hasNext
-      } = this.resultData
+      let { nextIsWork, nextType, nextPointId, hasNext } = this.resultData
       if (nextIsWork) {
+        wx.redirectTo({
+          url: `/literacy/l_submitHomework?id=${nextPointId}`
+        })
+      } else if (hasNext) {
+        wx.redirectTo({
+          url: `/pages/${nextType > 1 ? 'video' : 'picture'}?id=${nextPointId}`
+        })
+      } else {
+        wx.navigateBack()
       }
     }
   }

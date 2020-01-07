@@ -24,44 +24,52 @@
     <van-popup show="{{ show }}" overlay="{{true}}" position="bottom">
       <view class="video-popup">
         <view class="video-time">
-          <view class="video-circle">
+          <view class="video-circle" wx:if="{{show && !showIcon}}">
             <van-circle
               size="{{46}}"
-              value="{{30}}"
+              value="{{timeProgress}}"
               layer-color="#fff"
               color="#FFC001"
+              speed="{{100}}"
             >
-              <view class="video-circle-text">3</view>
+              <view class="video-circle-text">{{ time }}</view>
             </van-circle>
           </view>
         </view>
         <view class="video-content">
           <view class="video-title">
-            <view class="video-audio"></view>
+            <view
+              class="video-audio"
+              wx:if="{{questionData.authVfUrl}}"
+              @tap="resetAudio"
+            ></view>
             <text>他想做什么他想做什么他想做什么他想做什么他想做什么</text>
           </view>
-          <matching></matching>
-          <!-- <recorder></recorder> -->
-          <!-- <view class="choice">
-            <view class="choice-item selected">
-              <image class="choice-item-img" src="" />
-              <view class="choice-item-tag">
-                A
+          <matching
+            :questionData.sync="questionData"
+            @end.user="matchingEnd"
+            @selected.user="matchingSelected"
+            wx:if="{{questionData.type == 3}}"
+          ></matching>
+          <recorder
+            wx:if="{{questionData.type == 1}}"
+            :questionData.sync="questionData"
+            @stop.user="recorderStop"
+            @start.user="recorderStart"
+          ></recorder>
+          <view class="choice" wx:if="{{questionData.type == 2}}">
+            <block wx:for="{{questionArr}}" wx:key="{{index}}">
+              <view
+                class="choice-item {{choiceSeleced == item.index && (item.index == questionData.answer ? 'success' : 'error') }} {{choiceSeleced == item.index && 'selected'}}"
+                @tap="clickChoice({{item.index}})"
+              >
+                <image class="choice-item-img" src="{{item.value}}" />
+                <view class="choice-item-tag">
+                  {{ item.index }}
+                </view>
               </view>
-            </view>
-            <view class="choice-item">
-              <image class="choice-item-img" src="" />
-              <view class="choice-item-tag">
-                A
-              </view>
-            </view>
-            <view class="choice-item">
-              <image class="choice-item-img" src="" />
-              <view class="choice-item-tag">
-                A
-              </view>
-            </view>
-          </view> -->
+            </block>
+          </view>
         </view>
       </view>
     </van-popup>
@@ -90,6 +98,14 @@
         </view>
       </view>
     </view>
+    <load wx:if="{{loading}}"></load>
+    <van-popup show="{{ showIcon }}" overlay="{{true}}">
+      <view class="result-icon">
+        <view class="result-icon_cs" wx:if="{{anwserStatus == 3}}"></view>
+        <view class="result-icon_zq" wx:if="{{anwserStatus == 1}}"></view>
+        <view class="result-icon_cw" wx:if="{{anwserStatus == 2}}"></view>
+      </view>
+    </van-popup>
   </view>
 </template>
 <script>
@@ -97,6 +113,8 @@ import wepy from 'wepy'
 import mHeader from '../components/header'
 import recorder from '../components/recorder'
 import matching from '../components/matching'
+import load from '../components/load'
+let __timer = null
 export default class Example extends wepy.page {
   config = {
     navigationBarTitleText: '',
@@ -106,6 +124,8 @@ export default class Example extends wepy.page {
     }
   }
   data = {
+    loading: false,
+    showIcon: false,
     showBtn: false,
     show: false,
     showDialog: false,
@@ -116,66 +136,145 @@ export default class Example extends wepy.page {
     isEnd: false,
     isLookBack: false,
     currentTime: 0,
+    time: 0,
+    baseTime: 0,
     choiceSeleced: '',
     dialogText: '',
     learnData: {},
-    pointData: {}
+    pointData: {},
+    questionData: {},
+    questionArr: [],
+    matchingAnwswr: {},
+    InnerAudioContext: null
   }
   components = {
     mHeader,
     recorder,
-    matching
+    matching,
+    load
   }
   methods = {
-    clickConfirm() {
-      console.log(121313)
+    matchingEnd() {
+      this.time = 0
     },
+    matchingSelected(selectedObj) {
+      this.matchingAnwswr = selectedObj
+    },
+    clickChoice(index) {
+      this.choiceSeleced = index
+      this.time = 0
+    },
+    // 录音开始
+    recorderStart() {
+      this.InnerAudioContext.stop()
+      this.downTime()
+    },
+    // 录音停止
+    recorderStop(res) {
+      clearTimeout(__timer)
+      this.loading = true
+      // 上传录音临时文件
+      wx.uploadFile({
+        url: 'https://huoke.test.k12.vip/compositionv2/common/uploadPublicFile',
+        filePath: res.tempFilePath,
+        name: 'file',
+        header: { 'Content-Type': 'multipart/form-data' },
+        success: res => {
+          console.log(res)
+          if (res.statusCode !== 200) {
+            wx.showModal({
+              title: '提示',
+              content: '上传失败',
+              showCancel: false
+            })
+          } else {
+            let parmas = JSON.parse(res.data)
+            this.updateAnswer({
+              answer: true,
+              audio: parmas.resultData.url
+            })
+          }
+        },
+        fail: function(e) {
+          wx.showModal({
+            title: '提示',
+            content: '上传失败',
+            showCancel: false
+          })
+        }
+      })
+    },
+    // 取消退出
     cancleBack() {
       wx.navigateBack()
     },
+    // 从头开始
     cancle() {
       this.resetPoint()
     },
+    // 退出当前页面
     confirmBack() {
       this.showBack = false
       this.videoContext.play()
     },
+    // 继续学习
     confirm() {
-      this.videoContext.seek(this.pointData.ctime)
+      this.videoContext.seek(410)
+      // this.videoContext.seek(this.pointData.ctime)
       this.videoContext.play()
       this.showDialog = false
     },
+    // 点击题干小喇叭 重置音频
+    resetAudio() {
+      this.InnerAudioContext.stop()
+      setTimeout(() => {
+        this.InnerAudioContext.play()
+      }, 500)
+    },
+    // 视频播放结束
     bindended() {
       this.isEnd = true
       this.endPoint()
     },
+    // 视频播放中
     bindtimeupdate(event) {
       let { currentTime } = event.detail
       if (this.currentTime !== parseInt(currentTime)) {
-        // let data = this.courseInfo.qaMap[this.currentTime]
         this.currentTime = parseInt(currentTime)
+        let data = this.learnData.problemMap[this.currentTime]
+        // 更新关卡进度
         if (!(this.currentTime % 5)) {
           this.updatePoint()
         }
-        // if (data && data.anEnum === 1) {
-        //   this.questionData = data
-        //   this.questionArr = data.optionList
-        //   this.showDialog = false
-        //   this.show = true
-        //   this.isPlay = false
-        //   this.time = data.answerTime
-        //   this.baseTime = data.answerTime
-        //   this.setRandomTime()
-        //   setTimeout(() => {
-        //     this.downTime()
-        //   }, 1000)
-        // }
-        // if (data && data.anEnum === 2) {
-        //   this.correctAnswer = data.answer
-        //   this.setAnswerStatus()
-        // }
+        // 到达答题时间点， 设置答题内容
+        if (data) {
+          this.questionData = data
+          this.questionArr = data.optionList
+          this.showDialog = false
+          this.isPlay = false
+          this.time = data.answerTime
+          this.baseTime = data.answerTime
+
+          setTimeout(() => {
+            this.show = true
+            this.$apply()
+          }, 500)
+          setTimeout(() => {
+            // 播放题干音频
+            if (data.authVfUrl) {
+              this.InnerAudioContext.src = data.authVfUrl
+              this.InnerAudioContext.play()
+            }
+
+            if (data.type != 1) {
+              this.downTime()
+            }
+            this.$apply()
+          }, 1500)
+        }
       }
     },
+    // 点击视频显示退出按钮
     bindClickVideo() {
       this.showBtn = true
       clearTimeout(this.setTimeOut)
@@ -195,7 +294,6 @@ export default class Example extends wepy.page {
       if (n) {
         this.videoContext.play()
       } else {
-        console.log(1)
         this.videoContext.pause()
       }
     }
@@ -218,8 +316,36 @@ export default class Example extends wepy.page {
       } else {
         return '00分00秒'
       }
+    },
+    timeProgress() {
+      let { time, baseTime } = this
+      let progress = 100 - parseInt((time / baseTime) * 100)
+      if (!progress) return 0
+      return progress
+    },
+    anwserStatus() {
+      let status = 0
+      let { choiceSeleced, matchingAnwswr } = this
+      let { id, type, answer, linkAnswerMap } = this.questionData
+      if (!id) return status
+      if (type == 2) {
+        if (!choiceSeleced) return 3
+        return choiceSeleced == answer ? 1 : 2
+      } else if (type == 3) {
+        let isRight = true
+        let keys = Object.keys(matchingAnwswr)
+        if (!keys.length) return 3
+        for (let key in linkAnswerMap) {
+          if (matchingAnwswr[key] != linkAnswerMap[key]) {
+            isRight = false
+          }
+        }
+        return isRight ? 1 : 2
+      }
+      return status
     }
   }
+  // 获取关卡内容
   getThreeLearnInfo() {
     let { api } = this.$parent.globalData
     api.study
@@ -232,6 +358,7 @@ export default class Example extends wepy.page {
         this.$apply()
       })
   }
+  // 初始化进度
   startPoint() {
     let { api } = this.$parent.globalData
     api.study
@@ -252,6 +379,7 @@ export default class Example extends wepy.page {
         this.$apply()
       })
   }
+  // 重置进度
   resetPoint() {
     let { api } = this.$parent.globalData
     api.study
@@ -265,6 +393,7 @@ export default class Example extends wepy.page {
         this.$apply()
       })
   }
+  // 更新进度
   updatePoint() {
     let { api } = this.$parent.globalData
     api.study.updatePoint({
@@ -272,6 +401,35 @@ export default class Example extends wepy.page {
       id: this.pointData.id
     })
   }
+  // 更新答题
+  updateAnswer(parmas) {
+    let { api } = this.$parent.globalData
+    parmas.id = this.pointData.id
+    parmas.tid = this.questionData.id
+    api.study
+      .updateAnswer(parmas)
+      .then(() => {
+        if (this.loading) {
+          this.loading = false
+        }
+        if (parmas.audio) {
+          this.$broadcast('recorderUploadSuccess')
+        }
+        setTimeout(() => {
+          this.showIcon = false
+          this.show = false
+          this.isPlay = true
+          this.InnerAudioContext.stop()
+          this.$apply()
+        }, 2000)
+        this.$apply()
+      })
+      .catch(() => {
+        this.loading = false
+        this.$apply()
+      })
+  }
+  // 更新结束状态
   endPoint() {
     let { api } = this.$parent.globalData
     api.study
@@ -283,12 +441,41 @@ export default class Example extends wepy.page {
       })
   }
 
+  downTime() {
+    console.log('downTime')
+    let { choiceSeleced } = this
+    let { type, answer } = this.questionData
+    if (this.time >= 1) {
+      this.time -= 1
+      __timer = setTimeout(() => {
+        this.downTime()
+      }, 1000)
+    } else {
+      if (type == 1) {
+        this.$broadcast('recorderStop')
+      } else {
+        if (type == 3) {
+          this.$broadcast('matchingEnd')
+        }
+        this.updateAnswer({
+          answer: this.anwserStatus == 1 ? true : false
+        })
+        this.showIcon = true
+      }
+    }
+    this.$apply()
+  }
+
   onLoad(option) {
     this.pointId = option.id
     this.videoContext = wx.createVideoContext('video')
+    this.InnerAudioContext = wx.createInnerAudioContext()
   }
   onShow() {
     this.getThreeLearnInfo()
+  }
+  onUnload() {
+    this.InnerAudioContext.destroy()
   }
 }
 </script>
@@ -307,6 +494,22 @@ export default class Example extends wepy.page {
 }
 
 .video {
+  .result-icon {
+    & > view {
+      width: 602px;
+      height: 420px;
+      margin-bottom: 200px;
+    }
+    &_zq {
+      @include bg('/1.8/lesson/pop_img_dt.png');
+    }
+    &_cw {
+      @include bg('/1.8/lesson/pop_img_dc.png');
+    }
+    &_cs {
+      @include bg('/1.8/lesson/pop_img_cs.png');
+    }
+  }
   &-contorl {
     width: 100vw;
     height: 100vh;
@@ -333,7 +536,8 @@ export default class Example extends wepy.page {
   }
   &-popup {
     position: relative;
-    width: 750px;
+    width: 100vw;
+    min-height: 80vh;
     background: rgba(162, 173, 255, 1);
     border-radius: 48px 48px 0px 0px;
   }
@@ -372,6 +576,7 @@ export default class Example extends wepy.page {
       box-shadow: 0px 6px 0px 0px rgba(134, 132, 255, 1);
       border-radius: 40px;
       border: 8px solid rgba(255, 255, 255, 1);
+      overflow: hidden;
       &.selected {
         border-color: #ffc001;
       }
@@ -391,8 +596,8 @@ export default class Example extends wepy.page {
         margin-right: 0;
       }
       &-img {
-        width: 264px;
-        height: 264px;
+        width: 100%;
+        height: 100%;
       }
       &-tag {
         @include flex-center;

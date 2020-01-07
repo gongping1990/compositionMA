@@ -180,6 +180,14 @@ export default class extends wepy.app {
           'learningReport',
           'errorBook'
         ]
+      },
+      {
+        root: 'literacy',
+        pages: [
+          'l_submitHomework',
+          'l_uploadAudioWork',
+          'l_uploadImgWork'
+        ]
       }
     ],
     window: {

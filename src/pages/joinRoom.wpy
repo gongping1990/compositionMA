@@ -2,11 +2,11 @@
 <template>
   <view class="container joinRoom">
     <mHeader title="进入教室"></mHeader>
-    <view class="container-scroll" style="margin-top:{{height}}px">
-      <view
-        class="joinRoom-content {{typeClass[type-1]}}"
-        style="height:calc(100vh - {{height}}px);background-image:url('https://pub.file.k12.vip/tbzw/1.5/classroom/room{{type}}.png')"
-      >
+    <view class="joinRoom-pop">
+      <view class="joinRoom-content">
+        <view class="joinRoom-title">{{
+          start ? '正在进入教室...' : '同伴加入中...'
+        }}</view>
         <view class="joinRoom-student">
           <view
             class="joinRoom-student-item"
@@ -20,7 +20,6 @@
                 src="{{item.mateImg}}"
               />
             </view>
-            <view class="joinRoom-student-name">{{ item.mateName }}</view>
           </view>
         </view>
       </view>
@@ -38,8 +37,8 @@ export default class Classroom extends wepy.page {
     mHeader
   }
   data = {
+    start: false,
     lessonId: 0,
-    type: 1,
     typeClass: ['one', 'two', 'three', 'four'],
     show: false,
     mateInfo: []
@@ -73,13 +72,14 @@ export default class Classroom extends wepy.page {
 
   readyRoom() {
     setTimeout(() => {
+      this.start = true
+      this.$apply()
       wx.redirectTo({ url: '/pages/ready?id=' + this.lessonId })
     }, 4000)
   }
 
   onLoad(option) {
     this.lessonId = option.id
-    this.type = option.type
   }
 
   onShow() {
@@ -97,76 +97,45 @@ export default class Classroom extends wepy.page {
 <style lang="scss">
 @import '../assets/style/mixin.scss';
 .joinRoom {
-  &-content {
-    background-repeat: no-repeat;
-    background-size: 100%;
-    background-position-y: bottom;
-    &.one {
-      background-color: #fff4df;
-    }
-    &.two {
-      background-color: #f4ffe1;
-    }
-    &.three {
-      background-color: #f4ffe1;
-    }
-    &.four {
-      background-color: #f4ffe1;
-    }
-  }
-  &-student {
+  &-pop {
+    @include flex-center;
     position: fixed;
     left: 0;
     right: 0;
-    bottom: 168px;
-    .one & {
-      @include flex-center;
-      justify-content: space-around;
-    }
-    .three &,
-    .four &,
-    .two & {
-      display: flex;
-      flex-wrap: wrap;
-    }
-    .three & {
-      bottom: 80px;
-    }
+    top: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 1000;
+  }
+  &-title {
+    @include flex-center;
+    width: 212px;
+    height: 56px;
+    background: rgba(255, 227, 206, 1);
+    box-shadow: 0px 2px 2px 0px rgba(255, 255, 255, 0.53);
+    border-radius: 28px;
+    font-size: 26px;
+    font-weight: 400;
+    color: rgba(172, 113, 74, 1);
+  }
+  &-content {
+    @include flex-column-center;
+    @include bg('/1.8/classroom/pop_sk.png');
+    width: 686px;
+    height: 600px;
+  }
+  &-student {
+    @include flex-center;
+    margin-top: 48px;
+    margin-bottom: 60px;
 
     &-item {
       @include flex-column-center;
-      .three & {
-        margin-top: 34px;
-        &:nth-child(1) {
-          margin-left: 127px;
-        }
-        &:nth-child(2),
-        &:nth-child(4) {
-          margin-left: 298px;
-        }
-        &:nth-child(3) {
-          margin-left: 127px;
-        }
-      }
-      .four &,
-      .two & {
-        margin-top: 64px;
-        &:nth-child(1) {
-          margin-left: 92px;
-        }
-        &:nth-child(2),
-        &:nth-child(4) {
-          margin-left: 284px;
-        }
-        &:nth-child(3) {
-          margin-left: 152px;
-        }
-      }
+      margin: 0 20px;
     }
     &-img {
-      margin-bottom: 12px;
-      width: 112px;
-      height: 112px;
+      width: 118px;
+      height: 118px;
       border-radius: 50%;
       background: url('https://pub.file.k12.vip/tbzw/1.5/classroom/avatar.gif')
         no-repeat;
@@ -175,9 +144,9 @@ export default class Classroom extends wepy.page {
     &-avatar {
       opacity: 0;
       box-sizing: border-box;
-      width: 112px;
-      height: 112px;
-      border: 2px solid rgba(255, 255, 255, 1);
+      width: 118px;
+      height: 118px;
+      border: 6px solid #ffc001;
       border-radius: 50%;
       transition: all 0.7s;
       &.show {

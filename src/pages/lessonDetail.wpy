@@ -81,6 +81,12 @@ export default class Example extends wepy.page {
   methods = {
     bindClickItem(item) {
       if (!item.unlocked) return
+      if (item.workCp) {
+        wx.redirectTo({
+          url: `/literacy/l_submitHomework?id=${item.id}`
+        })
+        return
+      }
       if (item.type == 1) {
         wx.navigateTo({ url: '/pages/picture?id=' + item.id })
       } else {

@@ -6,10 +6,22 @@
         src="{{cameraImg}}"
         wx:if="{{cameraImg}}"
       />
+      <cover-view class="camera-back" wx:if="{{!cameraImg}}" @tap="bindClickCancel">
+        <cover-image
+          src="https://pub.file.k12.vip/tbzw/1.8/work/nav_icon_back@2x.png"
+        />
+      </cover-view>
+      <cover-view class="camera-center" wx:if="{{!cameraImg}}">
+        <cover-image
+          class="-img"
+          src="https://pub.file.k12.vip/tbzw/1.8/work/Group.png"
+          @tap="closeIcon"
+        />
+      </cover-view>
       <cover-view class="camera-cover">
         <cover-image
-          class="camera-cover-icon"
-          src="https://pub.file.k12.vip/2019/12/06/1202780137163984897.png"
+          class="camera-cover-icon {{tipType === '2' ? 'camera-cover-icon2' : ''}}"
+          src="{{tipType === '2' ? 'https://pub.file.k12.vip/tbzw/1.8/work/px_png_ts@2x.png' : 'https://pub.file.k12.vip/2019/12/06/1202780137163984897.png'}}"
           wx:if="{{showIcon}}"
           @tap="closeIcon"
         />
@@ -45,8 +57,8 @@
   </view>
 </template>
 <script>
-  import wepy from 'wepy'
-  import api from '../request/api'
+  import wepy from 'wepy';
+  import api from '../request/api';
 
   export default class CameraImg extends wepy.component {
     config = {
@@ -54,23 +66,24 @@
       usingComponents: {
         'van-popup': '../vant/popup/index'
       }
-    }
+    };
 
     props = {
       isShow: {
         type: Boolean,
         default: false
-      }
+      },
+      tipType: String
     };
 
     data = {
       showIcon: true,
       cameraImg: ''
-    }
+    };
     methods = {
 
       closeIcon() {
-        this.showIcon = false
+        this.showIcon = false;
       },
       bindClickCancel() {
         if (!this.cameraImg) {
@@ -79,61 +92,66 @@
           // })
           this.$emit('closeCamera');
         } else {
-          this.cameraImg = ''
+          this.cameraImg = '';
         }
       },
       bindClickSubmit() {
-        let _self = this
+        let _self = this;
         if (!_self.cameraImg) {
           wx.chooseImage({
             count: 1,
             sizeType: ['original', 'compressed'],
             sourceType: ['album'],
             success(res) {
-              _self.$emit('successImg', res.tempFilePaths)
+              _self.$emit('successImg', res.tempFilePaths);
               _self.$emit('closeCamera');
             }
-          })
+          });
         } else {
-          _self.$emit('successImg', [_self.cameraImg])
+          _self.$emit('successImg', [_self.cameraImg]);
           _self.$emit('closeCamera');
         }
       },
       takePhoto() {
-        const ctx = wx.createCameraContext()
+        const ctx = wx.createCameraContext();
         ctx.takePhoto({
           quality: 'high',
           success: res => {
-            this.cameraImg = res.tempImagePath
-            this.$apply()
+            this.cameraImg = res.tempImagePath;
+            this.$apply();
           }
-        })
+        });
       },
       error(e) {
       }
-    }
-    events = {}
+    };
+    events = {};
     watch = {
-      isShow: (_n)=> {
-        _n && this.hideIcon()
-        !_n && this.openIcon()
+      isShow: (_n) => {
+        _n && this.hideIcon();
+        !_n && this.openIcon();
       }
-    }
+    };
+
     hideIcon() {
       setTimeout(() => {
-        this.showIcon = false
-        this.$apply()
+        this.showIcon = false;
+        this.$apply();
       }, 3000);
     }
-    openIcon () {
-      this.showIcon = true
-      this.cameraImg = ''
+
+    openIcon() {
+      this.showIcon = true;
+      this.cameraImg = '';
     }
-    onLoad() {}
+
+    onLoad() {
+    }
   }
 </script>
 <style lang="scss">
   @import '../assets/style/mixin.scss';
+
   .camera {
     position: absolute;
     top: 0;
@@ -151,6 +169,26 @@
       width: 100%;
       z-index: 1;
     }
+    &-back {
+      position: fixed;
+      top: 6%;
+      left: 2%;
+      width: 80px;
+      height: 80px;
+    }
+
+    &-center {
+      position: fixed;
+      top: 17%;
+      width: 100%;
+
+      .-img {
+        margin: 0 auto;
+        width: 662px;
+        height: 830px;
+      }
+    }
+
     &-cover {
       display: flex;
       /*flex-direction: column;*/
@@ -170,7 +208,13 @@
         width: 516px;
         height: 154px;
         z-index: 100;
+      }
 
+      &-icon2 {
+        left: 32%;
+        top: 10%;
+        width: 300px;
+        height: 64px;
       }
 
       &-control {
@@ -206,7 +250,7 @@
       }
       &-confirm {
         box-sizing: initial;
-        top: 50rpx;
+        top: 50 rpx;
         left: 50%;
         width: 88px;
         height: 88px;

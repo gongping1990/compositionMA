@@ -7,7 +7,7 @@
       </view>
       <view class="p-successFlowerTemplate-img">
         <image class="-img-icon"
-               src="https://pub.file.k12.vip/tbzw/1.5/baogao/hua.png"
+               src="https://pub.file.k12.vip/2020/01/03/1213016856014237697.png"
                mode="widthFix"></image>
       </view>
       <view class="p-successFlowerTemplate-flower">+{{option.flowerNum}}朵小红花</view>
@@ -86,14 +86,13 @@
 
     &-img {
       @include flex-center;
-      @include bg('/1.5/baogao/light@2x.png');
       margin: 0 auto;
-      width: 330px;
-      height: 294px;
+      /*width: 330px;*/
+      /*height: 294px;*/
 
       .-img-icon {
-        width: 162px;
-        height: 194px;
+        width: 331px;
+        height: 332px;
       }
     }
 

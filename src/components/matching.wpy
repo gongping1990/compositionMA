@@ -113,9 +113,14 @@ export default class Matching extends wepy.component {
   events = {
     matchingEnd() {
       this.end = true
-      setTimeout(() => {
-        this.end = false
-      }, 4000)
+    },
+    reset() {
+      console.log('reset')
+      this.end = false
+      this.selectAnswer = {}
+      this.prevCol = -1
+      this.leftActive = ''
+      this.rightActive = ''
     }
   }
   watch = {

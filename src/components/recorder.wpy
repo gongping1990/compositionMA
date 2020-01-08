@@ -1,11 +1,6 @@
 <template>
   <view class="ly">
-    <image
-      class="ly-img"
-      mode="widthFix"
-      src="{{questionData.imgUrl}}"
-      wx:if="{{questionData.imgUrl}}"
-    />
+    <image class="ly-img" mode="widthFix" src="{{questionData.imgUrl}}" />
     <view class="ly-control">
       <view class="ly-control-item tj " @tap="clickPlay">
         <view class="tj-icon {{icon}}"></view>
@@ -60,9 +55,10 @@ export default class Recorder extends wepy.component {
     },
     recorderStop() {
       RecorderManager.stop()
-      setTimeout(() => {
-        this.type = 0
-      }, 4000)
+    },
+    reset() {
+      console.log('reset')
+      this.type = 0
     }
   }
   watch = {}

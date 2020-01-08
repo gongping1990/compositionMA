@@ -62,7 +62,11 @@ export default class Result extends wepy.page {
       }
     }
   }
-  events = {}
+  events = {
+    back() {
+      wx.navigateBack()
+    }
+  }
   watch = {}
   computed = {
     height() {

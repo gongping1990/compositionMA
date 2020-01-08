@@ -30,7 +30,7 @@
               value="{{timeProgress}}"
               layer-color="#fff"
               color="#FFC001"
-              speed="{{100}}"
+              speed="{{30}}"
             >
               <view class="video-circle-text">{{ time }}</view>
             </van-circle>
@@ -43,7 +43,7 @@
               wx:if="{{questionData.authVfUrl}}"
               @tap="resetAudio"
             ></view>
-            <text>他想做什么他想做什么他想做什么他想做什么他想做什么</text>
+            <text>{{ questionData.subject }}</text>
           </view>
           <matching
             :questionData.sync="questionData"
@@ -210,6 +210,7 @@ export default class Example extends wepy.page {
     },
     // 从头开始
     cancle() {
+      this.reset()
       this.resetPoint()
     },
     // 退出当前页面
@@ -219,8 +220,8 @@ export default class Example extends wepy.page {
     },
     // 继续学习
     confirm() {
-      this.videoContext.seek(410)
-      // this.videoContext.seek(this.pointData.ctime)
+      this.reset()
+      this.videoContext.seek(this.pointData.ctime - 2)
       this.videoContext.play()
       this.showDialog = false
     },
@@ -251,9 +252,9 @@ export default class Example extends wepy.page {
           this.questionData = data
           this.questionArr = data.optionList
           this.showDialog = false
-          this.isPlay = false
           this.time = data.answerTime
           this.baseTime = data.answerTime
+          this.videoContext.pause()
 
           setTimeout(() => {
             this.show = true
@@ -418,7 +419,8 @@ export default class Example extends wepy.page {
         setTimeout(() => {
           this.showIcon = false
           this.show = false
-          this.isPlay = true
+          this.$broadcast('reset')
+          this.videoContext.play()
           this.InnerAudioContext.stop()
           this.$apply()
         }, 2000)
@@ -442,7 +444,6 @@ export default class Example extends wepy.page {
   }
 
   downTime() {
-    console.log('downTime')
     let { choiceSeleced } = this
     let { type, answer } = this.questionData
     if (this.time >= 1) {
@@ -466,6 +467,20 @@ export default class Example extends wepy.page {
     this.$apply()
   }
 
+  reset() {
+    this.show = false
+    this.questionData = {}
+    this.questionArr = []
+    this.showIcon = false
+    this.isPlay = true
+    this.currentTime = 0
+    this.time = 0
+    this.baseTime = 0
+    this.choiceSeleced = ''
+    this.matchingAnwswr = {}
+    this.InnerAudioContext.stop()
+  }
+
   onLoad(option) {
     this.pointId = option.id
     this.videoContext = wx.createVideoContext('video')
@@ -473,6 +488,9 @@ export default class Example extends wepy.page {
   }
   onShow() {
     this.getThreeLearnInfo()
+  }
+  onHide() {
+    this.InnerAudioContext.stop()
   }
   onUnload() {
     this.InnerAudioContext.destroy()

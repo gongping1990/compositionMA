@@ -57,9 +57,9 @@
 			"list": [
 				{
 					"id": 0,
-					"name": "pages/joinRoom",
-					"pathName": "pages/joinRoom",
-					"query": "id=1173513977189851138",
+					"name": "pages/video",
+					"pathName": "pages/video",
+					"query": "id=1214070007701979137",
 					"scene": null
 				},
 				{

@@ -129,7 +129,7 @@ export default class extends wepy.app {
     pages: [
       'pages/index',
       'pages/detail',
-      'pages/hanzi',
+      // 'pages/hanzi',
       'pages/lesson',
       'pages/video',
       'pages/lessonDetail',

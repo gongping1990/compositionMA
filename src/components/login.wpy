@@ -1,34 +1,35 @@
 <!--  -->
 <template>
-  <view class='login'>
-    <van-popup show="{{showPopup}}"
-               z-index="{{300}}">
+  <view class="login">
+    <van-popup show="{{showPopup}}" z-index="{{300}}">
       <view class="-dialog">
-        <image class="-dialog-icon"
-               src="https://pub.file.k12.vip/tbzw/1.3/login/lion.png" />
+        <image
+          class="-dialog-icon"
+          src="https://pub.file.k12.vip/tbzw/1.3/login/lion.png"
+        />
         <text class="-dialog-title">您还未登录</text>
         <view class="-dialog-text">
           请登录后再进行操作
         </view>
         <view class="-dialog-btn-wrap">
-          <view class="-dialog-btn"
-                @tap="clickCancel">取消登录</view>
-          <view class="-dialog-btn confirm"
-                @tap="clickConfirm">确认登录</view>
+          <view class="-dialog-btn" @tap="clickCancel">取消登录</view>
+          <view class="-dialog-btn confirm" @tap="clickConfirm">确认登录</view>
         </view>
       </view>
     </van-popup>
-    <van-popup show="{{show}}"
-               z-index="{{300}}"
-               position="bottom">
+    <van-popup show="{{show}}" z-index="{{300}}" position="bottom">
       <view class="-select">
         <text class="-select-title">请选择登录方式</text>
-        <view class="-select-item van-hairline--top"
-              @tap="clickItem(1)">学习账号</view>
-        <view class="-select-item van-hairline--top"
-              @tap="clickItem(2)"><view class="-select-item-icon"></view>微信登录</view>
-        <view class="-select-item cancel van-hairline--top"
-              @tap="clickItem(3)">取消</view>
+        <view class="-select-item van-hairline--top" @tap="clickItem(1)">
+          学习账号
+        </view>
+        <view class="-select-item van-hairline--top" @tap="clickItem(2)">
+          <view class="-select-item-icon"></view>
+          微信登录
+        </view>
+        <view class="-select-item cancel van-hairline--top" @tap="clickItem(3)">
+          取消
+        </view>
       </view>
     </van-popup>
   </view>
@@ -48,12 +49,11 @@ export default class Example extends wepy.component {
       default: false,
       twoWay: true
     }
-  };
-  data = {
-  };
-  components = {};
+  }
+  data = {}
+  components = {}
   methods = {
-    clickItem (i) {
+    clickItem(i) {
       let index = Number(i)
       switch (index) {
         case 1:
@@ -67,19 +67,19 @@ export default class Example extends wepy.component {
           this.show = false
       }
     },
-    clickCancel () {
+    clickCancel() {
       this.showPopup = false
     },
-    clickConfirm () {
+    clickConfirm() {
       this.showPopup = false
       this.show = true
     }
-  };
-  events = {};
-  watch = {};
-  computed = {};
+  }
+  events = {}
+  watch = {}
+  computed = {}
 
-  getLogin () {
+  getLogin() {
     wx.showLoading({
       title: '登录中..',
       mask: true
@@ -92,19 +92,25 @@ export default class Example extends wepy.component {
         wx.hideLoading()
         this.show = false
         let { resultData } = data
-        if(resultData.needAuth) {
-          wx.navigateTo({ url: '/pages/authorize' });
+        if (resultData.needAuth) {
+          wx.navigateTo({ url: '/pages/authorize' })
         }
-        wepy.$store.dispatch({ type: 'UPDATE_USERINFO', payload: resultData })
-        wepy.$store.dispatch({ type: 'CHANGE_LOGIN_STATUS', payload: true })
-        this.$emit('login')
-        this.$apply()
+        api.center.getBottomTipsVO().then(res => {
+          wepy.$store.dispatch({
+            type: 'UPDATE_TAB_REMIND',
+            payload: res.data.resultData
+          })
+          wepy.$store.dispatch({ type: 'UPDATE_USERINFO', payload: resultData })
+          wepy.$store.dispatch({ type: 'CHANGE_LOGIN_STATUS', payload: true })
+          this.$emit('login')
+          this.$apply()
+        })
       })
     })
   }
 }
 </script>
-<style lang='scss'>
+<style lang="scss">
 @import '../assets/style/mixin.scss';
 .login {
   .-select {

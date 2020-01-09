@@ -129,6 +129,7 @@ export default class extends wepy.app {
     pages: [
       'pages/index',
       'pages/detail',
+      'pages/hanzi',
       'pages/lesson',
       'pages/video',
       'pages/lessonDetail',
@@ -183,11 +184,7 @@ export default class extends wepy.app {
       },
       {
         root: 'literacy',
-        pages: [
-          'l_submitHomework',
-          'l_uploadAudioWork',
-          'l_uploadImgWork'
-        ]
+        pages: ['l_submitHomework', 'l_uploadAudioWork', 'l_uploadImgWork']
       }
     ],
     window: {

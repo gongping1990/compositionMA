@@ -7,9 +7,8 @@
     >
       <view class="result-icon"></view>
       <view class="result-text" wx:if="{{resultData.score}}">获得小红花</view>
-      <view class="result-flower">
-        <view class="result-empty" wx:if="{{!resultData.score}}"></view>
-        <view class="result-flower-list" wx:else>
+      <view class="result-flower" wx:if="{{resultData.score}}">
+        <view class="result-flower-list">
           <view
             class="result-flower-item"
             wx:for="{{resultData.score}}"
@@ -42,13 +41,19 @@ export default class Result extends wepy.page {
   }
   methods = {
     tryAgain() {
+      let { audioContext, playSound } = this.$parent.globalData
       let { type } = this.resultData
+      playSound(audioContext, 1)
       wx.redirectTo({
-        url: `/pages/${type > 1 ? 'video' : 'picture'}?id=${this.pointId}`
+        url: `/pages/${type > 1 ? 'video' : 'picture'}?id=${
+          this.pointId
+        }&lookback=1`
       })
     },
     continueStudy() {
+      let { audioContext, playSound } = this.$parent.globalData
       let { nextIsWork, nextType, nextPointId, hasNext } = this.resultData
+      playSound(audioContext, 1)
       if (nextIsWork) {
         wx.redirectTo({
           url: `/literacy/l_submitHomework?id=${nextPointId}`

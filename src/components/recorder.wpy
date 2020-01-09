@@ -38,6 +38,8 @@ export default class Recorder extends wepy.component {
   components = {}
   methods = {
     clickPlay() {
+      let { audioContext, playSound } = this.$parent.$parent.globalData
+      playSound(audioContext, 1)
       let { type } = this
       switch (type) {
         case 0:

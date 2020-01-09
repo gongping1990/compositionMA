@@ -80,7 +80,17 @@ export default class Example extends wepy.page {
   }
   methods = {
     bindClickItem(item) {
+      let { audioContext, playSound } = this.$parent.globalData
+      let url =
+        item.type == 1
+          ? '/pages/picture?id=' + item.id
+          : '/pages/video?id=' + item.id
+      if (item.passed) {
+        url += '&lookback=1'
+      }
+      console.log(url)
       if (!item.unlocked) return
+      playSound(audioContext, 1)
       if (item.workCp) {
         wx.redirectTo({
           url: `/literacy/l_submitHomework?id=${item.id}`
@@ -88,9 +98,9 @@ export default class Example extends wepy.page {
         return
       }
       if (item.type == 1) {
-        wx.navigateTo({ url: '/pages/picture?id=' + item.id })
+        wx.navigateTo({ url })
       } else {
-        wx.navigateTo({ url: '/pages/video?id=' + item.id })
+        wx.navigateTo({ url })
       }
     }
   }

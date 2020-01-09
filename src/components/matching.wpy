@@ -88,11 +88,13 @@ export default class Matching extends wepy.component {
      * @params type [number] 0: left 1:right
      */
     clickAnswerColumn(type, item, index) {
+      let { audioContext, playSound } = this.$parent.$parent.globalData
       let { prevCol, selectAnswer } = this
       const isPrevCol = type === prevCol
       const hasKey = selectAnswer.hasOwnProperty(item.index)
       let activeName = type ? 'rightActive' : 'leftActive'
       let reverseActiveName = type ? 'leftActive' : 'rightActive'
+      playSound(audioContext, 1)
       if (hasKey && this.selectAnswer[item.index]) return
       if (!isPrevCol && this[reverseActiveName]) {
         this.selectAnswer[this[reverseActiveName]] = item.index
@@ -115,7 +117,6 @@ export default class Matching extends wepy.component {
       this.end = true
     },
     reset() {
-      console.log('reset')
       this.end = false
       this.selectAnswer = {}
       this.prevCol = -1

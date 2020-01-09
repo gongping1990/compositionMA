@@ -15,7 +15,6 @@
         enable-progress-gesture="{{progressEnable}}"
         loop="{{false}}"
         controls="{{controls}}"
-        show-play-btn="{{false}}"
         @ended="bindended"
         @timeupdate="bindtimeupdate"
         src="{{learnData.authContentUrl}}"
@@ -39,7 +38,7 @@
         <view class="video-content">
           <view class="video-title">
             <view
-              class="video-audio"
+              class="video-audio {{audioPause && 'paused'}}"
               wx:if="{{questionData.authVfUrl}}"
               @tap="resetAudio"
             ></view>
@@ -100,7 +99,7 @@
     </view>
     <load wx:if="{{loading}}"></load>
     <van-popup show="{{ showIcon }}" overlay="{{true}}">
-      <view class="result-icon">
+      <view class="result-icon" wx:if="{{showIcon}}">
         <view class="result-icon_cs" wx:if="{{anwserStatus == 3}}"></view>
         <view class="result-icon_zq" wx:if="{{anwserStatus == 1}}"></view>
         <view class="result-icon_cw" wx:if="{{anwserStatus == 2}}"></view>
@@ -124,6 +123,7 @@ export default class Example extends wepy.page {
     }
   }
   data = {
+    audioPause: true,
     loading: false,
     showIcon: false,
     showBtn: false,
@@ -161,6 +161,8 @@ export default class Example extends wepy.page {
       this.matchingAnwswr = selectedObj
     },
     clickChoice(index) {
+      let { audioContext, playSound } = this.$parent.globalData
+      playSound(audioContext, 1)
       this.choiceSeleced = index
       this.time = 0
     },
@@ -227,6 +229,8 @@ export default class Example extends wepy.page {
     },
     // 点击题干小喇叭 重置音频
     resetAudio() {
+      let { audioContext, playSound } = this.$parent.globalData
+      playSound(audioContext, 1)
       this.InnerAudioContext.stop()
       setTimeout(() => {
         this.InnerAudioContext.play()
@@ -405,6 +409,7 @@ export default class Example extends wepy.page {
   // 更新答题
   updateAnswer(parmas) {
     let { api } = this.$parent.globalData
+    let _time = this.questionData.type == 1 ? 1000 : 4000
     parmas.id = this.pointData.id
     parmas.tid = this.questionData.id
     api.study
@@ -423,7 +428,7 @@ export default class Example extends wepy.page {
           this.videoContext.play()
           this.InnerAudioContext.stop()
           this.$apply()
-        }, 2000)
+        }, _time)
         this.$apply()
       })
       .catch(() => {
@@ -462,12 +467,21 @@ export default class Example extends wepy.page {
           answer: this.anwserStatus == 1 ? true : false
         })
         this.showIcon = true
+        this.InnerAudioContext.stop()
+        this.InnerAudioContext.src =
+          this.anwserStatus == 1
+            ? this.learnData.rightAnswerUrl
+            : this.anwserStatus == 2
+            ? this.learnData.errorAnswerUrl
+            : this.learnData.giveupAnswerUrl
+        this.InnerAudioContext.play()
       }
     }
     this.$apply()
   }
 
   reset() {
+    this.audioPause = true
     this.show = false
     this.questionData = {}
     this.questionArr = []
@@ -482,9 +496,22 @@ export default class Example extends wepy.page {
   }
 
   onLoad(option) {
+    this.isLookBack = option.lookback
     this.pointId = option.id
+    if (option.lookback) {
+      this.controls = true
+    }
     this.videoContext = wx.createVideoContext('video')
     this.InnerAudioContext = wx.createInnerAudioContext()
+    this.InnerAudioContext.obeyMuteSwitch = false
+    this.InnerAudioContext.onPlay(() => {
+      this.audioPause = false
+      this.$apply()
+    })
+    this.InnerAudioContext.onStop(() => {
+      this.audioPause = true
+      this.$apply()
+    })
   }
   onShow() {
     this.getThreeLearnInfo()
@@ -547,10 +574,13 @@ export default class Example extends wepy.page {
     }
   }
   &-audio {
-    @include bg('/1.8/video/sp_icon.png');
+    @include bg('/1.8/video/play.gif');
     margin-right: 24px;
     width: 64px;
     height: 64px;
+    &.paused {
+      @include bg('/1.8/video/sp_icon.png');
+    }
   }
   &-popup {
     position: relative;

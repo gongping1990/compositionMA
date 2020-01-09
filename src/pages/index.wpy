@@ -601,6 +601,7 @@ export default class Home extends wepy.page {
   }
 
   bindKF() {
+    let { api } = this.$parent.globalData
     api.user.bindKF({
       courseId: this.infoData.kfTeacherVO.courseId
     })

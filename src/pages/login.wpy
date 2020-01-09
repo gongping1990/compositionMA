@@ -159,9 +159,15 @@ export default class Login extends wepy.page {
       }
       params[type ? 'code' : 'password'] = password
       loginFunc(params).then(({ data }) => {
-        this.methods.changeLoginStatus(true)
-        this.methods.updateUserInfo(data.resultData)
-        wx.navigateBack()
+        api.center.getBottomTipsVO().then(res => {
+          wepy.$store.dispatch({
+            type: 'UPDATE_TAB_REMIND',
+            payload: res.data.resultData
+          })
+          this.methods.changeLoginStatus(true)
+          this.methods.updateUserInfo(data.resultData)
+          wx.navigateBack()
+        })
       })
     }
   }

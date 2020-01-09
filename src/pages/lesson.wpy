@@ -469,7 +469,6 @@ export default class Lesson extends wepy.page {
   }
 
   getLearnRemind() {
-    console.log('dsa')
     let { api } = this.$parent.globalData
     api.study.getLearnRemind().then(({ data }) => {
       this.learnRemindData = data.resultData || {}

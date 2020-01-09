@@ -215,25 +215,29 @@ export default class Example extends wepy.page {
       }
     },
     toJump(data) {
-      if (!data.stage) {
-        if (data.studyStatus !== 4) {
-          wx.navigateTo({ url: '/pages/classroom?id=' + data.lessonId })
+      if (lesson.category == 1) {
+        if (!data.stage) {
+          if (data.studyStatus !== 4) {
+            wx.navigateTo({ url: '/pages/classroom?id=' + data.lessonId })
+          } else {
+            wx.showToast({
+              title: '课程尚未开始，先看看其他课程吧！', // 提示的内容,
+              icon: 'none', // 图标,
+              duration: 2000, // 延迟时间,
+              mask: true
+            })
+          }
+        } else if (data.stage === 1) {
+          wx.navigateTo({ url: '/pages/study?id=' + data.lessonId })
+        } else if (data.stage === 2) {
+          wx.navigateTo({ url: '/pages/test?id=' + data.lessonId })
         } else {
-          wx.showToast({
-            title: '课程尚未开始，先看看其他课程吧！', // 提示的内容,
-            icon: 'none', // 图标,
-            duration: 2000, // 延迟时间,
-            mask: true
+          wx.navigateTo({
+            url: `/user/submitHomework?id=${data.lessonId}&isFromLesson=true`
           })
         }
-      } else if (data.stage === 1) {
-        wx.navigateTo({ url: '/pages/study?id=' + data.lessonId })
-      } else if (data.stage === 2) {
-        wx.navigateTo({ url: '/pages/test?id=' + data.lessonId })
       } else {
-        wx.navigateTo({
-          url: `/user/submitHomework?id=${data.lessonId}&isFromLesson=true`
-        })
+        wx.navigateTo({ url: '/pages/lessonDetail?id=' + lesson.id })
       }
     }
   }

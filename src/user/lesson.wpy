@@ -215,7 +215,7 @@ export default class Example extends wepy.page {
       }
     },
     toJump(data) {
-      if (lesson.category == 1) {
+      if (data.category == 1) {
         if (!data.stage) {
           if (data.studyStatus !== 4) {
             wx.navigateTo({ url: '/pages/classroom?id=' + data.lessonId })
@@ -237,7 +237,7 @@ export default class Example extends wepy.page {
           })
         }
       } else {
-        wx.navigateTo({ url: '/pages/lessonDetail?id=' + lesson.id })
+        wx.navigateTo({ url: '/pages/lessonDetail?id=' + data.lessonId })
       }
     }
   }

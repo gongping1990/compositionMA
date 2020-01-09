@@ -126,7 +126,7 @@
           class="lesson-msg {{showMsg && 'show'}}"
           wx:if="{{learnRemindData.lessonId}}"
         >
-          <view class="lesson-msg-icon"></view>
+          <view class="lesson-msg-icon" @tap="clickMsgIcon"></view>
           <view class="lesson-msg-content">
             <view class="lesson-msg-text">
               {{ formatTime }}的课程你忘记学习咯
@@ -330,6 +330,9 @@ export default class Lesson extends wepy.page {
   }
 
   methods = {
+    clickMsgIcon() {
+      this.showMsg = !this.showMsg
+    },
     clickContinueLearn() {
       let lesson = this.learnRemindData
       if (lesson.category == 1) {
@@ -344,11 +347,6 @@ export default class Lesson extends wepy.page {
     },
     onScroll() {
       this.showMsg = false
-      clearTimeout(timer)
-      timer = setTimeout(() => {
-        this.showMsg = true
-        this.$apply()
-      }, 2000)
     },
     submit(e) {
       saveFormId(e.detail.formId)

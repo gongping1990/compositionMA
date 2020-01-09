@@ -29,7 +29,6 @@
               value="{{timeProgress}}"
               layer-color="#fff"
               color="#FFC001"
-              speed="{{30}}"
             >
               <view class="video-circle-text">{{ time }}</view>
             </van-circle>
@@ -239,7 +238,9 @@ export default class Example extends wepy.page {
     // 视频播放结束
     bindended() {
       this.isEnd = true
-      this.endPoint()
+      wx.redirectTo({
+        url: `/pages/result?id=${this.pointId}&cid=${this.pointData.id}`
+      })
     },
     // 视频播放中
     bindtimeupdate(event) {
@@ -436,17 +437,6 @@ export default class Example extends wepy.page {
         this.$apply()
       })
   }
-  // 更新结束状态
-  endPoint() {
-    let { api } = this.$parent.globalData
-    api.study
-      .endPoint({
-        id: this.pointData.id
-      })
-      .then(({ data }) => {
-        wx.redirectTo({ url: '/pages/result?id=' + this.pointId })
-      })
-  }
 
   downTime() {
     let { choiceSeleced } = this
@@ -509,6 +499,10 @@ export default class Example extends wepy.page {
       this.$apply()
     })
     this.InnerAudioContext.onStop(() => {
+      this.audioPause = true
+      this.$apply()
+    })
+    this.InnerAudioContext.onEnded(() => {
       this.audioPause = true
       this.$apply()
     })

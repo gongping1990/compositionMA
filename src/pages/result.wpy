@@ -87,11 +87,26 @@ export default class Result extends wepy.page {
       })
       .then(({ data }) => {
         this.resultData = data.resultData
+        this.endPoint()
+        this.$apply()
+      })
+  }
+
+  // 更新结束状态
+  endPoint() {
+    let { api } = this.$parent.globalData
+    api.study
+      .endPoint({
+        id: this.cid
+      })
+      .then(({ data }) => {
+        this.resultData.score = data.resultData.score
         this.$apply()
       })
   }
   onLoad(option) {
     this.pointId = option.id
+    this.cid = option.cid
   }
   onShow() {
     this.getThreeLearnResult()

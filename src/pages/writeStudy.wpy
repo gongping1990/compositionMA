@@ -1,0 +1,356 @@
+<template>
+  <view class="container write">
+    <mHeader title="上课中" flag="1"></mHeader>
+    <view
+      class="container-scroll"
+      style="margin-top:{{height}}px;height: calc(100vh - {{height}}px)"
+    >
+      <video
+          src="{{}}"
+          class="write-video"
+          controls="true"
+          autoplay="true"
+          loop="{{loop}}"
+        >
+          <cover-view class="write-video-loop"></cover-view>
+        </video>
+      <scroll-view
+        scroll-y
+        scroll-with-animation
+        style="height: calc(100vh - {{height + 235}}px)"
+      >
+        <view class="write-scroll">
+          <view class="write-scroll-header">
+            <view class="write-scroll-header_left">
+              <view class="write-hanzi">
+                <hanzi-writer-view id="hz-writer" width="46" height="46" />
+              </view>
+              <view class="write-title">第一课：文</view>
+            </view>
+            <view class="write-catalog">
+              <view class="write-catalog-icon"></view>
+              <text>目录</text>
+            </view>
+          </view>
+          <view class="write-yd">
+            <view class="write-yd-text">1.横平绝对</view>
+            <view class="write-yd-text">2.撇捺对称撇捺对称</view>
+          </view>
+          <view class="write-work">
+            <view class="write-work-title">
+              <view class="write-work-icon"></view>
+              同学作业
+            </view>
+            <view class="write-list">
+              <view class="write-item">
+                <view class="write-item-cover">
+                  <image
+                    src="{{}}"
+                    mode="widthFix" />
+                </view>
+                <view class="write-item-content">
+                  <view class="write-item-title">我每天都来乐小狮练字，已经坚持了5天了</view>
+                  <view class="write-item-info">
+                    <view class="write-item-user">
+                      <image
+                        class="write-item-avatar"
+                        src="{{}}"
+                      >
+                      <text class="write-item-name">乐乐</text>
+                    </view>
+                    <view class="write-item-date">2天前</view>
+                  </view>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+    <view class="write-nav">
+      <view class="write-btn">
+        <view>上交作业</view>
+        <text>（自动解锁下节）</text>
+      </view>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import createHanziWriterContext from 'hanzi-writer-miniprogram'
+import mHeader from '../components/header'
+export default class WriteStudy extends wepy.page {
+  config = {
+    usingComponents: {
+      'hanzi-writer-view': '../miniprogram_dist/hanzi-writer-view'
+    }
+  }
+  data = {
+    loop: true,
+    lessonId: 0,
+    lessonData: {}
+  }
+  components = {
+    mHeader
+  }
+  methods = {
+    bindClickItem(item) {
+      let { audioContext, playSound } = this.$parent.globalData
+      let url =
+        item.type == 1
+          ? '/pages/picture?id=' + item.id
+          : '/pages/video?id=' + item.id
+      if (item.passed) {
+        url += '&lookback=1'
+      }
+      console.log(url)
+      if (!item.unlocked) return
+      playSound(audioContext, 1)
+      if (item.workCp) {
+        wx.redirectTo({
+          url: `/literacy/l_submitHomework?id=${item.id}`
+        })
+        return
+      }
+      if (item.type == 1) {
+        wx.navigateTo({ url })
+      } else {
+        wx.navigateTo({ url })
+      }
+    }
+  }
+  events = {}
+  watch = {}
+  computed = {
+    height() {
+      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+    }
+  }
+
+  getThreeLessonInfo() {
+    let { api } = this.$parent.globalData
+    api.study
+      .getThreeLessonInfo({
+        lessonId: this.lessonId
+      })
+      .then(({ data }) => {
+        this.lessonData = data.resultData
+        this.$apply()
+      })
+  }
+  onLoad(option) {
+    this.lessonId = option.id
+    this.writerCtx = createHanziWriterContext({
+      id: 'hz-writer',
+      character: '文',
+      page: this.$wxpage,
+      padding: 7
+    })
+    this.writerCtx.loopCharacterAnimation()
+  }
+  onShow() {
+    this.getThreeLessonInfo()
+  }
+}
+</script>
+<style lang="scss">
+@import '../assets/style/mixin.scss';
+.write {
+  &-video {
+    position: relative;
+    width: 100vw;
+    &-loop {
+      @include bg('/1.8/video/loop.png');
+      position: absolute;
+      right: 32px;
+      bottom: 40%;
+      width: 92px;
+      height: 40px;
+      &.disabled {
+        @include bg('/1.8/video/no-loop.png');
+      }
+    }
+  }
+  &-nav {
+    @include flex-center;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width:750px;
+    height:124px;
+    background:rgba(255,255,255,1);
+    box-shadow:0px 0px 8px 0px rgba(237,239,243,1);
+    z-index: 100;
+  }
+  &-btn {
+    @include flex-column-center;
+    width:686px;
+    height:92px;
+    background:rgba(255,192,1,1);
+    box-shadow:0px 6px 8px 0px rgba(255,192,1,0.4);
+    border-radius:50px;
+    view {
+      font-size: 32px;
+      color: #fff;
+      color: 600;
+    }
+    text {
+      color: #fff;
+      font-size: 24px;
+    }
+  }
+  &-scroll {
+    padding-bottom: 240px;
+    &-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-sizing: border-box;
+      padding: 10px 20px;
+      &_left {
+        @include flex-center;
+      }
+    }
+  }
+  &-title {
+    @include text-overflow(400px);
+    margin-left: 12px;
+    font-size: 36px;
+    color: #333;
+    font-weight: bold;
+  }
+  &-catalog {
+    @include flex-center;
+    height: 92px;
+    &-icon {
+      @include bg('/1.8/video/list.png');
+      margin-right: 8px;
+      width: 48px;
+      height: 48px;
+    }
+    text {
+      font-size: 26px;
+      color: #999999;
+    }
+  }
+  &-yd {
+    position: relative;
+    box-sizing: border-box;
+    margin: 40px 32px;
+    margin-bottom: 60px;
+    padding: 70px 0;
+    padding-left: 116px;
+    width: 686px;
+    border-radius: 24px;
+    border: 16px solid #ffecb1;
+    &-text {
+      font-size: 30px;
+      line-height: 38px;
+      color: #666;
+    }
+    &::before {
+      content: '';
+      @include bg('/1.8/video/yd-icon.png');
+      position: absolute;
+      left: 50%;
+      top: 0;
+      width: 218px;
+      height: 56px;
+      transform: translate(-50%, -50%);
+    }
+    &::after {
+      content: '';
+      @include bg('/1.8/video/yd-bg.png');
+      position: absolute;
+      right: -90px;
+      bottom: -20px;
+      width: 130px;
+      height: 56px;
+      transform: translate(-50%, -50%);
+    }
+  }
+  &-work {
+    &-title {
+      display: flex;
+      align-items: center;
+      margin-left: 34px;
+      font-size: 34px;
+      color: #333;
+      font-weight: bold;
+    }
+    &-icon {
+      display: block;
+      margin-right: 10px;
+      width: 40px;
+      height: 40px;
+      @include bg('/1.8/video/work.png');
+    }
+  }
+  &-list {
+    display: flex;
+    flex-wrap:nowrap;
+    padding: 0 17px;
+  }
+  &-hanzi {
+    @include bg('/1.8/video/hanzi.png');
+    display: flex;
+    justify-content: center;
+    box-sizing: border-box;
+    padding-top: 8px;
+    height: 116px;
+    width: 116px;
+    overflow: hidden;
+  }
+  &-item {
+    box-sizing: border-box;
+    margin: 0 15px;
+    margin-top: 32px;
+    width:328px;
+    height:484px;
+    background:rgba(255,255,255,1);
+    box-shadow:0px 6px 12px 0px rgba(237,239,243,0.95);
+    border-radius:16px;
+    &-cover {
+      width: 100%;
+      height: 304px;
+      overflow: hidden;
+      image {
+        width: 100%;
+      }
+    }
+    &-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-sizing: border-box;
+      padding: 16px;
+      width: 100%;
+      height: 180px;
+    }
+    &-title {
+      font-size: 28px;
+      line-height: 36px;
+      color: #333;
+    }
+    &-info {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    &-user {
+      @include flex-center;
+    }
+    &-avatar {
+      margin-right: 8px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+    }
+    &-name,
+    &-date {
+      font-size: 24px;
+      color: #666;
+    }
+  }
+}
+</style>

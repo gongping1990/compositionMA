@@ -127,10 +127,12 @@ export default class Matching extends wepy.component {
   watch = {
     selectAnswer(n) {
       let { leftList } = this.questionData
+      let hasZero = Object.values(n).indexOf(0)
       let keys = Object.keys(n)
       let anwserLength = keys.length / 2
+
       this.$emit('selected', n)
-      if (anwserLength == leftList.length) {
+      if (anwserLength == leftList.length && hasZero == -1) {
         this.$emit('end')
       }
     }

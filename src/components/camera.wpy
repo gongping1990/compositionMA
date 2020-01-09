@@ -170,16 +170,16 @@
       z-index: 1;
     }
     &-back {
-      position: fixed;
-      top: 6%;
-      left: 2%;
+      position: absolute;
+      bottom: 89%;
+      left: 16px;
       width: 80px;
       height: 80px;
     }
 
     &-center {
-      position: fixed;
-      top: 17%;
+      position: absolute;
+      bottom: 24%;
       width: 100%;
 
       .-img {

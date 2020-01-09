@@ -17,6 +17,7 @@
         </view>
       </view>
       <view class="classroom-content">
+        <view class="classroom-content-title">—— 选择教室 ——</view>
         <view class="classroom-list">
           <view class="classroom-item" @tap="bindClickRoom">
             <image
@@ -145,6 +146,7 @@ export default class Classroom extends wepy.page {
     width: 470px;
     height: 100px;
     font-size: 32px;
+    color: #fff;
     background: linear-gradient(
       90deg,
       rgba(249, 230, 11, 1) 0%,
@@ -155,9 +157,16 @@ export default class Classroom extends wepy.page {
     transform: translateX(-50%);
   }
   &-content {
+    padding-top: 40px;
     height: 100vh;
     box-shadow: 0px 4px 32px 0px rgba(237, 239, 243, 1);
     border-radius: 48px 48px 0px 0px;
+    &-title {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #999;
+      font-size: 26px;
+    }
   }
   &-list {
     display: flex;

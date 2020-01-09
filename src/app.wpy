@@ -130,6 +130,8 @@ export default class extends wepy.app {
       'pages/index',
       'pages/detail',
       'pages/hanzi',
+      'pages/write',
+      'pages/writeStudy',
       'pages/lesson',
       'pages/video',
       'pages/lessonDetail',

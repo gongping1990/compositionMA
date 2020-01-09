@@ -57,16 +57,16 @@
 			"list": [
 				{
 					"id": 0,
-					"name": "pages/video",
-					"pathName": "pages/video",
+					"name": "pages/writeStudy",
+					"pathName": "pages/writeStudy",
 					"query": "id=1214070007701979137&lookback=1",
 					"scene": null
 				},
 				{
-					"id": -1,
-					"name": "pages/sharePoster",
-					"pathName": "pages/sharePoster",
-					"query": "id=1173848797161070593",
+					"id": 1,
+					"name": "pages/picture",
+					"pathName": "pages/picture",
+					"query": "id=1214095493148721153&lookback=1",
 					"scene": null
 				},
 				{
@@ -143,7 +143,7 @@
 					"id": 12,
 					"name": "literacy/l_uploadImgWork",
 					"pathName": "literacy/l_uploadImgWork",
-					"query": "id=1178580314148048897",
+					"query": "id=1214016363879219201",
 					"scene": null
 				},
 				{

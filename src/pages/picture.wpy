@@ -29,7 +29,7 @@
     </swiper>
 
     <view class="picture-num">
-      {{ current + 1 + '/' + learnData.ibookList.length }}
+      {{ current + 1 + '/' + pageTimes.length }}
     </view>
     <view class="_c-dialog" wx:if="{{showDialog}}">
       <view class="_c-dialog-content">
@@ -70,6 +70,8 @@ export default class Example extends wepy.page {
     showDialog: false,
     showBack: false,
     current: 0,
+    pageNum: 0,
+    pageTimes: [],
     learnData: {},
     pointData: {}
   }
@@ -78,14 +80,13 @@ export default class Example extends wepy.page {
   }
   methods = {
     bindchange(params) {
-      let { current } = params.detail
-      let { ibookList } = this.learnData
+      console.log(params)
+      let { current, source } = params.detail
+      let { pageTimes } = this
       this.current = current
-      InnerAudioContext.stop()
-      setTimeout(() => {
-        InnerAudioContext.src = ibookList[current].authVfUrl
-        InnerAudioContext.play()
-      }, 1000)
+      if (source == 'touch') {
+        InnerAudioContext.seek(+pageTimes[current])
+      }
     },
     cancleBack() {
       wx.navigateBack()
@@ -116,22 +117,24 @@ export default class Example extends wepy.page {
   computed = {}
 
   initPage() {
-    let { ibookList } = this.learnData
-    let activePage = ibookList[this.current]
+    let { ibookList, authContentUrl } = this.learnData
     InnerAudioContext.onEnded(() => {
-      if (this.current < ibookList.length - 1) {
-        this.current += 1
-        InnerAudioContext.stop()
-        setTimeout(() => {
-          InnerAudioContext.src = ibookList[this.current].authVfUrl
-          InnerAudioContext.play()
-        }, 1000)
-      } else {
-        this.endPoint()
+      this.endPoint()
+      this.$apply()
+    })
+    InnerAudioContext.onPlay(() => {})
+
+    InnerAudioContext.onTimeUpdate(() => {
+      let time = parseInt(InnerAudioContext.currentTime)
+      let activePage = ibookList[time]
+      console.log(time)
+      if (activePage) {
+        this.current = activePage.index - 1
+        this.activePage = activePage
       }
       this.$apply()
     })
-    InnerAudioContext.src = activePage.authVfUrl
+    InnerAudioContext.src = authContentUrl
     InnerAudioContext.play()
   }
 
@@ -143,6 +146,7 @@ export default class Example extends wepy.page {
       })
       .then(({ data }) => {
         this.learnData = data.resultData
+        this.pageTimes = Object.keys(this.learnData.ibookList)
         this.startPoint()
         this.$apply()
       })
@@ -204,7 +208,6 @@ export default class Example extends wepy.page {
     this.getThreeLearnInfo()
   }
   onUnload() {
-    console.log(11)
     InnerAudioContext.destroy()
   }
 }

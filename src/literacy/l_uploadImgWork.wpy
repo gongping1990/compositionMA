@@ -1,6 +1,6 @@
 <template>
   <view class="container">
-    <mHeader title="提交作业"></mHeader>
+    <mHeader title="提交作业" wx:if="{{!isShowCamera}}"></mHeader>
     <view class="container-scroll p-l_uploadImgWork" style="margin-top:{{height}}px">
       <view class="p-l_uploadImgWork-title">
         <view class="-title-icon">
@@ -118,7 +118,7 @@
         path: ''
       },
       // isOpenPopup: false,
-      isShowCamera: false,
+      isShowCamera: true,
       isSending: false,
       flowerInfo: {},
       queryInfo: {},

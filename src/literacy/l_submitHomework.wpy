@@ -252,10 +252,10 @@
         let { audioContext, playSound } = this.$parent.globalData;
         playSound(audioContext, 1);
         wx.navigateTo({
-          url: `/user/${
+          url: `/literacy/${
             this.lessonDetail.homeworkType == 1
-              ? 'uploadAudioWork'
-              : 'uploadImgWork'
+              ? 'l_uploadAudioWork'
+              : 'l_uploadImgWork'
             }?id=${this.queryInfo.id}`
         });
       }

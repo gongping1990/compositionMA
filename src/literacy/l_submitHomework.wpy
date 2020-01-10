@@ -1,6 +1,6 @@
 <template>
   <view class="container">
-    <mHeader title="课后作业" flag="4"></mHeader>
+    <mHeader title="课后作业"></mHeader>
     <view class="container-scroll p-l_submitHomework"
           style="margin-top:{{height}}px">
       <form
@@ -269,15 +269,6 @@
       nextStep() {
         this.getAudio(6);
       },
-      back() {
-        if (this.queryInfo.isFromLesson) {
-          wx.navigateBack();
-        } else {
-          wx.reLaunch({
-            url: '/pages/lesson'
-          });
-        }
-      }
     };
 
     onLoad(query) {

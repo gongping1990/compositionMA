@@ -92,7 +92,7 @@ export default class Example extends wepy.page {
       if (!item.unlocked) return
       playSound(audioContext, 1)
       if (item.workCp) {
-        wx.redirectTo({
+        wx.navigateTo({
           url: `/literacy/l_submitHomework?id=${item.id}`
         })
         return

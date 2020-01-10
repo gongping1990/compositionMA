@@ -60,7 +60,7 @@
     </van-popup> -->
     <!--<loaded></loaded>-->
 
-    <!--<successFlowerTemplate :isShow.sync="isOpenPopup" :option.sync="flowerOption"></successFlowerTemplate>-->
+    <successFlowerTemplate :isShow.sync="isOpenPopup" :option.sync="flowerOption"></successFlowerTemplate>
 
     <ConfirmModal :isShow.sync="isOpenResultPopup"
                   titleText="提示"
@@ -104,6 +104,7 @@
         path: ''
       },
       isOpenResultPopup: false,
+      isOpenPopup: false,
       isSending: false,
       flowerInfo: {},
       queryInfo: {},
@@ -196,6 +197,18 @@
       wx.navigateTo({ url: `/literacy/l_submitHomework?id=${this.queryInfo.id}&isFromUpload=true` });
     }
 
+    getSorceByRecordSource() {
+      api.center.getSorceByRecordSource({
+        lessonId: this.queryInfo.id,
+        source: 1
+      }).then(({ data }) => {
+        this.flowerInfo = data.resultData;
+        this.flowerOption.flowerNum = this.flowerInfo.count;
+        this.flowerOption.path = `/literacy/l_submitHomework?id=${this.queryInfo.id}`;
+        this.$apply();
+      });
+    }
+
     methods = {
       changeStatus(num) {
         switch (+this.nowStatus) {
@@ -217,6 +230,8 @@
       },
       openModal() {
         this.isOpenResultPopup = true;
+        this.innerAudioContext.pause();
+        this.nowStatus = 4;
       },
       toSubmitAudio() {
         let _self = this;
@@ -248,7 +263,7 @@
               }).then(res => {
                 _self.isSending = false;
                 wx.hideToast();  // 隐藏Toast
-                _self.toWorkDetail();
+                _self.isOpenPopup = true
                 _self.$apply();
               }, () => {
                 _self.isSending = false;
@@ -281,6 +296,7 @@
 
     onLoad(query) {
       this.queryInfo = query;
+      this.getSorceByRecordSource();
     }
 
     onUnload() {

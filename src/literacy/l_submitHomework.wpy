@@ -206,21 +206,6 @@
       return result;
     }
 
-    getSorceByRecordSource() {
-      api.center.getSorceByRecordSource({
-        lessonId: this.queryInfo.id,
-        source: 1
-      }).then(({ data }) => {
-        this.flowerInfo = data.resultData;
-        this.flowerOption.flowerNum = this.flowerInfo.count;
-        this.flowerOption.path = '';
-        if (this.queryInfo.isFromUpload && this.flowerInfo.harvest) {
-          this.isOpenFlower = true
-        }
-        this.$apply();
-      });
-    }
-
     methods = {
       submit(e) {
         saveFormId(e.detail.formId);
@@ -251,13 +236,19 @@
       submitWork() {
         let { audioContext, playSound } = this.$parent.globalData;
         playSound(audioContext, 1);
-        wx.navigateTo({
-          url: `/literacy/${
-            this.lessonDetail.homeworkType == 1
-              ? 'l_uploadAudioWork'
-              : 'l_uploadImgWork'
-            }?id=${this.queryInfo.id}`
-        });
+        if (this.isSuccessWork) {
+          wx.navigateTo({
+            url: `/pages/lessonDetail?id=${this.queryInfo.id}`
+          });
+        } else {
+          wx.navigateTo({
+            url: `/literacy/${
+              this.lessonDetail.homeworkType == 1
+                ? 'l_uploadAudioWork'
+                : 'l_uploadImgWork'
+              }?id=${this.queryInfo.id}`
+          });
+        }
       }
     };
 
@@ -269,20 +260,15 @@
       nextStep() {
         this.getAudio(6);
       },
-      back() {
-        if (this.queryInfo.isFromLesson) {
-          wx.navigateBack();
-        } else {
-          wx.reLaunch({
-            url: '/pages/lesson'
-          });
-        }
+      back () {
+        wx.reLaunch({
+          url: `/pages/lessonDetail?id=${this.queryInfo.id}`
+        });
       }
     };
 
     onLoad(query) {
       this.queryInfo = query;
-      this.getSorceByRecordSource();
     }
 
     onShow() {

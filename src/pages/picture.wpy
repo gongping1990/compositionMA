@@ -80,7 +80,6 @@ export default class Example extends wepy.page {
   }
   methods = {
     bindchange(params) {
-      console.log(params)
       let { current, source } = params.detail
       let { pageTimes } = this
       this.current = current
@@ -119,8 +118,9 @@ export default class Example extends wepy.page {
   initPage() {
     let { ibookList, authContentUrl } = this.learnData
     InnerAudioContext.onEnded(() => {
-      this.endPoint()
-      this.$apply()
+      wx.redirectTo({
+        url: `/pages/result?id=${this.pointId}&cid=${this.pointData.id}`
+      })
     })
     InnerAudioContext.onPlay(() => {})
 
@@ -189,16 +189,6 @@ export default class Example extends wepy.page {
       cpage: this.current,
       id: this.pointData.id
     })
-  }
-  endPoint() {
-    let { api } = this.$parent.globalData
-    api.study
-      .endPoint({
-        id: this.pointData.id
-      })
-      .then(({ data }) => {
-        wx.redirectTo({ url: '/pages/result?id=' + this.pointId })
-      })
   }
   onLoad(option) {
     this.pointId = option.id

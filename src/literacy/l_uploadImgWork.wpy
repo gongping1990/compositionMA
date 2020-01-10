@@ -77,7 +77,7 @@
 
     <camera :isShow.sync="isShowCamera" tipType="2"></camera>
 
-    <!--<successFlowerTemplate :isShow.sync="isOpenPopup" :option.sync="flowerOption"></successFlowerTemplate>-->
+    <successFlowerTemplate :isShow.sync="isOpenPopup" :option.sync="flowerOption"></successFlowerTemplate>
 
   </view>
 </template>
@@ -117,7 +117,7 @@
         twoText: '老师随后为你点评，请留意微信通知',
         path: ''
       },
-      // isOpenPopup: false,
+      isOpenPopup: false,
       isShowCamera: false,
       isSending: false,
       flowerInfo: {},
@@ -137,21 +137,21 @@
         });
     }
 
-    // getSorceByRecordSource() {
-    //   api.center.getSorceByRecordSource({
-    //     lessonId: this.queryInfo.id,
-    //     source: 1
-    //   }).then(({ data }) => {
-    //     this.flowerInfo = data.resultData;
-    //     this.flowerOption.flowerNum = this.flowerInfo.count;
-    //     this.flowerOption.path = `/user/completionOfWork?type=1&id=${this.queryInfo.id}&isPlayAudio=true`;
-    //     this.$apply();
-    //   });
-    // }
+    getSorceByRecordSource() {
+      api.center.getSorceByRecordSource({
+        lessonId: this.queryInfo.id,
+        source: 1
+      }).then(({ data }) => {
+        this.flowerInfo = data.resultData;
+        this.flowerOption.flowerNum = this.flowerInfo.count;
+        this.flowerOption.path = `/literacy/l_submitHomework?id=${this.queryInfo.id}`;
+        this.$apply();
+      });
+    }
 
     toWorkDetail() {
-      // this.isOpenPopup = false;
-      wx.navigateTo({ url: `/literacy/l_submitHomework?id=${this.queryInfo.id}&isFromUpload=true` });
+      this.isOpenPopup = false;
+      wx.navigateTo({ url: `/literacy/l_submitHomework?id=${this.queryInfo.id}` });
     }
 
     uploadImgFn(fileUrl) {
@@ -204,12 +204,6 @@
       submit(e) {
         saveFormId(e.detail.formId);
       },
-      toWorkDetail() {
-        // this.isOpenPopup = false;
-        wx.navigateTo({
-          url: `/user/completionOfWork?type=1&id=${this.queryInfo.id}`
-        });
-      },
       delImg(index) {
         this.workImgList.splice(index, 1);
       },
@@ -247,7 +241,8 @@
             .then(
               res => {
                 this.isSending = false;
-                this.toWorkDetail();
+                this.isOpenPopup = true
+                // this.toWorkDetail();
                 this.$apply();
               },
               () => {
@@ -278,7 +273,7 @@
         this.uploadImgFn(this.queryInfo.imgUrl);
       }
       this.getLessonInfo();
-      // this.getSorceByRecordSource();
+      this.getSorceByRecordSource();
     }
 
     onHide() {

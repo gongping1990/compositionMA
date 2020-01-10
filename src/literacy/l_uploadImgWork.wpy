@@ -56,7 +56,7 @@
       <view class="p-l_uploadImgWork-footer">
         <form report-submit="true" @submit="submit">
           <button form-type="submit" class="-footer-btn" @tap="submitWork">
-           {{workImgList.length ? '确认提交' : '做作业'}}
+           {{workImgList.length ? '确认提交' : '交作业'}}
           </button>
         </form>
       </view>

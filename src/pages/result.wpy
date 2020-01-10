@@ -11,7 +11,7 @@
         <view class="result-flower-list">
           <view
             class="result-flower-item"
-            wx:for="{{resultData.score}}"
+            wx:for="{{score}}"
             wx:key="{{index}}"
           ></view>
         </view>
@@ -33,6 +33,7 @@ export default class Result extends wepy.page {
     navigationBarTitleText: ''
   }
   data = {
+    score: 0,
     pointId: 0,
     resultData: {}
   }
@@ -87,7 +88,6 @@ export default class Result extends wepy.page {
       })
       .then(({ data }) => {
         this.resultData = data.resultData
-        this.endPoint()
         this.$apply()
       })
   }
@@ -100,7 +100,7 @@ export default class Result extends wepy.page {
         id: this.cid
       })
       .then(({ data }) => {
-        this.resultData.score = data.resultData.score
+        this.getThreeLearnResult()
         this.$apply()
       })
   }
@@ -109,7 +109,7 @@ export default class Result extends wepy.page {
     this.cid = option.cid
   }
   onShow() {
-    this.getThreeLearnResult()
+    this.endPoint()
   }
 }
 </script>

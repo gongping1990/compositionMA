@@ -514,9 +514,11 @@ export default class Home extends wepy.page {
     clickAddTeacher(type) {
       
       if (type == 2) {
-        this.showAddTeacher = false
+        this.followKF()
+      } else {
+        this.bindKF()
       }
-      this.bindKF()
+      this.showAddTeacher = false
     },
     clickLike(item, index) {
       if (this.logined) {
@@ -604,6 +606,12 @@ export default class Home extends wepy.page {
   bindKF() {
     let { api } = this.$parent.globalData
     api.user.bindKF({
+      courseId: this.infoData.kfTeacherVO.courseId
+    })
+  }
+  followKF () {
+    let { api } = this.$parent.globalData
+    api.user.followKF({
       courseId: this.infoData.kfTeacherVO.courseId
     })
   }

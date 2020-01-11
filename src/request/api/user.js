@@ -59,6 +59,9 @@ const user = {
   bindKF(params) {
     return request.post('/homework/kfteacher/bindKF', params)
   },
+  followKF(params) {
+    return request.post('/homework/kfteacher/followKF', params)
+  },
   listByDubbing() {
     return request.get('/compositionv2/dubbing/listByDubbing')
   }

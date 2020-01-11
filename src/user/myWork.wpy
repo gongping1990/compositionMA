@@ -137,7 +137,11 @@ export default class MyWork extends wepy.page {
     },
     workDetail(item) {
       if (this.tabActive === '1') {
-        wx.navigateTo({ url: `/user/submitHomework?id=${item.lessonId}` })
+        if(item.category === 1) {
+          wx.navigateTo({ url: `/user/submitHomework?id=${item.lessonId}` })
+        } else if (item.category === 2) {
+          wx.navigateTo({ url: `/pages/lessonDetail?id=${item.lessonId}` })
+        }
       } else {
         wx.navigateTo({
           url: `/user/completionOfWork?type=1&id=${item.lessonId}`

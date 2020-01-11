@@ -839,7 +839,7 @@ export default class Lesson extends wepy.page {
     box-sizing: border-box;
     padding-left: 110px;
     right: 32px;
-    bottom: 200px;
+    bottom: 140px;
     width: 112px;
     height: 110px;
     background: rgba(255, 255, 255, 1);

@@ -100,6 +100,7 @@ export default class Result extends wepy.page {
         id: this.cid
       })
       .then(({ data }) => {
+        this.score = data.resultData.score
         this.getThreeLearnResult()
         this.$apply()
       })

@@ -156,19 +156,23 @@ export default class Example extends wepy.page {
         courseId: this.courseId
       })
       .then(({ data }) => {
-        let activeYear = data.resultData.yearList.findIndex(e => {
-          return e.year == data.resultData.year
-        })
-        let activeMonth = data.resultData.yearList[
-          activeYear
-        ].monthList.findIndex(e => {
-          return e.month == data.resultData.month
-        })
+        if (data.resultData.yearList.length) {
+          let activeYear = data.resultData.yearList.findIndex(e => {
+            return e.year == data.resultData.year
+          })
+          let activeMonth = data.resultData.yearList[
+            activeYear
+          ].monthList.findIndex(e => {
+            return e.month == data.resultData.month
+          })
+          this.activeYear = activeYear
+          this.activeMonth = activeMonth
+          this.timeList = data.resultData.yearList
+        }
+
         this.year = data.resultData.year
         this.month = data.resultData.month
-        this.timeList = data.resultData.yearList
-        this.activeYear = activeYear
-        this.activeMonth = activeMonth
+
         this.$apply()
         this.getList()
       })
@@ -286,7 +290,6 @@ export default class Example extends wepy.page {
     &-icon {
       @include bg('/1.8/lesson/empty.png');
       margin-bottom: 20px;
-      margin-top: 200px;
       width: 360px;
       height: 360px;
     }

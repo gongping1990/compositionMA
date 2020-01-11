@@ -168,7 +168,7 @@
               </view>
             </view>
             <view class="_listen-item-right">
-              <view class="_listen-item-flower" wx:if="{{item.state == 5}}">
+              <view class="_listen-item-flower" @tap="bindClickBtn({{item}})" wx:if="{{item.state == 5}}">
                 <view class="_listen-item-flower-icon"></view>
                 x {{ item.score }}
               </view>
@@ -389,6 +389,9 @@ export default class Lesson extends wepy.page {
           wx.navigateTo({ url: '/user/submitHomework?id=' + lesson.id })
         }
       } else {
+        if(!lesson.stage && lesson.state == 4) {
+          return
+        }
         wx.navigateTo({ url: '/pages/lessonDetail?id=' + lesson.id })
       }
     }

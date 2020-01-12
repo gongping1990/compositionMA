@@ -159,6 +159,7 @@ export default class Login extends wepy.page {
       }
       params[type ? 'code' : 'password'] = password
       loginFunc(params).then(({ data }) => {
+        let { _sa, sa } = this.$parent.globalData
         api.center.getBottomTipsVO().then(res => {
           wepy.$store.dispatch({
             type: 'UPDATE_TAB_REMIND',
@@ -168,6 +169,8 @@ export default class Login extends wepy.page {
           this.methods.updateUserInfo(data.resultData)
           wx.navigateBack()
         })
+        _sa.login(data.resultData.userId)
+        sa.login(data.resultData.userId)
       })
     }
   }

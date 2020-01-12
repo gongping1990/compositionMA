@@ -80,6 +80,9 @@ export default class Example extends wepy.component {
   computed = {}
 
   getLogin() {
+    let { _sa, sa } = this.$parent.$parent.globalData
+    console.log(wepy)
+    console.log(this)
     wx.showLoading({
       title: '登录中..',
       mask: true
@@ -105,6 +108,8 @@ export default class Example extends wepy.component {
           this.$emit('login')
           this.$apply()
         })
+        _sa.login(resultData.id)
+        sa.login(resultData.id)
       })
     })
   }

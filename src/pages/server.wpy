@@ -1,91 +1,97 @@
 <!--  -->
 <template>
-  <view class='container server'>
+  <view class="container server">
     <mHeader flag="0"></mHeader>
-    <view class="container-scroll"
-          style="margin-top:{{height}}px">
+    <view class="container-scroll" style="margin-top:{{height}}px">
       <view class="banner"></view>
       <view class="server-content">
-        <div class="-content-item"
-             wx:for="{{itemList}}"
-             wx:key="{{item.id}}"
-             @tap="toJump({{item.id}})">
+        <div
+          class="-content-item"
+          wx:for="{{itemList}}"
+          wx:key="{{item.id}}"
+          @tap="toJump({{item.id}})"
+        >
           <view class="-content-item-left">
             <view class="-left-img-wrap">
-              <view class="-right-tip"
-                    wx:if="{{item.num}}">{{item.num}}</view>
-              <image class="-left-img"
-                     src="{{item.url}}"></image>
+              <view class="-right-tip" wx:if="{{item.num}}">{{
+                item.num
+              }}</view>
+              <image class="-left-img" src="{{item.url}}"></image>
             </view>
 
-            <view class="-left-text">{{item.name}}</view>
+            <view class="-left-text">{{ item.name }}</view>
           </view>
           <view class="-content-item-right">
-
-            <image class="-right-img"
-                   src="https://pub.file.k12.vip/tbzw/course/my-icon-arrow.png"
-                   mode="widthFix"></image>
+            <image
+              class="-right-img"
+              src="https://pub.file.k12.vip/tbzw/course/my-icon-arrow.png"
+              mode="widthFix"
+            ></image>
           </view>
         </div>
       </view>
     </view>
-    <van-tabbar active="2"
-                active-color="#58422B"
-                bind:change="onChangeTabbar">
+    <van-tabbar active="2" active-color="#58422B" bind:change="onChangeTabbar">
       <van-tabbar-item>
-        <image slot="icon"
-               src="../assets/image/home-def.png"
-               mode="aspectFit" />
-        <image slot="icon-active"
-               src="../assets/image/home-pre.png"
-               mode="aspectFit" />
+        <image
+          slot="icon"
+          src="../assets/image/home-def.png"
+          mode="aspectFit"
+        />
+        <image
+          slot="icon-active"
+          src="../assets/image/home-pre.png"
+          mode="aspectFit"
+        />
         首页
       </van-tabbar-item>
       <van-tabbar-item>
-        <image slot="icon"
-               src="../assets/image/sk-def.png"
-               mode="aspectFit" />
-        <image slot="icon-active"
-               src="../assets/image/sk-pre.png"
-               mode="aspectFit" />
+        <image slot="icon" src="../assets/image/sk-def.png" mode="aspectFit" />
+        <image
+          slot="icon-active"
+          src="../assets/image/sk-pre.png"
+          mode="aspectFit"
+        />
         上课
       </van-tabbar-item>
       <van-tabbar-item dot="{{remindData.servicetip}}">
-        <image slot="icon"
-               src="../assets/image/serve-def.png"
-               mode="aspectFit" />
-        <image slot="icon-active"
-               src="../assets/image/serve-pre.png"
-               mode="aspectFit" />
+        <image
+          slot="icon"
+          src="../assets/image/serve-def.png"
+          mode="aspectFit"
+        />
+        <image
+          slot="icon-active"
+          src="../assets/image/serve-pre.png"
+          mode="aspectFit"
+        />
         服务
       </van-tabbar-item>
       <van-tabbar-item dot="{{remindData.uctip}}">
-        <image slot="icon"
-               src="../assets/image/my-def.png"
-               mode="aspectFit" />
-        <image slot="icon-active"
-               src="../assets/image/my-pre.png"
-               mode="aspectFit" />
+        <image slot="icon" src="../assets/image/my-def.png" mode="aspectFit" />
+        <image
+          slot="icon-active"
+          src="../assets/image/my-pre.png"
+          mode="aspectFit"
+        />
         我的
       </van-tabbar-item>
     </van-tabbar>
-    <van-popup show="{{ showKF }}"
-               position="bottom"
-               @close="onClose">
+    <van-popup show="{{ showKF }}" position="bottom" @close="onClose">
       <view class="server-kf-pop">
         <text class="server-kf-pop-title">添加老师微信</text>
-        <image src="https://pub.file.k12.vip/gif/donghua_2.gif"
-               class="server-kf-pop-img" />
+        <image
+          src="https://pub.file.k12.vip/gif/donghua_2.gif"
+          class="server-kf-pop-img"
+        />
         <text class="server-kf-pop-text">点击下方按钮</text>
         <text class="server-kf-pop-text red">回复“2”即可添加老师微信</text>
-        <button class="server-kf-pop-btn"
-                open-type="contact">
+        <button class="server-kf-pop-btn" open-type="contact">
           回复“2”立即添加
         </button>
       </view>
     </van-popup>
-    <login :showPopup.sync="showPopup"
-           :show.sync="showSelect"></login>
+    <login :showPopup.sync="showPopup" :show.sync="showSelect"></login>
   </view>
 </template>
 <script>
@@ -162,6 +168,8 @@ export default class Example extends wepy.page {
   }
   methods = {
     toJump(n) {
+      let { sa } = this.$parent.globalData
+      let ButtonTypeArr = ['点评', '点赞', '表扬', '辅导老师']
       if (!this.logined) {
         this.showPopup = true
         return
@@ -180,6 +188,9 @@ export default class Example extends wepy.page {
           wx.navigateTo({ url: '/user/teacher' })
           break
       }
+      sa.track('serviceClick', {
+        ButtonType: ButtonTypeArr[n - 2]
+      })
     },
     clickKfBtn() {
       this.showKF = true
@@ -201,7 +212,7 @@ export default class Example extends wepy.page {
   }
 }
 </script>
-<style lang='scss'>
+<style lang="scss">
 @import '../assets/style/mixin.scss';
 .server {
   &-kf-pop {

@@ -15,6 +15,7 @@
         enable-progress-gesture="{{progressEnable}}"
         loop="{{false}}"
         controls="{{controls}}"
+        @play="bindplay"
         @ended="bindended"
         @timeupdate="bindtimeupdate"
         src="{{learnData.authContentUrl}}"
@@ -134,6 +135,8 @@ export default class Example extends wepy.page {
     isPlay: true,
     isEnd: false,
     isLookBack: false,
+    isReset: false,
+    isFirstPlay: false,
     currentTime: 0,
     time: 0,
     baseTime: 0,
@@ -211,6 +214,7 @@ export default class Example extends wepy.page {
     },
     // 从头开始
     cancle() {
+      this.isReset = true
       this.reset()
       this.resetPoint()
     },
@@ -221,6 +225,7 @@ export default class Example extends wepy.page {
     },
     // 继续学习
     confirm() {
+      this.isReset = false
       this.reset()
       this.videoContext.seek(this.pointData.ctime - 2)
       this.videoContext.play()
@@ -235,11 +240,46 @@ export default class Example extends wepy.page {
         this.InnerAudioContext.play()
       }, 500)
     },
+    bindplay() {
+      let { sa } = this.$parent.globalData
+      if (!this.isFirstPlay) {
+        sa.track('playingVideo', {
+          courseID: '',
+          courseTitle: '',
+          classID: this.learnData.lessonId,
+          className: this.learnData.lessonName,
+          classType: '读写',
+          playProgress: this.learnData.ctime,
+          studyStage: this.isLookBack ? '回看' : '初次上课',
+          playType: this.pointData.resume
+            ? !this.isReset
+              ? '继续观看'
+              : '从头开始'
+            : '初次上课',
+          Source: ''
+        })
+        this.isFirstPlay = true
+      }
+    },
     // 视频播放结束
     bindended() {
       this.isEnd = true
       wx.redirectTo({
         url: `/pages/result?id=${this.pointId}&cid=${this.pointData.id}`
+      })
+      sa.track('finishPlayingVideo', {
+        courseID: '',
+        courseTitle: '',
+        classID: this.learnData.lessonId,
+        className: this.learnData.lessonName,
+        classType: '读写',
+        duration: this.learnData.duration,
+        isFinish: true,
+        playType: this.pointData.resume
+          ? !this.isReset
+            ? '继续观看'
+            : '从头开始'
+          : '初次上课'
       })
     },
     // 视频播放中

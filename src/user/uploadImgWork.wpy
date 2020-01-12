@@ -60,8 +60,10 @@
 
     <camera :isShow.sync="isShowCamera"></camera>
 
-    <successFlowerTemplate :isShow.sync="isOpenPopup" :option.sync="flowerOption"></successFlowerTemplate>
-
+    <successFlowerTemplate
+      :isShow.sync="isOpenPopup"
+      :option.sync="flowerOption"
+    ></successFlowerTemplate>
   </view>
 </template>
 
@@ -72,7 +74,7 @@ import { saveFormId } from '../utils'
 import mHeader from '../components/header'
 import loaded from '../components/loaded'
 import camera from '../components/camera'
-import successFlowerTemplate from '../components/successFlowerTemplate';
+import successFlowerTemplate from '../components/successFlowerTemplate'
 
 export default class UploadImgWork extends wepy.page {
   config = {
@@ -121,20 +123,24 @@ export default class UploadImgWork extends wepy.page {
   }
 
   getSorceByRecordSource() {
-    api.center.getSorceByRecordSource({
-      lessonId: this.queryInfo.id,
-      source: 1
-    }).then(({ data }) => {
-      this.flowerInfo = data.resultData
-      this.flowerOption.flowerNum = this.flowerInfo.count;
-      this.flowerOption.path = `/user/completionOfWork?type=1&id=${this.queryInfo.id}&isPlayAudio=true`
-      this.$apply();
-    });
+    api.center
+      .getSorceByRecordSource({
+        lessonId: this.queryInfo.id,
+        source: 1
+      })
+      .then(({ data }) => {
+        this.flowerInfo = data.resultData
+        this.flowerOption.flowerNum = this.flowerInfo.count
+        this.flowerOption.path = `/user/completionOfWork?type=1&id=${this.queryInfo.id}&isPlayAudio=true`
+        this.$apply()
+      })
   }
 
   toWorkDetail() {
-    this.isOpenPopup = false;
-    wx.navigateTo({ url: `/user/completionOfWork?type=1&id=${this.queryInfo.id}&isPlayAudio=true` });
+    this.isOpenPopup = false
+    wx.navigateTo({
+      url: `/user/completionOfWork?type=1&id=${this.queryInfo.id}&isPlayAudio=true`
+    })
   }
 
   uploadImgFn(fileUrl) {
@@ -215,6 +221,7 @@ export default class UploadImgWork extends wepy.page {
     },
 
     submitWork() {
+      let { lessonDetail } = this
       let { audioContext, playSound } = this.$parent.globalData
       playSound(audioContext, 1)
       if (this.isSending) return

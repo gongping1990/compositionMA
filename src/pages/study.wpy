@@ -1,100 +1,131 @@
 <!--  -->
 <template>
-  <view class='container study'>
-    <mHeader title=""
-             bgColor="transparent"
-             :showBtn.sync="showBtn"
-             flag="3"></mHeader>
+  <view class="container study">
+    <mHeader
+      title=""
+      bgColor="transparent"
+      :showBtn.sync="showBtn"
+      flag="3"
+    ></mHeader>
     <view @tap="bindClickVideo">
-      <video class="video"
-             id="video"
-             style="height:{{isIpx ? 'calc(100vh - 68rpx' : '100vh'}}"
-             show-center-play-btn="{{false}}"
-             enable-progress-gesture="{{progressEnable}}"
-             loop="{{false}}"
-             controls="{{controls}}"
-             @ended="bindended"
-             @timeupdate="bindtimeupdate"
-             src="{{courseInfo.videoUrl}}"></video>
+      <video
+        class="video"
+        id="video"
+        style="height:{{isIpx ? 'calc(100vh - 68rpx' : '100vh'}}"
+        show-center-play-btn="{{false}}"
+        enable-progress-gesture="{{progressEnable}}"
+        loop="{{false}}"
+        controls="{{controls}}"
+        @play="bindplay"
+        @ended="bindended"
+        @timeupdate="bindtimeupdate"
+        src="{{courseInfo.videoUrl}}"
+      ></video>
     </view>
-    <view class="avatar-mask"
-          style="bottom:{{isIpx ? '68rpx' : '0'}}"
-          wx:if="{{!controls}}">
+    <view
+      class="avatar-mask"
+      style="bottom:{{isIpx ? '68rpx' : '0'}}"
+      wx:if="{{!controls}}"
+    >
       <view class="teacher-avatar">
         <view class="teacher-avatar-mask">
           <view class="teacher-avatar-icon"></view>
         </view>
-        <image src="{{roomData.teacherImg}}"
-               class="avatar teacher" />
+        <image src="{{roomData.teacherImg}}" class="avatar teacher" />
       </view>
       <view class="student">
-        <view class="avatar-student"
-              wx:for="{{answerArr}}"
-              wx:key="{{index}}">
-          <image src="{{item.mateImg}}"
-                 class="avatar" />
-          <view class="medal"
-                wx:if="{{item.flower}}">
+        <view class="avatar-student" wx:for="{{answerArr}}" wx:key="{{index}}">
+          <image src="{{item.mateImg}}" class="avatar" />
+          <view class="medal" wx:if="{{item.flower}}">
             <view class="medal-icon"></view>
-            x{{item.flower}}
+            x{{ item.flower }}
           </view>
         </view>
       </view>
     </view>
-    <van-popup show="{{ show }}"
-               overlay="{{false}}"
-               position="bottom">
+    <van-popup show="{{ show }}" overlay="{{false}}" position="bottom">
       <view class="popup">
         <view class="popup-header">
           <view class="popup-header-left">
-            <image src="{{roomData.teacherImg}}"
-               class="popup-header-teacher" />
+            <image src="{{roomData.teacherImg}}" class="popup-header-teacher" />
             <text class="popup-header-teacher-text">请答题</text>
           </view>
           <view class="popup-header-right">
-            <view class="popup-student {{item.status == 1 && 'success'}} {{item.answer == 2 && 'error'}} {{item.status == 2 && 'fq'}}"
-                  wx:for="{{answerArr}}"
-                  wx:key="{{index}}">
-              <image class="popup-student-avatar"
-                     src="{{item.mateImg}}" />
+            <view
+              class="popup-student {{item.status == 1 && 'success'}} {{item.answer == 2 && 'error'}} {{item.status == 2 && 'fq'}}"
+              wx:for="{{answerArr}}"
+              wx:key="{{index}}"
+            >
+              <image class="popup-student-avatar" src="{{item.mateImg}}" />
               <view class="popup-student-status">
-                {{item.answer ? (item.answer ==1 ? '正确' : item.answer ==2 ? '错误' : '已放弃') : (item.status == 2 ? '已放弃' : item.status ? '已回答' : '答题中...')}}
+                {{
+                  item.answer
+                    ? item.answer == 1
+                      ? '正确'
+                      : item.answer == 2
+                      ? '错误'
+                      : '已放弃'
+                    : item.status == 2
+                    ? '已放弃'
+                    : item.status
+                    ? '已回答'
+                    : '答题中...'
+                }}
               </view>
               <view class="popup-student-flower">
-                <flower :flower.sync="flowerOne"
-                        wx:if="{{index == 0}}"></flower>
-                <flower1 :flower.sync="flowerTwo"
-                         wx:if="{{index == 1}}"></flower1>
-                <flower2 :flower.sync="flowerThree"
-                         wx:if="{{index == 2}}"></flower2>
-                <flower3 :flower.sync="flowerFour"
-                         wx:if="{{index == 3}}"></flower3>
+                <flower
+                  :flower.sync="flowerOne"
+                  wx:if="{{index == 0}}"
+                ></flower>
+                <flower1
+                  :flower.sync="flowerTwo"
+                  wx:if="{{index == 1}}"
+                ></flower1>
+                <flower2
+                  :flower.sync="flowerThree"
+                  wx:if="{{index == 2}}"
+                ></flower2>
+                <flower3
+                  :flower.sync="flowerFour"
+                  wx:if="{{index == 3}}"
+                ></flower3>
               </view>
             </view>
-
           </view>
         </view>
-        <view class="result-wrap {{startAnimated && 'animation'}} {{showResult && 'show'}} {{'a' + correctNum}}">
+        <view
+          class="result-wrap {{startAnimated && 'animation'}} {{showResult && 'show'}} {{'a' + correctNum}}"
+        >
           <view class="result-header">
-            <view class="result-title">恭喜以下<view class="result-title-span">{{correctNum}}位</view>同学</view>
+            <view class="result-title">
+              恭喜以下
+              <view class="result-title-span">{{ correctNum }}位</view>
+              同学
+            </view>
             <view class="result-header-icon">
-              <image class="result-header-sz" src="https://pub.file.k12.vip/tbzw/1.5/test/sz.png" />
-              <image class="result-header-zq" src="https://pub.file.k12.vip/tbzw/1.5/test/zq.png" />
+              <image
+                class="result-header-sz"
+                src="https://pub.file.k12.vip/tbzw/1.5/test/sz.png"
+              />
+              <image
+                class="result-header-zq"
+                src="https://pub.file.k12.vip/tbzw/1.5/test/zq.png"
+              />
             </view>
           </view>
           <view class="result-list">
-            <view class="result-item"
-                  wx:for="{{formatAnswerArr}}"
-                  wx:key="index"
-                  wx:if="{{item.answer==1}}">
-              <image class="result-avatar"
-                     src="{{item.mateImg}}" />
+            <view
+              class="result-item"
+              wx:for="{{formatAnswerArr}}"
+              wx:key="index"
+              wx:if="{{item.answer==1}}"
+            >
+              <image class="result-avatar" src="{{item.mateImg}}" />
               <view class="result-icon {{'icon-' + (index + 1)}}"></view>
             </view>
           </view>
         </view>
-        <view class="popup-content"
-              wx:if="{{!showResult}}">
+        <view class="popup-content" wx:if="{{!showResult}}">
           <choiceQuestion
             :question.sync="questionData"
             :selectIndex.sync="selectIndex"
@@ -103,26 +134,46 @@
             @bindClickInput.user="bindClickInput"
           ></choiceQuestion>
         </view>
-        <button class="popup-btn {{answerEnd && 'disabled'}}"
-                disabled="{{answerEnd}}"
-                wx:if="{{!showResult}}"
-                @tap="bindSubmit">
+        <button
+          class="popup-btn {{answerEnd && 'disabled'}}"
+          disabled="{{answerEnd}}"
+          wx:if="{{!showResult}}"
+          @tap="bindSubmit"
+        >
           <view class="popup-btn-text" wx:if="{{answerArr[3].answer}}">
-            {{answerArr[3].answer == 1 ? '回答正确' : (answerArr[3].status == 2 ? '你已放弃作答' : '回答错误')}}
+            {{
+              answerArr[3].answer == 1
+                ? '回答正确'
+                : answerArr[3].status == 2
+                ? '你已放弃作答'
+                : '回答错误'
+            }}
           </view>
           <view class="popup-btn-text" wx:elif="{{answerEnd}}">
             等待老师公布答案
           </view>
           <view class="popup-btn-text" wx:else>
-            确定答案 <text class="popup-btn-text-icon">{{time}}</text>
+            确定答案 <text class="popup-btn-text-icon">{{ time }}</text>
           </view>
         </button>
         <view
           class="popup-msg {{answerArr[3].answer == 1 ? 'suc' : answerArr[3].answer == 2 ? 'err' : answerArr[3].answer == 3 && 'fq'}}"
           wx:if="{{!showResult}}"
         >
-          <text class="popup-msg-title">{{answerArr[3].answer == 1 ? '回答正确' : answerArr[3].status == 2 ? '你已放弃作答' : '回答错误'}}</text>
-          <text class="popup-msg-text">{{answerArr[3].answer == 1 ? '真棒！' : answerArr[3].status == 2 ? '' : '正确答案：' + correctAnswer}}</text>
+          <text class="popup-msg-title">{{
+            answerArr[3].answer == 1
+              ? '回答正确'
+              : answerArr[3].status == 2
+              ? '你已放弃作答'
+              : '回答错误'
+          }}</text>
+          <text class="popup-msg-text">{{
+            answerArr[3].answer == 1
+              ? '真棒！'
+              : answerArr[3].status == 2
+              ? ''
+              : '正确答案：' + correctAnswer
+          }}</text>
         </view>
       </view>
     </van-popup>
@@ -131,22 +182,26 @@
         <view class="dialog-title">课程还没有上完，</view>
         <view class="dialog-title">确定要退出吗？</view>
         <view class="dialog-btn-wrap">
-          <view class="dialog-btn dialog-cancel"
-                @tap="bindClickCancel">确认退出</view>
-          <view class="dialog-btn dialog-confirm"
-                @tap="bindClickConfirm">继续观看</view>
+          <view class="dialog-btn dialog-cancel" @tap="bindClickCancel">
+            确认退出
+            </view>
+          <view class="dialog-btn dialog-confirm" @tap="bindClickConfirm">
+            继续观看
+          </view>
         </view>
       </view>
     </van-popup>
     <van-popup show="{{ showContinueDiaolig }}">
       <view class="dialog out">
-        <view class="dialog-title">你上次已经学习到{{progressTimeText}}</view>
+        <view class="dialog-title">你上次已经学习到{{ progressTimeText }}</view>
         <view class="dialog-title">是否要继续</view>
         <view class="dialog-btn-wrap">
-          <view class="dialog-btn dialog-cancel"
-                @tap="bindClickReset">从头再看</view>
-          <view class="dialog-btn dialog-confirm"
-                @tap="bindClickConfirmTwo">继续观看</view>
+          <view class="dialog-btn dialog-cancel" @tap="bindClickReset">
+            从头再看
+          </view>
+          <view class="dialog-btn dialog-confirm" @tap="bindClickConfirmTwo">
+            继续观看
+          </view>
         </view>
       </view>
     </van-popup>
@@ -177,6 +232,7 @@ export default class Example extends wepy.page {
     lessonId: 0,
     videoContext: null,
     isLookBack: 0,
+    isReset: false,
     show: false,
     showBtn: false,
     showDialog: false,
@@ -205,6 +261,7 @@ export default class Example extends wepy.page {
     ],
     answerArr: [],
     currentTime: 0,
+    isFirstPlay: false,
     isPlay: true,
     courseInfo: {},
     roomData: {},
@@ -243,6 +300,7 @@ export default class Example extends wepy.page {
   }
   methods = {
     bindClickReset() {
+      this.isReset = true
       this.showContinueDiaolig = false
       this.getLessonRoom(1)
     },
@@ -260,6 +318,7 @@ export default class Example extends wepy.page {
     },
     bindClickConfirmTwo() {
       this.reset()
+      this.isReset = true
       this.showContinueDiaolig = false
       this.videoContext.seek(this.roomData.progressTime)
       this.videoContext.play()
@@ -284,7 +343,7 @@ export default class Example extends wepy.page {
       let { audioContext, playSound } = this.$parent.globalData
       playSound(audioContext, 1)
       if (this.questionData.qetype >= 3) {
-        if(selectIndex.length < questionData.optionList.length) {
+        if (selectIndex.length < questionData.optionList.length) {
           wx.showToast({
             title: '你还没有完成答题呦！', // 提示的内容,
             icon: 'none', // 图标,
@@ -305,7 +364,30 @@ export default class Example extends wepy.page {
       this.answerEnd = true
       this.imitateEnd && (this.time = 1)
     },
+    bindplay() {
+      let { sa } = this.$parent.globalData
+      if (!this.isFirstPlay) {
+        sa.track('playingVideo', {
+          courseID: '',
+          courseTitle: '',
+          classID: this.lessonId,
+          className: '',
+          classType: '作文',
+          playProgress: this.roomData.progressTime,
+          studyStage: this.isLookBack ? '回看' : '初次上课',
+          playType:
+            this.isReset
+              ? this.roomData.stage > 0
+                ? '继续观看'
+                : '从头开始'
+              : '初次上课',
+          Source: ''
+        })
+        this.isFirstPlay = true
+      }
+    },
     bindended() {
+      let {sa} = this.$parent.globalData
       this.isEnd = true
       if (!this.isLookBack) {
         this.changeLearnStage(this.roomData.id, 2)
@@ -313,6 +395,21 @@ export default class Example extends wepy.page {
       } else {
         wx.redirectTo({ url: '/user/submitHomework?id=' + this.lessonId })
       }
+      sa.track('finishPlayingVideo', {
+          courseID: '',
+          courseTitle: '',
+          classID: this.lessonId,
+          className: '',
+          classType: '作文',
+          isFinish: true,
+          playType:
+            this.isReset
+              ? this.roomData.stage > 0
+                ? '继续观看'
+                : '从头开始'
+              : '初次上课',
+          duration: this.currentTime
+        })
     },
     bindtimeupdate(event) {
       let { currentTime } = event.detail
@@ -441,7 +538,10 @@ export default class Example extends wepy.page {
       this.answerArr[3].answer = 3
     }
     this.setAnswerStatusEnd = true
-    this.saveWrongSubject(this.selectIndex === this.correctAnswer, this.questionData.questionId)
+    this.saveWrongSubject(
+      this.selectIndex === this.correctAnswer,
+      this.questionData.questionId
+    )
 
     setTimeout(() => {
       this.showResult = true
@@ -615,7 +715,7 @@ export default class Example extends wepy.page {
   }
 }
 </script>
-<style lang='scss'>
+<style lang="scss">
 @import '../assets/style/mixin.scss';
 .study {
   height: 100vh;
@@ -702,7 +802,7 @@ export default class Example extends wepy.page {
         width: 334px;
         height: 204px;
         transform: scale(0);
-        transition: all 1.6s cubic-bezier(.90, .24, .39, .92);
+        transition: all 1.6s cubic-bezier(0.9, 0.24, 0.39, 0.92);
       }
       &-zq {
         position: absolute;
@@ -712,7 +812,7 @@ export default class Example extends wepy.page {
         left: 50%;
         bottom: 0;
         transform: translateX(-50%);
-        transition: all 0.6s 1s cubic-bezier(.90, .24, .39, .92);
+        transition: all 0.6s 1s cubic-bezier(0.9, 0.24, 0.39, 0.92);
       }
     }
     &-title {
@@ -727,7 +827,7 @@ export default class Example extends wepy.page {
       white-space: nowrap;
       transition: all 1s;
       &-span {
-        color: #FB762F;
+        color: #fb762f;
       }
     }
     &-list {
@@ -783,7 +883,6 @@ export default class Example extends wepy.page {
         height: auto;
       }
       &.animation {
-
         .result-header {
           background-position-y: 0;
         }
@@ -854,17 +953,17 @@ export default class Example extends wepy.page {
       padding: 27px 32px;
       bottom: -200px;
       left: 50%;
-      width:620px;
-      height:140px;
+      width: 620px;
+      height: 140px;
       background-size: 160px;
       background-repeat: no-repeat;
       background-position-y: bottom;
       background-position-x: right;
-      background-color: rgba(255,255,255,1);
-      box-shadow:0px 3px 20px 0px rgba(221,224,230,1);
-      border-radius:20px;
+      background-color: rgba(255, 255, 255, 1);
+      box-shadow: 0px 3px 20px 0px rgba(221, 224, 230, 1);
+      border-radius: 20px;
       transform: translateX(-50%);
-      transition: all .3s;
+      transition: all 0.3s;
       &-title {
         font-size: 36px;
         line-height: 36px;
@@ -885,7 +984,7 @@ export default class Example extends wepy.page {
         background-image: url('https://pub.file.k12.vip/tbzw/1.5/study/suc-icon.png');
         .popup-msg {
           &-title {
-            color: #08D67D;
+            color: #08d67d;
           }
         }
       }
@@ -893,7 +992,7 @@ export default class Example extends wepy.page {
         background-image: url('https://pub.file.k12.vip/tbzw/1.5/study/err-icon.png');
         .popup-msg {
           &-title {
-            color: #FF7B33;
+            color: #ff7b33;
           }
         }
       }
@@ -901,7 +1000,7 @@ export default class Example extends wepy.page {
         background-image: url('https://pub.file.k12.vip/tbzw/1.5/study/fq-icon.png');
         .popup-msg {
           &-title {
-            color: #B2B2B2;
+            color: #b2b2b2;
           }
         }
       }
@@ -915,7 +1014,8 @@ export default class Example extends wepy.page {
       height: 108px;
       font-size: 36px;
       color: #fff;
-      background: url('https://pub.file.k12.vip/tbzw/1.5/study/btn.png') no-repeat;
+      background: url('https://pub.file.k12.vip/tbzw/1.5/study/btn.png')
+        no-repeat;
       background-size: 100%;
       &-text {
         @include flex-center;
@@ -929,7 +1029,7 @@ export default class Example extends wepy.page {
       }
       &.disabled {
         color: #fff;
-        opacity: 0.7 ;
+        opacity: 0.7;
       }
     }
     .input {
@@ -947,15 +1047,15 @@ export default class Example extends wepy.page {
         color: #333333;
         border-radius: 40px;
         background: #fff;
-        border: 4px solid #ECEEF2;
+        border: 4px solid #eceef2;
         &.select {
-          color: #FFC000;
-          border-color: #FFC000;
+          color: #ffc000;
+          border-color: #ffc000;
         }
         &.success {
           color: #fff;
-          border-color: #08D67D;
-          background: #08D67D;
+          border-color: #08d67d;
+          background: #08d67d;
           &::after {
             @include bg('/sk/icon-true.png');
             content: '';
@@ -969,8 +1069,8 @@ export default class Example extends wepy.page {
         }
         &.error {
           color: #fff;
-          border-color: #FF7B33;
-          background: #FF7B33;
+          border-color: #ff7b33;
+          background: #ff7b33;
           &::after {
             @include bg('/sk/icon-fause.png');
             content: '';
@@ -993,7 +1093,7 @@ export default class Example extends wepy.page {
       margin-bottom: 10px;
       width: 100px;
       height: 100px;
-      border: 4px solid #FFC81F;
+      border: 4px solid #ffc81f;
       border-radius: 50%;
       transition: all 0.3s;
       &-flower {
@@ -1018,29 +1118,29 @@ export default class Example extends wepy.page {
         width: 90px;
         height: 30px;
         font-size: 20px;
-        text-shadow:0px 2px 2px rgba(198,139,11,0.44);
+        text-shadow: 0px 2px 2px rgba(198, 139, 11, 0.44);
         color: #fff;
-        background: #FFC81F;
-        border-radius:10px;
+        background: #ffc81f;
+        border-radius: 10px;
         transition: all 0.3s;
         transform: translateX(-50%);
       }
       &.success {
-        border-color: #08D67D;
+        border-color: #08d67d;
         .popup-student-status {
-          background: #08D67D;
+          background: #08d67d;
         }
       }
       &.error {
-        border-color: #FF6136;
+        border-color: #ff6136;
         .popup-student-status {
-          background: #FF6136;
+          background: #ff6136;
         }
       }
       &.fq {
-        border-color: #B2B2B2;
+        border-color: #b2b2b2;
         .popup-student-status {
-          background: #B2B2B2;
+          background: #b2b2b2;
         }
       }
     }
@@ -1053,7 +1153,7 @@ export default class Example extends wepy.page {
         width: 100px;
         height: 100px;
         position: relative;
-        border:4px solid #FF9000;
+        border: 4px solid #ff9000;
         border-radius: 50%;
       }
       &-right {
@@ -1062,27 +1162,27 @@ export default class Example extends wepy.page {
         justify-content: space-between;
         box-sizing: border-box;
         padding: 0 21px;
-        width:520px;
-        height:146px;
-        background:rgba(245,244,244,1);
-        border-radius:20px;
+        width: 520px;
+        height: 146px;
+        background: rgba(245, 244, 244, 1);
+        border-radius: 20px;
       }
       &-teacher {
         box-sizing: border-box;
         width: 100px;
         height: 100px;
-        border:4px solid #fff;
+        border: 4px solid #fff;
         border-radius: 50%;
         &-text {
           @include flex-center;
           top: -7px;
           right: -32px;
           position: absolute;
-          width:75px;
-          height:39px;
-          background:rgba(255,144,0,1);
-          border:2px solid rgba(255, 255, 255, 1);
-          border-radius:20px 20px 20px 0px;
+          width: 75px;
+          height: 39px;
+          background: rgba(255, 144, 0, 1);
+          border: 2px solid rgba(255, 255, 255, 1);
+          border-radius: 20px 20px 20px 0px;
           font-size: 20px;
           color: #fff;
           font-weight: 500;
@@ -1182,7 +1282,7 @@ export default class Example extends wepy.page {
   0% {
     left: -40px;
     bottom: 300px;
-    opacity: 0
+    opacity: 0;
   }
   10% {
     left: -40px;

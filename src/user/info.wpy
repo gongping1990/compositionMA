@@ -1,7 +1,7 @@
 <!-- 辅导老师列表 -->
 <template>
   <view class="container info">
-    <mHeader flag="4" title="完善学籍信息"></mHeader>
+    <mHeader flag="0" title="完善学籍信息"></mHeader>
     <view class="container-scroll info-content" style="margin-top:{{height}}px">
       <!--<text class="info-msg">为了给您匹配适合的课程，请填写以下信息</text>-->
       <view class="info-sex">
@@ -68,7 +68,6 @@ import mHeader from '../components/header'
     return state.user.audioList
   }
 })
-
 export default class Info extends wepy.page {
   config = {
     navigationBarTitleText: ''
@@ -162,13 +161,14 @@ export default class Info extends wepy.page {
       params.id = id
     }
     api.user.addMyChild(params).then(({ data }) => {
-      let path = wx.getStorageSync('redirect')
       wx.showToast({
         title: '信息已完善', //提示的内容,
         icon: 'none' //图标
       })
       this.getBottomTipsVO()
-      wx.redirectTo({ url: path })
+      wx.navigateBack({
+        delta: 1 //返回的页面数，如果 delta 大于现有页面数，则返回到首页,
+      })
       this.$apply()
     })
   }
@@ -177,7 +177,10 @@ export default class Info extends wepy.page {
     api.center
       .getBottomTipsVO()
       .then(({ data }) => {
-        getStore().dispatch({ type: 'UPDATE_TAB_REMIND', payload: data.resultData })
+        getStore().dispatch({
+          type: 'UPDATE_TAB_REMIND',
+          payload: data.resultData
+        })
       })
       .catch(e => {})
   }

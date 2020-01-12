@@ -16,7 +16,7 @@
               共{{ item.lessons }}节|已学{{ item.studys }}节
             </text>
             <text class="course-text" wx:if="{{queryInfo.isErrorBook}}">
-              共{{item.wrongSubject}}道
+              共{{ item.wrongSubject }}道
             </text>
           </view>
         </view>
@@ -72,12 +72,13 @@ export default class Example extends wepy.page {
   methods = {
     toCourseDetail(data) {
       if (this.logined && !this.remindData.hasChild) {
-        wx.setStorageSync('redirect', '/user/myCourse')
-        wx.redirectTo({ url: '/user/info' })
+        wx.navigateTo({ url: '/user/info' })
         return
       }
       wx.navigateTo({
-        url: `/user/${!this.queryInfo.isErrorBook ? 'lesson' : 'errorBook'}?id=${data.courseId}`
+        url: `/user/${
+          !this.queryInfo.isErrorBook ? 'lesson' : 'errorBook'
+        }?id=${data.courseId}`
       })
     }
   }

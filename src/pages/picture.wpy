@@ -95,7 +95,6 @@ export default class Example extends wepy.page {
     },
     confirmBack() {
       this.showBack = false
-      this.videoContext.play()
     },
     confirm() {
       this.showDialog = false
@@ -116,6 +115,7 @@ export default class Example extends wepy.page {
   computed = {}
 
   initPage() {
+    let { pageTimes } = this
     let { ibookList, authContentUrl } = this.learnData
     InnerAudioContext.onEnded(() => {
       wx.redirectTo({
@@ -127,7 +127,6 @@ export default class Example extends wepy.page {
     InnerAudioContext.onTimeUpdate(() => {
       let time = parseInt(InnerAudioContext.currentTime)
       let activePage = ibookList[time]
-      console.log(time)
       if (activePage) {
         this.current = activePage.index - 1
         this.activePage = activePage
@@ -135,6 +134,9 @@ export default class Example extends wepy.page {
       this.$apply()
     })
     InnerAudioContext.src = authContentUrl
+    if (this.current) {
+      InnerAudioContext.seek(+pageTimes[this.current])
+    }
     InnerAudioContext.play()
   }
 

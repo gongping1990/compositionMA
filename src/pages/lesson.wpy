@@ -168,7 +168,11 @@
               </view>
             </view>
             <view class="_listen-item-right">
-              <view class="_listen-item-flower" @tap="bindClickBtn({{item}})" wx:if="{{item.state == 5}}">
+              <view
+                class="_listen-item-flower"
+                @tap="bindClickBtn({{item}})"
+                wx:if="{{item.state == 5}}"
+              >
                 <view class="_listen-item-flower-icon"></view>
                 x {{ item.score }}
               </view>
@@ -323,8 +327,7 @@ export default class Lesson extends wepy.page {
     },
     remindData(n) {
       if (this.logined && !n.hasChild) {
-        wx.setStorageSync('redirect', '/pages/lesson')
-        wx.redirectTo({ url: '/user/info' })
+        wx.navigateTo({ url: '/user/info' })
       }
     }
   }
@@ -369,6 +372,16 @@ export default class Lesson extends wepy.page {
       this.listCompositionWeekLesson()
     },
     bindClickBtn(lesson) {
+      let {sa} = this.$parent.globalData
+      sa.track('playingClass', {
+        ButtonType: lesson.stateText,
+        courseID: '',
+        courseTitle: '',
+        courseList: this.nowWeek ? '本周' : '上周',
+        classID: lesson.id,
+        className: lesson.name,
+        classType: lesson.category == 1 ? '作文' : '读写'
+      })
       if (lesson.category == 1) {
         if (!lesson.stage) {
           if (lesson.state !== 4) {
@@ -389,7 +402,7 @@ export default class Lesson extends wepy.page {
           wx.navigateTo({ url: '/user/submitHomework?id=' + lesson.id })
         }
       } else {
-        if(!lesson.stage && lesson.state == 4) {
+        if (!lesson.stage && lesson.state == 4) {
           return
         }
         wx.navigateTo({ url: '/pages/lessonDetail?id=' + lesson.id })
@@ -537,8 +550,7 @@ export default class Lesson extends wepy.page {
   onShow() {
     if (this.logined) {
       if (!this.remindData.hasChild) {
-        wx.setStorageSync('redirect', '/user/lesson')
-        wx.redirectTo({ url: '/user/info' })
+        wx.navigateTo({ url: '/user/info' })
         return
       }
       this.getAttendClassCatalog()

@@ -21,6 +21,7 @@
                 send-message-title="{{item.cardtitle}}"
                 send-message-path="{{'/pages/index?homeConfig=' + item.sessionFrom}}"
                 send-message-img="{{item.cardimgurl}}"
+                @tap="bindClickBanner({{item}})"
               >
                 <image
                   mode="aspectFill"
@@ -471,6 +472,14 @@ export default class Home extends wepy.page {
     tooltip
   }
   methods = {
+    bindClickBanner(item) {
+      let {sa} = this.$parent.globalData
+      sa.track('bannerClick', {
+        bannerName: item.name,
+        bannerId: item.id,
+        url: item.href
+      })
+    },
     bindscrolltolower() {
       let { tabActive } = this
       if (tabActive) {
@@ -620,10 +629,10 @@ export default class Home extends wepy.page {
       type: 1
     }).then(({data}) => {
       this.systemConfig = data.resultData
-      if(data.resultData.param == '0') {
-        wx.redirectTo({ url: '/pages/detail' });
-        return
-      }
+      // if(data.resultData.param == '0') {
+      //   wx.redirectTo({ url: '/pages/detail' });
+      //   return
+      // }
       // if(!this.logined && data.resultData.param == '1') {
       //   this.initWelcome()
       // }

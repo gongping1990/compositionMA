@@ -1,49 +1,46 @@
 <!--  -->
 <template>
-  <view class='container card'>
+  <view class="container card">
     <mHeader title="打卡记录"></mHeader>
-    <view class="container-scroll"
-          style="margin-top:{{height}}px">
+    <view class="container-scroll" style="margin-top:{{height}}px">
       <view class="card-header">
         <view class="card-day">
           <view class="card-day-left">
-            <view class="card-day-time">你好，截止今天 ({{todayTime}})</view>
+            <view class="card-day-time">你好，截止今天 ({{ todayTime }})</view>
             <view class="card-day-num">
-              {{cardDetail.totaldays||0}}天
+              {{ cardDetail.totaldays || 0 }}天
               <text>累计打卡</text>
             </view>
             <view class="card-day-num">
-              {{cardDetail.continuousdays||0}}天
+              {{ cardDetail.continuousdays || 0 }}天
               <text>连续打卡</text>
             </view>
           </view>
           <view class="card-day-right"></view>
         </view>
-        <view class="card-btn {{cardDetail.todayCard ? 'isCard' : ''}}"
-              @tap="addMyCard">
-          {{cardDetail.todayCard ? '真棒！今天已打卡' : '未打卡，立即打卡'}}
+        <view
+          class="card-btn {{cardDetail.todayCard ? 'isCard' : ''}}"
+          @tap="addMyCard"
+        >
+          {{ cardDetail.todayCard ? '真棒！今天已打卡' : '未打卡，立即打卡' }}
         </view>
       </view>
       <view class="card-content">
         <view class="card-content-header">
           <text class="card-content-title">打卡记录</text>
           <view class="canlendar-control">
-            <view class="canlendar-control-pre"
-                  @tap="bindClickPre"></view>
-            <text class="canlendar-control-title">{{today}}</text>
-            <view class="canlendar-control-next"
-                  @tap="bindClickNext"></view>
+            <view class="canlendar-control-pre" @tap="bindClickPre"></view>
+            <text class="canlendar-control-title">{{ today }}</text>
+            <view class="canlendar-control-next" @tap="bindClickNext"></view>
           </view>
         </view>
         <calendar :card.sync="cardList"></calendar>
       </view>
-      <van-popup show="{{ show }}"
-                 bind:close="onClose">
+      <van-popup show="{{ show }}" bind:close="onClose">
         <view class="dialog">
           <view class="dialog-icon"></view>
           <text class="dialog-text">今日已打卡成功</text>
-          <view class="dialog-btn"
-                @tap="bindClose">我知道了</view>
+          <view class="dialog-btn" @tap="bindClose">我知道了</view>
         </view>
       </van-popup>
 
@@ -55,21 +52,22 @@
           </view>
 
           <view class="card-popup-flex">
-            <button class="card-popup-btn card-popup-btn2"
-                    @tap="closePopup">我知道了</button>
+            <button class="card-popup-btn card-popup-btn2" @tap="closePopup">
+              我知道了
+            </button>
             <!--<button class="card-popup-btn card-popup-btn2"-->
-                    <!--@tap="toLearn">立即学习</button>-->
+            <!--@tap="toLearn">立即学习</button>-->
           </view>
-
         </view>
 
-        <van-icon name="close"
-                  class="p-submitHomework-close"
-                  color="#fff"
-                  size="36px"
-                  @click="closePopup" />
+        <van-icon
+          name="close"
+          class="p-submitHomework-close"
+          color="#fff"
+          size="36px"
+          @click="closePopup"
+        />
       </van-popup>
-
     </view>
   </view>
 </template>
@@ -83,10 +81,10 @@ import mHeader from '../components/header'
 import testMixin from '../mixins/test'
 
 @connect({
-  userInfo (state) {
+  userInfo(state) {
     return state.user.userInfo
   },
-  remindData (state) {
+  remindData(state) {
     return state.user.remindData
   }
 })
@@ -96,86 +94,95 @@ export default class Example extends wepy.page {
     usingComponents: {
       'van-popup': '../vant/popup/index'
     }
-  };
+  }
   data = {
     today: '',
     cardDetail: '',
     show: false,
     showNoLearn: false
-  };
+  }
   components = {
     calendar,
     mHeader
-  };
-  mixins = [testMixin];
+  }
+  mixins = [testMixin]
 
-  getCardInfo () {
-    api.study.countCard()
-      .then(res => {
-        this.cardDetail = res.data.resultData
-        this.$apply()
-      })
-  };
+  getCardInfo() {
+    api.study.countCard().then(res => {
+      this.cardDetail = res.data.resultData
+      this.$apply()
+    })
+  }
 
   methods = {
-    toLearn () {
-      wx.navigateTo({ url: `/pages/classroom?id=${this.cardDetail.todayLessonId}` })
+    toLearn() {
+      wx.navigateTo({
+        url: `/pages/classroom?id=${this.cardDetail.todayLessonId}`
+      })
     },
-    addMyCard () {
+    addMyCard() {
+      let { sa } = this.$parent.globalData
       if (this.cardDetail.todayLearned) {
         if (this.cardDetail.todayCard) return
-        api.study.addCard()
-          .then(() => {
-            this.show = true
-            this.$invoke('calendar', 'getCardList')
-            this.$apply()
+        api.study.addCard().then(() => {
+          this.show = true
+          this.$invoke('calendar', 'getCardList')
+          this.$apply()
+          sa.track('courseClockRecord', {
+            courseID: '',
+            courseTitle: '',
+            isSuccess: true,
+            classID: '',
+            className: '',
+            classType: ''
           })
+        })
       } else {
         this.showNoLearn = true
       }
     },
-    closePopup () {
+    closePopup() {
       this.showNoLearn = false
     },
-    bindClose () {
+    bindClose() {
       this.show = !this.show
       this.getCardInfo()
     },
-    bindClickPre () {
+    bindClickPre() {
       this.$invoke('calendar', 'preMonth')
     },
-    bindClickNext () {
+    bindClickNext() {
       this.$invoke('calendar', 'nextMonth')
     }
-  };
+  }
   events = {
-    today (date) {
+    today(date) {
       this.today = date
     }
-  };
-  watch = {};
+  }
+  watch = {}
   computed = {
-    height () {
+    height() {
       return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
     },
-    todayTime () {
+    todayTime() {
       return dayjs(new Date()).format('MM月DD日')
     }
-  };
+  }
 
-  onShow () {
+  onShow() {
     this.getCardInfo()
-  };
+  }
 
-  onUnload () {
+  onUnload() {
     this.showNoLearn = false
   }
 
-  onHide () {
+  onHide() {
     this.showNoLearn = false
   }
 
-  onShareAppMessage () {
+  onShareAppMessage() {
     return {
       title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
       path: `/pages/index`,
@@ -184,7 +191,7 @@ export default class Example extends wepy.page {
   }
 }
 </script>
-<style lang='scss'>
+<style lang="scss">
 @import '../assets/style/mixin.scss';
 
 .card {

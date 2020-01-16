@@ -646,7 +646,6 @@ export default class SubmitHomework extends wepy.page {
         classType: lessonDetail.category == 1 ? '作文' : '读写',
         homeworkID: lessonDetail.id,
         homeworkType: lessonDetail.homeworkType == 1 ? '音频' : '图片',
-        Source: ''
       })
     },
     lookWorkDetail(data) {

@@ -1,51 +1,72 @@
 <template>
   <view class="container _write">
     <mHeader title="课时目录" flag="1"></mHeader>
-    <view
+     <scroll-view
       class="container-scroll"
       style="margin-top:{{height}}px;height: calc(100vh - {{height}}px)"
-    >
-    </view>
+      scroll-y
+      scroll-with-animation
+      >
+      <catalog @clickItem.user="clickItem" :lessonList.sync="lessonList">
+    </scroll-view>
+    <van-popup show="{{ showDialog }}" z-index="{{200}}">
+      <view class="__common-dialog">
+        <view class="__common-dialog-icon mt"></view>
+        <view class="__common-dialog-text">
+          <view>今日已解锁3个课时，</view>
+          <view>明天再来解锁更多课时吧！</view>
+
+        </view>
+        <view class="__common-dialog-btn" @tap="closeDialog">我知道了</view>
+      </view>
+    </van-popup>
+    <van-popup show="{{ showDialogOne }}" z-index="{{200}}">
+      <view class="__common-dialog">
+        <view class="__common-dialog-icon js"></view>
+        <view class="__common-dialog-text">
+          <view>上交最新课程的作业即可解锁下一课</view>
+
+        </view>
+        <view class="__common-dialog-btn" @tap="closeDialog">我知道了</view>
+      </view>
+    </van-popup>
   </view>
 </template>
 <script>
 import wepy from 'wepy'
 import mHeader from '../components/header'
+import catalog from '../components/catalog'
 export default class Write extends wepy.page {
   config = {
-    navigationBarTitleText: ''
+    usingComponents: {
+      'van-popup': '../vant/popup/index'
+    }
   }
   data = {
-    lessonId: 0,
-    lessonData: {}
+    showDialog: false,
+    showDialogOne: false,
+    courseId: 0,
+    lessonList: []
   }
   components = {
-    mHeader
+    mHeader,
+    catalog
   }
   methods = {
-    bindClickItem(item) {
-      let { audioContext, playSound } = this.$parent.globalData
-      let url =
-        item.type == 1
-          ? '/pages/picture?id=' + item.id
-          : '/pages/video?id=' + item.id
-      if (item.passed) {
-        url += '&lookback=1'
-      }
-      console.log(url)
-      if (!item.unlocked) return
-      playSound(audioContext, 1)
-      if (item.workCp) {
-        wx.redirectTo({
-          url: `/literacy/l_submitHomework?id=${item.id}`
-        })
+    closeDialog() {
+      this.showDialog = false
+      this.showDialogOne = false
+    },
+    clickItem(item) {
+      if(!item.unLock) {
+        this.showDialogOne = true
         return
       }
-      if (item.type == 1) {
-        wx.navigateTo({ url })
-      } else {
-        wx.navigateTo({ url })
+      if(item.maxUnLock) {
+        this.showDialog = true
+        return
       }
+      wx.navigateTo({ url: '/pages/writeStudy?id=' + item.lessonId });
     }
   }
   events = {}
@@ -58,12 +79,13 @@ export default class Write extends wepy.page {
 
   listWritingLessonCatalog() {
     let { api } = this.$parent.globalData
+    if(this.lessonList.length >= this.total) return
     api.study
       .listWritingLessonCatalog({
         courseId: this.courseId
       })
       .then(({ data }) => {
-        this.lessonData = data.resultData
+        this.lessonList = data.resultData
         this.$apply()
       })
   }

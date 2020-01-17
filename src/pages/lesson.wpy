@@ -241,6 +241,25 @@
         我的
       </van-tabbar-item>
     </van-tabbar>
+    <van-popup show="{{ showDialog }}" z-index="{{200}}">
+      <view class="__common-dialog">
+        <view class="__common-dialog-icon mt"></view>
+        <view class="__common-dialog-text">
+          <view>今日已解锁3个课时，</view>
+          <view>明天再来解锁更多课时吧！</view>
+        </view>
+        <view class="__common-dialog-btn" @tap="closeDialog">我知道了</view>
+      </view>
+    </van-popup>
+    <van-popup show="{{ showDialogOne }}" z-index="{{200}}">
+      <view class="__common-dialog">
+        <view class="__common-dialog-icon js"></view>
+        <view class="__common-dialog-text">
+          <view>上交最新课程的作业即可解锁下一课</view>
+        </view>
+        <view class="__common-dialog-btn" @tap="closeDialog">我知道了</view>
+      </view>
+    </van-popup>
     <login :showPopup.sync="showPopup" :show.sync="showSelect"></login>
     <load wx:if="{{loading}}"></load>
     <error wx:if="{{isError}}"></error>
@@ -288,6 +307,8 @@ export default class Lesson extends wepy.page {
   }
 
   data = {
+    showDialog: false,
+    showDialogOne: false,
     showTry: false,
     isError: false,
     loading: false,
@@ -334,6 +355,10 @@ export default class Lesson extends wepy.page {
   }
 
   methods = {
+    closeDialog() {
+      this.showDialog = false
+      this.showDialogOne = false
+    },
     clickMsgIcon() {
       this.showMsg = !this.showMsg
     },
@@ -383,6 +408,7 @@ export default class Lesson extends wepy.page {
         className: lesson.name,
         classType: lesson.category == 1 ? '作文' : '读写'
       })
+      // lesson.category  1 作文课， 2 读写课 3写字课
       if (lesson.category == 1) {
         if (!lesson.stage) {
           if (lesson.state !== 4) {
@@ -403,12 +429,24 @@ export default class Lesson extends wepy.page {
           wx.navigateTo({ url: '/user/submitHomework?id=' + lesson.id })
         }
       } else if (lesson.category == 2) {
+        // 读写课
         if (!lesson.stage && lesson.state == 4) {
           return
         }
         wx.navigateTo({ url: '/pages/lessonDetail?id=' + lesson.id })
       } else {
+        // 写字课
+        if (!lesson.locked) {
+          this.showDialogOne = true
+          return
+        }
         if (!lesson.stage && lesson.state == 4) {
+          return
+        }
+        if (lesson.stage === 3) {
+          wx.navigateTo({
+            url: `/literacy/w_uploadImgWork?id=${lesson.id}`
+          })
           return
         }
         wx.navigateTo({ url: '/pages/writeStudy?id=' + lesson.id })
@@ -445,6 +483,10 @@ export default class Lesson extends wepy.page {
               ? e.openTime + '开课'
               : stateArr[e.state - 1]
           e.stateClass = classArr[e.state - 1]
+          if (e.category == 3) {
+            e.stateText = e.locked ? e.stateText : '待解锁'
+            e.stateClass = e.locked ? e.stateClass : 'dkk'
+          }
           if (e.learnDate) {
             time = e.learnDate.split('/')
             e.learnDate = time[1] + '月' + time[2] + '日'
@@ -520,7 +562,7 @@ export default class Lesson extends wepy.page {
                 '去学习',
                 '开始学习',
                 '交作业',
-                '待开课',
+                _e.category > 1 ? '待解锁' : '待开课',
                 '回看',
                 '预约上课'
               ]

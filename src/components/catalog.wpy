@@ -1,0 +1,92 @@
+<template>
+  <view class="catalog">
+    <view
+      class="catalog-item"
+      wx:for="{{lessonList}}"
+      wx:key="{{item.lessonId}}"
+      @tap="clickItem({{item}})"
+    >
+      <view class="{{item.passed && 'success'}} {{!item.unLock && 'disabled'}}">
+        <view class="catalog-item-left">
+          <view class="catalog-item-title">{{ item.lessonName }}</view>
+          <view class="catalog-item-text">{{ item.mark }}</view>
+        </view>
+        <view class="catalog-item-icon "></view>
+      </view>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+export default class Catalog extends wepy.component {
+  props = {
+    lessonList: Array
+  }
+  data = {}
+  components = {}
+  methods = {
+    clickItem(item) {
+      this.$emit('clickItem', item)
+    }
+  }
+  events = {}
+  watch = {}
+  computed = {}
+}
+</script>
+<style lang="scss">
+@import '../assets/style/mixin.scss';
+.catalog {
+  box-sizing: border-box;
+  width: 100vw;
+  background: #fff;
+  padding: 32px;
+  padding-top: 60px;
+  max-height: 80vh;
+  overflow-y: auto;
+  border-radius: 20px 20px 0 0;
+  &-item {
+    box-sizing: border-box;
+    margin-bottom: 32px;
+    width: 686px;
+    height: 180px;
+    background: #fff;
+    box-shadow: 0px 0px 60px 0px rgba(237, 239, 243, 1);
+    border-radius: 20px;
+    & > view {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-sizing: border-box;
+      height: 180px;
+      padding: 0 45px;
+    }
+    &-title {
+      margin-bottom: 25px;
+      font-size: 30px;
+      color: #333;
+      font-weight: 500;
+      .disabled & {
+        color: #999;
+      }
+    }
+    &-text {
+      font-size: 28px;
+      color: #333333;
+      .disabled & {
+        color: #999;
+      }
+    }
+    &-icon {
+      width: 60px;
+      height: 60px;
+      .success & {
+        @include bg('/1.8/work/success.png');
+      }
+      .disabled & {
+        @include bg('/1.8/work/suo.png');
+      }
+    }
+  }
+}
+</style>

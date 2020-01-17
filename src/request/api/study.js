@@ -151,6 +151,12 @@ const study = {
   },
   setUpPlayback() {
     return request.get('/compositionv2/lesson/setUpPlayback')
+  },
+  pageCompanionHomeWork(params) {
+    return request.get('/compositionv2/lesson/pageCompanionHomeWork', params)
+  },
+  finishWritingLesson(params) {
+    return request.get('/compositionv2/lesson/finishWritingLesson', params)
   }
 }
 

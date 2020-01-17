@@ -10,6 +10,7 @@
           class="write-video"
           autoplay="{{false}}"
           loop="{{loop}}"
+          @timeupdate="bindtimeupdate"
         >
           <cover-view class="write-video-loop {{!loop && 'disabled'}}" @tap="changeLoop"></cover-view>
         </video>
@@ -17,6 +18,7 @@
         scroll-y
         scroll-with-animation
         style="height: calc(100vh - {{height + 235}}px)"
+        @scrolltolower="bindscrolltolower"
       >
         <view class="write-scroll">
           <view class="write-scroll-header">
@@ -26,7 +28,7 @@
               </view>
               <view class="write-title">{{lessonData.lessonName}}</view>
             </view>
-            <view class="write-catalog">
+            <view class="write-catalog" @tap="changeShowCatalog">
               <view class="write-catalog-icon"></view>
               <text>目录</text>
             </view>
@@ -34,16 +36,16 @@
           <view class="write-yd">
             <view class="write-yd-text" wx:for="{{lessonData.learncontent}}" wx:key="{{index}}">{{index + 1}}. {{item}}</view>
           </view>
-          <view class="write-work">
+          <view class="write-work" wx:if="{{workList.length}}">
             <view class="write-work-title">
               <view class="write-work-icon"></view>
               同学作业
             </view>
             <view class="write-list">
-              <view class="write-item">
+              <view class="write-item" wx:for="{{workList}}" wx:key="{{item.workId}}">
                 <view class="write-item-cover">
                   <image
-                    src="{{}}"
+                    src="{{item.homeworkList[0]}}"
                     mode="widthFix" />
                 </view>
                 <view class="write-item-content">
@@ -52,9 +54,9 @@
                     <view class="write-item-user">
                       <image
                         class="write-item-avatar"
-                        src="{{}}"
+                        src="{{item.headimgurl}}"
                       >
-                      <text class="write-item-name">乐乐</text>
+                      <text class="write-item-name">{{item.nickname}}</text>
                     </view>
                     <view class="write-item-date">2天前</view>
                   </view>
@@ -77,7 +79,7 @@
         <text>（自动解锁下节）</text>
       </view>
     </view>
-    <van-popup show="{{ showDialog }}">
+    <van-popup show="{{ showDialog }}" z-index="{{200}}">
       <view class="__common-dialog">
         <view class="__common-dialog-icon mt"></view>
         <view class="__common-dialog-text">
@@ -88,10 +90,25 @@
         <view class="__common-dialog-btn" @tap="closeDialog">我知道了</view>
       </view>
     </van-popup>
+    <van-popup show="{{ showDialogOne }}" z-index="{{200}}">
+      <view class="__common-dialog">
+        <view class="__common-dialog-icon js"></view>
+        <view class="__common-dialog-text">
+          <view>上交最新课程的作业即可解锁下一课</view>
+
+        </view>
+        <view class="__common-dialog-btn" @tap="closeDialog">我知道了</view>
+      </view>
+    </van-popup>
+    <van-popup show="{{showCatalog}}" position="bottom" @close="closeDialog">
+      <catalog @clickItem.user="clickItem" :lessonList.sync="calalog" wx:if="{{calalog.length}}" />
+    </van-popup>
   </view>
 </template>
 <script>
 import wepy from 'wepy'
+import {getDateDiff} from '../utils/getDateDiff.js'
+import catalog from '../components/catalog'
 import createHanziWriterContext from 'hanzi-writer-miniprogram'
 import mHeader from '../components/header'
 export default class WriteStudy extends wepy.page {
@@ -103,17 +120,60 @@ export default class WriteStudy extends wepy.page {
   }
   data = {
     showDialog: false,
+    showDialogOne: false,
+    showCatalog: false,
     loop: true,
+    currentTime: 0,
     lessonId: 0,
+    total: 10,
+    current: 1,
     calalog: [],
+    workList: [],
     lessonData: {}
   }
   components = {
-    mHeader
+    mHeader,
+    catalog
   }
   methods = {
+    bindtimeupdate(event) {
+      let {currentTime, duration}  = event.detail
+      let time = parseInt(currentTime)
+      if(time != this.currentTime) {
+        this.currentTime = time
+        if(time == (parseInt(duration) - 2)) {
+          this.finishWritingLesson()
+        }
+      }
+    },
+    bindscrolltolower() {
+      this.pageCompanionHomeWork()
+    },
+    clickItem(item) {
+      if(item.lessonId == this.lessonId) {
+        wx.showToast({
+          title: '该课程正在学习', //提示的内容,
+          icon: 'none', //图标,
+        });
+        return
+      }
+      if(!item.unLock) {
+        this.showDialogOne = true
+        return
+      }
+      if(item.maxUnLock) {
+        this.showDialog = true
+        return
+      }
+      this.getWritingLessonInfo(item.lessonId)
+    },
     closeDialog() {
+      this.showDialogOne = false
       this.showDialog = false
+      this.showCatalog = false
+    },
+    changeShowCatalog() {
+      this.showCatalog = !this.showCatalog
     },
     clickComment() {
       wx.navigateTo({
@@ -124,11 +184,7 @@ export default class WriteStudy extends wepy.page {
     },
     clickWorkBtn() {
       wx.navigateTo({
-        url: `/user/${
-          this.lessonData.type == 1
-            ? 'uploadAudioWork'
-            : 'uploadImgWork'
-        }?id=${this.lessonData.lessonId}`
+        url: `/literacy/w_uploadImgWork?id=${this.lessonData.lessonId}`
       })
     },
     clicNextLesson() {
@@ -151,6 +207,14 @@ export default class WriteStudy extends wepy.page {
     }
   }
 
+  finishWritingLesson() {
+    let { api } = this.$parent.globalData
+    api.study
+      .finishWritingLesson({
+        lessonId: this.lessonId
+      })
+  }
+
   listWritingLessonCatalog() {
     let { api } = this.$parent.globalData
     api.study
@@ -162,12 +226,33 @@ export default class WriteStudy extends wepy.page {
       })
   }
 
+  pageCompanionHomeWork() {
+    let { api } = this.$parent.globalData
+    if(this.total <= this.workList.length) return
+    api.study.pageCompanionHomeWork({
+      current: this.current,
+      size: 10,
+      lessonId: this.lessonId
+    }).then(({data}) => {
+      this.current += 1
+      this.total = data.resultData.total
+      this.workList = data.resultData.records.map(e => {
+        e.dateTime = getDateDiff(e.submitTime)
+        return e
+      })
+      this.$apply()
+    })
+  }
+
   setUpPlayback() {
     let { api } = this.$parent.globalData
     api.study.setUpPlayback()
   }
   getWritingLessonInfo(lessonId) {
     let { api } = this.$parent.globalData
+    if(lessonId) {
+      this.lessonId = lessonId
+    }
     api.study
       .getWritingLessonInfo({
         lessonId: lessonId || this.lessonId
@@ -175,19 +260,25 @@ export default class WriteStudy extends wepy.page {
       .then(({ data }) => {
         this.lessonData = data.resultData
         this.loop = data.resultData.playback
+        this.writerCtx = createHanziWriterContext({
+          id: 'hz-writer',
+          character: data.resultData.stroke || '文',
+          page: this.$wxpage,
+          padding: 7
+        })
+        this.writerCtx.loopCharacterAnimation()
         this.listWritingLessonCatalog()
+        this.pageCompanionHomeWork()
+        this.showDialogOne = false
+        this.showDialog = false
+        this.showCatalog = false
+        this.current = 1
+        this.total = 10
         this.$apply()
       })
   }
   onLoad(option) {
     this.lessonId = option.id
-    this.writerCtx = createHanziWriterContext({
-      id: 'hz-writer',
-      character: '文',
-      page: this.$wxpage,
-      padding: 7
-    })
-    this.writerCtx.loopCharacterAnimation()
   }
   onShow() {
     this.getWritingLessonInfo()

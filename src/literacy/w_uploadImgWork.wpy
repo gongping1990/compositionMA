@@ -12,7 +12,7 @@
       </view>
 
       <view class="p-w_uploadImgWork-text">
-        <textarea class="-text-textarea" maxlength="25" placeholder="自动变高" />
+        <view class="-text-textarea">{{nowText}}</view>
         <view class="-text-down">
           <view class="-text-left">不超过25个字</view>
           <view class="-text-btn" @tap="changeTip">换一句</view>
@@ -75,8 +75,10 @@
         twoText: '老师随后为你点评，请留意微信通知',
         path: ''
       },
+      nowText: '',
+      textObj: {},
       isOpenPopup: false,
-      isShowCamera: false,
+      isShowCamera: true,
       isSending: false,
       flowerInfo: {},
       queryInfo: {},
@@ -91,6 +93,17 @@
         })
         .then(res => {
           this.lessonDetail = res.data.resultData;
+          this.textObj = {
+            '1': '每天的坚持让我收获满满，耶！',
+            '2': '我的字越写越好了，开心^-^',
+            '3': '今天又是收获满满的一天，越来越喜欢乐小狮练字课了',
+            '4': '我要努力写得更好，让老师把我推上墙做小明星',
+            '5': 'xx老师的字太漂亮了，我要努力向他学习',
+            '6': `坚持练字第${this.lessonDetail.learnDays}天，我每天必做的事就是来乐小狮练字`,
+            '7': `第${this.lessonDetail.learnDays}天练字打卡，坚持就是胜利，加油加油`
+          };
+
+          this.randomFn();
           this.$apply();
         });
     }
@@ -111,7 +124,7 @@
       let _self = this;
       if (_self.isSending) return;
       _self.isSending = true;
-      _self.workImgList = []
+      _self.workImgList = [];
       wx.showToast({
         icon: 'loading',
         duration: 100000,
@@ -154,9 +167,16 @@
       });
     }
 
-    methods = {
-      changeTip () {
+    randomFn () {
+      let num = parseInt(Math.random() * 10);
+      num === 0 && (num = 1)
+      num > 7 && (num = 7)
+      this.nowText = this.textObj[num]
+    }
 
+    methods = {
+      changeTip() {
+        this.randomFn()
       },
       submit(e) {
         saveFormId(e.detail.formId);
@@ -182,7 +202,7 @@
             .then(
               res => {
                 this.isSending = false;
-                this.isOpenPopup = true
+                this.isOpenPopup = true;
                 // this.toWorkDetail();
                 this.$apply();
               },
@@ -215,6 +235,7 @@
       }
       this.getLessonInfo();
       this.getSorceByRecordSource();
+      console.log(parseInt(Math.random() * 10, 7));
     }
 
     onHide() {
@@ -231,9 +252,9 @@
     &-title {
       display: inline-block;
       margin: 48px auto 34px;
-      font-size:34px;
-      font-weight:500;
-      color:rgba(0,0,0,1);
+      font-size: 34px;
+      font-weight: 500;
+      color: rgba(0, 0, 0, 1);
     }
 
     &-tip {
@@ -241,9 +262,9 @@
 
       .-tip-img {
         margin: 0 auto;
-        width:686px;
-        height:686px;
-        border-radius:20px;
+        width: 686px;
+        height: 686px;
+        border-radius: 20px;
       }
 
     }
@@ -255,18 +276,18 @@
       box-sizing: border-box;
       padding: 24px;
       margin: 38px auto 48px;
-      width:686px;
-      height:230px;
-      background:rgba(245,246,250,1);
-      border-radius:20px;
+      width: 686px;
+      height: 230px;
+      background: rgba(245, 246, 250, 1);
+      border-radius: 20px;
 
       .-text-textarea {
         text-align: left;
         width: 100%;
-        font-size:32px;
-        line-height: 32px;
-        font-weight:500;
-        color:rgba(51,51,51,1);
+        font-size: 32px;
+        line-height: 40px;
+        font-weight: 500;
+        color: rgba(51, 51, 51, 1);
       }
 
       .-text-down {
@@ -275,29 +296,29 @@
       }
 
       .-text-left {
-        height:23px;
-        font-size:24px;
-        font-weight:500;
-        color:rgba(153,153,153,1);
+        height: 23px;
+        font-size: 24px;
+        font-weight: 500;
+        color: rgba(153, 153, 153, 1);
       }
 
       .-text-btn {
         text-align: center;
-        width:129px;
-        height:51px;
+        width: 129px;
+        height: 51px;
         line-height: 51px;
-        background:rgba(99,196,255,1);
-        border-radius:10px;
-        font-size:32px;
-        font-weight:500;
-        color:rgba(255,255,255,1);
+        background: rgba(99, 196, 255, 1);
+        border-radius: 10px;
+        font-size: 32px;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 1);
       }
     }
 
     &-footer {
       margin: 0 32px 30px;
 
-      .-footer-wrap{
+      .-footer-wrap {
         @include flex-center;
         justify-content: space-between;
       }
@@ -305,11 +326,11 @@
       .-footer-cancleBtn {
 
         text-align: center;
-        width:331px;
-        height:88px;
-        background:rgba(255,255,255,1);
-        border:2px solid rgba(231, 231, 231, 1);
-        border-radius:44px;
+        width: 331px;
+        height: 88px;
+        background: rgba(255, 255, 255, 1);
+        border: 2px solid rgba(231, 231, 231, 1);
+        border-radius: 44px;
         font-size: 32px;
         font-weight: 500;
         color: #999999;
@@ -318,10 +339,10 @@
 
       .-footer-okBtn {
         text-align: center;
-        width:331px;
-        height:88px;
-        background:rgba(255,192,0,1);
-        border-radius:44px;
+        width: 331px;
+        height: 88px;
+        background: rgba(255, 192, 0, 1);
+        border-radius: 44px;
         font-size: 32px;
         font-weight: 500;
         color: #ffffff;

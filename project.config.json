@@ -141,8 +141,8 @@
 				},
 				{
 					"id": 12,
-					"name": "literacy/l_uploadImgWork",
-					"pathName": "literacy/l_uploadImgWork",
+					"name": "literacy/w_uploadImgWork",
+					"pathName": "literacy/w_uploadImgWork",
 					"query": "id=1214016363879219201",
 					"scene": null
 				},

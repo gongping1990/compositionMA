@@ -110,6 +110,50 @@ button {
     }
   }
 }
+.__common-dialog {
+  @include flex-column-center;
+  justify-content: space-between;
+  position: relative;
+  box-sizing: border-box;
+  padding-top: 174px;
+  padding-bottom: 46px;
+  width: 602px;
+  height: 424px;
+  background: rgba(255, 255, 255, 1);
+  border-radius: 40px;
+  &-icon {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 216px;
+    height: 216px;
+    transform: translate(-50%, -50%);
+    &.js {
+      @include bg('/1.8/work/js-icon.png');
+    }
+    &.mt {
+      @include bg('/1.8/work/mt-icon.png');
+    }
+  }
+  &-text {
+    text-align: center;
+    font-size: 32px;
+    line-height: 36px;
+    color: #000;
+    view {
+      margin-bottom: 6px;
+    }
+  }
+  &-btn {
+    @include flex-center;
+    width: 241px;
+    height: 88px;
+    background: rgba(255, 192, 0, 1);
+    border-radius: 44px;
+    font-size: 32px;
+    color: #fff;
+  }
+}
 </style>
 
 <script>
@@ -183,7 +227,8 @@ export default class extends wepy.app {
       'pages/authorize',
       'pages/enroll',
       'pages/sharePoster',
-      'pages/result'
+      'pages/result',
+      'pages/writeCatalog'
     ],
     subPackages: [
       {

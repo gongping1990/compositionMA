@@ -164,7 +164,8 @@
             <view class="_listen-item-left">
               <view class="_listen-item-title">{{ item.name }}</view>
               <view class="_listen-item-text">
-                {{ item.learnDate }} | {{ item.learnNum }}人已学
+                {{ item.learnDate || item.lessonTips }} |
+                {{ item.learnNum }}人已学
               </view>
             </view>
             <view class="_listen-item-right">
@@ -372,7 +373,7 @@ export default class Lesson extends wepy.page {
       this.listCompositionWeekLesson()
     },
     bindClickBtn(lesson) {
-      let {sa} = this.$parent.globalData
+      let { sa } = this.$parent.globalData
       sa.track('playingClass', {
         ButtonType: lesson.stateText,
         courseID: '',
@@ -401,11 +402,16 @@ export default class Lesson extends wepy.page {
         } else {
           wx.navigateTo({ url: '/user/submitHomework?id=' + lesson.id })
         }
-      } else {
+      } else if (lesson.category == 2) {
         if (!lesson.stage && lesson.state == 4) {
           return
         }
         wx.navigateTo({ url: '/pages/lessonDetail?id=' + lesson.id })
+      } else {
+        if (!lesson.stage && lesson.state == 4) {
+          return
+        }
+        wx.navigateTo({ url: '/pages/writeStudy?id=' + lesson.id })
       }
     }
   }
@@ -429,7 +435,7 @@ export default class Lesson extends wepy.page {
             '去学习',
             '开始学习',
             '交作业',
-            '待开课',
+            '待解锁',
             '回看',
             '预约上课'
           ]
@@ -439,8 +445,10 @@ export default class Lesson extends wepy.page {
               ? e.openTime + '开课'
               : stateArr[e.state - 1]
           e.stateClass = classArr[e.state - 1]
-          time = e.learnDate.split('/')
-          e.learnDate = time[1] + '月' + time[2] + '日'
+          if (e.learnDate) {
+            time = e.learnDate.split('/')
+            e.learnDate = time[1] + '月' + time[2] + '日'
+          }
           return e
         })
         this.showTry = true

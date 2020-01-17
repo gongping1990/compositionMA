@@ -139,6 +139,18 @@ const study = {
   },
   updatePoint(params) {
     return request.post('/compositionv2/stucheckpoint/updatePoint', params)
+  },
+  getWritingLessonInfo(params) {
+    return request.get('/compositionv2/lesson/getWritingLessonInfo', params)
+  },
+  listWritingLessonCatalog(params) {
+    return request.get('/compositionv2/lesson/listWritingLessonCatalog', params)
+  },
+  pageWritingLessonCatalog(params) {
+    return request.get('/compositionv2/lesson/pageWritingLessonCatalog', params)
+  },
+  setUpPlayback() {
+    return request.get('/compositionv2/lesson/setUpPlayback')
   }
 }
 

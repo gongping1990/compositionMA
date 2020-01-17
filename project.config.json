@@ -57,9 +57,9 @@
 			"list": [
 				{
 					"id": 0,
-					"name": "pages/card",
-					"pathName": "pages/card",
-					"query": "id=1173416243014283266",
+					"name": "pages/writeStudy",
+					"pathName": "pages/writeStudy",
+					"query": "id=1217988422719926274",
 					"scene": null
 				},
 				{

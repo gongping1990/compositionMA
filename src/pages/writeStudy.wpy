@@ -6,13 +6,12 @@
       style="margin-top:{{height}}px;height: calc(100vh - {{height}}px)"
     >
       <video
-          src="{{}}"
+          src="{{lessonData.authVideoUrl}}"
           class="write-video"
-          controls="true"
-          autoplay="true"
+          autoplay="{{false}}"
           loop="{{loop}}"
         >
-          <cover-view class="write-video-loop"></cover-view>
+          <cover-view class="write-video-loop {{!loop && 'disabled'}}" @tap="changeLoop"></cover-view>
         </video>
       <scroll-view
         scroll-y
@@ -25,7 +24,7 @@
               <view class="write-hanzi">
                 <hanzi-writer-view id="hz-writer" width="46" height="46" />
               </view>
-              <view class="write-title">第一课：文</view>
+              <view class="write-title">{{lessonData.lessonName}}</view>
             </view>
             <view class="write-catalog">
               <view class="write-catalog-icon"></view>
@@ -33,8 +32,7 @@
             </view>
           </view>
           <view class="write-yd">
-            <view class="write-yd-text">1.横平绝对</view>
-            <view class="write-yd-text">2.撇捺对称撇捺对称</view>
+            <view class="write-yd-text" wx:for="{{lessonData.learncontent}}" wx:key="{{index}}">{{index + 1}}. {{item}}</view>
           </view>
           <view class="write-work">
             <view class="write-work-title">
@@ -68,11 +66,28 @@
       </scroll-view>
     </view>
     <view class="write-nav">
-      <view class="write-btn">
+      <view class="write-btn dp" wx:if="{{lessonData.passed}}" @tap="clickComment">
+        <view>查看老师点评</view>
+      </view>
+      <view class="write-btn" wx:if="{{lessonData.passed && lessonData}}" @tap="clicNextLesson">
+        <view>下一课</view>
+      </view>
+      <view class="write-btn" wx:if="{{!lessonData.passed}}" @tap="clickWorkBtn">
         <view>上交作业</view>
         <text>（自动解锁下节）</text>
       </view>
     </view>
+    <van-popup show="{{ showDialog }}">
+      <view class="__common-dialog">
+        <view class="__common-dialog-icon mt"></view>
+        <view class="__common-dialog-text">
+          <view>今日已解锁3个课时，</view>
+          <view>明天再来解锁更多课时吧！</view>
+
+        </view>
+        <view class="__common-dialog-btn" @tap="closeDialog">我知道了</view>
+      </view>
+    </van-popup>
   </view>
 </template>
 <script>
@@ -82,41 +97,50 @@ import mHeader from '../components/header'
 export default class WriteStudy extends wepy.page {
   config = {
     usingComponents: {
+      'van-popup': '../vant/popup/index',
       'hanzi-writer-view': '../miniprogram_dist/hanzi-writer-view'
     }
   }
   data = {
+    showDialog: false,
     loop: true,
     lessonId: 0,
+    calalog: [],
     lessonData: {}
   }
   components = {
     mHeader
   }
   methods = {
-    bindClickItem(item) {
-      let { audioContext, playSound } = this.$parent.globalData
-      let url =
-        item.type == 1
-          ? '/pages/picture?id=' + item.id
-          : '/pages/video?id=' + item.id
-      if (item.passed) {
-        url += '&lookback=1'
-      }
-      console.log(url)
-      if (!item.unlocked) return
-      playSound(audioContext, 1)
-      if (item.workCp) {
-        wx.redirectTo({
-          url: `/literacy/l_submitHomework?id=${item.id}`
-        })
+    closeDialog() {
+      this.showDialog = false
+    },
+    clickComment() {
+      wx.navigateTo({
+        url: `/user/completionOfWork?type=1&id=${
+          this.lessonData.lessonId
+        }`
+      })
+    },
+    clickWorkBtn() {
+      wx.navigateTo({
+        url: `/user/${
+          this.lessonData.type == 1
+            ? 'uploadAudioWork'
+            : 'uploadImgWork'
+        }?id=${this.lessonData.lessonId}`
+      })
+    },
+    clicNextLesson() {
+      if(this.lessonData.maxUnLock) {
+        this.showDialog = true
         return
       }
-      if (item.type == 1) {
-        wx.navigateTo({ url })
-      } else {
-        wx.navigateTo({ url })
-      }
+      this.getWritingLessonInfo(this.lessonData.nextLessonId)
+    },
+    changeLoop() {
+      this.loop = !this.loop
+      this.setUpPlayback()
     }
   }
   events = {}
@@ -127,14 +151,31 @@ export default class WriteStudy extends wepy.page {
     }
   }
 
-  getThreeLessonInfo() {
+  listWritingLessonCatalog() {
     let { api } = this.$parent.globalData
     api.study
-      .getThreeLessonInfo({
-        lessonId: this.lessonId
+      .listWritingLessonCatalog({
+        courseId: this.lessonData.courseId
+      }).then(({data}) => {
+        this.calalog = data.resultData
+        this.$apply()
+      })
+  }
+
+  setUpPlayback() {
+    let { api } = this.$parent.globalData
+    api.study.setUpPlayback()
+  }
+  getWritingLessonInfo(lessonId) {
+    let { api } = this.$parent.globalData
+    api.study
+      .getWritingLessonInfo({
+        lessonId: lessonId || this.lessonId
       })
       .then(({ data }) => {
         this.lessonData = data.resultData
+        this.loop = data.resultData.playback
+        this.listWritingLessonCatalog()
         this.$apply()
       })
   }
@@ -149,7 +190,7 @@ export default class WriteStudy extends wepy.page {
     this.writerCtx.loopCharacterAnimation()
   }
   onShow() {
-    this.getThreeLessonInfo()
+    this.getWritingLessonInfo()
   }
 }
 </script>
@@ -174,8 +215,10 @@ export default class WriteStudy extends wepy.page {
   &-nav {
     @include flex-center;
     position: fixed;
+    box-sizing: border-box;
     left: 0;
     bottom: 0;
+    padding: 0 32px;
     width:750px;
     height:124px;
     background:rgba(255,255,255,1);
@@ -184,11 +227,23 @@ export default class WriteStudy extends wepy.page {
   }
   &-btn {
     @include flex-column-center;
-    width:686px;
+    flex: 1;
+    box-sizing: border-box;
     height:92px;
     background:rgba(255,192,1,1);
     box-shadow:0px 6px 8px 0px rgba(255,192,1,0.4);
     border-radius:50px;
+    &.dp {
+      background: #fff;
+      box-shadow:0px 6px 8px 0px rgba(255,192,1,0.35);
+      border:2px solid rgba(255,192,1,1);
+      view {
+        color: #FFC001;
+      }
+    }
+    & + & {
+      margin-left: 34px;
+    }
     view {
       font-size: 32px;
       color: #fff;

@@ -115,7 +115,7 @@
       }).then(({ data }) => {
         this.flowerInfo = data.resultData;
         this.flowerOption.flowerNum = this.flowerInfo.count;
-        this.flowerOption.path = `/user/completionOfWork?type=1&id=${this.queryInfo.id}&isPlayAudio=true`;
+        this.flowerOption.path = `/pages/writeStudy?id=${this.queryInfo.id}`;
         this.$apply();
       });
     }

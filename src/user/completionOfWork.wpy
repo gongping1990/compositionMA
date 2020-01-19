@@ -546,9 +546,15 @@
         this.isShowConfirm = false;
 
         if (bool === 'true') {
-          wx.navigateTo({
-            url: `/user/${this.workDetail.homeworkType == 1 ? 'uploadAudioWork' : 'uploadImgWork'}?id=${this.workDetail.lessonId}`
-          });
+          if (this.workDetail.category === 3) {
+            wx.navigateTo({
+              url: `/literacy/w_uploadImgWork?id=${this.workDetail.lessonId}`
+            });
+          } else {
+            wx.navigateTo({
+              url: `/user/${this.workDetail.homeworkType == 1 ? 'uploadAudioWork' : 'uploadImgWork'}?id=${this.workDetail.lessonId}`
+            });
+          }
         }
       }
     };

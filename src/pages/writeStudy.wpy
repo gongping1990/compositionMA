@@ -49,7 +49,7 @@
                     mode="widthFix" />
                 </view>
                 <view class="write-item-content">
-                  <view class="write-item-title">我每天都来乐小狮练字，已经坚持了5天了</view>
+                  <view class="write-item-title">{{item.slogan}}</view>
                   <view class="write-item-info">
                     <view class="write-item-user">
                       <image
@@ -58,7 +58,7 @@
                       >
                       <text class="write-item-name">{{item.nickname}}</text>
                     </view>
-                    <view class="write-item-date">2天前</view>
+                    <view class="write-item-date">{{item.dateTime}}</view>
                   </view>
                 </view>
               </view>
@@ -260,25 +260,28 @@ export default class WriteStudy extends wepy.page {
       .then(({ data }) => {
         this.lessonData = data.resultData
         this.loop = data.resultData.playback
-        this.writerCtx = createHanziWriterContext({
-          id: 'hz-writer',
-          character: data.resultData.stroke || '文',
-          page: this.$wxpage,
-          padding: 7
-        })
+        this.writerCtx.setCharacter(data.resultData.stroke || '你')
         this.writerCtx.loopCharacterAnimation()
-        this.listWritingLessonCatalog()
+        if(!this.calalog.length) {
+          this.listWritingLessonCatalog()
+        }
+        this.current = 1
+        this.total = 10
         this.pageCompanionHomeWork()
         this.showDialogOne = false
         this.showDialog = false
         this.showCatalog = false
-        this.current = 1
-        this.total = 10
         this.$apply()
       })
   }
   onLoad(option) {
     this.lessonId = option.id
+    this.writerCtx = createHanziWriterContext({
+      id: 'hz-writer',
+      character: '文',
+      page: this.$wxpage,
+      padding: 7
+    })
   }
   onShow() {
     this.getWritingLessonInfo()

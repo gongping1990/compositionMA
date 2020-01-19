@@ -261,7 +261,7 @@ export default class WriteStudy extends wepy.page {
       .then(({ data }) => {
         this.lessonData = data.resultData
         this.loop = data.resultData.playback
-        this.writerCtx.setCharacter(data.resultData.stroke || '')
+        this.writerCtx.setCharacter(data.resultData.stroke || '空')
         this.writerCtx.loopCharacterAnimation()
         if(!this.calalog.length) {
           this.listWritingLessonCatalog()
@@ -279,7 +279,7 @@ export default class WriteStudy extends wepy.page {
     this.lessonId = option.id
     this.writerCtx = createHanziWriterContext({
       id: 'hz-writer',
-      character: '',
+      character: '空',
       page: this.$wxpage,
       padding: 7
     })

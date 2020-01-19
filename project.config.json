@@ -64,9 +64,9 @@
 				},
 				{
 					"id": 1,
-					"name": "pages/picture",
-					"pathName": "pages/picture",
-					"query": "id=1214095493148721153&lookback=1",
+					"name": "pages/writeCatalog",
+					"pathName": "pages/writeCatalog",
+					"query": "id=1217988296437821442",
 					"scene": null
 				},
 				{

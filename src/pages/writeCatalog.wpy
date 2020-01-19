@@ -1,14 +1,18 @@
 <template>
   <view class="container _write">
     <mHeader title="课时目录" flag="1"></mHeader>
+
      <scroll-view
       class="container-scroll"
-      style="margin-top:{{height}}px;height: calc(100vh - {{height}}px)"
+
       scroll-y
       scroll-with-animation
       >
-      <catalog @clickItem.user="clickItem" :lessonList.sync="lessonList">
+
     </scroll-view>
+    <view style="margin-top:{{height}}px;">
+      <catalog @clickItem.user="clickItem" :height.sync="height" :lessonList.sync="lessonList">
+    </view>
     <van-popup show="{{ showDialog }}" z-index="{{200}}">
       <view class="__common-dialog">
         <view class="__common-dialog-icon mt"></view>

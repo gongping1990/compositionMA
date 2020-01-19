@@ -8,7 +8,7 @@
       <video
           src="{{lessonData.authVideoUrl}}"
           class="write-video"
-          autoplay="{{false}}"
+          autoplay="{{true}}"
           loop="{{loop}}"
           @timeupdate="bindtimeupdate"
         >
@@ -23,8 +23,8 @@
         <view class="write-scroll">
           <view class="write-scroll-header">
             <view class="write-scroll-header_left">
-              <view class="write-hanzi">
-                <hanzi-writer-view id="hz-writer" width="46" height="46" />
+              <view class="write-hanzi" hidden="{{showCatalog}}">
+                <hanzi-writer-view id="hz-writer" width="46" height="46"  />
               </view>
               <view class="write-title">{{lessonData.lessonName}}</view>
             </view>
@@ -174,6 +174,7 @@ export default class WriteStudy extends wepy.page {
     },
     changeShowCatalog() {
       this.showCatalog = !this.showCatalog
+      this.$broadcast('scrollView')
     },
     clickComment() {
       wx.navigateTo({
@@ -260,7 +261,7 @@ export default class WriteStudy extends wepy.page {
       .then(({ data }) => {
         this.lessonData = data.resultData
         this.loop = data.resultData.playback
-        this.writerCtx.setCharacter(data.resultData.stroke || '你')
+        this.writerCtx.setCharacter(data.resultData.stroke || '')
         this.writerCtx.loopCharacterAnimation()
         if(!this.calalog.length) {
           this.listWritingLessonCatalog()
@@ -278,7 +279,7 @@ export default class WriteStudy extends wepy.page {
     this.lessonId = option.id
     this.writerCtx = createHanziWriterContext({
       id: 'hz-writer',
-      character: '文',
+      character: '',
       page: this.$wxpage,
       padding: 7
     })

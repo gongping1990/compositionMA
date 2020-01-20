@@ -1123,6 +1123,7 @@ export default class SubmitHomework extends wepy.page {
     right: 44px;
     width: 199px;
     height: 161px;
+    z-index: 9999;
 
     .-yes-card {
       background: url('https://pub.file.k12.vip/2019/09/19/1174615812725411842.png');

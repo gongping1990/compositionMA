@@ -168,11 +168,7 @@
           return;
         }
         if (!item.unLock) {
-          this.showDialogOne = true;
-          return;
-        }
-        if (item.maxUnLock) {
-          this.showDialog = true;
+          item.maxUnLock ? (this.showDialog = true) : (this.showDialogOne = true)
           return;
         }
         this.getWritingLessonInfo(item.lessonId);

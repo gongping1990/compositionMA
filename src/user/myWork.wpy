@@ -24,8 +24,7 @@
               <view class="-list-item-left">
                 <view class="-left-name">{{ list.name }}</view>
                 <view class="-left-time {{ list.status == 1 ? 'ts' : ''}}">
-                  {{ list.time
-                  }}{{
+                  {{ list.time}}({{weekList[list.week]}}){{
                     tabActive === '1'
                       ? list.status == 1
                         ? '的作业不合格'
@@ -88,6 +87,15 @@ export default class MyWork extends wepy.page {
     isShow: false,
     queryInfo: {},
     dataList: [],
+    weekList: {
+      '1': '周一',
+      '2': '周二',
+      '3': '周三',
+      '4': '周四',
+      '5': '周五',
+      '6': '周六',
+      '7': '周日'
+    },
     emptyOption: {
       url: 'https://pub.file.k12.vip/tbzw/v2/empty/wtj.png',
       text: '真棒，你没有需要上交的作业！'

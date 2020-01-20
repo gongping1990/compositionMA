@@ -73,7 +73,7 @@
       <view class="write-btn dp" wx:if="{{lessonData.passed}}" @tap="clickComment">
         <view>查看老师点评</view>
       </view>
-      <view class="write-btn" wx:if="{{lessonData.passed && lessonData}}" @tap="clicNextLesson">
+      <view class="write-btn" wx:if="{{lessonData.passed && lessonData.nextLessonId}}" @tap="clicNextLesson">
         <view>下一课</view>
       </view>
       <view class="write-btn" wx:if="{{!lessonData.passed}}" @tap="clickWorkBtn">
@@ -206,10 +206,6 @@
         });
       },
       clicNextLesson() {
-        if (!this.lessonData.nextLessonId) {
-          this.showDialog = true;
-          return;
-        }
         this.getWritingLessonInfo(this.lessonData.nextLessonId);
       },
       changeLoop() {

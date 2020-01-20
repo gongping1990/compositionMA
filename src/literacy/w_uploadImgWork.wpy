@@ -197,6 +197,7 @@
           api.study
             .addHomework({
               lessonId: this.queryInfo.id,
+              slogan: this.nowText,
               workImg: this.workImgList
             })
             .then(

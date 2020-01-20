@@ -2,130 +2,135 @@
   <van-popup show="{{ isShow }}">
     <view class="p-successFlowerTemplate">
       <view class="p-successFlowerTemplate-title">
-        <view class="-title-one">{{option.oneText}}</view>
-        <view class="-title-two">恭喜获得{{option.flowerNum}}朵小红花</view>
+        <view class="-title-one">{{ option.oneText }}</view>
+        <view class="-title-two">恭喜获得{{ option.flowerNum }}朵小红花</view>
       </view>
       <view class="p-successFlowerTemplate-img">
-        <image class="-img-icon"
-               src="https://pub.file.k12.vip/2020/01/03/1213016856014237697.png"
-               mode="widthFix"></image>
+        <image
+          class="-img-icon"
+          src="https://pub.file.k12.vip/2020/01/03/1213016856014237697.png"
+          mode="widthFix"
+        ></image>
       </view>
-      <view class="p-successFlowerTemplate-flower">+{{option.flowerNum}}朵小红花</view>
-      <view class="p-successFlowerTemplate-text">{{option.twoText}}</view>
+      <view class="p-successFlowerTemplate-flower">
+        +{{ option.flowerNum }}朵小红花
+      </view>
+      <view class="p-successFlowerTemplate-text">{{ option.twoText }}</view>
       <view class="p-successFlowerTemplate-btn" @tap="jumpUrl">我知道了</view>
     </view>
   </van-popup>
 </template>
 
 <script>
-  import wepy from 'wepy';
+import wepy from 'wepy'
 
-  export default class SuccessFlowerTemplate extends wepy.component {
-    props = {
-      isShow: {
-        type: Boolean,
-        default: false,
-        twoWay: true
-      },
-      option: {
-        type: Object,
-        default: {}
-      }
-    };
-
-    data = {
-      myAudio: ''
-    };
-
-    watch= {
-      isShow (_n,) {
-        _n && this.playGuideAudio()
-      }
+export default class SuccessFlowerTemplate extends wepy.component {
+  props = {
+    isShow: {
+      type: Boolean,
+      default: false,
+      twoWay: true
+    },
+    option: {
+      type: Object,
+      default: {}
     }
-
-    playGuideAudio(src) {
-      this.myAudio = wx.createInnerAudioContext();
-      this.myAudio.src = 'https://pub.file.k12.vip/2019/12/13/1205371668852912129.mp3'
-      this.myAudio.play()
-    }
-
-    methods = {
-      jumpUrl() {
-        this.isShow = false;
-        if (this.option.path) {
-          wx.navigateTo({
-            url: this.option.path
-          });
-        }
-      }
-    };
-
-    events = {};
-
-    onLoad() {}
   }
+
+  data = {
+    myAudio: ''
+  }
+
+  watch = {
+    isShow(_n) {
+      _n && this.playGuideAudio()
+    }
+  }
+
+  playGuideAudio(src) {
+    this.myAudio = wx.createInnerAudioContext()
+    this.myAudio.src =
+      'https://pub.file.k12.vip/2019/12/13/1205371668852912129.mp3'
+    this.myAudio.play()
+  }
+
+  methods = {
+    jumpUrl() {
+      this.isShow = false
+      if (this.option.path) {
+        wx.redirectTo({
+          url: this.option.path
+        })
+      }
+    }
+  }
+
+  events = {}
+
+  onLoad() {}
+}
 </script>
 <style lang="scss">
-  @import '../assets/style/mixin.scss';
+@import '../assets/style/mixin.scss';
 
-  .p-successFlowerTemplate {
-    width: 100%;
+.p-successFlowerTemplate {
+  width: 100%;
 
-    &-title {
-      text-align: center;
-      width: 500px;
-      font-size:48px;
-      font-weight:400;
-      color:rgba(255,255,255,1);
-      line-height:54px;
+  &-title {
+    text-align: center;
+    width: 500px;
+    font-size: 48px;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 1);
+    line-height: 54px;
 
-      .-title-one {
-        font-size: 32px;
-      }
-    }
-
-    &-img {
-      @include flex-center;
-      margin: 0 auto;
-      /*width: 330px;*/
-      /*height: 294px;*/
-
-      .-img-icon {
-        width: 331px;
-        height: 332px;
-      }
-    }
-
-    &-flower {
-      text-align: center;
-      height:60px;
-      font-size:44px;
-      font-weight:500;
-      color:rgba(249,165,53,1);
-      line-height:60px;
-    }
-
-    &-text {
-      text-align: center;
-      margin: 8px auto 46px;
-      height:40px;
-      font-size:28px;
-      font-weight:400;
-      color:rgba(255,255,255,0.8);
-      line-height:40px;
-    }
-
-    &-btn {
-      margin: 0 auto;
-      text-align: center;
-      width:296px;
-      height:84px;
-      border-radius:52px;
-      border:1px solid rgba(255,255,255,1);
-      line-height:84px;
-      font-size:28px;
-      font-weight:500;
-      color:rgba(255,255,255,1);
+    .-title-one {
+      font-size: 32px;
     }
   }
+
+  &-img {
+    @include flex-center;
+    margin: 0 auto;
+    /*width: 330px;*/
+    /*height: 294px;*/
+
+    .-img-icon {
+      width: 331px;
+      height: 332px;
+    }
+  }
+
+  &-flower {
+    text-align: center;
+    height: 60px;
+    font-size: 44px;
+    font-weight: 500;
+    color: rgba(249, 165, 53, 1);
+    line-height: 60px;
+  }
+
+  &-text {
+    text-align: center;
+    margin: 8px auto 46px;
+    height: 40px;
+    font-size: 28px;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 40px;
+  }
+
+  &-btn {
+    margin: 0 auto;
+    text-align: center;
+    width: 296px;
+    height: 84px;
+    border-radius: 52px;
+    border: 1px solid rgba(255, 255, 255, 1);
+    line-height: 84px;
+    font-size: 28px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 1);
+  }
+}
 </style>

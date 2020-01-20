@@ -1,6 +1,6 @@
 <template>
   <view class="container write">
-    <mHeader title="上课中" flag="1"></mHeader>
+    <mHeader title="上课中" flag="4"></mHeader>
     <view
       class="container-scroll"
       style="margin-top:{{height}}px;height: calc(100vh - {{height}}px)"
@@ -44,7 +44,7 @@
               同学作业
             </view>
             <view class="write-list">
-              <view class="write-item" wx:for="{{workList}}" wx:key="{{item.workId}}">
+              <view class="write-item" wx:for="{{workList}}" wx:key="{{item.workId}}" @tap="clickStudentWork({{item}})">
                 <view class="write-item-cover">
                   <image
                     src="{{item.homeworkList[0]}}"
@@ -122,6 +122,7 @@
       }
     };
     data = {
+      fromUser: 0,
       showDialog: false,
       showDialogOne: false,
       showCatalog: false,
@@ -179,6 +180,13 @@
         this.showCatalog = !this.showCatalog;
         this.$broadcast('scrollView');
       },
+      clickStudentWork(item) {
+        wx.navigateTo({
+          url: `/user/completionOfWork?type=2&id=${
+            item.workId
+            }`
+        });
+      },
       clickComment() {
         wx.navigateTo({
           url: `/user/completionOfWork?type=1&id=${
@@ -203,7 +211,17 @@
         this.setUpPlayback();
       }
     };
-    events = {};
+    events = {
+      back() {
+        if(this.fromUser) {
+          wx.navigateBack({
+            delta: 1 //返回的页面数，如果 delta 大于现有页面数，则返回到首页,
+          });
+        } else {
+          wx.redirectTo({ url: '/pages/lesson' });
+        }
+      }
+    };
     watch = {};
     computed = {
       height() {
@@ -281,6 +299,7 @@
     }
 
     onLoad(option) {
+      this.fromUser = option.fromUser
       this.lessonId = option.id;
       this.writerCtx = createHanziWriterContext({
         id: 'hz-writer',
@@ -446,7 +465,7 @@
     }
     &-list {
       display: flex;
-      flex-wrap: nowrap;
+      flex-wrap: wrap;
       padding: 0 17px;
     }
     &-hanzi {
@@ -473,6 +492,7 @@
         height: 304px;
         overflow: hidden;
         image {
+          border-radius:16px 16px 0px 0px;
           width: 100%;
         }
       }
@@ -486,6 +506,7 @@
         height: 180px;
       }
       &-title {
+        @include line-clamp;
         font-size: 28px;
         line-height: 36px;
         color: #333;
@@ -508,6 +529,10 @@
       &-date {
         font-size: 24px;
         color: #666;
+      }
+      &-name {
+        @include text-overflow;
+        width: 100px;
       }
     }
   }

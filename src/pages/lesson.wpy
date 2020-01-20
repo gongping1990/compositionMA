@@ -443,12 +443,12 @@ export default class Lesson extends wepy.page {
         if (!lesson.stage && lesson.state == 4) {
           return
         }
-        if (lesson.state === 3) {
-          wx.navigateTo({
-            url: `/literacy/w_uploadImgWork?id=${lesson.id}`
-          })
-          return
-        }
+        // if (lesson.state === 3) {
+        //   wx.navigateTo({
+        //     url: `/literacy/w_uploadImgWork?id=${lesson.id}`
+        //   })
+        //   return
+        // }
         wx.navigateTo({ url: '/pages/writeStudy?id=' + lesson.id })
       }
     }

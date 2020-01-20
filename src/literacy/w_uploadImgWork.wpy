@@ -224,7 +224,7 @@
         this.uploadImgFn(data[0]);
       },
       closeCamera() {
-        wx.navigateBack()
+        this.isShowCamera = false
       }
     };
 

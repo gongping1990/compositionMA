@@ -6,14 +6,14 @@
       style="margin-top:{{height}}px;height: calc(100vh - {{height}}px)"
     >
       <video
-          src="{{lessonData.authVideoUrl}}"
-          class="write-video"
-          autoplay="{{true}}"
-          loop="{{loop}}"
-          @timeupdate="bindtimeupdate"
-        >
-          <cover-view class="write-video-loop {{!loop && 'disabled'}}" @tap="changeLoop"></cover-view>
-        </video>
+        src="{{lessonData.authVideoUrl}}"
+        class="write-video"
+        autoplay="{{true}}"
+        loop="{{loop}}"
+        @timeupdate="bindtimeupdate"
+      >
+        <view class="write-video-loop {{!loop && 'disabled'}}" @tap="changeLoop"></view>
+      </video>
       <scroll-view
         scroll-y
         scroll-with-animation
@@ -24,7 +24,7 @@
           <view class="write-scroll-header">
             <view class="write-scroll-header_left">
               <view class="write-hanzi" hidden="{{showCatalog}}">
-                <hanzi-writer-view id="hz-writer" width="46" height="46"  />
+                <hanzi-writer-view id="hz-writer" width="46" height="46"/>
               </view>
               <view class="write-title">{{lessonData.lessonName}}</view>
             </view>
@@ -34,7 +34,9 @@
             </view>
           </view>
           <view class="write-yd">
-            <view class="write-yd-text" wx:for="{{lessonData.learncontent}}" wx:key="{{index}}">{{index + 1}}. {{item}}</view>
+            <view class="write-yd-text" wx:for="{{lessonData.learncontent}}" wx:key="{{index}}">{{index + 1}}.
+              {{item}}
+            </view>
           </view>
           <view class="write-work" wx:if="{{workList.length}}">
             <view class="write-work-title">
@@ -46,7 +48,7 @@
                 <view class="write-item-cover">
                   <image
                     src="{{item.homeworkList[0]}}"
-                    mode="widthFix" />
+                    mode="widthFix"/>
                 </view>
                 <view class="write-item-content">
                   <view class="write-item-title">{{item.slogan}}</view>
@@ -56,7 +58,7 @@
                         class="write-item-avatar"
                         src="{{item.headimgurl}}"
                       >
-                      <text class="write-item-name">{{item.nickname}}</text>
+                        <text class="write-item-name">{{item.nickname}}</text>
                     </view>
                     <view class="write-item-date">{{item.dateTime}}</view>
                   </view>
@@ -101,406 +103,412 @@
       </view>
     </van-popup>
     <van-popup show="{{showCatalog}}" position="bottom" @close="closeDialog">
-      <catalog @clickItem.user="clickItem" :lessonList.sync="calalog" wx:if="{{calalog.length}}" />
+      <catalog @clickItem.user="clickItem" :lessonList.sync="calalog" wx:if="{{calalog.length}}"/>
     </van-popup>
   </view>
 </template>
 <script>
-import wepy from 'wepy'
-import {getDateDiff} from '../utils/getDateDiff.js'
-import catalog from '../components/catalog'
-import createHanziWriterContext from 'hanzi-writer-miniprogram'
-import mHeader from '../components/header'
-export default class WriteStudy extends wepy.page {
-  config = {
-    usingComponents: {
-      'van-popup': '../vant/popup/index',
-      'hanzi-writer-view': '../miniprogram_dist/hanzi-writer-view'
-    }
-  }
-  data = {
-    showDialog: false,
-    showDialogOne: false,
-    showCatalog: false,
-    loop: true,
-    currentTime: 0,
-    lessonId: 0,
-    total: 10,
-    current: 1,
-    calalog: [],
-    workList: [],
-    lessonData: {}
-  }
-  components = {
-    mHeader,
-    catalog
-  }
-  methods = {
-    bindtimeupdate(event) {
-      let {currentTime, duration}  = event.detail
-      let time = parseInt(currentTime)
-      if(time != this.currentTime) {
-        this.currentTime = time
-        if(time == (parseInt(duration) - 2)) {
-          this.finishWritingLesson()
-        }
+  import wepy from 'wepy';
+  import { getDateDiff } from '../utils/getDateDiff.js';
+  import catalog from '../components/catalog';
+  import createHanziWriterContext from 'hanzi-writer-miniprogram';
+  import mHeader from '../components/header';
+
+  export default class WriteStudy extends wepy.page {
+    config = {
+      usingComponents: {
+        'van-popup': '../vant/popup/index',
+        'hanzi-writer-view': '../miniprogram_dist/hanzi-writer-view'
       }
-    },
-    bindscrolltolower() {
-      this.pageCompanionHomeWork()
-    },
-    clickItem(item) {
-      if(item.lessonId == this.lessonId) {
-        wx.showToast({
-          title: '该课程正在学习', //提示的内容,
-          icon: 'none', //图标,
+    };
+    data = {
+      showDialog: false,
+      showDialogOne: false,
+      showCatalog: false,
+      loop: true,
+      currentTime: 0,
+      lessonId: 0,
+      total: 10,
+      current: 1,
+      calalog: [],
+      workList: [],
+      lessonData: {}
+    };
+    components = {
+      mHeader,
+      catalog
+    };
+    methods = {
+      bindtimeupdate(event) {
+        let { currentTime, duration } = event.detail;
+        let time = parseInt(currentTime);
+        if (time != this.currentTime) {
+          this.currentTime = time;
+          if (time == (parseInt(duration) - 2)) {
+            this.finishWritingLesson();
+          }
+        }
+      },
+      bindscrolltolower() {
+        this.pageCompanionHomeWork();
+      },
+      clickItem(item) {
+        if (item.lessonId == this.lessonId) {
+          wx.showToast({
+            title: '该课程正在学习', //提示的内容,
+            icon: 'none' //图标,
+          });
+          return;
+        }
+        if (!item.unLock) {
+          this.showDialogOne = true;
+          return;
+        }
+        if (item.maxUnLock) {
+          this.showDialog = true;
+          return;
+        }
+        this.getWritingLessonInfo(item.lessonId);
+      },
+      closeDialog() {
+        this.showDialogOne = false;
+        this.showDialog = false;
+        this.showCatalog = false;
+      },
+      changeShowCatalog() {
+        this.showCatalog = !this.showCatalog;
+        this.$broadcast('scrollView');
+      },
+      clickComment() {
+        wx.navigateTo({
+          url: `/user/completionOfWork?type=1&id=${
+            this.lessonData.lessonId
+            }`
         });
-        return
-      }
-      if(!item.unLock) {
-        this.showDialogOne = true
-        return
-      }
-      if(item.maxUnLock) {
-        this.showDialog = true
-        return
-      }
-      this.getWritingLessonInfo(item.lessonId)
-    },
-    closeDialog() {
-      this.showDialogOne = false
-      this.showDialog = false
-      this.showCatalog = false
-    },
-    changeShowCatalog() {
-      this.showCatalog = !this.showCatalog
-      this.$broadcast('scrollView')
-    },
-    clickComment() {
-      wx.navigateTo({
-        url: `/user/completionOfWork?type=1&id=${
-          this.lessonData.lessonId
-        }`
-      })
-    },
-    clickWorkBtn() {
-      wx.navigateTo({
-        url: `/literacy/w_uploadImgWork?id=${this.lessonData.lessonId}`
-      })
-    },
-    clicNextLesson() {
-      if(this.lessonData.maxUnLock) {
-        this.showDialog = true
-        return
-      }
-      this.getWritingLessonInfo(this.lessonData.nextLessonId)
-    },
-    changeLoop() {
-      this.loop = !this.loop
-      this.setUpPlayback()
-    }
-  }
-  events = {}
-  watch = {}
-  computed = {
-    height() {
-      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
-    }
-  }
-
-  finishWritingLesson() {
-    let { api } = this.$parent.globalData
-    api.study
-      .finishWritingLesson({
-        lessonId: this.lessonId
-      })
-  }
-
-  listWritingLessonCatalog() {
-    let { api } = this.$parent.globalData
-    api.study
-      .listWritingLessonCatalog({
-        courseId: this.lessonData.courseId
-      }).then(({data}) => {
-        this.calalog = data.resultData
-        this.$apply()
-      })
-  }
-
-  pageCompanionHomeWork() {
-    let { api } = this.$parent.globalData
-    if(this.total <= this.workList.length) return
-    api.study.pageCompanionHomeWork({
-      current: this.current,
-      size: 10,
-      lessonId: this.lessonId
-    }).then(({data}) => {
-      this.current += 1
-      this.total = data.resultData.total
-      this.workList = data.resultData.records.map(e => {
-        e.dateTime = getDateDiff(e.submitTime)
-        return e
-      })
-      this.$apply()
-    })
-  }
-
-  setUpPlayback() {
-    let { api } = this.$parent.globalData
-    api.study.setUpPlayback()
-  }
-  getWritingLessonInfo(lessonId) {
-    let { api } = this.$parent.globalData
-    if(lessonId) {
-      this.lessonId = lessonId
-    }
-    api.study
-      .getWritingLessonInfo({
-        lessonId: lessonId || this.lessonId
-      })
-      .then(({ data }) => {
-        this.lessonData = data.resultData
-        this.loop = data.resultData.playback
-        this.writerCtx.setCharacter(data.resultData.stroke || '空')
-        this.writerCtx.loopCharacterAnimation()
-        if(!this.calalog.length) {
-          this.listWritingLessonCatalog()
+      },
+      clickWorkBtn() {
+        wx.navigateTo({
+          url: `/literacy/w_uploadImgWork?id=${this.lessonData.lessonId}`
+        });
+      },
+      clicNextLesson() {
+        if (this.lessonData.maxUnLock) {
+          this.showDialog = true;
+          return;
         }
-        this.current = 1
-        this.total = 10
-        this.pageCompanionHomeWork()
-        this.showDialogOne = false
-        this.showDialog = false
-        this.showCatalog = false
-        this.$apply()
-      })
+        this.getWritingLessonInfo(this.lessonData.nextLessonId);
+      },
+      changeLoop() {
+        this.loop = !this.loop;
+        this.setUpPlayback();
+      }
+    };
+    events = {};
+    watch = {};
+    computed = {
+      height() {
+        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
+      }
+    };
+
+    finishWritingLesson() {
+      let { api } = this.$parent.globalData;
+      api.study
+        .finishWritingLesson({
+          lessonId: this.lessonId
+        });
+    }
+
+    listWritingLessonCatalog() {
+      let { api } = this.$parent.globalData;
+      api.study
+        .listWritingLessonCatalog({
+          courseId: this.lessonData.courseId
+        }).then(({ data }) => {
+        this.calalog = data.resultData;
+        this.$apply();
+      });
+    }
+
+    pageCompanionHomeWork() {
+      let { api } = this.$parent.globalData;
+      if (this.total <= this.workList.length) return;
+      api.study.pageCompanionHomeWork({
+        current: this.current,
+        size: 10,
+        lessonId: this.lessonId
+      }).then(({ data }) => {
+        this.current += 1;
+        this.total = data.resultData.total;
+        this.workList = data.resultData.records.map(e => {
+          e.dateTime = getDateDiff(e.submitTime);
+          return e;
+        });
+        this.$apply();
+      });
+    }
+
+    setUpPlayback() {
+      let { api } = this.$parent.globalData;
+      api.study.setUpPlayback();
+    }
+
+    getWritingLessonInfo(lessonId) {
+      let { api } = this.$parent.globalData;
+      if (lessonId) {
+        this.lessonId = lessonId;
+      }
+      api.study
+        .getWritingLessonInfo({
+          lessonId: lessonId || this.lessonId
+        })
+        .then(({ data }) => {
+          this.lessonData = data.resultData;
+          this.loop = data.resultData.playback;
+          this.writerCtx.setCharacter(data.resultData.stroke || '空');
+          this.writerCtx.loopCharacterAnimation();
+          if (!this.calalog.length) {
+            this.listWritingLessonCatalog();
+          }
+          this.current = 1;
+          this.total = 10;
+          this.pageCompanionHomeWork();
+          this.showDialogOne = false;
+          this.showDialog = false;
+          this.showCatalog = false;
+          this.$apply();
+        });
+    }
+
+    onLoad(option) {
+      this.lessonId = option.id;
+      this.writerCtx = createHanziWriterContext({
+        id: 'hz-writer',
+        character: '空',
+        page: this.$wxpage,
+        padding: 7
+      });
+    }
+
+    onShow() {
+      this.getWritingLessonInfo();
+    }
   }
-  onLoad(option) {
-    this.lessonId = option.id
-    this.writerCtx = createHanziWriterContext({
-      id: 'hz-writer',
-      character: '空',
-      page: this.$wxpage,
-      padding: 7
-    })
-  }
-  onShow() {
-    this.getWritingLessonInfo()
-  }
-}
 </script>
 <style lang="scss">
-@import '../assets/style/mixin.scss';
-.write {
-  &-video {
-    position: relative;
-    width: 100vw;
-    &-loop {
-      @include bg('/1.8/video/loop.png');
-      position: absolute;
-      right: 32px;
-      bottom: 40%;
-      width: 92px;
-      height: 40px;
-      &.disabled {
-        @include bg('/1.8/video/no-loop.png');
+  @import '../assets/style/mixin.scss';
+
+  .write {
+    &-video {
+      position: relative;
+      width: 100vw;
+      &-loop {
+        @include bg('/1.8/video/loop.png');
+        position: absolute;
+        right: 32px;
+        bottom: 40%;
+        width: 92px;
+        height: 40px;
+        z-index: 9999;
+        &.disabled {
+          @include bg('/1.8/video/no-loop.png');
+        }
       }
     }
-  }
-  &-nav {
-    @include flex-center;
-    position: fixed;
-    box-sizing: border-box;
-    left: 0;
-    bottom: 0;
-    padding: 0 32px;
-    width:750px;
-    height:124px;
-    background:rgba(255,255,255,1);
-    box-shadow:0px 0px 8px 0px rgba(237,239,243,1);
-    z-index: 100;
-  }
-  &-btn {
-    @include flex-column-center;
-    flex: 1;
-    box-sizing: border-box;
-    height:92px;
-    background:rgba(255,192,1,1);
-    box-shadow:0px 6px 8px 0px rgba(255,192,1,0.4);
-    border-radius:50px;
-    &.dp {
-      background: #fff;
-      box-shadow:0px 6px 8px 0px rgba(255,192,1,0.35);
-      border:2px solid rgba(255,192,1,1);
-      view {
-        color: #FFC001;
-      }
-    }
-    & + & {
-      margin-left: 34px;
-    }
-    view {
-      font-size: 32px;
-      color: #fff;
-      color: 600;
-    }
-    text {
-      color: #fff;
-      font-size: 24px;
-    }
-  }
-  &-scroll {
-    padding-bottom: 240px;
-    &-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+    &-nav {
+      @include flex-center;
+      position: fixed;
       box-sizing: border-box;
-      padding: 10px 20px;
-      &_left {
-        @include flex-center;
+      left: 0;
+      bottom: 0;
+      padding: 0 32px;
+      width: 750px;
+      height: 124px;
+      background: rgba(255, 255, 255, 1);
+      box-shadow: 0px 0px 8px 0px rgba(237, 239, 243, 1);
+      z-index: 100;
+    }
+    &-btn {
+      @include flex-column-center;
+      flex: 1;
+      box-sizing: border-box;
+      height: 92px;
+      background: rgba(255, 192, 1, 1);
+      box-shadow: 0px 6px 8px 0px rgba(255, 192, 1, 0.4);
+      border-radius: 50px;
+      &.dp {
+        background: #fff;
+        box-shadow: 0px 6px 8px 0px rgba(255, 192, 1, 0.35);
+        border: 2px solid rgba(255, 192, 1, 1);
+        view {
+          color: #FFC001;
+        }
+      }
+      & + & {
+        margin-left: 34px;
+      }
+      view {
+        font-size: 32px;
+        color: #fff;
+        color: 600;
+      }
+      text {
+        color: #fff;
+        font-size: 24px;
       }
     }
-  }
-  &-title {
-    @include text-overflow(400px);
-    margin-left: 12px;
-    font-size: 36px;
-    color: #333;
-    font-weight: bold;
-  }
-  &-catalog {
-    @include flex-center;
-    height: 92px;
-    &-icon {
-      @include bg('/1.8/video/list.png');
-      margin-right: 8px;
-      width: 48px;
-      height: 48px;
+    &-scroll {
+      padding-bottom: 240px;
+      &-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-sizing: border-box;
+        padding: 10px 20px;
+        &_left {
+          @include flex-center;
+        }
+      }
     }
-    text {
-      font-size: 26px;
-      color: #999999;
-    }
-  }
-  &-yd {
-    position: relative;
-    box-sizing: border-box;
-    margin: 40px 32px;
-    margin-bottom: 60px;
-    padding: 70px 0;
-    padding-left: 116px;
-    width: 686px;
-    border-radius: 24px;
-    border: 16px solid #ffecb1;
-    &-text {
-      font-size: 30px;
-      line-height: 38px;
-      color: #666;
-    }
-    &::before {
-      content: '';
-      @include bg('/1.8/video/yd-icon.png');
-      position: absolute;
-      left: 50%;
-      top: 0;
-      width: 218px;
-      height: 56px;
-      transform: translate(-50%, -50%);
-    }
-    &::after {
-      content: '';
-      @include bg('/1.8/video/yd-bg.png');
-      position: absolute;
-      right: -90px;
-      bottom: -20px;
-      width: 130px;
-      height: 56px;
-      transform: translate(-50%, -50%);
-    }
-  }
-  &-work {
     &-title {
-      display: flex;
-      align-items: center;
-      margin-left: 34px;
-      font-size: 34px;
+      @include text-overflow(400px);
+      margin-left: 12px;
+      font-size: 36px;
       color: #333;
       font-weight: bold;
     }
-    &-icon {
-      display: block;
-      margin-right: 10px;
-      width: 40px;
-      height: 40px;
-      @include bg('/1.8/video/work.png');
-    }
-  }
-  &-list {
-    display: flex;
-    flex-wrap:nowrap;
-    padding: 0 17px;
-  }
-  &-hanzi {
-    @include bg('/1.8/video/hanzi.png');
-    display: flex;
-    justify-content: center;
-    box-sizing: border-box;
-    padding-top: 8px;
-    height: 116px;
-    width: 116px;
-    overflow: hidden;
-  }
-  &-item {
-    box-sizing: border-box;
-    margin: 0 15px;
-    margin-top: 32px;
-    width:328px;
-    height:484px;
-    background:rgba(255,255,255,1);
-    box-shadow:0px 6px 12px 0px rgba(237,239,243,0.95);
-    border-radius:16px;
-    &-cover {
-      width: 100%;
-      height: 304px;
-      overflow: hidden;
-      image {
-        width: 100%;
+    &-catalog {
+      @include flex-center;
+      height: 92px;
+      &-icon {
+        @include bg('/1.8/video/list.png');
+        margin-right: 8px;
+        width: 48px;
+        height: 48px;
+      }
+      text {
+        font-size: 26px;
+        color: #999999;
       }
     }
-    &-content {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+    &-yd {
+      position: relative;
       box-sizing: border-box;
-      padding: 16px;
-      width: 100%;
-      height: 180px;
+      margin: 40px 32px;
+      margin-bottom: 60px;
+      padding: 70px 0;
+      padding-left: 116px;
+      width: 686px;
+      border-radius: 24px;
+      border: 16px solid #ffecb1;
+      &-text {
+        font-size: 30px;
+        line-height: 38px;
+        color: #666;
+      }
+      &::before {
+        content: '';
+        @include bg('/1.8/video/yd-icon.png');
+        position: absolute;
+        left: 50%;
+        top: 0;
+        width: 218px;
+        height: 56px;
+        transform: translate(-50%, -50%);
+      }
+      &::after {
+        content: '';
+        @include bg('/1.8/video/yd-bg.png');
+        position: absolute;
+        right: -90px;
+        bottom: -20px;
+        width: 130px;
+        height: 56px;
+        transform: translate(-50%, -50%);
+      }
     }
-    &-title {
-      font-size: 28px;
-      line-height: 36px;
-      color: #333;
+    &-work {
+      &-title {
+        display: flex;
+        align-items: center;
+        margin-left: 34px;
+        font-size: 34px;
+        color: #333;
+        font-weight: bold;
+      }
+      &-icon {
+        display: block;
+        margin-right: 10px;
+        width: 40px;
+        height: 40px;
+        @include bg('/1.8/video/work.png');
+      }
     }
-    &-info {
+    &-list {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
+      flex-wrap: nowrap;
+      padding: 0 17px;
     }
-    &-user {
-      @include flex-center;
+    &-hanzi {
+      @include bg('/1.8/video/hanzi.png');
+      display: flex;
+      justify-content: center;
+      box-sizing: border-box;
+      padding-top: 8px;
+      height: 116px;
+      width: 116px;
+      overflow: hidden;
     }
-    &-avatar {
-      margin-right: 8px;
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-    }
-    &-name,
-    &-date {
-      font-size: 24px;
-      color: #666;
+    &-item {
+      box-sizing: border-box;
+      margin: 0 15px;
+      margin-top: 32px;
+      width: 328px;
+      height: 484px;
+      background: rgba(255, 255, 255, 1);
+      box-shadow: 0px 6px 12px 0px rgba(237, 239, 243, 0.95);
+      border-radius: 16px;
+      &-cover {
+        width: 100%;
+        height: 304px;
+        overflow: hidden;
+        image {
+          width: 100%;
+        }
+      }
+      &-content {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        box-sizing: border-box;
+        padding: 16px;
+        width: 100%;
+        height: 180px;
+      }
+      &-title {
+        font-size: 28px;
+        line-height: 36px;
+        color: #333;
+      }
+      &-info {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      &-user {
+        @include flex-center;
+      }
+      &-avatar {
+        margin-right: 8px;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+      }
+      &-name,
+      &-date {
+        font-size: 24px;
+        color: #666;
+      }
     }
   }
-}
 </style>

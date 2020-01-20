@@ -166,6 +166,13 @@
 					"pathName": "literacy/l_submitHomework",
 					"query": "id=1178580314148048897&isFromUpload=true",
 					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "pages/writeStudy",
+					"pathName": "pages/writeStudy",
+					"query": "id=1216555540059918338",
+					"scene": null
 				}
 			]
 		}

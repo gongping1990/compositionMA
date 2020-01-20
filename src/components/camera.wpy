@@ -146,6 +146,7 @@
     }
 
     onLoad() {
+      this.hideIcon()
     }
   }
 </script>

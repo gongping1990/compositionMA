@@ -23,8 +23,8 @@
         <view class="write-scroll">
           <view class="write-scroll-header">
             <view class="write-scroll-header_left">
-              <view class="write-hanzi" hidden="{{showCatalog}}">
-                <hanzi-writer-view id="hz-writer" width="46" height="46"/>
+              <view class="write-hanzi" hidden="{{showCatalog}}" @tap="clickShowHanzi">
+                <image src="{{lessonData.strokeImg}}" />
               </view>
               <view class="write-title">{{lessonData.lessonName}}</view>
             </view>
@@ -102,6 +102,13 @@
         <view class="__common-dialog-btn" @tap="closeDialog">我知道了</view>
       </view>
     </van-popup>
+    <van-popup show="{{showHanzi}}" @close="closeDialog">
+     <view class="hanzi-popup">
+       <view class="hanzi-popup-title">{{lessonData.lessonName}}</view>
+       <image src="{{lessonData.strokeImg}}" />
+       <view class="hanzi-popup-close" @tap="closeDialog"></view>
+     </view>
+    </van-popup>
     <van-popup show="{{showCatalog}}" position="bottom" @close="closeDialog">
       <catalog @clickItem.user="clickItem" :lessonList.sync="calalog" wx:if="{{calalog.length}}"/>
     </van-popup>
@@ -111,18 +118,17 @@
   import wepy from 'wepy';
   import { getDateDiff } from '../utils/getDateDiff.js';
   import catalog from '../components/catalog';
-  import createHanziWriterContext from 'hanzi-writer-miniprogram';
   import mHeader from '../components/header';
 
   export default class WriteStudy extends wepy.page {
     config = {
       usingComponents: {
         'van-popup': '../vant/popup/index',
-        'hanzi-writer-view': '../miniprogram_dist/hanzi-writer-view'
       }
     };
     data = {
       fromUser: 0,
+      showHanzi: false,
       showDialog: false,
       showDialogOne: false,
       showCatalog: false,
@@ -171,7 +177,11 @@
         }
         this.getWritingLessonInfo(item.lessonId);
       },
+      clickShowHanzi() {
+        this.showHanzi = true
+      },
       closeDialog() {
+        this.showHanzi = false
         this.showDialogOne = false;
         this.showDialog = false;
         this.showCatalog = false;
@@ -283,8 +293,6 @@
         .then(({ data }) => {
           this.lessonData = data.resultData;
           this.loop = data.resultData.playback;
-          this.writerCtx.setCharacter(data.resultData.stroke || '空');
-          this.writerCtx.loopCharacterAnimation();
           if (!this.calalog.length) {
             this.listWritingLessonCatalog();
           }
@@ -301,12 +309,6 @@
     onLoad(option) {
       this.fromUser = option.fromUser
       this.lessonId = option.id;
-      this.writerCtx = createHanziWriterContext({
-        id: 'hz-writer',
-        character: '空',
-        page: this.$wxpage,
-        padding: 7
-      });
     }
 
     onShow() {
@@ -318,6 +320,33 @@
   @import '../assets/style/mixin.scss';
 
   .write {
+    .hanzi-popup {
+      @include flex-column-center;
+      position: relative;
+      width:480px;
+      height:424px;
+      background:rgba(255,255,255,1);
+      border-radius:40px;
+      &-close {
+        position: absolute;
+        left: 50%;
+        bottom: -103px;
+        width: 50px;
+        height: 50px;
+        @include bg('/1.8/lesson/close-icon.png');
+        transform: translateX(-50%);
+      }
+      &-title {
+        margin-bottom: 32px;
+        font-size: 36px;
+        color: #000;
+        font-weight: bold;
+      }
+      image {
+        width: 220px;
+        height: 220px;
+      }
+    }
     &-video {
       position: relative;
       width: 100vw;
@@ -469,14 +498,26 @@
       padding: 0 17px;
     }
     &-hanzi {
-      @include bg('/1.8/video/hanzi.png');
+      position: relative;
       display: flex;
       justify-content: center;
       box-sizing: border-box;
-      padding-top: 8px;
-      height: 116px;
-      width: 116px;
-      overflow: hidden;
+      margin-right: 24px;
+      height: 92px;
+      width: 92px;
+      &::after {
+        content: '';
+        position: absolute;
+        right: -16px;
+        bottom: -16px;
+        width: 48px;
+        height: 48px;
+        @include bg('/1.8/lesson/hanzi-play.png');
+      }
+      image {
+        height: 92px;
+        width: 92px;
+      }
     }
     &-item {
       box-sizing: border-box;

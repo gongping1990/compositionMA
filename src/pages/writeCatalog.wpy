@@ -17,7 +17,7 @@
       <view class="__common-dialog">
         <view class="__common-dialog-icon mt"></view>
         <view class="__common-dialog-text">
-          <view>今日已解锁3个课时，</view>
+          <view>今日已解锁{{lessonList[0].nowunlock}}个课时，</view>
           <view>明天再来解锁更多课时吧！</view>
 
         </view>

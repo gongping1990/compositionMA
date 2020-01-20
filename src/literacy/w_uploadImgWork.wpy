@@ -3,7 +3,7 @@
     <mHeader title="提交作业" wx:if="{{!isShowCamera}}"></mHeader>
     <view class="container-scroll p-w_uploadImgWork" style="margin-top:{{height}}px">
       <view class="p-w_uploadImgWork-title">
-        {{lessonDetail.name}}
+        {{lessonDetail.learnTag}} {{lessonDetail.name}}
       </view>
       <view class="p-w_uploadImgWork-tip">
         <view wx:for="{{workImgList}}" wx:key="{{item}}">
@@ -203,8 +203,13 @@
             .then(
               res => {
                 this.isSending = false;
-                this.isOpenPopup = true;
-                // this.toWorkDetail();
+                if (!this.queryInfo.isRepeat) {
+                  this.isOpenPopup = true;
+                } else {
+                  wx.navigateTo({
+                    url: `/pages/writeStudy?id=${this.queryInfo.id}`
+                  });
+                }
                 this.$apply();
               },
               () => {
@@ -236,7 +241,6 @@
       }
       this.getLessonInfo();
       this.getSorceByRecordSource();
-      console.log(parseInt(Math.random() * 10, 7));
     }
 
     onHide() {
@@ -252,7 +256,7 @@
 
     &-title {
       display: inline-block;
-      margin: 48px auto 34px;
+      margin: 24px auto;
       font-size: 34px;
       font-weight: 500;
       color: rgba(0, 0, 0, 1);

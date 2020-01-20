@@ -445,7 +445,7 @@
       resultHomework() {
         if (this.workDetail.category === 3) {
           wx.navigateTo({
-            url: `/literacy/w_uploadImgWork?id=${this.workDetail.lessonId}`
+            url: `/literacy/w_uploadImgWork?id=${this.workDetail.lessonId}&isRepeat=true`
           });
         } else {
           this.isShowConfirm = true;

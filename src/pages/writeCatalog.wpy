@@ -63,11 +63,7 @@ export default class Write extends wepy.page {
     },
     clickItem(item) {
       if(!item.unLock) {
-        this.showDialogOne = true
-        return
-      }
-      if(item.maxUnLock) {
-        this.showDialog = true
+        item.maxUnLock ? (this.showDialog = true) : (this.showDialogOne = true)
         return
       }
       wx.redirectTo({ url: `/pages/writeStudy?id=${item.lessonId}&fromUser=1` });

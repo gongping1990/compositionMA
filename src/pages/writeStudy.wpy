@@ -200,7 +200,7 @@
         });
       },
       clicNextLesson() {
-        if (this.lessonData.maxUnLock) {
+        if (!this.lessonData.nextLessonId) {
           this.showDialog = true;
           return;
         }

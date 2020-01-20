@@ -383,9 +383,9 @@
             @include flex-center;
 
             justify-content: space-between;
-            width: 448px;
-            height: 100px;
-            background: linear-gradient(90deg, rgba(255, 192, 1, 1) 0%, rgba(254, 179, 18, 1) 100%);
+            width:448px;
+            height:100px;
+            background:linear-gradient(-37deg,rgba(255,142,74,1),rgba(255,122,50,1));
             box-shadow:0px 12px 12px 0px rgba(255,122,50,0.4);
             border-radius:0px 50px 50px 55px;
 

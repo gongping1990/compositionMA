@@ -150,7 +150,7 @@
 					"id": 13,
 					"name": "literacy/l_submitHomework",
 					"pathName": "literacy/l_submitHomework",
-					"query": "id= 1178580314148048897",
+					"query": "id=1214032696993923074",
 					"scene": null
 				},
 				{
@@ -161,10 +161,10 @@
 					"scene": null
 				},
 				{
-					"id": -1,
+					"id": 15,
 					"name": "literacy/l_submitHomework",
 					"pathName": "literacy/l_submitHomework",
-					"query": "id=1178580314148048897&isFromUpload=true",
+					"query": "id=1214016363879219201",
 					"scene": null
 				},
 				{

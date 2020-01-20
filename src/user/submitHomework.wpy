@@ -305,6 +305,7 @@ import api from '../request/api'
 import { saveFormId } from '../utils'
 import dayjs from 'dayjs'
 import { connect } from 'wepy-redux'
+import getDateDiff from '../utils/getDateDiff';
 import mHeader from '../components/header'
 import load from '../components/load'
 import lookImage from '../components/lookImage'
@@ -415,9 +416,7 @@ export default class SubmitHomework extends wepy.page {
           this.workDetail = res.data.resultData
           if (this.workDetail) {
             this.isSuccessWork = true
-            this.workDetail.workTime = dayjs(+this.workDetail.workTime).format(
-              'YYYY-MM-DD HH:mm'
-            )
+            this.workDetail.workTime = getDateDiff.getDateDiff(this.workDetail.workTime)
             this.workDetail.workImg =
               this.workDetail.workImg && this.workDetail.workImg.split(',')
             this.workDetail.workImgSrc =
@@ -454,7 +453,7 @@ export default class SubmitHomework extends wepy.page {
           }
 
           this.dataList.forEach(item => {
-            item.workTime = dayjs(+item.workTime).format('YYYY-MM-DD HH:mm')
+            item.workTime = getDateDiff.getDateDiff(item.workTime)
             item.workImg = item.workImg && item.workImg.split(',')
             item.workImgSrc = item.workImgSrc && item.workImgSrc.split(',')
             item.replyImg = item.replyImg && item.replyImg.split(',')
@@ -907,33 +906,31 @@ export default class SubmitHomework extends wepy.page {
         align-items: center;
         justify-content: space-between;
         padding: 0 48px;
-        margin: 0 0 32px;
+        margin: 0 0 38px;
 
         .-top-left {
           @include flex-center;
 
           &-img {
-            margin-right: 12px;
-            width: 56px;
-            height: 56px;
+            margin-right: 29px;
+            width: 87px;
+            height: 87px;
             border-radius: 50%;
           }
 
           &-name {
-            height: 44px;
-            font-size: 32px;
+            font-size: 27px;
             font-weight: 500;
             color: rgba(51, 51, 51, 1);
-            line-height: 44px;
           }
         }
 
         .-top-right {
           &-time {
             height: 32px;
-            font-size: 22px;
+            font-size: 23px;
             font-weight: 400;
-            color: rgba(153, 153, 153, 1);
+            color: #C1C4CE;
             line-height: 32px;
           }
         }
@@ -941,7 +938,7 @@ export default class SubmitHomework extends wepy.page {
 
       &-down {
         display: flex;
-        padding-left: 112px;
+        padding-left: 45px;
         padding-bottom: 28px;
 
         &-img {
@@ -953,40 +950,35 @@ export default class SubmitHomework extends wepy.page {
         &-audio {
           @include flex-center;
           justify-content: space-between;
-          width: 352px;
-          height: 60px;
-          background: linear-gradient(
-            90deg,
-            rgba(255, 192, 1, 1) 0%,
-            rgba(254, 179, 18, 1) 100%
-          );
-          border-radius: 0px 32px 32px 32px;
+          width:448px;
+          height:100px;
+          background:linear-gradient(-37deg,rgba(255,142,74,1),rgba(255,122,50,1));
+          box-shadow:0px 12px 12px 0px rgba(255,122,50,0.4);
+          border-radius:0px 50px 50px 55px;
 
           .-reply-icon {
-            margin: 18px 0 16px 28px;
+            margin: 30px 0 29px 44px;
 
             .icon {
               background: url('https://pub.file.k12.vip/2019/12/04/1202071888211087362.png');
               background-size: 100%;
-              width: 32px;
-              height: 26px;
+              width: 53px;
+              height: 41px;
             }
 
             .playIcon {
               background: url('https://pub.file.k12.vip/2019/12/04/1202108006889558018.gif');
               background-size: 100%;
-              width: 32px;
-              height: 26px;
+              width: 53px;
+              height: 41px;
             }
           }
 
           .-reply-time {
             margin: 14px 30px 16px 0;
-            height: 30px;
-            font-size: 21px;
+            font-size: 40px;
             font-weight: 600;
             color: #ffffff;
-            line-height: 30px;
           }
         }
       }

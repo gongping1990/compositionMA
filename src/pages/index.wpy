@@ -633,9 +633,9 @@ export default class Home extends wepy.page {
       //   wx.redirectTo({ url: '/pages/detail' });
       //   return
       // }
-      // if(!this.logined && data.resultData.param == '1') {
-      //   this.initWelcome()
-      // }
+      if(!this.logined && data.resultData.param == '1') {
+        this.initWelcome()
+      }
     })
   }
 

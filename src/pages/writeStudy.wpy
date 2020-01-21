@@ -206,6 +206,10 @@
         });
       },
       clicNextLesson() {
+        wx.showLoading({
+          title: '切换课程中...', //提示的内容,
+          mask: true, //显示透明蒙层，防止触摸穿透
+        });
         this.getWritingLessonInfo(this.lessonData.nextLessonId);
       },
       changeLoop() {
@@ -294,6 +298,7 @@
           this.showDialogOne = false;
           this.showDialog = false;
           this.showCatalog = false;
+          wx.hideLoading();
           this.$apply();
         });
     }

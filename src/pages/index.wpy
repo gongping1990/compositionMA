@@ -64,7 +64,10 @@
         </repeat>
 
         <view class="-tabs-wrap">
-          <view class="-tabs {{isFixed ? 'fixed' : 'relative'}}" style="top:{{height}}px">
+          <view
+            class="-tabs {{isFixed ? 'fixed' : 'relative'}}"
+            style="top:{{height}}px"
+          >
             <view
               class="-tabs-item {{index == tabActive ? 'active': ''}}"
               wx:for="{{tabList}}"
@@ -316,23 +319,22 @@
           <view class="dialog-close" @tap="onClose"></view>
         </view>
       </van-popup>
-      <van-popup custom-style="top: 42%" show="{{ showWelcome }}" closeable @close="onCloseWelcome">
+      <van-popup
+        custom-style="top: 42%"
+        show="{{ showWelcome }}"
+        closeable
+        @close="onCloseWelcome"
+      >
         <view class="welcome-pop">
           <view class="welcome-pop-text">
             初次见面，送您一份新人福利
             <text class="welcome-pop-span">名师1对1指导作文</text>
           </view>
           <view class="welcome-pop-btn-wrap">
-            <button
-              class="welcome-pop-btn new cancel"
-              @tap="clickToLesson"
-            >
+            <button class="welcome-pop-btn new cancel" @tap="clickToLesson">
               我已报名，去上课
             </button>
-            <button
-              class="welcome-pop-btn new"
-              @tap="onCloseWelcome({{1}})"
-            >
+            <button class="welcome-pop-btn new" @tap="onCloseWelcome({{1}})">
               立即领取
             </button>
           </view>
@@ -344,10 +346,7 @@
           <view class="welcome-pop-text">
             你好呀，小朋友。老师给你发来了课后作业讲解，快去看看吧！
           </view>
-          <button
-            class="welcome-pop-btn"
-            @tap="clickToCompletionOfWork"
-          >
+          <button class="welcome-pop-btn" @tap="clickToCompletionOfWork">
             去看看
           </button>
           <view class="welcome-pop-close" @tap="onClose"></view>
@@ -383,7 +382,6 @@
         src="https://pub.file.k12.vip/tbzw/1.5/home/yd-banner1.png"
         wx:else
       />
-
     </view>
   </view>
 </template>
@@ -424,7 +422,6 @@ export default class Home extends wepy.page {
       'van-tabbar': '../vant/tabbar/index',
       'van-tabbar-item': '../vant/tabbar-item/index',
       'van-popup': '../vant/popup/index'
-
     }
   }
   data = {
@@ -473,7 +470,7 @@ export default class Home extends wepy.page {
   }
   methods = {
     bindClickBanner(item) {
-      let {sa} = this.$parent.globalData
+      let { sa } = this.$parent.globalData
       sa.track('bannerClick', {
         bannerName: item.name,
         bannerId: item.id,
@@ -498,7 +495,7 @@ export default class Home extends wepy.page {
       })
     },
     clickToLesson() {
-      wx.redirectTo({ url: '/pages/lesson' });
+      wx.redirectTo({ url: '/pages/lesson' })
     },
     onClose() {
       this.showAddTeacher = false
@@ -512,7 +509,7 @@ export default class Home extends wepy.page {
     },
     onCloseWelcome(index) {
       this.showWelcome = false
-      index ? this.showBannderYd = true : this.showYD = true
+      index ? (this.showBannderYd = true) : (this.showYD = true)
     },
     bindPerfect() {
       wx.navigateTo({ url: `/user/gift` })
@@ -520,7 +517,6 @@ export default class Home extends wepy.page {
       this.isShowPraise = false
     },
     clickAddTeacher(type) {
-      
       if (type == 2) {
         this.followKF()
       } else {
@@ -547,9 +543,10 @@ export default class Home extends wepy.page {
       })
     },
     clickTab(index) {
-      let {bannerHeight, scrollTop} = this
+      let { bannerHeight, scrollTop } = this
       this.tabActive = index
-      this.scrollTop = scrollTop == bannerHeight + 16 ? bannerHeight + 15 : bannerHeight + 16
+      this.scrollTop =
+        scrollTop == bannerHeight + 16 ? bannerHeight + 15 : bannerHeight + 16
     }
   }
   events = {
@@ -617,7 +614,7 @@ export default class Home extends wepy.page {
       courseId: this.infoData.kfTeacherVO.courseId
     })
   }
-  followKF () {
+  followKF() {
     let { api } = this.$parent.globalData
     api.user.followKF({
       courseId: this.infoData.kfTeacherVO.courseId
@@ -625,18 +622,20 @@ export default class Home extends wepy.page {
   }
   getSystemConfigType() {
     let { api } = this.$parent.globalData
-    api.center.getSystemConfigType({
-      type: 1
-    }).then(({data}) => {
-      this.systemConfig = data.resultData
-      // if(data.resultData.param == '0') {
-      //   wx.redirectTo({ url: '/pages/detail' });
-      //   return
-      // }
-      if(!this.logined && data.resultData.param == '1') {
-        this.initWelcome()
-      }
-    })
+    api.center
+      .getSystemConfigType({
+        type: 1
+      })
+      .then(({ data }) => {
+        this.systemConfig = data.resultData
+        if (data.resultData.param == '0') {
+          wx.redirectTo({ url: '/pages/detail' })
+          return
+        }
+        if (!this.logined && data.resultData.param == '1') {
+          this.initWelcome()
+        }
+      })
   }
 
   getLatelyDubbingByHome() {
@@ -680,18 +679,24 @@ export default class Home extends wepy.page {
           return e
         })
         if (this.logined) {
-          if(!(data.resultData.hasgift || data.resultData.remindAddTeacher || data.resultData.awardsPop)) {
+          if (
+            !(
+              data.resultData.hasgift ||
+              data.resultData.remindAddTeacher ||
+              data.resultData.awardsPop
+            )
+          ) {
             this.getLatelyDubbingByHome()
           }
         }
         setTimeout(() => {
           const query = wx.createSelectorQuery()
           query.select('#banner').boundingClientRect()
-          query.exec((res) => {
+          query.exec(res => {
             this.bannerHeight = res[0].height + 16
             this.$apply()
           })
-        }, 2000);
+        }, 2000)
         this.$apply()
       })
       .catch(({ code }) => {
@@ -837,7 +842,8 @@ export default class Home extends wepy.page {
       bottom: -132px;
       width: 80px;
       height: 80px;
-      background: url('https://pub.file.k12.vip/tbzw/1.5/home/close.png') no-repeat;
+      background: url('https://pub.file.k12.vip/tbzw/1.5/home/close.png')
+        no-repeat;
       background-size: 100%;
       transform: translateX(-50%);
     }
@@ -869,21 +875,21 @@ export default class Home extends wepy.page {
       }
       &.new {
         font-size: 26px;
-        width:250px;
+        width: 250px;
       }
       &.cancel {
         font-size: 26px;
         background: #fff;
         color: #999999;
         box-sizing: border-box;
-        border:1px solid rgba(153,153,153,1);
+        border: 1px solid rgba(153, 153, 153, 1);
       }
     }
   }
   .container-scroll {
     position: relative;
     box-sizing: border-box;
-    padding:0 32px;
+    padding: 0 32px;
   }
   .hot {
     &-title {

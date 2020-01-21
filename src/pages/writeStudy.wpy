@@ -23,14 +23,24 @@
         <view class="write-scroll">
           <view class="write-scroll-header">
             <view class="write-scroll-header_left">
-              <view class="write-hanzi" hidden="{{showCatalog}}" @tap="clickShowHanzi">
-                <image src="{{lessonData.strokeImg}}" />
-              </view>
               <view class="write-title">{{lessonData.lessonName}}</view>
             </view>
             <view class="write-catalog" @tap="changeShowCatalog">
               <view class="write-catalog-icon"></view>
               <text>目录</text>
+            </view>
+          </view>
+          <view class="write-hanzi-wrap">
+            <view class="write-hanzi-img">
+              <image src="{{lessonData.etymology}}" />
+            </view>
+            <view class="write-hanzi-arrow"></view>
+            <view class="write-hanzi-img">
+              <image src="{{lessonData.evolution}}" />
+            </view>
+            <view class="write-hanzi-arrow"></view>
+            <view class="write-hanzi" hidden="{{showCatalog}}" @tap="clickShowHanzi">
+              <image src="{{lessonData.strokeImg}}" />
             </view>
           </view>
           <view class="write-yd">
@@ -502,6 +512,30 @@
       margin-right: 24px;
       height: 92px;
       width: 92px;
+      &-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      &-arrow {
+        margin: 0 50px;
+        width: 48px;
+        height: 48px;
+        @include bg('/1.8/work/arrow.png');
+      }
+      &-img {
+        box-sizing: border-box;
+        width:102px;
+        height:102px;
+        box-shadow:0px 4px 10px 0px rgba(221,221,221,0.08);
+        border-radius:8px;
+        overflow: hidden;
+        border:2px solid rgba(255,130,130,1);
+        & > image {
+          width: 98px;
+          height: 98px;
+        }
+      }
       &::after {
         content: '';
         position: absolute;

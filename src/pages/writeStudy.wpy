@@ -450,6 +450,7 @@
       position: relative;
       box-sizing: border-box;
       margin: 40px 32px;
+      margin-top: 88px;
       margin-bottom: 60px;
       padding: 70px 0;
       padding-left: 116px;

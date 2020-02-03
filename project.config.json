@@ -57,9 +57,9 @@
 			"list": [
 				{
 					"id": 0,
-					"name": "pages/writeStudy",
-					"pathName": "pages/writeStudy",
-					"query": "id=1215906068585656321",
+					"name": "user/completionOfWork",
+					"pathName": "user/completionOfWork",
+					"query": "type=1&id=1218724573697683457",
 					"scene": null
 				},
 				{

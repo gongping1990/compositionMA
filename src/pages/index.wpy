@@ -627,14 +627,14 @@ export default class Home extends wepy.page {
         type: 1
       })
       .then(({ data }) => {
-        this.systemConfig = data.resultData
-        if (data.resultData.param == '0') {
-          wx.redirectTo({ url: '/pages/detail' })
-          return
-        }
-        if (!this.logined && data.resultData.param == '1') {
-          this.initWelcome()
-        }
+        // this.systemConfig = data.resultData
+        // if (data.resultData.param == '1') {
+        //   wx.redirectTo({ url: '/pages/detail' })
+        //   return
+        // }
+        // if (!this.logined && data.resultData.param == '0') {
+        //   this.initWelcome()
+        // }
       })
   }
 

@@ -1,5 +1,11 @@
 <template>
-  <view class="p-completionOfWork">
+   <scroll-view
+    scroll-y
+    scroll-with-animation
+    scroll-top="{{scrollTop}}"
+    class="p-completionOfWork-scroll"
+    >
+    <view class="p-completionOfWork">
     <view class="p-completionOfWork-body" id="scorllCompletion">
       <Text class="-body-back" @tap="backPre">
         <van-icon size="26px" name="arrow-left"/>
@@ -17,7 +23,7 @@
           </view>
           <view class="-top-right">{{workDetail.workTime}}</view>
         </view>
-        <view class="-body-content-down">
+        <view class="-body-content-down {{workDetail.category === 3 && 'write'}}">
           <swiper class="-content-down-swiper"
                   wx:if="{{workDetail.homeworkType == 2}}"
                   indicator-dots="{{swiperOptions.indicatorDots}}"
@@ -27,8 +33,24 @@
                   duration="{{swiperOptions.duration}}">
             <block wx:for="{{workDetail.workImg}}" wx:key="{{index}}">
               <swiper-item>
-                <image class="-content-down-img"
-                       src="{{item}}" @tap="enlargeImage({{index}}, {{workDetail.workImgSrc}})"></image>
+                <view class="-content-down-img-wrap">
+                  <image class="-content-down-img"
+                        mode="widthFix"
+                       src="{{workDetail.category === 3 ? workDetail.workImgSrc[0] : item}}" @tap="enlargeImage({{index}}, {{workDetail.workImgSrc}})"></image>
+                  <view
+                    class="-content-down-img-point {{item.time < _currentTime && 'show'}}"
+                    wx:for="{{workDetail.audioTags}}"
+                    wx:key="{{index}}"
+                    style="width:{{item.width + 'rpx'}};height:{{item.width + 'rpx'}};left:{{item.x + 'rpx'}};top:{{item.y + 'rpx'}};border-color: {{item.color}}"
+                  ></view>
+                  <view class="-content-down-bh" wx:if="{{_currentTime > workDetail.strokeStartTime && _currentTime < workDetail.strokeEndTime}}">
+                    <image
+                      class="-content-down-gif"
+                      mode="widthFix"
+                      src="{{workDetail.strokeImg}}"
+                    />
+                  </view>
+                </view>
               </swiper-item>
             </block>
           </swiper>
@@ -79,7 +101,7 @@
         </view>
       </view>
       <view class="-footer-center" wx:if="{{workDetail.replyTime && workDetail.replyAudio && !isOpenAudio}}"
-            @tap="changeAudioStatus">
+            @tap="changeAudioStatus(1)">
         <text>收听老师点评</text>
         <image class="-footer-center-img1"
                src="https://pub.file.k12.vip/tbzw/1.3/course/bofang.png"></image>
@@ -225,6 +247,8 @@
 
     <load wx:if="{{isFetching}}"></load>
   </view>
+  </scroll-view>
+
 </template>
 
 <script>
@@ -273,12 +297,14 @@
       isOpenAudio: false,
       isActive: '',
       currentTime: 0,
+      _currentTime: 0,
       stumsg: '',
       workDetail: '',
       queryInfo: '',
       myAudio: '',
       itemUrl: [],
       imgIndex: '',
+      scrollTop: 0,
       swiperOptions: {
         indicatorDots: true,
         indicatorActiveColor: '#FFDBA9',
@@ -301,6 +327,8 @@
         let duration = parseInt(this.myAudio.duration);
 
         this.currentTime = (parseInt(this.myAudio.currentTime) / duration) * 100;
+        this._currentTime = this.myAudio.currentTime * 1000
+        console.log(this._currentTime)
         this.$apply();
       });
       this.myAudio.onEnded(() => {
@@ -344,6 +372,16 @@
         this.workDetail.duration = this.timeToFormat(this.workDetail.duration);
         this.workDetail.replyDuration = this.timeToFormat(this.workDetail.replyDuration);
         this.workDetail.likeRemind && this.getAudio(9)
+        this.workDetail.audioTags = JSON.parse(this.workDetail.audioTags)
+        this.workDetail.audioTags = this.workDetail.audioTags.map(e => {
+          e.x *= 2
+          e.y *= 2
+          e.width *=2
+          return e
+        })
+        if(this.workDetail.workImgSrc.length == 1) {
+          this.swiperOptions.indicatorDots = false
+        }
         if (this.workDetail.replyTime) {
           this.workDetail.replyTime = getDateDiff.getDateDiff(this.workDetail.replyTime);
           this.isReply = true;
@@ -354,6 +392,7 @@
         this.initAudio(false);
         this.isFetching = false;
         this.$apply();
+        console.log(this.workDetail)
       }, () => {
         this.isFetching = false;
         this.$apply();
@@ -451,7 +490,8 @@
           this.isShowConfirm = true;
         }
       },
-      changeAudioStatus() {
+      changeAudioStatus(i) {
+        if(i == 1 && this.workDetail.category == 3) this.scrollTop = 200
         this.isMyPlay = false;
         !this.isOpenAudio && this.myAudio.destroy();
         !this.isOpenAudio && this.initAudio(false);
@@ -609,7 +649,9 @@
 
   .p-completionOfWork {
     background-color: #F6BA04;
-
+    &-scroll {
+      height: 100vh;
+    }
     &-body {
       position: relative;
       display: inline-block;
@@ -633,9 +675,9 @@
 
       .-body-content {
         position: relative;
+        padding-bottom: 27px;
         margin: 207px 32px 71px;
         width: 686px;
-        height: 1033px;
         background: rgba(255, 255, 255, 1);
         box-shadow: 0px 13px 27px 0px rgba(246, 95, 4, 0.2);
         border-radius: 33px;
@@ -701,7 +743,9 @@
         &-down {
           height: 776px;
           border-radius: 27px;
-
+          &.write {
+            height: 1000px;
+          }
           .-content-down-swiper {
             margin: 0 27px;
             height: 100%;
@@ -710,8 +754,37 @@
 
           .-content-down-img {
             width: 100%;
-            height: 776px;
             border-radius: 27px;
+            &-wrap {
+              position: relative;
+              height: 100%;
+            }
+            &-point {
+              opacity: 0;
+              position: absolute;
+              box-sizing: border-box;
+              border: 4px solid rgba(255, 89, 89, 1);
+              border-radius: 50%;
+              transform: translate(-50%, -50%);
+              transition: all 0.4s;
+              &.show {
+                opacity: 1;
+              }
+            }
+          }
+          .-content-down-bh {
+            box-sizing: border-box;
+            position: absolute;
+            padding: 10px 20px;
+            left: 50%;
+            bottom: 20px;
+            width: 200px;
+            transform: translateX(-50%);
+            @include bg('/1.8/gezi.png');
+          }
+          .-content-down-gif {
+            width: 100%;
+            height: 100%;
           }
 
           .-content-down-wrap {

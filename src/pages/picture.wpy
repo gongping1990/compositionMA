@@ -69,8 +69,8 @@ export default class Example extends wepy.page {
   data = {
     showDialog: false,
     showBack: false,
+    isFirst: true,
     current: 0,
-    pageNum: 0,
     pageTimes: [],
     learnData: {},
     pointData: {}
@@ -124,7 +124,16 @@ export default class Example extends wepy.page {
         url: `/pages/result?id=${this.pointId}&cid=${this.pointData.id}`
       })
     })
-    InnerAudioContext.onPlay(() => {})
+    InnerAudioContext.onPlay(() => {
+      let time = InnerAudioContext.currentTime
+      let current = Number(pageTimes[this.current])
+      if(time < current && this.isFirst) {
+        InnerAudioContext.seek(current)
+        this.isFirst = false
+      }
+      this.$apply()
+
+    })
 
     InnerAudioContext.onTimeUpdate(() => {
       let time = parseInt(InnerAudioContext.currentTime)
@@ -136,10 +145,10 @@ export default class Example extends wepy.page {
       this.$apply()
     })
     InnerAudioContext.src = authContentUrl
-    if (this.current) {
-      InnerAudioContext.seek(+pageTimes[this.current])
-    }
     InnerAudioContext.play()
+    // if (this.current) {
+    //   InnerAudioContext.seek(Number(pageTimes[this.current]))
+    // }
   }
 
   getThreeLearnInfo() {

@@ -372,13 +372,16 @@
         this.workDetail.duration = this.timeToFormat(this.workDetail.duration);
         this.workDetail.replyDuration = this.timeToFormat(this.workDetail.replyDuration);
         this.workDetail.likeRemind && this.getAudio(9)
-        this.workDetail.audioTags = JSON.parse(this.workDetail.audioTags)
-        this.workDetail.audioTags = this.workDetail.audioTags.map(e => {
-          e.x *= 2
-          e.y *= 2
-          e.width *=2
-          return e
-        })
+        if(this.workDetail.audioTags) {
+          this.workDetail.audioTags = JSON.parse(this.workDetail.audioTags)
+          this.workDetail.audioTags = this.workDetail.audioTags.map(e => {
+            e.x *= 2
+            e.y *= 2
+            e.width *=2
+            return e
+          })
+        }
+
         if(this.workDetail.workImgSrc.length == 1) {
           this.swiperOptions.indicatorDots = false
         }

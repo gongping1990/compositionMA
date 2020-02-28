@@ -40,7 +40,7 @@
             </view>
             <view class="write-hanzi-arrow"></view>
             <view class="write-hanzi" hidden="{{showCatalog}}" @tap="clickShowHanzi">
-              <image src="{{lessonData.strokeImg}}" />
+              <image src="{{lessonData.meterImg}}" />
             </view>
           </view>
           <view class="write-yd">
@@ -114,7 +114,7 @@
     </van-popup>
     <van-popup show="{{showHanzi}}" @close="closeDialog">
      <view class="hanzi-popup">
-       <view class="hanzi-popup-title">{{lessonData.lessonName}}</view>
+       <view class="hanzi-popup-title">{{lessonData.stroke}}</view>
        <image src="{{lessonData.strokeImg}}" />
        <view class="hanzi-popup-close" @tap="closeDialog"></view>
      </view>
@@ -216,6 +216,10 @@
         });
       },
       clicNextLesson() {
+        if(this.lessonData.maxUnLock && !this.lessonData.nextunlock) {
+          this.showDialog = true
+          return
+        }
         wx.showLoading({
           title: '切换课程中...', //提示的内容,
           mask: true, //显示透明蒙层，防止触摸穿透

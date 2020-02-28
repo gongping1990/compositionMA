@@ -57,9 +57,9 @@
 			"list": [
 				{
 					"id": 0,
-					"name": "user/completionOfWork",
-					"pathName": "user/completionOfWork",
-					"query": "type=1&id=1218724573697683457",
+					"name": "pages/picture",
+					"pathName": "pages/picture",
+					"query": "id=1214095493148721153&lookback=1",
 					"scene": null
 				},
 				{

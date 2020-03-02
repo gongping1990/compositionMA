@@ -261,7 +261,12 @@ export default class extends wepy.app {
       },
       {
         root: 'literacy',
-        pages: ['l_submitHomework', 'l_uploadAudioWork', 'l_uploadImgWork', 'w_uploadImgWork']
+        pages: [
+          'l_submitHomework',
+          'l_uploadAudioWork',
+          'l_uploadImgWork',
+          'w_uploadImgWork'
+        ]
       }
     ],
     window: {

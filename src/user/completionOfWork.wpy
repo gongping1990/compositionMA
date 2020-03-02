@@ -454,14 +454,7 @@
         wx.navigateBack();
       },
       scrollToFn() {
-        let that = this;
-        wx.createSelectorQuery().select('#scorllCompletion').boundingClientRect(function(rect) {
-          if (rect) {
-            wx.pageScrollTo({
-              scrollTop: rect.height
-            });
-          }
-        }).exec();
+        this.scrollTop = 1000;
       },
       openShareModal() {
         this.isOpenPopup = false;

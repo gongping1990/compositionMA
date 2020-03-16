@@ -168,12 +168,12 @@ const userInfo = wx.getStorageInfoSync('userInfo')
 const _sa = require('./utils/sensorsdata.min.js')
 const sa = require('./utils/sensorsdata.custom.min.js')
 sa.setPara({
-  server_url: 'http://collector.k12.vip:8106/sa?project=default'
+  server_url: 'https://collector.k12.vip:8106/sa?project=default'
 })
 
 _sa.setPara({
   name: 'sensors',
-  server_url: 'http://collector.k12.vip:8106/sa?project=default',
+  server_url: 'https://collector.k12.vip:8106/sa?project=default',
   // 是否开启自动采集
   autoTrack: {
     appLaunch: true,

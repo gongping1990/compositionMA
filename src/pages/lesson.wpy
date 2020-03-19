@@ -398,8 +398,8 @@ export default class Lesson extends wepy.page {
       this.listCompositionWeekLesson()
     },
     bindClickBtn(lesson) {
-      let { sa } = this.$parent.globalData
-      sa.track('playingClass', {
+      let { _sa } = this.$parent.globalData
+      _sa.track('playingClass', {
         ButtonType: lesson.stateText,
         courseID: '',
         courseTitle: '',

@@ -168,7 +168,7 @@ export default class Example extends wepy.page {
   }
   methods = {
     toJump(n) {
-      let { sa } = this.$parent.globalData
+      let { _sa } = this.$parent.globalData
       let ButtonTypeArr = ['点评', '点赞', '表扬', '辅导老师']
       if (!this.logined) {
         this.showPopup = true
@@ -188,7 +188,7 @@ export default class Example extends wepy.page {
           wx.navigateTo({ url: '/user/teacher' })
           break
       }
-      sa.track('serviceClick', {
+      _sa.track('serviceClick', {
         ButtonType: ButtonTypeArr[n - 2]
       })
     },

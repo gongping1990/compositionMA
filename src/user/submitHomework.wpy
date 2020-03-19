@@ -305,7 +305,7 @@ import api from '../request/api'
 import { saveFormId } from '../utils'
 import dayjs from 'dayjs'
 import { connect } from 'wepy-redux'
-import getDateDiff from '../utils/getDateDiff';
+import getDateDiff from '../utils/getDateDiff'
 import mHeader from '../components/header'
 import load from '../components/load'
 import lookImage from '../components/lookImage'
@@ -416,7 +416,9 @@ export default class SubmitHomework extends wepy.page {
           this.workDetail = res.data.resultData
           if (this.workDetail) {
             this.isSuccessWork = true
-            this.workDetail.workTime = getDateDiff.getDateDiff(this.workDetail.workTime)
+            this.workDetail.workTime = getDateDiff.getDateDiff(
+              this.workDetail.workTime
+            )
             this.workDetail.workImg =
               this.workDetail.workImg && this.workDetail.workImg.split(',')
             this.workDetail.workImgSrc =
@@ -571,7 +573,7 @@ export default class SubmitHomework extends wepy.page {
     },
     openUrl(num) {
       let { lessonDetail } = this
-      let { sa } = this.$parent.globalData
+      let { _sa } = this.$parent.globalData
       if (num === 1) {
         wx.navigateTo({
           url: `/pages/study?id=${this.queryInfo.id}&lookback=1`
@@ -579,7 +581,7 @@ export default class SubmitHomework extends wepy.page {
       } else {
         wx.navigateTo({ url: `/pages/test?id=${this.queryInfo.id}&lookback=1` })
       }
-      sa.track('playBack', {
+      _sa.track('playBack', {
         courseID: lessonDetail.courseID,
         courseTitle: lessonDetail.courseName,
         classID: this.queryInfo.id,
@@ -627,7 +629,7 @@ export default class SubmitHomework extends wepy.page {
       this.isOpenPopup = !this.isOpenPopup
     },
     submitWork() {
-      let { audioContext, playSound, sa } = this.$parent.globalData
+      let { audioContext, playSound, _sa } = this.$parent.globalData
       let { lessonDetail } = this
       playSound(audioContext, 1)
       wx.navigateTo({
@@ -637,14 +639,14 @@ export default class SubmitHomework extends wepy.page {
             : 'uploadImgWork'
         }?id=${this.queryInfo.id}`
       })
-      sa.track('clickHomework', {
+      _sa.track('clickHomework', {
         courseID: lessonDetail.courseId,
         courseTitle: lessonDetail.courseName,
         classID: this.queryInfo.id,
         className: '',
         classType: lessonDetail.category == 1 ? '作文' : '读写',
         homeworkID: lessonDetail.id,
-        homeworkType: lessonDetail.homeworkType == 1 ? '音频' : '图片',
+        homeworkType: lessonDetail.homeworkType == 1 ? '音频' : '图片'
       })
     },
     lookWorkDetail(data) {
@@ -930,7 +932,7 @@ export default class SubmitHomework extends wepy.page {
             height: 32px;
             font-size: 23px;
             font-weight: 400;
-            color: #C1C4CE;
+            color: #c1c4ce;
             line-height: 32px;
           }
         }
@@ -950,11 +952,15 @@ export default class SubmitHomework extends wepy.page {
         &-audio {
           @include flex-center;
           justify-content: space-between;
-          width:448px;
-          height:100px;
-          background:linear-gradient(-37deg,rgba(255,142,74,1),rgba(255,122,50,1));
-          box-shadow:0px 12px 12px 0px rgba(255,122,50,0.4);
-          border-radius:0px 50px 50px 55px;
+          width: 448px;
+          height: 100px;
+          background: linear-gradient(
+            -37deg,
+            rgba(255, 142, 74, 1),
+            rgba(255, 122, 50, 1)
+          );
+          box-shadow: 0px 12px 12px 0px rgba(255, 122, 50, 0.4);
+          border-radius: 0px 50px 50px 55px;
 
           .-reply-icon {
             margin: 30px 0 29px 44px;

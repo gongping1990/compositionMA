@@ -166,10 +166,6 @@ import configStore from './store'
 import api from './request/api'
 const userInfo = wx.getStorageInfoSync('userInfo')
 const _sa = require('./utils/sensorsdata.min.js')
-const sa = require('./utils/sensorsdata.custom.min.js')
-sa.setPara({
-  server_url: 'https://collector.k12.vip:8106/sa?project=default'
-})
 
 _sa.setPara({
   name: 'sensors',
@@ -191,16 +187,11 @@ _sa.setPara({
 })
 if (userInfo && userInfo.id) {
   _sa.login(userInfo.id)
-  sa.login(userInfo.id)
 }
 _sa.registerApp({
   platform: 'miniprogram'
 })
-sa.registerApp({
-  platform: 'miniprogram'
-})
 _sa.init()
-sa.init()
 
 const store = configStore()
 setStore(store)

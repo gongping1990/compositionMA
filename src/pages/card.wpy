@@ -121,14 +121,14 @@ export default class Example extends wepy.page {
       })
     },
     addMyCard() {
-      let { sa } = this.$parent.globalData
+      let { _sa } = this.$parent.globalData
       if (this.cardDetail.todayLearned) {
         if (this.cardDetail.todayCard) return
         api.study.addCard().then(() => {
           this.show = true
           this.$invoke('calendar', 'getCardList')
           this.$apply()
-          sa.track('courseClockRecord', {
+          _sa.track('courseClockRecord', {
             courseID: '',
             courseTitle: '',
             isSuccess: true,

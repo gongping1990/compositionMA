@@ -470,8 +470,8 @@ export default class Home extends wepy.page {
   }
   methods = {
     bindClickBanner(item) {
-      let { sa } = this.$parent.globalData
-      sa.track('bannerClick', {
+      let { _sa } = this.$parent.globalData
+      _sa.track('bannerClick', {
         bannerName: item.name,
         bannerId: item.id,
         url: item.href

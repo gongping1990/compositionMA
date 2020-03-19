@@ -184,7 +184,7 @@
         <view class="dialog-btn-wrap">
           <view class="dialog-btn dialog-cancel" @tap="bindClickCancel">
             确认退出
-            </view>
+          </view>
           <view class="dialog-btn dialog-confirm" @tap="bindClickConfirm">
             继续观看
           </view>
@@ -365,9 +365,9 @@ export default class Example extends wepy.page {
       this.imitateEnd && (this.time = 1)
     },
     bindplay() {
-      let { sa } = this.$parent.globalData
+      let { _sa } = this.$parent.globalData
       if (!this.isFirstPlay) {
-        sa.track('playingVideo', {
+        _sa.track('playingVideo', {
           courseID: '',
           courseTitle: '',
           classID: this.lessonId,
@@ -375,19 +375,18 @@ export default class Example extends wepy.page {
           classType: '作文',
           playProgress: this.roomData.progressTime,
           studyStage: this.isLookBack ? '回看' : '初次上课',
-          playType:
-            this.isReset
-              ? this.roomData.stage > 0
-                ? '继续观看'
-                : '从头开始'
-              : '初次上课',
+          playType: this.isReset
+            ? this.roomData.stage > 0
+              ? '继续观看'
+              : '从头开始'
+            : '初次上课',
           Source: ''
         })
         this.isFirstPlay = true
       }
     },
     bindended() {
-      let {sa} = this.$parent.globalData
+      let { _sa } = this.$parent.globalData
       this.isEnd = true
       if (!this.isLookBack) {
         this.changeLearnStage(this.roomData.id, 2)
@@ -395,21 +394,20 @@ export default class Example extends wepy.page {
       } else {
         wx.redirectTo({ url: '/user/submitHomework?id=' + this.lessonId })
       }
-      sa.track('finishPlayingVideo', {
-          courseID: '',
-          courseTitle: '',
-          classID: this.lessonId,
-          className: '',
-          classType: '作文',
-          isFinish: true,
-          playType:
-            this.isReset
-              ? this.roomData.stage > 0
-                ? '继续观看'
-                : '从头开始'
-              : '初次上课',
-          duration: this.currentTime
-        })
+      _sa.track('finishPlayingVideo', {
+        courseID: '',
+        courseTitle: '',
+        classID: this.lessonId,
+        className: '',
+        classType: '作文',
+        isFinish: true,
+        playType: this.isReset
+          ? this.roomData.stage > 0
+            ? '继续观看'
+            : '从头开始'
+          : '初次上课',
+        duration: this.currentTime
+      })
     },
     bindtimeupdate(event) {
       let { currentTime } = event.detail

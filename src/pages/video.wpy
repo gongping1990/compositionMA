@@ -241,9 +241,9 @@ export default class Example extends wepy.page {
       }, 500)
     },
     bindplay() {
-      let { sa } = this.$parent.globalData
+      let { _sa } = this.$parent.globalData
       if (!this.isFirstPlay) {
-        sa.track('playingVideo', {
+        _sa.track('playingVideo', {
           courseID: '',
           courseTitle: '',
           classID: this.learnData.lessonId,
@@ -263,11 +263,12 @@ export default class Example extends wepy.page {
     },
     // 视频播放结束
     bindended() {
+      let { _sa } = this.$parent.globalData
       this.isEnd = true
       wx.redirectTo({
         url: `/pages/result?id=${this.pointId}&cid=${this.pointData.id}`
       })
-      sa.track('finishPlayingVideo', {
+      _sa.track('finishPlayingVideo', {
         courseID: '',
         courseTitle: '',
         classID: this.learnData.lessonId,

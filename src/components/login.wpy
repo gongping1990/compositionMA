@@ -80,7 +80,7 @@ export default class Example extends wepy.component {
   computed = {}
 
   getLogin() {
-    let { _sa, sa } = this.$parent.$parent.globalData
+    let { _sa } = this.$parent.$parent.globalData
     console.log(wepy)
     console.log(this)
     wx.showLoading({
@@ -109,7 +109,6 @@ export default class Example extends wepy.component {
           this.$apply()
         })
         _sa.login(resultData.id)
-        sa.login(resultData.id)
       })
     })
   }

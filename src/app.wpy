@@ -193,6 +193,12 @@ if (userInfo && userInfo.id) {
   _sa.login(userInfo.id)
   sa.login(userInfo.id)
 }
+_sa.registerApp({
+  platform: 'miniprogram'
+})
+sa.registerApp({
+  platform: 'miniprogram'
+})
 _sa.init()
 sa.init()
 

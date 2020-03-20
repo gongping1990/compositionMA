@@ -401,8 +401,8 @@ export default class Lesson extends wepy.page {
       let { _sa } = this.$parent.globalData
       _sa.track('playingClass', {
         ButtonType: lesson.stateText,
-        courseID: '',
-        courseTitle: '',
+        courseID: lesson.courseId,
+        courseTitle: lesson.courseName,
         courseList: this.nowWeek ? '本周' : '上周',
         classID: lesson.id,
         className: lesson.name,

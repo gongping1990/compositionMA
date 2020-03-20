@@ -1,6 +1,6 @@
 <template>
   <view class="container p-uploadImgWork">
-    <mHeader title="提交作业"></mHeader>
+    <mHeader title="提交作业"  wx:if="{{!isShowCamera}}"></mHeader>
     <view class="container-scroll" style="margin-top:{{height}}px">
       <view class="p-uploadImgWork-title">
         <text class="-title-left">{{ lessonDetail.homeworkClaim }}</text>

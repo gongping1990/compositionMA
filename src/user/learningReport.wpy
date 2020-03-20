@@ -212,12 +212,21 @@
         });
       },
       addMyCard() {
+        let { _sa } = this.$parent.globalData
         api.study.addCard().then(({ data }) => {
           this.cardDetail.continuousdays = data.resultData.continuousdays;
           this.cardDetail.totaldays = data.resultData.totaldays;
           this.isShowFlower = true;
           this.getCardInfo();
           this.$apply();
+          _sa.track('courseClockRecord', {
+            courseID: this.dataInfo.courseId,
+            courseTitle: this.dataInfo.courseName,
+            isSuccess: true,
+            classID: this.dataInfo.lessonId,
+            className: this.dataInfo.lessonName,
+            classType: this.dataInfo.category
+          })
         });
       }
     };

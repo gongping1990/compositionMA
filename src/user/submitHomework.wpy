@@ -585,7 +585,7 @@ export default class SubmitHomework extends wepy.page {
         courseID: lessonDetail.courseID,
         courseTitle: lessonDetail.courseName,
         classID: this.queryInfo.id,
-        className: '',
+        className: lessonDetail.name,
         classType: lessonDetail.category == 1 ? '作文' : '读写',
         playBackContent: num == 1 ? '回看课程' : '随堂检测'
       })
@@ -643,7 +643,7 @@ export default class SubmitHomework extends wepy.page {
         courseID: lessonDetail.courseId,
         courseTitle: lessonDetail.courseName,
         classID: this.queryInfo.id,
-        className: '',
+        className: lessonDetail.name,
         classType: lessonDetail.category == 1 ? '作文' : '读写',
         homeworkID: lessonDetail.id,
         homeworkType: lessonDetail.homeworkType == 1 ? '音频' : '图片'

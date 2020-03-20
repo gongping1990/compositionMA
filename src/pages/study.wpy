@@ -368,10 +368,10 @@ export default class Example extends wepy.page {
       let { _sa } = this.$parent.globalData
       if (!this.isFirstPlay) {
         _sa.track('playingVideo', {
-          courseID: '',
-          courseTitle: '',
+          courseID: this.courseInfo.courseId,
+          courseTitle: this.courseInfo.courseName,
           classID: this.lessonId,
-          className: '',
+          className: this.courseInfo.lessonName,
           classType: '作文',
           playProgress: this.roomData.progressTime,
           studyStage: this.isLookBack ? '回看' : '初次上课',
@@ -395,10 +395,10 @@ export default class Example extends wepy.page {
         wx.redirectTo({ url: '/user/submitHomework?id=' + this.lessonId })
       }
       _sa.track('finishPlayingVideo', {
-        courseID: '',
-        courseTitle: '',
+        courseID: this.courseInfo.courseId,
+        courseTitle: this.courseInfo.courseName,
         classID: this.lessonId,
-        className: '',
+        className: this.courseInfo.lessonName,
         classType: '作文',
         isFinish: true,
         playType: this.isReset

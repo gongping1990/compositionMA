@@ -336,7 +336,6 @@ export default class extends wepy.app {
     audioContext.volume = 0.3
     audioContext.obeyMuteSwitch = false
     this.globalData.audioContext = audioContext
-    this.globalData.sa = sa
     this.globalData._sa = _sa
     wx.setKeepScreenOn({
       keepScreenOn: true

@@ -9,6 +9,7 @@
 		"postcss": false,
 		"minified": false,
 		"newFeature": true,
+		"coverView": true,
 		"nodeModules": true,
 		"autoAudits": false,
 		"checkInvalidKey": true,
@@ -18,10 +19,11 @@
 			"ignore": [],
 			"disablePlugins": [],
 			"outputPath": ""
-		}
+		},
+		"enhance": true
 	},
 	"compileType": "miniprogram",
-	"libVersion": "2.10.0",
+	"libVersion": "2.10.3",
 	"appid": "wx2a0a77e396535475",
 	"projectname": "chinese-wepy",
 	"miniprogramRoot": "dist/",
@@ -57,15 +59,15 @@
 			"list": [
 				{
 					"id": 0,
-					"name": "pages/picture",
-					"pathName": "pages/picture",
-					"query": "id=1214095493148721153&lookback=1",
+					"name": "pages/video",
+					"pathName": "pages/video",
+					"query": "id=1214070007701979137&lookback=1",
 					"scene": null
 				},
 				{
 					"id": 1,
-					"name": "pages/writeCatalog",
-					"pathName": "pages/writeCatalog",
+					"name": "pages/demo",
+					"pathName": "pages/demo",
 					"query": "id=1217988296437821442",
 					"scene": null
 				},

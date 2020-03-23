@@ -1,0 +1,76 @@
+<template>
+  <view class="container">
+    <movable-area
+      class="area"
+      style="height: 200px; width: 200px; background: red;"
+    >
+      <movable-view
+        style="height: 50px; width: 50px; background: blue;"
+        x="{{x}}"
+        y="{{y}}"
+        id="a"
+        data-list="{{listData}}"
+        direction="all"
+        bindtouchstart="bindtouchstart"
+        bindtouchend="bindtouchend"
+      >
+      </movable-view>
+    </movable-area>
+    <view class="text">dasdas</view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+export default class Example extends wepy.page {
+  config = {
+    navigationBarTitleText: ''
+  }
+  data = {
+    x: 0,
+    y: 0,
+    listData: {
+      a: 1
+    }
+  }
+  components = {}
+  methods = {
+    bindtouchstart(e) {
+      let { clientX, clientY } = e.changedTouches[0]
+      const query = wx.createSelectorQuery()
+      query.select('#a').boundingClientRect()
+      query.selectViewport().scrollOffset()
+      query.exec(function(res) {
+        console.log(res)
+      })
+    },
+    bindtouchend(e) {
+      console.log(e)
+      let { clientX, clientY } = e.changedTouches[0]
+      console.log(clientX)
+      if (clientX < 100) {
+        this.x = this.x ? 0 : 0.1
+        this.y = this.y ? 0 : 0.1
+      }
+    }
+  }
+  events = {}
+  watch = {}
+  computed = {}
+  onLoad() {}
+  onShow() {}
+}
+</script>
+<style lang="scss">
+.area {
+  margin-top: 100px;
+  movable-view {
+    z-index: 999;
+  }
+}
+.text {
+  position: absolute;
+  left: 100px;
+  top: 100px;
+  z-index: 1;
+}
+</style>

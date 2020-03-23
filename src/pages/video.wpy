@@ -24,16 +24,10 @@
     <van-popup show="{{ show }}" overlay="{{true}}" position="bottom">
       <view class="video-popup">
         <view class="video-time">
-          <view class="video-circle" wx:if="{{show && !showIcon}}">
-            <van-circle
-              size="{{46}}"
-              value="{{timeProgress}}"
-              layer-color="#fff"
-              color="#FFC001"
-            >
-              <view class="video-circle-text">{{ time }}</view>
-            </van-circle>
+          <view class="video-time-text">
+            倒计时
           </view>
+          <view class="video-time-num">{{ time }}</view>
         </view>
         <view class="video-content">
           <view class="video-title">
@@ -49,13 +43,18 @@
             @end.user="matchingEnd"
             @selected.user="matchingSelected"
             wx:if="{{questionData.type == 3}}"
-          ></matching>
-          <recorder
+          />
+          <!-- <recorder
             wx:if="{{questionData.type == 1}}"
             :questionData.sync="questionData"
             @stop.user="recorderStop"
             @start.user="recorderStart"
-          ></recorder>
+          /> -->
+          <!-- <drag
+            wx:if="{{questionData.type == 1}}"
+            :questionData.sync="questionData"
+          /> -->
+          <sentence wx:if="{{questionData.type == 1}}" />
           <view class="choice" wx:if="{{questionData.type == 2}}">
             <block wx:for="{{questionArr}}" wx:key="{{index}}">
               <view
@@ -111,7 +110,9 @@
 import wepy from 'wepy'
 import mHeader from '../components/header'
 import recorder from '../components/recorder'
+import drag from '../components/drag'
 import matching from '../components/matching'
+import sentence from '../components/sentence'
 import load from '../components/load'
 let __timer = null
 export default class Example extends wepy.page {
@@ -151,7 +152,9 @@ export default class Example extends wepy.page {
   }
   components = {
     mHeader,
+    sentence,
     recorder,
+    drag,
     matching,
     load
   }
@@ -304,6 +307,7 @@ export default class Example extends wepy.page {
 
           setTimeout(() => {
             this.show = true
+            this.$broadcast('showQuestion')
             this.$apply()
           }, 500)
           setTimeout(() => {
@@ -595,60 +599,64 @@ export default class Example extends wepy.page {
     height: 100vh;
   }
   &-content {
-    padding: 144px 80px 60px;
+    padding: 144px 24px 60px;
   }
   &-title {
     display: flex;
     align-items: center;
-    margin-bottom: 50px;
+    margin: 0 28px;
     text {
       max-width: 502px;
       font-size: 34px;
-      color: #fff;
+      color: #000000;
       line-height: 46px;
     }
   }
   &-audio {
-    @include bg('/1.8/video/play.gif');
+    @include bg('/1.9/video/sp_icon.png');
     margin-right: 24px;
-    width: 64px;
-    height: 64px;
+    width: 68px;
+    height: 74px;
     &.paused {
-      @include bg('/1.8/video/sp_icon.png');
+      @include bg('/1.9/video/sp_icon.png');
     }
   }
   &-popup {
     position: relative;
     width: 100vw;
-    min-height: 80vh;
-    background: rgba(162, 173, 255, 1);
-    border-radius: 48px 48px 0px 0px;
+    min-height: 100vh;
+    background: #fff7e7;
   }
   &-time {
+    @include flex-center;
     position: absolute;
     left: 50%;
-    top: 0;
-    width: 112px;
-    height: 112px;
-    background: #fff;
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-  }
-  &-circle {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -45%);
+    bottom: 0;
+    width: 170px;
+    height: 58px;
+    background: rgba(0, 0, 0, 1);
+    opacity: 0.3;
+    border-radius: 29px 29px 0px 0px;
+    transform: translateX(-50%);
     &-text {
-      font-size: 48px;
-      color: #ffc001;
+      font-size: 24px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 1);
+      line-height: 48px;
+    }
+    &-num {
+      margin-left: 17px;
+      font-size: 36px;
       font-weight: bold;
+      color: rgba(255, 255, 255, 1);
+      line-height: 48px;
     }
   }
   .choice {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
+    margin-top: 56px;
     &-item {
       position: relative;
       box-sizing: border-box;

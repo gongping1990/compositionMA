@@ -185,13 +185,15 @@ _sa.setPara({
   // 是否允许修改onShareAppMessage里return的path，用来增加(用户id，分享层级，当前的path)，在app onShow中自动获取这些参数来查看具体分享来源，层级等
   allow_amend_share_path: true
 })
-if (userInfo && userInfo.id) {
-  _sa.login(userInfo.id)
-}
 _sa.registerApp({
   platform: 'miniprogram'
 })
-_sa.init()
+if (userInfo && userInfo.id) {
+  _sa.login(userInfo.id)
+  _sa.init()
+}
+
+
 
 const store = configStore()
 setStore(store)

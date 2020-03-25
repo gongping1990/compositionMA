@@ -1,0 +1,1041 @@
+<template>
+  <view class="container lesson">
+    <mHeader title="我的课程表" flag="0"></mHeader>
+    <view
+      class="container-scroll"
+      style="margin-top:{{height}}px;height: calc(100vh - {{height}}px)"
+    >
+      <view class="no-login" wx:if="{{!logined}}">
+        <image
+          class="no-login-icon"
+          src="https://pub.file.k12.vip/tbzw/1.3/login/lion_bg.png"
+        />
+        <text class="no-login-title">请登陆后查看本周课表~</text>
+        <button class="no-login-btn" @tap="clickLoginBtn">立即登录</button>
+      </view>
+      <view class="empty" wx:if="{{!isBuy && remindData.hasChild}}">
+        <text class="empty-title">你还没有报名课程哦~</text>
+        <text class="empty-text">我们为你推荐了其他小朋友都在学的动画课程</text>
+        <button
+          class="empty-btn"
+          wx:for="{{recommendList}}"
+          wx:key="{{index}}"
+          open-type="contact"
+          show-message-card="true"
+          send-message-title="{{item.cardtitle}}"
+          send-message-path="{{'/pages/index?homeConfig=' + item.sessionFrom}}"
+          send-message-img="{{item.cardimgurl}}"
+        >
+          <image class="empty-btn-img" src="{{item.coverphoto}}" />
+        </button>
+      </view>
+      <view wx:if="{{remindData.hasChild && !showTry}}">
+        <view class="lesson-header">
+          <view class="lesson-tab">
+            <view
+              class="lesson-tab-item {{nowWeek && 'active'}}"
+              @tap="clickTab({{true}})"
+            >
+              本周课表
+            </view>
+            <view
+              class="lesson-tab-item {{!nowWeek && 'active'}} "
+              @tap="clickTab({{false}})"
+            >
+              上周课表
+            </view>
+          </view>
+          <view class="lesson-all" @tap="clickAllBtn">
+            全部课程
+            <view class="lesson-all-icon"></view>
+          </view>
+        </view>
+        <scroll-view
+          class="lesson-scroll"
+          style="height: calc(100vh - {{height * 2 + 150 }}rpx)"
+          scroll-y
+          scroll-with-animation
+          scroll-into-view="{{scrollView}}"
+          @scroll="onScroll"
+        >
+          <view class="lesson-scroll-empty" wx:if="{{isEmpty}}">
+            <image
+              class="lesson-scroll-empty-img"
+              src="https://pub.file.k12.vip/tbzw/1.3/lion.png"
+            />
+            <text class="lesson-scroll-empty-text">本周没有要学习的课程</text>
+            <view class="lesson-scroll-empty-btn-wrap">
+              <view class="lesson-scroll-empty-btn" @tap="clickEmptyBtn({{0}})">
+                查看我的课程
+              </view>
+              <view
+                class="lesson-scroll-empty-btn sub"
+                @tap="clickEmptyBtn({{1}})"
+              >
+                报名更多课程
+              </view>
+            </view>
+          </view>
+          <view class="lesson-scroll-wrap">
+            <form report-submit="true" @submit="submit">
+              <view
+                class="lesson-content"
+                id="{{item.isToday ? 'today' : ''}}"
+                wx:for="{{catalogData}}"
+                wx:key="{{item.lessonId}}"
+              >
+                <view class="lesson-time">
+                  <text class="lesson-time-title">{{
+                    item.isToday ? '今日' : item.week
+                  }}</text>
+                  <text class="lesson-time-text">{{ item.dayTime }}</text>
+                </view>
+                <view class="lesson-list">
+                  <view
+                    class="lesson-item"
+                    wx:for="{{item.lessonlist}}"
+                    wx:for-item="lessonItem"
+                    wx:key="{{lessonItem.id}}"
+                  >
+                    <image
+                      class="lesson-cover"
+                      src="{{lessonItem.coverphoto}}"
+                    />
+                    <view class="lesson-info">
+                      <text class="lesson-title">{{ lessonItem.name }}</text>
+                      <view class="lesson-footer">
+                        <text class="lesson-num">
+                          {{ lessonItem.learnNum }}人已学
+                        </text>
+                        <button
+                          class="lesson-btn {{lessonItem.stateClass}}"
+                          form-type="submit"
+                          @tap="bindClickBtn({{lessonItem}})"
+                        >
+                          {{ lessonItem.stateText }}
+                        </button>
+                      </view>
+                    </view>
+                  </view>
+                </view>
+              </view>
+            </form>
+          </view>
+        </scroll-view>
+        <view
+          class="lesson-msg {{showMsg && 'show'}}"
+          wx:if="{{learnRemindData.lessonId}}"
+        >
+          <view class="lesson-msg-icon" @tap="clickMsgIcon"></view>
+          <view class="lesson-msg-content">
+            <view class="lesson-msg-text">
+              {{ formatTime }}的课程你忘记学习咯
+            </view>
+            <view class="lesson-msg-btn" @tap="clickContinueLearn">去学习</view>
+          </view>
+        </view>
+      </view>
+      <view class="_listen" wx:else>
+        <view class="_listen-header">
+          <view class="_listen-header-left">
+            <view class="_listen-header-title">
+              {{ tryData.coursename }}
+            </view>
+            <view class="_listen-header-progress">
+              <view
+                class="_listen-header-bar"
+                style="width: {{tryData.learns /tryData.total * 100 }}%"
+              ></view>
+            </view>
+          </view>
+          <image src="{{tryData.verticalCover}}" class="_listen-cover" />
+        </view>
+        <scroll-view
+          class="_listen-scroll"
+          style="height: calc(100vh - {{height * 2 + 350 }}rpx)"
+          scroll-y
+          scroll-with-animation
+        >
+          <view
+            class="_listen-item"
+            wx:for="{{tryData.lessonlist}}"
+            wx:key="{{item.id}}"
+          >
+            <view class="_listen-item-left">
+              <view class="_listen-item-title">{{ item.name }}</view>
+              <view class="_listen-item-text">
+                {{ item.learnDate || item.lessonTips }} |
+                {{ item.learnNum }}人已学
+              </view>
+            </view>
+            <view class="_listen-item-right">
+              <view
+                class="_listen-item-flower"
+                @tap="bindClickBtn({{item}})"
+                wx:if="{{item.state == 5}}"
+              >
+                <view class="_listen-item-flower-icon"></view>
+                x {{ item.score }}
+              </view>
+              <button
+                class="lesson-btn _listen-btn {{item.stateClass}}"
+                form-type="submit"
+                wx:else
+                @tap="bindClickBtn({{item}})"
+              >
+                {{ item.stateText }}
+              </button>
+            </view>
+          </view>
+        </scroll-view>
+      </view>
+    </view>
+    <van-tabbar
+      active="1"
+      active-color="#58422B"
+      z-index="{{100}}"
+      bind:change="onChangeTabbar"
+    >
+      <van-tabbar-item>
+        <image
+          slot="icon"
+          src="../assets/image/home-def.png"
+          mode="aspectFit"
+        />
+        <image
+          slot="icon-active"
+          src="../assets/image/home-pre.png"
+          mode="aspectFit"
+        />
+        首页
+      </van-tabbar-item>
+      <van-tabbar-item>
+        <image slot="icon" src="../assets/image/sk-def.png" mode="aspectFit" />
+        <image
+          slot="icon-active"
+          src="../assets/image/sk-pre.png"
+          mode="aspectFit"
+        />
+        上课
+      </van-tabbar-item>
+      <van-tabbar-item dot="{{remindData.servicetip}}">
+        <image
+          slot="icon"
+          src="../assets/image/serve-def.png"
+          mode="aspectFit"
+        />
+        <image
+          slot="icon-active"
+          src="../assets/image/serve-pre.png"
+          mode="aspectFit"
+        />
+        服务
+      </van-tabbar-item>
+      <van-tabbar-item dot="{{remindData.uctip}}">
+        <image slot="icon" src="../assets/image/my-def.png" mode="aspectFit" />
+        <image
+          slot="icon-active"
+          src="../assets/image/my-pre.png"
+          mode="aspectFit"
+        />
+        我的
+      </van-tabbar-item>
+    </van-tabbar>
+    <van-popup show="{{ showDialog }}" z-index="{{200}}">
+      <view class="__common-dialog">
+        <view class="__common-dialog-icon mt"></view>
+        <view class="__common-dialog-text">
+          <view>今日已解锁3个课时，</view>
+          <view>明天再来解锁更多课时吧！</view>
+        </view>
+        <view class="__common-dialog-btn" @tap="closeDialog">我知道了</view>
+      </view>
+    </van-popup>
+    <van-popup show="{{ showDialogOne }}" z-index="{{200}}">
+      <view class="__common-dialog">
+        <view class="__common-dialog-icon js"></view>
+        <view class="__common-dialog-text">
+          <view>上交最新课程的作业即可解锁下一课</view>
+        </view>
+        <view class="__common-dialog-btn" @tap="closeDialog">我知道了</view>
+      </view>
+    </van-popup>
+    <login :showPopup.sync="showPopup" :show.sync="showSelect"></login>
+    <load wx:if="{{loading}}"></load>
+    <error wx:if="{{isError}}"></error>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import { connect } from 'wepy-redux'
+import dayjs from 'dayjs'
+import { saveFormId } from '../utils'
+import testMixin from '../mixins/test'
+import mHeader from '../components/header'
+import login from '../components/login'
+import load from '../components/load'
+import error from '../components/error'
+
+let timer = 1
+
+@connect({
+  logined(state) {
+    return state.user.logined
+  },
+  remindData(state) {
+    return state.user.remindData
+  }
+})
+export default class Lesson extends wepy.page {
+  config = {
+    navigationBarTitleText: '我的课程',
+    usingComponents: {
+      'van-tabbar': '../vant/tabbar/index',
+      'van-tabbar-item': '../vant/tabbar-item/index',
+      'van-popup': '../vant/popup/index'
+    }
+  }
+
+  mixins = [testMixin]
+
+  components = {
+    mHeader,
+    login,
+    error,
+    load
+  }
+
+  data = {
+    showDialog: false,
+    showDialogOne: false,
+    showTry: false,
+    isError: false,
+    loading: false,
+    showPopup: false,
+    showSelect: false,
+    isEmpty: false,
+    isBuy: true,
+    scrollView: '',
+    catalogData: {},
+    tryData: {},
+    learnRemindData: {},
+    titleScrollTopArr: [],
+    recommendList: [],
+    nowWeek: true,
+    showMsg: true
+  }
+
+  computed = {
+    height() {
+      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+    },
+    formatTime() {
+      let { date } = this.learnRemindData
+      if (date) {
+        return dayjs(date).format('MM月DD日')
+      } else {
+        return ''
+      }
+    }
+  }
+
+  watch = {
+    logined(n) {
+      if (n) {
+        this.getBottomTipsVO()
+        this.getAttendClassCatalog()
+      }
+    },
+    remindData(n) {
+      if (this.logined && !n.hasChild) {
+        wx.navigateTo({ url: '/user/info' })
+      }
+    }
+  }
+
+  methods = {
+    closeDialog() {
+      this.showDialog = false
+      this.showDialogOne = false
+    },
+    clickMsgIcon() {
+      this.showMsg = !this.showMsg
+    },
+    clickContinueLearn() {
+      let lesson = this.learnRemindData
+      if (lesson.category == 1) {
+        if (!lesson.stage) {
+          wx.navigateTo({ url: '/pages/classroom?id=' + lesson.lessonId })
+        } else if (lesson.stage === 1) {
+          wx.navigateTo({ url: '/pages/study?id=' + lesson.lessonId })
+        }
+      } else {
+        wx.navigateTo({ url: '/pages/lessonDetail?id=' + lesson.lessonId })
+      }
+    },
+    onScroll() {
+      this.showMsg = false
+    },
+    submit(e) {
+      saveFormId(e.detail.formId)
+    },
+    clickAllBtn() {
+      wx.navigateTo({ url: '/user/myCourse' })
+    },
+    clickEmptyBtn(i) {
+      if (i) {
+        wx.redirectTo({ url: '/pages/index' })
+      } else {
+        wx.navigateTo({ url: '/user/myCourse' })
+      }
+    },
+    clickLoginBtn() {
+      this.showSelect = true
+    },
+    clickTab(s) {
+      this.nowWeek = s
+      this.listCompositionWeekLesson()
+    },
+    bindClickBtn(lesson) {
+      let { _sa } = this.$parent.globalData
+      _sa.track('playingClass', {
+        ButtonType: lesson.stateText,
+        courseID: lesson.courseId,
+        courseTitle: lesson.courseName,
+        courseList: this.nowWeek ? '本周' : '上周',
+        classID: lesson.id,
+        className: lesson.name,
+        classType: lesson.category == 1 ? '作文' : '读写'
+      })
+      // lesson.category  1 作文课， 2 读写课 3写字课
+      if (lesson.category == 1) {
+        if (!lesson.stage) {
+          if (lesson.state !== 4) {
+            wx.navigateTo({ url: '/pages/classroom?id=' + lesson.id })
+          } else {
+            wx.showToast({
+              title: '课程尚未开始，先看看其他课程吧！', // 提示的内容,
+              icon: 'none', // 图标,
+              duration: 2000, // 延迟时间,
+              mask: true
+            })
+          }
+        } else if (lesson.stage === 1) {
+          wx.navigateTo({ url: '/pages/study?id=' + lesson.id })
+        } else if (lesson.stage === 2) {
+          wx.navigateTo({ url: '/pages/test?id=' + lesson.id })
+        } else {
+          wx.navigateTo({ url: '/user/submitHomework?id=' + lesson.id })
+        }
+      } else if (lesson.category == 2) {
+        // 读写课
+        if (!lesson.stage && lesson.state == 4) {
+          return
+        }
+        wx.navigateTo({ url: '/pages/lessonDetail?id=' + lesson.id })
+      } else {
+        // 写字课
+        if (!lesson.locked) {
+          this.showDialogOne = true
+          return
+        }
+        if (!lesson.stage && lesson.state == 4) {
+          return
+        }
+        // if (lesson.state === 3) {
+        //   wx.navigateTo({
+        //     url: `/literacy/w_uploadImgWork?id=${lesson.id}`
+        //   })
+        //   return
+        // }
+        wx.redirectTo({ url: `/pages/writeStudy?id=${lesson.id}` })
+      }
+    }
+  }
+
+  events = {
+    login() {
+      this.getAttendClassCatalog()
+    }
+  }
+  getRestrictCourseLesson(courseId) {
+    let { api } = this.$parent.globalData
+    api.study
+      .getRestrictCourseLesson({
+        courseId
+      })
+      .then(({ data }) => {
+        this.tryData = data.resultData
+        this.tryData.lessonlist = this.tryData.lessonlist.map(e => {
+          var time = []
+          let stateArr = [
+            '去学习',
+            '开始学习',
+            '交作业',
+            '待解锁',
+            '回看',
+            '预约上课'
+          ]
+          let classArr = ['bk', 'sk', 'jzy', 'dkk', 'hk', 'yy']
+          e.stateText =
+            e.showOpenTime && e.state == 4
+              ? e.openTime + '开课'
+              : stateArr[e.state - 1]
+          e.stateClass = classArr[e.state - 1]
+          if (e.category == 3) {
+            e.stateText = e.locked ? e.stateText : '待解锁'
+            e.stateClass = e.locked ? e.stateClass : 'dkk'
+          }
+          if (e.learnDate) {
+            time = e.learnDate.split('/')
+            e.learnDate = time[1] + '月' + time[2] + '日'
+          }
+          return e
+        })
+        this.showTry = true
+        this.$apply()
+      })
+  }
+
+  // 检查是否购买，并返回推荐课程
+  getAttendClassCatalog() {
+    this.loading = true
+    let { api } = this.$parent.globalData
+    api.study
+      .getAttendClassCatalog()
+      .then(({ data }) => {
+        this.isError = false
+        this.loading = false
+        if (data.resultData.restrict) {
+          this.getRestrictCourseLesson(data.resultData.courseId)
+        } else if (!data.resultData.hasBuy) {
+          this.isBuy = false
+          this.recommendList = data.resultData.recommenList.map(e => {
+            e.sessionFrom = JSON.stringify({
+              type: 1,
+              homeConfig: e.id
+            })
+            return e
+          })
+          this.$apply()
+        } else {
+          this.listCompositionWeekLesson()
+        }
+      })
+      .catch(({ code }) => {
+        this.loading = false
+        if (code === 500) {
+          this.isError = true
+        }
+        this.$apply()
+      })
+  }
+
+  getLearnRemind() {
+    let { api } = this.$parent.globalData
+    api.study.getLearnRemind().then(({ data }) => {
+      this.learnRemindData = data.resultData || {}
+    })
+  }
+
+  // 获取课程目录
+  listCompositionWeekLesson() {
+    this.loading = true
+    let { api } = this.$parent.globalData
+    api.study
+      .listCompositionWeekLesson({
+        nowWeek: this.nowWeek
+      })
+      .then(({ data }) => {
+        this.isError = false
+        this.loading = false
+        if (data.resultData.length) {
+          let weekArr = ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+          let today = dayjs(new Date()).format('YYYY/MM/DD')
+          this.catalogData = data.resultData.map(e => {
+            e.isToday = today === e.dayTime
+            e.dayTime = dayjs(new Date(e.dayTime)).format('MM月DD日')
+            e.week = weekArr[e.week - 1]
+            e.lessonlist = e.lessonlist.map(_e => {
+              let stateArr = [
+                '去学习',
+                '开始学习',
+                '交作业',
+                _e.category > 1 ? '待解锁' : '待开课',
+                '回看',
+                '预约上课'
+              ]
+              let classArr = ['bk', 'sk', 'jzy', 'dkk', 'hk', 'yy']
+              _e.stateText =
+                _e.showOpenTime && _e.state == 4
+                  ? _e.openTime + '开课'
+                  : stateArr[_e.state - 1]
+              _e.stateClass = classArr[_e.state - 1]
+              return _e
+            })
+            return e
+          })
+        } else {
+          this.catalogData = []
+        }
+        this.isEmpty = !this.catalogData.length
+        this.scrollView = ''
+        this.getLearnRemind()
+        setTimeout(() => {
+          this.scrollView = 'today'
+          this.$apply()
+        }, 1000)
+        this.$apply()
+      })
+      .catch(({ code }) => {
+        this.loading = false
+        if (code === 500) {
+          this.isError = true
+        }
+        this.$apply()
+      })
+  }
+
+  onShow() {
+    if (this.logined) {
+      if (!this.remindData.hasChild) {
+        wx.navigateTo({ url: '/user/info' })
+        return
+      }
+      this.getAttendClassCatalog()
+    }
+  }
+
+  onShareAppMessage() {
+    return {
+      title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
+      path: `/pages/index`,
+      imageUrl: 'https://pub.file.k12.vip/tbzw/v2/logo2.png'
+    }
+  }
+}
+</script>
+<style lang="scss">
+@import '../assets/style/mixin.scss';
+.lesson {
+  position: relative;
+  color: #58422b;
+
+  &-content {
+    padding: 0 32px;
+    display: flex;
+  }
+  &-time {
+    display: flex;
+    flex-direction: column;
+    margin-right: 31px;
+    &-title {
+      margin-bottom: 19px;
+      font-size: 33px;
+      line-height: 33px;
+      font-weight: bold;
+      color: #474958;
+    }
+    &-text {
+      font-size: 20px;
+      color: #a8a8af;
+    }
+  }
+  &-list {
+    flex: 1;
+  }
+  &-item {
+    margin-bottom: 27px;
+    display: flex;
+    width: 100%;
+  }
+  &-cover {
+    margin-right: 33px;
+    width: 160px;
+    height: 200px;
+    border-radius: 20px;
+  }
+  &-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-right: 16px;
+  }
+  &-title {
+    margin-top: 20px;
+    font-size: 32px;
+    line-height: 32px;
+  }
+  &-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  &-num {
+    font-size: 24px;
+    color: #a8a8af;
+  }
+  &-btn {
+    @include flex-center;
+    width: 167px;
+    height: 53px;
+    font-size: 28px;
+    color: #fff;
+    font-weight: bold;
+    background: linear-gradient(
+      -37deg,
+      rgba(67, 155, 255, 1),
+      rgba(71, 132, 255, 1)
+    );
+    box-shadow: 0px 8px 8px 0px rgba(82, 136, 255, 0.4);
+    border-radius: 27px;
+    &.bk {
+      background: linear-gradient(
+        -37deg,
+        rgba(15, 218, 130, 1),
+        rgba(0, 209, 118, 1)
+      );
+      box-shadow: 0px 8px 8px 0px rgba(63, 211, 147, 0.4);
+    }
+    &.jzy {
+      background: linear-gradient(
+        -37deg,
+        rgba(255, 192, 0, 1),
+        rgba(254, 179, 18, 1)
+      );
+      box-shadow: 0px 5px 5px 0px rgba(255, 181, 76, 0.4);
+    }
+    &.hk {
+      background: linear-gradient(
+        -37deg,
+        rgba(255, 142, 74, 1),
+        rgba(255, 122, 50, 1)
+      );
+      box-shadow: 0px 8px 8px 0px rgba(255, 122, 50, 0.4);
+    }
+    &.dkk {
+      background: rgba(216, 213, 226, 1);
+      box-shadow: none;
+    }
+  }
+  .no-login {
+    @include flex-column-center;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 105px;
+    z-index: 20;
+    background-color: #fff;
+    &-icon {
+      width: 401px;
+      height: 401px;
+      margin-bottom: 54px;
+    }
+    &-title {
+      font-size: 32px;
+      color: #333;
+      font-weight: 500;
+    }
+    &-btn {
+      @include flex-center;
+      margin-top: 39px;
+      width: 267px;
+      height: 73px;
+      font-size: 32px;
+      color: #fff;
+      font-weight: 500;
+      background: linear-gradient(
+        -37deg,
+        rgba(255, 192, 0, 1),
+        rgba(254, 179, 18, 1)
+      );
+      box-shadow: 0px 5px 5px 0px rgba(255, 181, 76, 0.4);
+      border-radius: 37px;
+    }
+  }
+  .empty {
+    @include flex-column-center;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    z-index: 10;
+    background-color: #fff;
+    &-title {
+      align-self: flex-start;
+      margin-top: 20px;
+      margin-left: 32px;
+      margin-bottom: 18px;
+      font-size: 40px;
+      font-weight: bold;
+      color: #474958;
+    }
+    &-text {
+      margin-left: 32px;
+      align-self: flex-start;
+      margin-bottom: 55px;
+      font-size: 28px;
+      color: #a8a8af;
+    }
+    &-btn {
+      @include flex-center;
+      position: relative;
+      margin-bottom: 107px;
+      width: 685px;
+      height: 343px;
+      border-radius: 27px;
+      overflow: hidden;
+      &-img {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 685px;
+        height: 343px;
+      }
+    }
+  }
+  &-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 32px;
+    height: 53px;
+  }
+  &-all {
+    display: flex;
+    align-items: center;
+    font-size: 32px;
+    color: #a8a8af;
+    font-weight: bold;
+    &-icon {
+      margin-left: 12px;
+      width: 13px;
+      height: 23px;
+      background: url('https://pub.file.k12.vip/tbzw/course/my-icon-arrow.png')
+        no-repeat;
+      background-size: 100%;
+    }
+  }
+  &-tab {
+    display: flex;
+    align-items: center;
+    &-item {
+      @include flex-center;
+      margin-right: 22px;
+      width: 167px;
+      height: 53px;
+      font-size: 27px;
+      color: #fff;
+      font-weight: bold;
+      background-color: #dbd9e2;
+      border-radius: 7px;
+      &.active {
+        background: linear-gradient(
+          -37deg,
+          rgba(46, 110, 255, 1),
+          rgba(67, 129, 255, 1)
+        );
+      }
+    }
+  }
+  &-scroll-wrap {
+    padding-top: 33px;
+    padding-bottom: 120px;
+  }
+  &-scroll {
+    position: relative;
+    &-empty {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      background-color: #fff;
+      &-img {
+        margin-top: 248px;
+        margin-bottom: 51px;
+        width: 401px;
+        height: 401px;
+      }
+      &-text {
+        font-size: 32px;
+        color: #333;
+      }
+      &-btn {
+        @include flex-center;
+        margin: 0 22px;
+        width: 267px;
+        height: 73px;
+        font-size: 32px;
+        color: #fff;
+        background: linear-gradient(
+          -37deg,
+          rgba(255, 142, 74, 1),
+          rgba(255, 122, 50, 1)
+        );
+        box-shadow: 0px 8px 8px 0px rgba(255, 122, 50, 0.4);
+        border-radius: 37px;
+        &.sub {
+          background: linear-gradient(
+            -37deg,
+            rgba(255, 192, 0, 1),
+            rgba(254, 179, 18, 1)
+          );
+          box-shadow: 0px 5px 5px 0px rgba(255, 181, 76, 0.4);
+        }
+        &-wrap {
+          @include flex-center;
+          margin-top: 39px;
+        }
+      }
+    }
+  }
+  &-msg {
+    position: fixed;
+    box-sizing: border-box;
+    padding-left: 110px;
+    right: 32px;
+    bottom: 140px;
+    width: 112px;
+    height: 110px;
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0px 0px 60px 0px rgba(206, 210, 218, 1);
+    border-radius: 55px;
+    z-index: 100;
+    overflow: hidden;
+    transition: all 0.3s;
+    &.show {
+      width: 687px;
+    }
+    &-content {
+      display: inline-flex;
+      align-items: center;
+      justify-content: space-between;
+      box-sizing: border-box;
+      padding-right: 27px;
+      width: 560px;
+      height: 110px;
+      margin-left: 19px;
+    }
+    &-icon {
+      @include bg('/1.8/lesson/tx.png');
+      position: absolute;
+      left: 5px;
+      top: 4px;
+      width: 102px;
+      height: 102px;
+    }
+    &-text {
+      font-size: 28px;
+      color: #333;
+      font-weight: 500;
+    }
+    &-btn {
+      @include flex-center;
+      width: 140px;
+      height: 60px;
+      background: rgba(255, 195, 46, 1);
+      border-radius: 30px;
+      font-size: 28px;
+      color: #fff;
+      font-weight: 500;
+    }
+  }
+  ._listen {
+    position: relative;
+    background: #f7f8fa;
+    &-header {
+      display: flex;
+      justify-content: space-between;
+      box-sizing: border-box;
+      padding: 70px 49px;
+      height: 350px;
+      background: rgba(255, 192, 0, 1);
+      border-radius: 0px 0px 60px 60px;
+      &-left {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 386px;
+      }
+      &-title {
+        font-size: 60px;
+        color: #fff;
+      }
+      &-progress {
+        position: relative;
+        width: 360px;
+        height: 20px;
+        background: rgba(255, 208, 64, 1);
+        border-radius: 10px;
+      }
+      &-bar {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 40%;
+        height: 100%;
+        background: rgba(255, 255, 255, 1);
+        border-radius: 10px;
+      }
+    }
+    &-scroll {
+      box-sizing: border-box;
+      padding: 12px 32px;
+      padding-bottom: 130px;
+    }
+    &-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-sizing: border-box;
+      margin-top: 32px;
+      padding: 0 49px;
+      width: 100%;
+      height: 180px;
+      background: rgba(255, 255, 255, 1);
+      box-shadow: 0px 0px 60px 0px rgba(237, 239, 243, 1);
+      border-radius: 20px;
+      &-title {
+        margin-bottom: 20px;
+        font-size: 30px;
+        color: #333;
+        font-weight: bold;
+      }
+      &-text {
+        font-size: 28px;
+        color: #333;
+      }
+      &-flower {
+        @include flex-center;
+        color: #ff7a32;
+        font-size: 48px;
+        font-weight: bold;
+        &-icon {
+          @include bg('/1.8/lesson/flower.png');
+          margin-right: 15px;
+          width: 66px;
+          height: 80px;
+        }
+      }
+    }
+    &-btn {
+      width: 180px;
+      height: 60px;
+      border-radius: 30px;
+    }
+    &-cover {
+      width: 168px;
+      height: 200px;
+      background: rgba(255, 255, 255, 1);
+      border-radius: 20px;
+    }
+  }
+}
+</style>

@@ -1,0 +1,127 @@
+<template>
+  <view class="sentence">
+    <view class="sentence-content">
+      <text
+        wx:for="{{sentenceFormatData}}"
+        wx:key="{{index}}"
+      ><text class="sentence-text {{item.selected && 'show'}}">{{item.problem}}</text></text>
+    </view>
+    <view class="sentence-list">
+      <view
+        class="sentence-item {{item.selected && 'hide'}}"
+        wx:for="{{sentenceData}}"
+        wx:key="{{item.mark}}"
+        @tap="bindClickSentence({{item}}, {{index}})"
+      >
+        {{ item.problem }}
+      </view>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+export default class Example extends wepy.component {
+  props = {}
+  data = {
+    selectedIndex: 1,
+    sentenceData: [
+      {
+        selected: false,
+        index: 10,
+        mark: '1',
+        problem: 'dasdsa'
+      },
+      {
+        selected: false,
+        index: 10,
+        mark: '1',
+        problem: 'dasdsa'
+      }
+    ],
+    sentenceArr: []
+  }
+  components = {}
+  methods = {
+    bindClickSentence(item, i) {
+      if (item.selected) return
+      this.sentenceData[i].index = this.selectedIndex
+      this.sentenceData[i].selected = true
+      this.sentenceArr.push(item.mark)
+      this.selectedIndex += 1
+      this.$emit('bindClickInput', this.sentenceArr.join(''))
+    }
+  }
+  events = {}
+  watch = {}
+  computed = {
+    sentenceFormatData() {
+      let arr = [...this.sentenceData]
+      arr = arr.sort((a, b) => {
+        return a.index - b.index
+      })
+      return arr
+    }
+  }
+  onLoad() {}
+}
+</script>
+<style lang="scss">
+@import '../assets/style/mixin.scss';
+.sentence {
+  position: relative;
+  &-content {
+    margin: 32px 0;
+    height: 130px;
+    border-bottom: 2px solid #eceef2;
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 64px;
+      height: 2px;
+      background-color: #eceef2;
+      transform: translateY(-50%);
+    }
+  }
+  &-text {
+    opacity: 0;
+    margin-right: 25px;
+    color: #ffc000;
+    font-size: 32px;
+    font-weight: 500;
+    line-height: 70px;
+    transition: all 0.3s;
+    &.show {
+      opacity: 1;
+    }
+    &.success {
+      color: #08d67d;
+    }
+    &.error {
+      color: #ff7b33;
+    }
+  }
+  &-list {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  &-item {
+    @include flex-center;
+    opacity: 1;
+    margin-right: 32px;
+    padding: 0 16px;
+    margin-bottom: 16px;
+    height: 72px;
+    background: rgba(255, 255, 255, 1);
+    border: 3px solid rgba(236, 238, 242, 1);
+    box-shadow: 0px 2px 0px 0px rgba(236, 238, 242, 1);
+    border-radius: 20px;
+    transition: all 0.3s;
+    &.hide {
+      opacity: 0;
+    }
+  }
+}
+</style>

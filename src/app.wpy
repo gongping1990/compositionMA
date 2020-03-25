@@ -1,4 +1,5 @@
 <style lang="scss">
+@import './assets/style/mixin.scss';
 @import './vant/common/index.wxss';
 .container {
   height: 100%;
@@ -10,6 +11,149 @@ button::after {
 .container-scroll {
   position: relative;
 }
+.yd-popup,
+.tabbar-popup {
+  position: absolute;
+  left: 50%;
+  top: -50px;
+  width: 187px;
+  height: 60px;
+
+  z-index: 999;
+}
+.tabbar-popup {
+  transform: translateX(-50%);
+}
+.yd-popup {
+  width: 110px;
+  height: 132px;
+  top: -132px;
+}
+.top-img {
+  position: fixed;
+  width: 559px;
+  height: 199px;
+  right: 36px;
+  top: 90px;
+  z-index: 100;
+}
+button {
+  padding: 0;
+  margin: 0;
+}
+.animate-top {
+  animation: top 0.8s infinite;
+}
+@keyframes top {
+  0% {
+    transform: translate(-50%, 0);
+  }
+  100% {
+    transform: translate(-50%, -10%);
+  }
+}
+._c-dialog {
+  @include flex-center;
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 1000;
+  &-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    box-sizing: border-box;
+    padding: 34px 48px;
+    padding-top: 166px;
+    width: 602px;
+    height: 424px;
+    background: rgba(255, 255, 255, 1);
+    border-radius: 40px;
+  }
+  &-icon {
+    @include bg('/1.8/lesson/pop.png');
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 210px;
+    height: 210px;
+    transform: translate(-50%, -50%);
+  }
+  &-text {
+    text-align: center;
+    font-size: 32px;
+    color: #666;
+  }
+  &-footer {
+    @include flex-center;
+    width: 100%;
+  }
+  &-btn {
+    @include flex-center;
+    flex: 1;
+    height: 88px;
+    background: rgba(255, 255, 255, 1);
+    border-radius: 44px;
+    border: 2px solid rgba(221, 221, 221, 1);
+    &.confirm {
+      border-color: #ffc000;
+      background: #ffc000;
+      color: #fff;
+    }
+    &:last-child {
+      margin-left: 30px;
+    }
+  }
+}
+.__common-dialog {
+  @include flex-column-center;
+  justify-content: space-between;
+  position: relative;
+  box-sizing: border-box;
+  padding-top: 174px;
+  padding-bottom: 46px;
+  width: 602px;
+  height: 424px;
+  background: rgba(255, 255, 255, 1);
+  border-radius: 40px;
+  &-icon {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 216px;
+    height: 216px;
+    transform: translate(-50%, -50%);
+    &.js {
+      @include bg('/1.8/work/js-icon.png');
+    }
+    &.mt {
+      @include bg('/1.8/work/mt-icon.png');
+    }
+  }
+  &-text {
+    text-align: center;
+    font-size: 32px;
+    line-height: 36px;
+    color: #000;
+    view {
+      margin-bottom: 6px;
+    }
+  }
+  &-btn {
+    @include flex-center;
+    width: 241px;
+    height: 88px;
+    background: rgba(255, 192, 0, 1);
+    border-radius: 44px;
+    font-size: 32px;
+    color: #fff;
+  }
+}
 </style>
 
 <script>
@@ -20,15 +164,51 @@ import { setStore } from 'wepy-redux'
 import configStore from './store'
 // eslint-disable-next-line no-unused-vars
 import api from './request/api'
+const userInfo = wx.getStorageInfoSync('userInfo')
+const _sa = require('./utils/sensorsdata.min.js')
+
+_sa.setPara({
+  name: 'sensors',
+  server_url: 'https://collector.k12.vip/sa?project=default',
+  // 是否开启自动采集
+  autoTrack: {
+    appLaunch: true,
+    appShow: true,
+    appHide: true,
+    pageShow: true,
+    pageShare: true
+  },
+  // 自定义渠道追踪参数，如source_channel: ["custom_param"]
+  source_channel: [],
+  // 是否允许控制台打印查看埋点数据(建议开启查看)
+  show_log: true,
+  // 是否允许修改onShareAppMessage里return的path，用来增加(用户id，分享层级，当前的path)，在app onShow中自动获取这些参数来查看具体分享来源，层级等
+  allow_amend_share_path: true
+})
+if (userInfo && userInfo.id) {
+  _sa.login(userInfo.id)
+}
+_sa.registerApp({
+  platform: 'miniprogram'
+})
+_sa.init()
 
 const store = configStore()
 setStore(store)
 wepy.$store = store
-
 export default class extends wepy.app {
   config = {
     pages: [
       'pages/index',
+      'pages/demo',
+      'pages/detail',
+      'pages/write',
+      'pages/writeStudy',
+      'pages/lesson',
+      'pages/video',
+      'pages/lessonDetail',
+      'pages/joinRoom',
+      'pages/server',
       'pages/login',
       'pages/resetPwd',
       'pages/card',
@@ -36,6 +216,7 @@ export default class extends wepy.app {
       'pages/classroom',
       'pages/ready',
       'pages/study',
+      'pages/picture',
       'pages/test',
       'pages/user',
       'pages/praiseOfWorks',
@@ -43,21 +224,46 @@ export default class extends wepy.app {
       'pages/subscribe',
       'pages/authorize',
       'pages/enroll',
-      'pages/sharePoster'
+      'pages/sharePoster',
+      'pages/result',
+      'pages/writeCatalog'
     ],
     subPackages: [
       {
         root: 'user',
         pages: [
+          'info',
+          'teacher',
+          'child',
+          'gift',
+          'giftActive',
+          'myCourse',
+          'lesson',
+          'sendGood',
           'address',
           'myWork',
+          'myWorkList',
           'pointNotice',
           'recognitionNotice',
           'myWorkAll',
           'submitHomework',
           'completionOfWork',
+          'completionOfWorkNew',
           'uploadAudioWork',
-          'uploadImgWork'
+          'uploadImgWork',
+          'workEvaluation',
+          'praisePoster',
+          'learningReport',
+          'errorBook'
+        ]
+      },
+      {
+        root: 'literacy',
+        pages: [
+          'l_submitHomework',
+          'l_uploadAudioWork',
+          'l_uploadImgWork',
+          'w_uploadImgWork'
         ]
       }
     ],
@@ -71,6 +277,8 @@ export default class extends wepy.app {
   }
 
   globalData = {
+    _sa: null,
+    sa: null,
     api: api,
     isIpx: false,
     userInfo: null,
@@ -79,7 +287,7 @@ export default class extends wepy.app {
     audioContext: null,
     audioReadyIndex: 1,
     audioReadyArr: [1, 2, 3, 5, 6, 7],
-    show (that, param, opacity) {
+    show(that, param, opacity) {
       var animation = wx.createAnimation({
         // 持续时间800ms
         duration: 500,
@@ -90,10 +298,30 @@ export default class extends wepy.app {
       // 设置动画
       that[param] = animation.export()
     },
-    playSound (audioContext, index) {
-      audioContext.src = `https://pub.file.k12.vip/tbzw/v2/sound/sound_${index}.mp3`
+    playSound(audioContext, index, src) {
+      if (src) {
+        audioContext.src = src
+      } else {
+        audioContext.src = `https://pub.file.k12.vip/tbzw/v2/sound/sound_${index}.mp3`
+      }
       audioContext.stop()
       audioContext.play()
+    },
+    checkLogined() {
+      api.user.checkLogined().then(({ data }) => {
+        store.dispatch({
+          type: 'CHANGE_LOGIN_STATUS',
+          payload: data.resultData
+        })
+      })
+    },
+    getListByDubbing() {
+      api.user.listByDubbing().then(({ data }) => {
+        store.dispatch({
+          type: 'UPDATE_AUDIO',
+          payload: data.resultData
+        })
+      })
     }
   }
 
@@ -103,18 +331,18 @@ export default class extends wepy.app {
     this.use('promisify')
   }
 
-  onLaunch (options) {
+  onLaunch(options) {
     const that = this
     let audioContext = wx.createInnerAudioContext()
     audioContext.volume = 0.3
     audioContext.obeyMuteSwitch = false
     this.globalData.audioContext = audioContext
-    console.log('load start')
+    this.globalData._sa = _sa
     wx.setKeepScreenOn({
       keepScreenOn: true
     })
     wx.getSystemInfo({
-      success (res) {
+      success(res) {
         that.globalData.systemInfo = res
         that.globalData.headHeight = res.statusBarHeight + 46
         if (res.model.indexOf('iPhone X') > -1) {
@@ -123,37 +351,9 @@ export default class extends wepy.app {
       }
     })
   }
-  onShow () {
-    // api.user.loginWithPhone({
-    //   password: '123654',
-    //   phone: '13699011543'
-    // }).then(({data}) => {
-    //   let { resultData } = data
-    //   this.globalData.userInfo = resultData
-    //   store.dispatch({ type: 'UPDATE_USERINFO', payload: resultData })
-    //   if (resultData.needAuth) {
-    //     let url = `/pages/authorize`
-    //     wx.redirectTo({ url })
-    //   }
-    // })
-    wepy.login().then(res => {
-      let params = {
-        code: res.code
-      }
-      console.log(11)
-      api.user.wxUserLogin(params).then(({ data }) => {
-        let { resultData } = data
-        this.globalData.userInfo = resultData
-        store.dispatch({ type: 'UPDATE_USERINFO', payload: resultData })
-        if (resultData.needAuth) {
-          let url = `/pages/authorize`
-          wx.redirectTo({ url })
-        }
-      })
-    })
-  }
-  onHide() {
-    store.dispatch({ type: 'UPDATE_USERINFO', payload: {id: null} })
+  onShow() {
+    this.globalData.checkLogined()
+    this.globalData.getListByDubbing()
   }
 }
 </script>

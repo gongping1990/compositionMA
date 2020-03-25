@@ -1,0 +1,74 @@
+<!--  -->
+<template>
+  <view class="hua {{num && 'show'}}">
+    <view class="hua-img to-{{num}}"></view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+export default class Flower extends wepy.component {
+  props = {
+    flower: Number
+  };
+  data = {
+    num: 0,
+    total: 55,
+    time: 2000 / 55
+  };
+  events = {
+    start() {
+      this.start()
+    }
+  };
+  start() {
+    this.requestAnimationFrame()
+  }
+  requestAnimationFrame() {
+
+    let {num, total, time} = this
+    if(num == total) {
+      this.num = 0
+      this.$emit('animateEnd')
+      this.$apply()
+      return
+    }
+    this.num += 1
+    this.$apply()
+    setTimeout(() => {
+      this.requestAnimationFrame()
+    }, time);
+  }
+}
+</script>
+<style lang='scss'>
+@import '../assets/style/mixin.scss';
+.hua {
+  @include flex-center;
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba($color: #000000, $alpha: 0.7);
+  visibility: hidden;
+  z-index: 1000;
+  &.show {
+    visibility: visible;
+  }
+  &-img {
+    width: 100%;
+    height: 400px;
+    background: url('https://pub.file.k12.vip/tbzw/1.5/gif/hua1.png') no-repeat;
+    background-size: 100%;
+    background-position-x: 0;
+
+  }
+  @for $i from 0 through 56
+  {
+      .to-#{$i}
+      {
+        background-position-y: -(400px * $i);
+      }
+  }
+}
+</style>

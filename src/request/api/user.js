@@ -3,43 +3,67 @@ import request from '../index'
 const user = {
   // 微信登录
   loginWithPhone(params) {
-    return request.post('/user/loginWithPhone', params)
+    return request.post('/compositionv2/user/loginWithPhone', params)
   },
   loginWithPassword(params) {
-    return request.post('/user/loginWithPassword', params)
+    return request.post('/compositionv2/user/loginWithPassword', params)
   },
   loginOut() {
-    return request.get('/user/loginOut')
+    return request.get('/compositionv2/user/loginOut')
   },
   changePassword(params) {
-    return request.post('/user/changePassword', params)
+    return request.post('/compositionv2/user/changePassword', params)
   },
   wxUserLogin(params) {
-    return request.post('/user/loginWithWxMa', params)
+    return request.post('/compositionv2/user/loginWithWxMa', params)
   },
   updateUserWxMa(params) {
-    return request.post('/user/updateUserWxMa', params)
+    return request.post('/compositionv2/user/updateUserWxMa', params)
   },
   updateGrade(params) {
-    return request.post('/user/updateGrade', params)
+    return request.post('/compositionv2/user/updateGrade', params)
   },
   addZan(params) {
-    return request.get('/user/zan', params)
+    return request.get('/compositionv2/user/zan', params)
   },
   addCollect(params) {
-    return request.get('/user/collect', params)
+    return request.get('/compositionv2/user/collect', params)
   },
   changeIdentity(params) {
-    return request.post('/user/updateUserType', params)
+    return request.post('/compositionv2/user/updateUserType', params)
   },
   listCollect(params) {
-    return request.get('/user/listCollect', params)
+    return request.get('/compositionv2/user/listCollect', params)
   },
   uploadFormId(params) {
-    return request.post('/user/uploadFormId', params)
+    return request.post('/compositionv2/user/uploadFormId', params)
   },
   sendCode(params) {
-    return request.get('/common/sendCode', params)
+    return request.get('/compositionv2/common/sendCode', params)
+  },
+  checkLogined() {
+    return request.get('/compositionv2/user/checkLogined')
+  },
+  saveFormId(params) {
+    return request.get('/compositionv2/user/saveFormId', params)
+  },
+  addMyChild(params) {
+    return request.post('/umg/student/addMyChild', params)
+  },
+  getMyChild() {
+    return request.get('/umg/student/getMyChild')
+  },
+  getKFTeacher() {
+    return request.get('/compositionv2/teacher/getKFTeacher')
+  },
+  bindKF(params) {
+    return request.post('/homework/kfteacher/bindKF', params)
+  },
+  followKF(params) {
+    return request.post('/homework/kfteacher/followKF', params)
+  },
+  listByDubbing() {
+    return request.get('/compositionv2/dubbing/listByDubbing')
   }
 }
 

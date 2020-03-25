@@ -1,46 +1,58 @@
 <!--  -->
 <template>
-  <view class='container login'>
-    <mHeader flag="4"
-             bgColor="#FAFAFA"></mHeader>
-    <view class="container-scroll login-scroll"
-          style="margin-top:{{height}}px">
+  <view class="container login">
+    <mHeader flag="4" bgColor="#FAFAFA"></mHeader>
+    <view class="container-scroll login-scroll" style="margin-top:{{height}}px">
       <view class="login-logo">
-        <image src="https://pub.file.k12.vip/composition/login/logo@3x.png"
-               class="login-logo-img" />
+        <image
+          src="https://pub.file.k12.vip/composition/login/logo.png"
+          class="login-logo-img"
+        />
         <view class="login-logo-content">
-          <text class="login-logo-title">小语轻作文</text>
-          <text class="login-logo-text">学<text></text>技<text></text>巧<text></text>积<text></text>素</text>
+          <text class="login-logo-title">乐小狮大语文</text>
+          <!-- <text class="login-logo-text">学<text></text>技<text></text>巧<text></text>积<text></text>素</text> -->
         </view>
       </view>
       <view class="login-input">
-        <input value="{{form.phone}}"
-               bindinput="bindInputChange('phone')"
-               type="text"
-               placeholder-class="placeholder"
-               placeholder="请输入手机号码" />
-        <view class="send-code-btn {{codeTime ? 'isSend' : ''}}"
-              @tap="clickSendCode"
-              wx:if="{{type}}"> {{codeTime ? codeTime + 's' : '获取验证码'}}</view>
+        <input
+          value="{{form.phone}}"
+          bindinput="bindInputChange('phone')"
+          type="text"
+          placeholder-class="placeholder"
+          placeholder="请输入手机号码"
+        />
+        <view
+          class="send-code-btn {{codeTime ? 'isSend' : ''}}"
+          @tap="clickSendCode"
+          wx:if="{{type}}"
+        >
+          {{ codeTime ? codeTime + 's' : '获取验证码' }}
+        </view>
       </view>
       <view class="login-input">
-        <input value="{{form.password}}"
-               bindinput="bindInputChange('password')"
-               type="text"
-               password="{{!type}}"
-               placeholder-class="placeholder"
-               placeholder="{{type ? '请输入验证码' : '请输入密码'}}" />
+        <input
+          value="{{form.password}}"
+          bindinput="bindInputChange('password')"
+          type="text"
+          id="password"
+          focus="{{focus}}"
+          password="{{!type}}"
+          placeholder-class="placeholder"
+          placeholder="{{type ? '请输入验证码' : '请输入密码'}}"
+        />
       </view>
-      <view class="login-submit-btn"
-            @tap="clickLogin">登录</view>
-      <view class="login-change-btn"
-            @tap="changeLoginType">{{type ? '账号密码登录' : '短信验证码登录'}}</view>
-      <view class="login-reset-password"
-            wx:if="{{!type}}"
-            @tap="clickReset">忘记密码？</view>
+      <view class="login-submit-btn" @tap="clickLogin">登录</view>
+      <view class="login-change-btn" @tap="changeLoginType">{{
+        type ? '账号密码登录' : '短信验证码登录'
+      }}</view>
+      <view class="login-reset-password" wx:if="{{!type}}" @tap="clickReset">
+        忘记密码？
+      </view>
       <view class="login-message">
         <view class="login-message-icon"></view>
-        <text class="login-message-text">购买课程后，账号密码将通过短信发送给您；如果未收到短信，可使用“短信验证码登录”。</text>
+        <text class="login-message-text">
+          购买课程后，账号密码将通过短信发送给您；如果未收到短信，可使用“短信验证码登录”。
+        </text>
       </view>
     </view>
   </view>
@@ -49,35 +61,53 @@
 import wepy from 'wepy'
 import { connect } from 'wepy-redux'
 import mHeader from '@/components/header'
-import { updateUserInfo } from '../store/actions/index.js'
-@connect({}, {
-  updateUserInfo
-})
-export default class Example extends wepy.page {
+import { updateUserInfo, changeLoginStatus } from '../store/actions/index.js'
+@connect(
+  {},
+  {
+    updateUserInfo,
+    changeLoginStatus
+  }
+)
+export default class Login extends wepy.page {
   config = {
     navigationBarTitleText: ''
-  };
+  }
   data = {
+    focus: false,
     type: 0,
     codeTime: 0,
     form: {
       phone: '',
       password: ''
     }
-  };
+  }
+  // watch = {
+  //   form (v, o) {
+  //     if (v.phone.length >= 10) {
+  //       console.log(v.phone.length)
+  //       this.focus = true
+  //     }
+  //   }
+  // }
   components = {
     mHeader
-  };
+  }
   methods = {
-    clickReset () {
+    clickReset() {
       wx.navigateTo({ url: '/pages/resetPwd' })
     },
-    bindInputChange (name, event) {
-      console.log(event, name)
+    bindInputChange(name, event) {
+      if (name === 'phone') {
+        if (event.detail.value.length === 11) {
+          this.focus = true
+        } else {
+          this.focus = false
+        }
+      }
       this.form[name] = event.detail.value
-      console.log(this.form)
     },
-    clickSendCode () {
+    clickSendCode() {
       let { phone } = this.form
       if (this.codeTime) return
       if (!this.isPhoneVailable(phone)) {
@@ -90,24 +120,29 @@ export default class Example extends wepy.page {
       }
       this.codeTime = 60
       let { api } = this.$parent.globalData
-      api.user.sendCode({
-        phone
-      }).then(() => {
-        this.downTime()
-      })
+      api.user
+        .sendCode({
+          phone
+        })
+        .then(() => {
+          this.downTime()
+          this.focus = true
+        })
     },
-    changeLoginType () {
+    changeLoginType() {
       this.form.password = ''
       this.type = this.type ? 0 : 1
     },
-    clickLogin () {
+    clickLogin() {
       let { phone, password } = this.form
       let { type, isPhoneVailable } = this
       let { api } = this.$parent.globalData
       let params = {
         phone
       }
-      let loginFunc = type ? api.user.loginWithPhone : api.user.loginWithPassword
+      let loginFunc = type
+        ? api.user.loginWithPhone
+        : api.user.loginWithPassword
       if (!isPhoneVailable(phone)) {
         wx.showToast({
           title: '请输入正确的手机号', // 提示的内容,
@@ -124,12 +159,21 @@ export default class Example extends wepy.page {
       }
       params[type ? 'code' : 'password'] = password
       loginFunc(params).then(({ data }) => {
-        this.methods.updateUserInfo(data.resultData)
-        wx.redirectTo({ url: '/pages/index' })
+        let { _sa } = this.$parent.globalData
+        api.center.getBottomTipsVO().then(res => {
+          wepy.$store.dispatch({
+            type: 'UPDATE_TAB_REMIND',
+            payload: res.data.resultData
+          })
+          this.methods.changeLoginStatus(true)
+          this.methods.updateUserInfo(data.resultData)
+          wx.navigateBack()
+        })
+        _sa.login(data.resultData.userId)
       })
     }
-  };
-  downTime () {
+  }
+  downTime() {
     if (this.codeTime <= 1) {
       this.codeTime = 0
     } else {
@@ -140,31 +184,28 @@ export default class Example extends wepy.page {
       }, 1000)
     }
   }
-  isPhoneVailable (phone) {
+  isPhoneVailable(phone) {
     var myreg = /^[1][0-9]{10}$/
-    console.log(myreg.test(phone))
     if (!myreg.test(phone)) {
       return false
     } else {
       return true
     }
   }
+
   events = {
-    back () {
-      wx.redirectTo({ url: '/pages/index' })
+    back() {
+      wx.navigateBack()
     }
-  };
-  watch = {};
+  }
   computed = {
-    height () {
+    height() {
       return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
     }
-  };
-  onLoad () { };
-  onShow () { };
+  }
 }
 </script>
-<style lang='scss'>
+<style lang="scss">
 @import '../assets/style/mixin.scss';
 .login {
   &-scroll {
@@ -195,7 +236,7 @@ export default class Example extends wepy.page {
   &-reset-password {
     position: absolute;
     right: 96px;
-    bottom: 164px;
+    bottom: 114px;
     color: #58422b;
     font-size: 28px;
   }
@@ -239,7 +280,7 @@ export default class Example extends wepy.page {
     border-radius: 50px;
   }
   &-change-btn {
-    margin-top: 128px;
+    margin-top: 68px;
     color: rgba($color: #58422b, $alpha: 0.7);
     background: #fff;
     border: 2px solid rgba(88, 66, 43, 0.3);
@@ -252,11 +293,13 @@ export default class Example extends wepy.page {
       margin-right: 20px;
       width: 112px;
       height: 112px;
+      border-radius: 20px;
     }
     &-content {
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      align-items: center;
+      justify-content: center;
     }
     &-title {
       font-size: 48px;

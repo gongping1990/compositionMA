@@ -1,0 +1,404 @@
+<!-- 辅导老师列表 -->
+<template>
+  <view class="container child">
+    <mHeader title="我的孩子"></mHeader>
+    <view
+      class="container-scroll child-list"
+      wx:if="{{isLoad}}"
+      style="margin-top:{{height}}px"
+    >
+      <view class="child-cell">
+        <text class="child-cell-left">孩子头像</text>
+        <view class="child-cell-right" @tap="bindUploadAvatar">
+          <image
+            class="child-avatar"
+            src="{{form.avatar ? form.avatar : userInfo.headimgurl}}"
+          />
+        </view>
+      </view>
+      <view class="child-cell" @tap="bindClickName">
+        <text class="child-cell-left">孩子昵称</text>
+        <view class="child-cell-right child-picker">
+          {{ form.nickname ? form.nickname : '填写孩子姓名' }}
+        </view>
+      </view>
+      <view class="child-cell">
+        <text class="child-cell-left">孩子性别</text>
+        <view class="child-cell-right">
+          <picker
+            class="child-picker-input"
+            bindchange="bindPickerChangeSex"
+            value="{{form.sex}}"
+            range="{{sexArr}}"
+          >
+            <view class="child-picker">
+              {{ sexArr[form.sex] }}
+            </view>
+          </picker>
+        </view>
+      </view>
+      <view class="child-cell">
+        <text class="child-cell-left">与孩子的关系</text>
+        <view class="child-cell-right">
+          <picker
+            class="child-picker-input"
+            bindchange="bindPickerChangeRelation"
+            value="{{form.relation}}"
+            range="{{gxArr}}"
+          >
+            <view class="child-picker">
+              {{ gxArr[form.relation] }}
+            </view>
+          </picker>
+        </view>
+      </view>
+      <view class="child-cell">
+        <text class="child-cell-left">在读年级</text>
+        <view class="child-cell-right">
+          <picker
+            class="child-picker-input"
+            bindchange="bindPickerChangeGrade"
+            value="{{form.grade}}"
+            range="{{gradeArr}}"
+          >
+            <view class="child-picker">
+              {{ gradeArr[form.grade] }}
+            </view>
+          </picker>
+        </view>
+      </view>
+      <view class="child-cell">
+        <text class="child-cell-left">所在城市</text>
+        <view class="child-cell-right child-picker" @tap="bindClickAreas">
+          {{ form.areasText ? form.areasText : '选择城市' }}
+        </view>
+      </view>
+    </view>
+    <van-popup position="bottom" show="{{ show }}">
+      <van-area
+        area-list="{{ areaList }}"
+        value="{{form.areasId}}"
+        @confirm="bindClickConfirm"
+        @cancel="bindClickRegion"
+      />
+    </van-popup>
+    <van-dialog
+      use-slot
+      title="孩子昵称"
+      customStyle="child-dialog"
+      show="{{ showDialog }}"
+      show-cancel-button
+      bind:close="onClose"
+      bind:confirm="onConfirm"
+    >
+      <view class="child-dialog-content">
+        <input
+          class="child-dialog-input"
+          maxlength="8"
+          value="{{form.nickname}}"
+          bindinput="bindChangeName"
+          placeholder="请输入孩子姓名"
+        />
+        <text class="child-dialog-msg">不超过8个字</text>
+      </view>
+    </van-dialog>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import { connect } from 'wepy-redux'
+import api from '../request/api'
+import mHeader from '../components/header'
+import areaList from '../assets/comJS/area'
+
+@connect({
+  userInfo(state) {
+    return state.user.userInfo
+  }
+})
+export default class Child extends wepy.page {
+  config = {
+    navigationBarTitleText: '',
+    usingComponents: {
+      'van-area': '../vant/area/index',
+      'van-popup': '../vant/popup/index',
+      'van-dialog': '../vant/dialog/index'
+    }
+  }
+  data = {
+    isLoad: false,
+    show: false,
+    showDialog: false,
+    showAction: false,
+    sexArr: ['小女孩', '小男孩'],
+    gxArr: ['亲友', '爸爸', '妈妈', '爷爷', '奶奶', '外公', '外婆'],
+    gradeArr: [
+      '其他',
+      '幼儿园',
+      '一年级',
+      '二年级',
+      '三年级',
+      '四年级',
+      '五年级',
+      '六年级',
+      '初中'
+    ],
+    form: {
+      areasId: '',
+      areasText: '',
+      nickname: '',
+      avatar: '',
+      grade: 0,
+      relation: 0,
+      sex: 0,
+      puid: 0,
+      id: 0
+    },
+    areaList: Object.assign({}, areaList)
+  }
+  components = {
+    mHeader
+  }
+  methods = {
+    bindUploadAvatar() {
+      wx.showActionSheet({
+        itemList: ['从相册选择照片', '拍照'],
+        success: res => {
+          this.onSelect(res.tapIndex)
+        }
+      })
+    },
+    onConfirm() {
+      if (!this.form.nickname) {
+        wx.showToast({
+          title: '请填写孩子姓名', //提示的内容,
+          icon: 'none'
+        })
+        return
+      }
+      this.addMyChild()
+    },
+    onClose() {
+      this.showDialog = !this.showDialog
+    },
+    bindPickerChangeSex(e) {
+      this.form.sex = e.detail.value
+      this.addMyChild()
+    },
+    bindPickerChangeRelation(e) {
+      this.form.relation = e.detail.value
+      this.addMyChild()
+    },
+    bindPickerChangeGrade(e) {
+      this.form.grade = e.detail.value
+      this.addMyChild()
+    },
+    bindChangeName(event, name) {
+      this.form.nickname = event.detail.value
+    },
+    bindClickName() {
+      this.showDialog = !this.showDialog
+    },
+    bindClickAreas() {
+      this.show = true
+    },
+    bindClickConfirm(event) {
+      let { values } = event.detail
+      let arr = []
+      values.forEach((e, i) => {
+        arr.push(e.name)
+      })
+
+      this.form.areasId = values[values.length - 1].code
+      this.form.areasText = arr.join('/')
+      this.show = false
+      this.addMyChild()
+    },
+    bindClickRegion() {
+      this.show = !this.show
+    }
+  }
+  events = {}
+  watch = {}
+  computed = {
+    height() {
+      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+    }
+  }
+
+  getMyChild() {
+    api.user.getMyChild().then(({ data }) => {
+      if (data.resultData) {
+        let {
+          areasId,
+          areasText,
+          nickname,
+          avatar,
+          grade,
+          relation,
+          sex,
+          puid,
+          id
+        } = data.resultData
+        this.form = {
+          areasId: areasId || '',
+          areasText: areasText || '',
+          nickname: nickname || '',
+          avatar: avatar || '',
+          grade: grade || 0,
+          relation: relation || 0,
+          sex: sex || 0,
+          puid: puid || 0,
+          id: id
+        }
+      }
+      this.isLoad = true
+      this.$apply()
+    })
+  }
+  addMyChild() {
+    let {
+      areasId,
+      areasText,
+      avatar,
+      grade,
+      nickname,
+      puid,
+      relation,
+      sex,
+      id
+    } = this.form
+    let params = {
+      areasId,
+      areasText,
+      avatar,
+      grade,
+      nickname,
+      relation,
+      sex,
+      puid
+    }
+    if (id) {
+      params.id = id
+    }
+
+    api.user.addMyChild(params).then(({ data }) => {
+      if (data.resultData) {
+        this.form = data.resultData
+        this.$apply()
+      }
+    })
+  }
+
+  onSelect(type) {
+    let sourceType = !type ? 'album' : 'camera'
+    wx.chooseImage({
+      count: 1,
+      sizeType: ['original'],
+      sourceType: [sourceType],
+      success: res => {
+        // tempFilePath可以作为img标签的src属性显示图片
+        const tempFilePaths = res.tempFilePaths
+        wx.uploadFile({
+          url:
+            wepy.$appConfig.baseUrl + '/compositionv2/common/uploadPublicFile', //仅为示例，非真实的接口地址
+          filePath: tempFilePaths[0],
+          name: 'file',
+          success: res => {
+            const data = JSON.parse(res.data)
+            this.form.avatar = data.resultData.url
+            this.$apply()
+            this.addMyChild()
+          }
+        })
+      }
+    })
+  }
+
+  onLoad() {}
+  onShow() {
+    this.getMyChild()
+  }
+}
+</script>
+<style lang="scss">
+@import '../assets/style/mixin.scss';
+.child {
+  &-dialog {
+    background-color: #fff;
+    &-content {
+      @include flex-column-center;
+      padding: 80px 40px;
+    }
+    &-input {
+      box-sizing: border-box;
+      margin-bottom: 30px;
+      padding: 20px;
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      border: 1px rgba($color: #a8a8af, $alpha: 0.5) solid;
+    }
+    &-msg {
+      align-self: flex-start;
+      margin-left: 20px;
+      font-size: 30px;
+      color: #ff7a32;
+    }
+  }
+  &-list {
+    padding: 1px 32px;
+    padding-bottom: 32px;
+  }
+  &-cell {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    margin-top: 40px;
+    padding-right: 60px;
+    width: 100%;
+    height: 107px;
+    &::after {
+      @include bg('/1.4/arrow.png');
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 50%;
+      width: 60px;
+      height: 60px;
+      transform: translateY(-50%);
+    }
+    &-left {
+      font-size: 32px;
+      color: #474958;
+      font-weight: 500;
+    }
+    &-right {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex: 1;
+      height: 107px;
+    }
+  }
+  &-avatar {
+    width: 107px;
+    height: 107px;
+    border-radius: 50%;
+  }
+  &-picker {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 100%;
+    height: 90px;
+    font-size: 32px;
+    color: #999;
+    &-input {
+      width: 100%;
+    }
+  }
+}
+</style>

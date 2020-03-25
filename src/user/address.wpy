@@ -1,22 +1,28 @@
-<template>
+ <template>
   <view class='container address'>
     <mHeader></mHeader>
     <view class="container-scroll"
           style="margin-top:{{height}}px">
+      <view class="-banner">
+        <text class="-banner-title">请你完善收货地址</text>
+        <view class="-banner-text">以便为您配送课程配套 <text>实物大礼包</text></view>
+        <view src=""
+              class="-banner-icon" />
+      </view>
       <address :addressInfo="addressInfo"></address>
     </view>
   </view>
 </template>
 <script>
-import wepy from 'wepy'
-import api from '../request/api'
-import mHeader from '../components/header'
-import address from '../components/address'
+import wepy from 'wepy';
+import api from '../request/api';
+import mHeader from '../components/header';
+import address from '../components/address';
 
 export default class Example extends wepy.page {
   config = {
     navigationBarTitleText: '',
-    'usingComponents': {
+    usingComponents: {
       'van-area': '../vant/area/index',
       'van-popup': '../vant/popup/index'
     }
@@ -28,35 +34,74 @@ export default class Example extends wepy.page {
   };
   methods = {};
   events = {
-    save (params) {
+    save(params) {
       wx.showToast({
         icon: 'loading',
         title: '正在提交'
-      })
-      api.order.saveRecipient(params)
+      });
+      api.center
+        .saveRecipient({
+          courseId: this.queryInfo.id,
+          ...params
+        })
         .then(() => {
           wx.showToast({
             icon: 'succerss',
             title: '保存成功'
-          })
-        })
+          });
+          wx.navigateTo({ url: `/user/sendGood?id=${this.queryInfo.id}` });
+        });
     }
   };
   watch = {};
   computed = {
-    height () {
-      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+    height() {
+      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
     }
   };
-
-  onShareAppMessage () {
+  onLoad(query) {
+    this.queryInfo = query;
+  }
+  onShareAppMessage() {
     return {
       title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
       path: `/pages/index`,
       imageUrl: 'https://pub.file.k12.vip/tbzw/v2/logo2.png'
-    }
+    };
   }
 }
 </script>
 <style lang='scss'>
+.address {
+  .-banner {
+    padding-left: 32px;
+    padding-top: 40px;
+    position: relative;
+    height: 134px;
+    border-bottom: 24px solid #f9fafc;
+    &-title {
+      margin-bottom: 4px;
+      font-size: 36px;
+      color: #333;
+      font-weight: bold;
+    }
+    &-text {
+      font-size: 28px;
+      color: #999999;
+      text {
+        color: #ff6d4d;
+      }
+    }
+    &-icon {
+      position: absolute;
+      right: 0;
+      top: 18px;
+      width: 236px;
+      height: 160px;
+      background: url('https://pub.file.k12.vip/tbzw/1.3/user/image_gift@2x.png')
+        no-repeat;
+      background-size: 100%;
+    }
+  }
+}
 </style>

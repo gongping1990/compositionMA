@@ -1,0 +1,709 @@
+<template>
+  <view class="container video">
+    <mHeader
+      title=""
+      bgColor="transparent"
+      :showBtn.sync="showBtn"
+      flag="3"
+    ></mHeader>
+    <view @tap="bindClickVideo">
+      <video
+        class="video-contorl"
+        id="video"
+        style="height:{{isIpx ? 'calc(100vh - 68rpx' : '100vh'}}"
+        show-center-play-btn="{{false}}"
+        enable-progress-gesture="{{progressEnable}}"
+        loop="{{false}}"
+        controls="{{controls}}"
+        @play="bindplay"
+        @ended="bindended"
+        @timeupdate="bindtimeupdate"
+        src="{{learnData.authContentUrl}}"
+      ></video>
+    </view>
+    <van-popup show="{{ show }}" overlay="{{true}}" position="bottom">
+      <view class="video-popup">
+        <view class="video-time">
+          <view class="video-time-text">
+            倒计时
+          </view>
+          <view class="video-time-num">{{ time }}</view>
+        </view>
+        <view class="video-content">
+          <view class="video-title">
+            <view
+              class="video-audio {{audioPause && 'paused'}}"
+              wx:if="{{questionData.authVfUrl}}"
+              @tap="resetAudio"
+            ></view>
+            <text>{{ questionData.subject }}</text>
+          </view>
+          <matching
+            :questionData.sync="questionData"
+            @end.user="matchingEnd"
+            @selected.user="matchingSelected"
+            wx:if="{{questionData.type == 3}}"
+          />
+          <!-- <recorder
+            wx:if="{{questionData.type == 1}}"
+            :questionData.sync="questionData"
+            @stop.user="recorderStop"
+            @start.user="recorderStart"
+          /> -->
+          <!-- <drag
+            wx:if="{{questionData.type == 1}}"
+            :questionData.sync="questionData"
+          /> -->
+          <sentence wx:if="{{questionData.type == 1}}" />
+          <view class="choice" wx:if="{{questionData.type == 2}}">
+            <block wx:for="{{questionArr}}" wx:key="{{index}}">
+              <view
+                class="choice-item {{choiceSeleced == item.index && (item.index == questionData.answer ? 'success' : 'error') }} {{choiceSeleced == item.index && 'selected'}}"
+                @tap="clickChoice({{item.index}})"
+              >
+                <image class="choice-item-img" src="{{item.value}}" />
+                <view class="choice-item-tag">
+                  {{ item.index }}
+                </view>
+              </view>
+            </block>
+          </view>
+        </view>
+      </view>
+    </van-popup>
+    <view class="_c-dialog" wx:if="{{showDialog}}">
+      <view class="_c-dialog-content">
+        <view class="_c-dialog-icon"></view>
+        <view class="_c-dialog-text">
+          你上次已经学习到{{ progressTimeText }}是否要继续？
+        </view>
+        <view class="_c-dialog-footer">
+          <view class="_c-dialog-btn cancle" @tap="cancle">从头开始</view>
+          <view class="_c-dialog-btn confirm" @tap="confirm">继续学习</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="_c-dialog" wx:if="{{showBack}}">
+      <view class="_c-dialog-content">
+        <view class="_c-dialog-icon"></view>
+        <view class="_c-dialog-text">
+          确定要退出上课吗？
+        </view>
+        <view class="_c-dialog-footer">
+          <view class="_c-dialog-btn cancle" @tap="cancleBack">确认退出</view>
+          <view class="_c-dialog-btn confirm" @tap="confirmBack">继续学习</view>
+        </view>
+      </view>
+    </view>
+    <load wx:if="{{loading}}"></load>
+    <van-popup show="{{ showIcon }}" overlay="{{true}}">
+      <view class="result-icon" wx:if="{{showIcon}}">
+        <view class="result-icon_cs" wx:if="{{anwserStatus == 3}}"></view>
+        <view class="result-icon_zq" wx:if="{{anwserStatus == 1}}"></view>
+        <view class="result-icon_cw" wx:if="{{anwserStatus == 2}}"></view>
+      </view>
+    </van-popup>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import mHeader from '../components/header'
+import recorder from '../components/recorder'
+import drag from '../components/drag'
+import matching from '../components/matching'
+import sentence from '../components/sentence'
+import load from '../components/load'
+let __timer = null
+export default class Example extends wepy.page {
+  config = {
+    navigationBarTitleText: '',
+    usingComponents: {
+      'van-popup': '../vant/popup/index',
+      'van-circle': '../vant/circle/index'
+    }
+  }
+  data = {
+    audioPause: true,
+    loading: false,
+    showIcon: false,
+    showBtn: false,
+    show: false,
+    showDialog: false,
+    showBack: false,
+    progressEnable: false,
+    controls: false,
+    isPlay: true,
+    isEnd: false,
+    isLookBack: false,
+    isReset: false,
+    isFirstPlay: false,
+    currentTime: 0,
+    time: 0,
+    baseTime: 0,
+    choiceSeleced: '',
+    dialogText: '',
+    learnData: {},
+    pointData: {},
+    questionData: {},
+    questionArr: [],
+    matchingAnwswr: {},
+    InnerAudioContext: null
+  }
+  components = {
+    mHeader,
+    sentence,
+    recorder,
+    drag,
+    matching,
+    load
+  }
+  methods = {
+    matchingEnd() {
+      this.time = 0
+    },
+    matchingSelected(selectedObj) {
+      this.matchingAnwswr = selectedObj
+    },
+    clickChoice(index) {
+      let { audioContext, playSound } = this.$parent.globalData
+      playSound(audioContext, 1)
+      this.choiceSeleced = index
+      this.time = 0
+    },
+    // 录音开始
+    recorderStart() {
+      this.InnerAudioContext.stop()
+      this.downTime()
+    },
+    // 录音停止
+    recorderStop(res) {
+      clearTimeout(__timer)
+      this.loading = true
+      // 上传录音临时文件
+      wx.uploadFile({
+        url: 'https://huoke.test.k12.vip/compositionv2/common/uploadPublicFile',
+        filePath: res.tempFilePath,
+        name: 'file',
+        header: { 'Content-Type': 'multipart/form-data' },
+        success: res => {
+          console.log(res)
+          if (res.statusCode !== 200) {
+            wx.showModal({
+              title: '提示',
+              content: '上传失败',
+              showCancel: false
+            })
+          } else {
+            let parmas = JSON.parse(res.data)
+            this.updateAnswer({
+              answer: true,
+              audio: parmas.resultData.url
+            })
+          }
+        },
+        fail: function(e) {
+          wx.showModal({
+            title: '提示',
+            content: '上传失败',
+            showCancel: false
+          })
+        }
+      })
+    },
+    // 取消退出
+    cancleBack() {
+      wx.navigateBack()
+    },
+    // 从头开始
+    cancle() {
+      this.isReset = true
+      this.reset()
+      this.resetPoint()
+    },
+    // 退出当前页面
+    confirmBack() {
+      this.showBack = false
+      this.videoContext.play()
+    },
+    // 继续学习
+    confirm() {
+      this.isReset = false
+      this.reset()
+      this.videoContext.seek(this.pointData.ctime - 2)
+      this.videoContext.play()
+      this.showDialog = false
+    },
+    // 点击题干小喇叭 重置音频
+    resetAudio() {
+      let { audioContext, playSound } = this.$parent.globalData
+      playSound(audioContext, 1)
+      this.InnerAudioContext.stop()
+      setTimeout(() => {
+        this.InnerAudioContext.play()
+      }, 500)
+    },
+    bindplay() {
+      let { _sa } = this.$parent.globalData
+      if (!this.isFirstPlay) {
+        _sa.track('playingVideo', {
+          courseID: '',
+          courseTitle: '',
+          classID: this.learnData.lessonId,
+          className: this.learnData.lessonName,
+          classType: '读写',
+          playProgress: this.learnData.ctime,
+          studyStage: this.isLookBack ? '回看' : '初次上课',
+          playType: this.pointData.resume
+            ? !this.isReset
+              ? '继续观看'
+              : '从头开始'
+            : '初次上课',
+          Source: ''
+        })
+        this.isFirstPlay = true
+      }
+    },
+    // 视频播放结束
+    bindended() {
+      let { _sa } = this.$parent.globalData
+      this.isEnd = true
+      wx.redirectTo({
+        url: `/pages/result?id=${this.pointId}&cid=${this.pointData.id}`
+      })
+      _sa.track('finishPlayingVideo', {
+        courseID: '',
+        courseTitle: '',
+        classID: this.learnData.lessonId,
+        className: this.learnData.lessonName,
+        classType: '读写',
+        duration: this.learnData.duration,
+        isFinish: true,
+        playType: this.pointData.resume
+          ? !this.isReset
+            ? '继续观看'
+            : '从头开始'
+          : '初次上课'
+      })
+    },
+    // 视频播放中
+    bindtimeupdate(event) {
+      let { currentTime } = event.detail
+      if (this.currentTime !== parseInt(currentTime)) {
+        this.currentTime = parseInt(currentTime)
+        let data = this.learnData.problemMap[this.currentTime]
+        // 更新关卡进度
+        if (!(this.currentTime % 5)) {
+          this.updatePoint()
+        }
+        // 到达答题时间点， 设置答题内容
+        if (data) {
+          this.questionData = data
+          this.questionArr = data.optionList
+          this.showDialog = false
+          this.time = data.answerTime
+          this.baseTime = data.answerTime
+          this.videoContext.pause()
+
+          setTimeout(() => {
+            this.show = true
+            this.$broadcast('showQuestion')
+            this.$apply()
+          }, 500)
+          setTimeout(() => {
+            // 播放题干音频
+            if (data.authVfUrl) {
+              this.InnerAudioContext.src = data.authVfUrl
+              this.InnerAudioContext.play()
+            }
+
+            if (data.type != 1) {
+              this.downTime()
+            }
+            this.$apply()
+          }, 1500)
+        }
+      }
+    },
+    // 点击视频显示退出按钮
+    bindClickVideo() {
+      this.showBtn = true
+      clearTimeout(this.setTimeOut)
+      this.setTimeOut = setTimeout(() => {
+        this.showBtn = false
+      }, 3000)
+    }
+  }
+  events = {
+    back() {
+      this.videoContext.pause()
+      this.showBack = true
+    }
+  }
+  watch = {
+    isPlay(n) {
+      if (n) {
+        this.videoContext.play()
+      } else {
+        this.videoContext.pause()
+      }
+    }
+  }
+  computed = {
+    isIpx() {
+      return this.$parent.globalData.isIpx
+    },
+    progressTimeText() {
+      let { ctime } = this.pointData
+      if (ctime) {
+        let minute = 0
+        let second = 0
+        let time = ctime
+        minute = parseInt(time / 60)
+        second = time % 60
+        minute = minute < 10 ? '0' + minute : minute
+        second = second < 10 ? '0' + second : second
+        return `${minute}分${second}秒`
+      } else {
+        return '00分00秒'
+      }
+    },
+    timeProgress() {
+      let { time, baseTime } = this
+      let progress = 100 - parseInt((time / baseTime) * 100)
+      if (!progress) return 0
+      return progress
+    },
+    anwserStatus() {
+      let status = 0
+      let { choiceSeleced, matchingAnwswr } = this
+      let { id, type, answer, linkAnswerMap } = this.questionData
+      if (!id) return status
+      if (type == 2) {
+        if (!choiceSeleced) return 3
+        return choiceSeleced == answer ? 1 : 2
+      } else if (type == 3) {
+        let isRight = true
+        let keys = Object.keys(matchingAnwswr)
+        if (!keys.length) return 3
+        for (let key in linkAnswerMap) {
+          if (matchingAnwswr[key] != linkAnswerMap[key]) {
+            isRight = false
+          }
+        }
+        return isRight ? 1 : 2
+      }
+      return status
+    }
+  }
+  // 获取关卡内容
+  getThreeLearnInfo() {
+    let { api } = this.$parent.globalData
+    api.study
+      .getThreeLearnInfo({
+        pointId: this.pointId
+      })
+      .then(({ data }) => {
+        this.learnData = data.resultData
+        this.startPoint()
+        this.$apply()
+      })
+  }
+  // 初始化进度
+  startPoint() {
+    let { api } = this.$parent.globalData
+    api.study
+      .startPoint({
+        cpId: this.learnData.id,
+        lessonId: this.learnData.lessonId
+      })
+      .then(({ data }) => {
+        let { type } = this.learnData
+        this.pointData = data.resultData
+        if (data.resultData.resume) {
+          this.showDialog = true
+        } else {
+          setTimeout(() => {
+            this.videoContext.play()
+          }, 1000)
+        }
+        this.$apply()
+      })
+  }
+  // 重置进度
+  resetPoint() {
+    let { api } = this.$parent.globalData
+    api.study
+      .resetPoint({
+        id: this.pointData.id
+      })
+      .then(({ data }) => {
+        this.showDialog = false
+        this.videoContext.seek(0)
+        this.videoContext.play()
+        this.$apply()
+      })
+  }
+  // 更新进度
+  updatePoint() {
+    let { api } = this.$parent.globalData
+    api.study.updatePoint({
+      ctime: this.currentTime,
+      id: this.pointData.id
+    })
+  }
+  // 更新答题
+  updateAnswer(parmas) {
+    let { api } = this.$parent.globalData
+    let _time = this.questionData.type == 1 ? 1000 : 4000
+    parmas.id = this.pointData.id
+    parmas.tid = this.questionData.id
+    api.study
+      .updateAnswer(parmas)
+      .then(() => {
+        if (this.loading) {
+          this.loading = false
+        }
+        if (parmas.audio) {
+          this.$broadcast('recorderUploadSuccess')
+        }
+        setTimeout(() => {
+          this.showIcon = false
+          this.show = false
+          this.$broadcast('reset')
+          this.videoContext.play()
+          this.InnerAudioContext.stop()
+          this.$apply()
+        }, _time)
+        this.$apply()
+      })
+      .catch(() => {
+        this.loading = false
+        this.$apply()
+      })
+  }
+
+  downTime() {
+    let { choiceSeleced } = this
+    let { type, answer } = this.questionData
+    if (this.time >= 1) {
+      this.time -= 1
+      __timer = setTimeout(() => {
+        this.downTime()
+      }, 1000)
+    } else {
+      if (type == 1) {
+        this.$broadcast('recorderStop')
+      } else {
+        if (type == 3) {
+          this.$broadcast('matchingEnd')
+        }
+        this.updateAnswer({
+          answer: this.anwserStatus == 1 ? true : false
+        })
+        this.showIcon = true
+        this.InnerAudioContext.stop()
+        this.InnerAudioContext.src =
+          this.anwserStatus == 1
+            ? this.learnData.rightAnswerUrl
+            : this.anwserStatus == 2
+            ? this.learnData.errorAnswerUrl
+            : this.learnData.giveupAnswerUrl
+        this.InnerAudioContext.play()
+      }
+    }
+    this.$apply()
+  }
+
+  reset() {
+    this.audioPause = true
+    this.show = false
+    this.questionData = {}
+    this.questionArr = []
+    this.showIcon = false
+    this.isPlay = true
+    this.currentTime = 0
+    this.time = 0
+    this.baseTime = 0
+    this.choiceSeleced = ''
+    this.matchingAnwswr = {}
+    this.InnerAudioContext.stop()
+  }
+
+  onLoad(option) {
+    this.isLookBack = option.lookback
+    this.pointId = option.id
+    if (option.lookback) {
+      this.controls = true
+    }
+    this.videoContext = wx.createVideoContext('video')
+    this.InnerAudioContext = wx.createInnerAudioContext()
+    this.InnerAudioContext.obeyMuteSwitch = false
+    this.InnerAudioContext.onPlay(() => {
+      this.audioPause = false
+      this.$apply()
+    })
+    this.InnerAudioContext.onStop(() => {
+      this.audioPause = true
+      this.$apply()
+    })
+    this.InnerAudioContext.onEnded(() => {
+      this.audioPause = true
+      this.$apply()
+    })
+  }
+  onShow() {
+    this.getThreeLearnInfo()
+  }
+  onHide() {
+    this.InnerAudioContext.stop()
+  }
+  onUnload() {
+    this.InnerAudioContext.destroy()
+  }
+}
+</script>
+<style lang="scss">
+@import '../assets/style/mixin.scss';
+
+@mixin tag($path) {
+  @include bg($path);
+  content: '';
+  left: 4px;
+  top: 4px;
+  position: absolute;
+  width: 68px;
+  height: 68px;
+  z-index: 10;
+}
+
+.video {
+  .result-icon {
+    & > view {
+      width: 602px;
+      height: 420px;
+      margin-bottom: 200px;
+    }
+    &_zq {
+      @include bg('/1.8/lesson/pop_img_dt.png');
+    }
+    &_cw {
+      @include bg('/1.8/lesson/pop_img_dc.png');
+    }
+    &_cs {
+      @include bg('/1.8/lesson/pop_img_cs.png');
+    }
+  }
+  &-contorl {
+    width: 100vw;
+    height: 100vh;
+  }
+  &-content {
+    padding: 144px 24px 60px;
+  }
+  &-title {
+    display: flex;
+    align-items: center;
+    margin: 0 28px;
+    text {
+      max-width: 502px;
+      font-size: 34px;
+      color: #000000;
+      line-height: 46px;
+    }
+  }
+  &-audio {
+    @include bg('/1.9/video/sp_icon.png');
+    margin-right: 24px;
+    width: 68px;
+    height: 74px;
+    &.paused {
+      @include bg('/1.9/video/sp_icon.png');
+    }
+  }
+  &-popup {
+    position: relative;
+    width: 100vw;
+    min-height: 100vh;
+    background: #fff7e7;
+  }
+  &-time {
+    @include flex-center;
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: 170px;
+    height: 58px;
+    background: rgba(0, 0, 0, 1);
+    opacity: 0.3;
+    border-radius: 29px 29px 0px 0px;
+    transform: translateX(-50%);
+    &-text {
+      font-size: 24px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 1);
+      line-height: 48px;
+    }
+    &-num {
+      margin-left: 17px;
+      font-size: 36px;
+      font-weight: bold;
+      color: rgba(255, 255, 255, 1);
+      line-height: 48px;
+    }
+  }
+  .choice {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 56px;
+    &-item {
+      position: relative;
+      box-sizing: border-box;
+      margin-right: 62px;
+      margin-bottom: 60px;
+      width: 264px;
+      height: 264px;
+      box-shadow: 0px 6px 0px 0px rgba(134, 132, 255, 1);
+      border-radius: 40px;
+      border: 8px solid rgba(255, 255, 255, 1);
+      overflow: hidden;
+      &.selected {
+        border-color: #ffc001;
+      }
+      &.error {
+        border-color: #ff7c53;
+        &::before {
+          @include tag('/1.8/video/sp_icon_cw.png');
+        }
+      }
+      &.success {
+        border-color: #08d67d;
+        &::before {
+          @include tag('/1.8/video/sp_icon_zq.png');
+        }
+      }
+      &:nth-child(2n) {
+        margin-right: 0;
+      }
+      &-img {
+        width: 100%;
+        height: 100%;
+      }
+      &-tag {
+        @include flex-center;
+        position: absolute;
+        left: 8px;
+        top: 8px;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 1);
+        font-size: 32px;
+        color: #333;
+        font-weight: bold;
+      }
+    }
+  }
+}
+</style>

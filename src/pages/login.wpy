@@ -169,6 +169,7 @@ export default class Login extends wepy.page {
           this.methods.updateUserInfo(data.resultData)
           wx.navigateBack()
         })
+        _sa.setOpenid(res.openid);
         _sa.login(data.resultData.userId)
         _sa.init()
       })

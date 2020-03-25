@@ -1,6 +1,6 @@
 <template>
   <view class="container course">
-    <mHeader title="我的课程"></mHeader>
+    <mHeader title="打卡课程"></mHeader>
     <view class="container-scroll" style="margin-top:{{height}}px">
       <view
         class="course-list"
@@ -12,11 +12,8 @@
           <image class="course-cover" src="{{item.coverphoto}}" />
           <view class="course-info">
             <text class="course-title">{{ item.name }}</text>
-            <text class="course-text" wx:if="{{!queryInfo.isErrorBook}}">
-              共{{ item.lessons }}节 | 已学{{ item.studys }}节
-            </text>
-            <text class="course-text" wx:if="{{queryInfo.isErrorBook}}">
-              共{{ item.wrongSubject }}道
+            <text class="course-text">
+              累计打卡{{ item.lessons }}天 | 连续打卡{{ item.studys }}天
             </text>
           </view>
         </view>

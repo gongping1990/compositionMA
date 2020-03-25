@@ -173,6 +173,20 @@
 					"pathName": "pages/writeStudy",
 					"query": "id=1216555540059918338",
 					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "user/myCardCourse",
+					"pathName": "user/myCardCourse",
+					"query": "id=1214032696993923074",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "pages/card",
+					"pathName": "pages/card",
+					"query": "",
+					"scene": null
 				}
 			]
 		}

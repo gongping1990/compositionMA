@@ -180,13 +180,13 @@ export default class User extends wepy.page {
         name: '我的孩子',
         url: 'https://pub.file.k12.vip/tbzw/1.4/my_child.png'
       },
-      // {
-      //   id: 5,
-      //   num: 0,
-      //   isBuy: true,
-      //   name: '我的错题',
-      //   url: 'https://pub.file.k12.vip/tbzw/1.5/new/ctb.png'
-      // },
+      {
+        id: 7,
+        num: 0,
+        isBuy: true,
+        name: '打开日历',
+        url: 'https://pub.file.k12.vip/2020/03/25/1242630322870034434.png'
+      },
       {
         id: 3,
         name: '我的礼包',
@@ -234,6 +234,9 @@ export default class User extends wepy.page {
           break
         case 5:
           wx.navigateTo({ url: `/user/myCourse?isErrorBook=true` })
+          break
+        case 7:
+          wx.navigateTo({ url: `/user/myCardCourse` })
           break
         // case 6:
         //   if (this.noticeInfo.finishcourse === 0) {

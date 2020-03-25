@@ -1,25 +1,40 @@
 <!--  -->
 <template>
-  <view class="flex commonHead component"
-        style="color:{{color}};background-color:{{bgColor}};height:{{titleHeight}}px;">
+  <view
+    class="flex commonHead component"
+    style="color:{{color}};background-color:{{bgColor}};height:{{titleHeight}}px;"
+  >
     <view class="commonHead-wrap flex">
       <!-- 0:无返回；1：返回上一级；2：home -->
       <view class="commonHead_left {{!showBtn && 'hide'}}">
-        <view wx:if="{{flag==1}}"
-              class="commonHead_left_back"
-              bindtap="commonHead_left_back"></view>
-        <view wx:if="{{flag==2}}"
-              class="commonHead_left_home"
-              bindtap="commonHead_left_home"></view>
-        <view wx:if="{{flag==3}}"
-              class="commonHead_left_back_s"
-              bindtap="commonHead_left_back_s"></view>
-        <view wx:if="{{flag==4}}"
-              class="commonHead_left_back"
-              bindtap="commonHead_left_back_s"></view>
+        <view
+          wx:if="{{flag==1}}"
+          class="commonHead_left_back"
+          bindtap="commonHead_left_back"
+        ></view>
+        <view
+          wx:if="{{flag==2}}"
+          class="commonHead_left_home"
+          bindtap="commonHead_left_home"
+        ></view>
+        <view
+          wx:if="{{flag==3}}"
+          class="commonHead_left_back_s"
+          bindtap="commonHead_left_back_s"
+        ></view>
+        <view
+          wx:if="{{flag==4}}"
+          class="commonHead_left_back"
+          bindtap="commonHead_left_back_s"
+        ></view>
+        <view
+          wx:if="{{flag==5}}"
+          class="commonHead_left_back_s"
+          bindtap="commonHead_left_back_s"
+        ></view>
       </view>
       <view class="commonHead_right flex">
-        <view class="commonHead_right_text line1">{{title}}</view>
+        <view class="commonHead_right_text line1">{{ title }}</view>
       </view>
     </view>
   </view>
@@ -46,7 +61,7 @@ export default class Example extends wepy.component {
     },
     title: {
       type: String,
-      default: '小语轻作文'
+      default: '乐小狮大语文'
     },
     commonHeadHeight: {
       type: Object,
@@ -58,9 +73,9 @@ export default class Example extends wepy.component {
       type: Boolean,
       default: true
     }
-  };
+  }
   methods = {
-    commonHead_left_back: function () {
+    commonHead_left_back: function() {
       this.$emit('back')
       if (this.path === '') {
         wx.navigateBack()
@@ -68,21 +83,28 @@ export default class Example extends wepy.component {
         wx.redirectTo({ url: this.path })
       }
     },
-    commonHead_left_back_s: function () {
+    commonHead_left_back_s: function() {
       this.$emit('back')
     },
-    commonHead_left_home: function () {
+    commonHead_left_home: function() {
       wx.reLaunch({
         url: '/pages/index/index'
       })
     }
-  };
+  }
   computed = {
-    titleHeight () {
-      this.$emit('height', this.commonHeadHeight.titleHeight + wepy.$instance.globalData.systemInfo.statusBarHeight)
-      return this.commonHeadHeight.titleHeight + wepy.$instance.globalData.systemInfo.statusBarHeight
+    titleHeight() {
+      this.$emit(
+        'height',
+        this.commonHeadHeight.titleHeight +
+          wepy.$instance.globalData.systemInfo.statusBarHeight
+      )
+      return (
+        this.commonHeadHeight.titleHeight +
+        wepy.$instance.globalData.systemInfo.statusBarHeight
+      )
     }
-  };
+  }
 }
 </script>
 <style lang="scss">
@@ -236,7 +258,7 @@ export default class Example extends wepy.component {
   background-position: center;
 }
 .commonHead_left_back_s {
-  @include bg('/sk/icon-retrun.png');
+  @include bg('/1.8/lesson/back-btn.png');
   margin-left: 30px;
   width: 100%;
   height: 100%;

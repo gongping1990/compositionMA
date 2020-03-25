@@ -1,0 +1,492 @@
+<template>
+  <view class="container">
+    <mHeader title="课后作业" flag="4"></mHeader>
+    <view class="container-scroll p-l_submitHomework"
+          style="margin-top:{{height}}px">
+      <form
+        report-submit="true"
+        @submit="submit"
+      >
+        <view class="p-l_submitHomework-center">
+          <view class="-center-blackboard">
+            <view class="-center-blackboard-title">{{lessonDetail.istoday ? '今日作业' : '课后作业'}}</view>
+            <text class="-center-blackboard-content">{{lessonDetail.homeworkClaim}}</text>
+          </view>
+
+          <view class="-center-work" wx:if="{{isSuccessWork}}">
+            <view class="-center-work-top">
+              <view class="-top-left">
+                <image class="-top-left-img"
+                       src="{{workDetail.stuImg}}"></image>
+                <view class="-top-left-name">{{workDetail.nickname}}</view>
+              </view>
+              <view class="-top-right">
+                <view class="-top-right-time">{{workDetail.workTime}}</view>
+              </view>
+            </view>
+            <view class="-center-work-down">
+              <image class="-center-work-down-img"
+                     wx:for="{{workDetail.workImgSrc}}"
+                     wx:key="{{item}}"
+                     wx:if="{{lessonDetail.homeworkType == 2}}"
+                     @tap="enlargeImage({{index}}, {{workDetail.workImgSrc}})"
+                     src="{{item}}"></image>
+
+              <view class="-center-work-down-audio"
+                    @tap="changeMyAudioStatus({{workDetail}})"
+                    wx:if="{{lessonDetail.homeworkType == 1}}">
+                <view class="-reply-icon">
+                  <view class="icon"
+                        wx:if="{{!isPlay}}"></view>
+                  <view class="playIcon"
+                        wx:if="{{isPlay}}"></view>
+                </view>
+                <view class="-reply-time">{{workDetail.duration}}</view>
+              </view>
+            </view>
+          </view>
+        </view>
+
+        <view class="p-l_submitHomework-footer">
+          <button class="-footer-btn"
+                  form-type="submit"
+                  @tap="submitWork">{{isSuccessWork ? '完成学习' : '上交作业'}}
+          </button>
+        </view>
+
+        <view class="p-l_submitHomework-teacher" @tap="toJump" wx:if="{{workDetail.replyTime}}">
+          <image class="-card-img" src="https://pub.file.k12.vip/2020/01/03/1213000584304144385.png"></image>
+          <view>来看看老师怎么说</view>
+        </view>
+
+      </form>
+    </view>
+
+    <lookImage :isShow.sync="isShowImage" :index.sync="imgIndex" :imgUrl.sync="itemUrl"></lookImage>
+
+    <load wx:if="{{isFetching}}"></load>
+
+    <successFlowerTemplate :isShow.sync="isOpenFlower" :option.sync="flowerOption"></successFlowerTemplate>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import api from '../request/api';
+  import { saveFormId } from '../utils';
+  import dayjs from 'dayjs';
+  import { connect } from 'wepy-redux';
+  import mHeader from '../components/header';
+  import load from '../components/load';
+  import lookImage from '../components/lookImage';
+  import successFlowerTemplate from '../components/successFlowerTemplate';
+  import getDateDiff from '../utils/getDateDiff';
+
+  @connect({
+    userInfo(state) {
+      return state.user.userInfo;
+    }
+  })
+  export default class SubmitHomework extends wepy.page {
+    config = {
+      navigationBarTitleText: '课后作业',
+      usingComponents: {
+        'van-icon': '../vant/icon/index',
+        'van-popup': '../vant/popup/index'
+      }
+    };
+    components = {
+      mHeader,
+      lookImage,
+      successFlowerTemplate,
+      load
+    };
+    computed = {
+      height() {
+        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
+      }
+    };
+
+    data = {
+      flowerOption: {
+        oneText: '作业提交成功',
+        flowerNum: 0,
+        twoText: '老师随后为你点评，请留意微信通知',
+        path: ''
+      },
+      itemUrl: [],
+      imgIndex: '',
+      isSuccessWork: false,
+      isFetching: false,
+      isShowImage: false,
+      isOpenFlower: false,
+      isPlay: false,
+      workDetail: '',
+      lessonDetail: '',
+      cardDetail: '',
+      flowerInfo: '',
+      queryInfo: {},
+      innerAudioContext: ''
+    };
+
+    getLessonInfo() {
+      api.study
+        .getLessonDetail({
+          lessonId: this.queryInfo.id
+        })
+        .then(res => {
+          this.lessonDetail = res.data.resultData;
+          this.$apply();
+        });
+    }
+
+    getMyHomework() {
+      this.isFetching = true;
+      api.study
+        .viewMyHomework({
+          lessonId: this.queryInfo.id
+        })
+        .then(
+          res => {
+            this.workDetail = res.data.resultData;
+            if (this.workDetail) {
+              this.isSuccessWork = true;
+              this.workDetail.workTime = getDateDiff.getDateDiff(this.workDetail.workTime)
+              this.workDetail.workImg =
+                this.workDetail.workImg && this.workDetail.workImg.split(',');
+              this.workDetail.workImgSrc =
+                this.workDetail.workImgSrc &&
+                this.workDetail.workImgSrc.split(',');
+              this.workDetail.duration = this.timeToFormat(
+                this.workDetail.duration
+              );
+            }
+            this.isFetching = false;
+            this.$apply();
+          },
+          () => {
+            this.isFetching = false;
+            this.$apply();
+          }
+        );
+    }
+
+    initPlayAudio(src) {
+      this.innerAudioContext && this.innerAudioContext.destroy();
+      this.innerAudioContext = wx.createInnerAudioContext();
+
+      this.innerAudioContext.src = src;
+
+      this.innerAudioContext.onPlay(() => {
+        console.log('监听开始播放');
+      });
+
+      this.innerAudioContext.onEnded(() => {
+        console.log('监听结束播放');
+        this.isPlay = false;
+        this.$apply();
+      });
+    }
+
+    timeToFormat(times) {
+      var result = '00 : 00';
+      var minute, second;
+      if (times > 0) {
+        minute = Math.floor(times / 60);
+        if (minute < 10) {
+          minute = '0' + minute;
+        }
+
+        second = Math.floor((times - 60 * minute) % 60);
+        if (second < 10) {
+          second = '0' + second;
+        }
+        result = `${minute} : ${second}`;
+      }
+      return result;
+    }
+
+    methods = {
+      submit(e) {
+        saveFormId(e.detail.formId);
+      },
+      changeMyAudioStatus(item) {
+        let url = item.workAudio;
+        this.initPlayAudio(url);
+        if (this.isPlay) {
+          this.isPlay = false;
+          this.innerAudioContext.stop();
+          console.log(1)
+        } else {
+          this.isPlay = true;
+          this.innerAudioContext.play();
+          console.log(2)
+        }
+      },
+      enlargeImage(idx, list) {
+        this.imgIndex = idx;
+        this.itemUrl = list;
+        this.isShowImage = true;
+      },
+      toJump() {
+        wx.navigateTo({
+          url: `/user/completionOfWork?type=1&id=${this.workDetail.lessonId}`
+        });
+      },
+      submitWork() {
+        let { audioContext, playSound } = this.$parent.globalData;
+        playSound(audioContext, 1);
+        if (this.isSuccessWork) {
+          wx.navigateTo({
+            url: `/pages/lessonDetail?id=${this.queryInfo.id}`
+          });
+        } else {
+          wx.navigateTo({
+            url: `/literacy/${
+              this.lessonDetail.homeworkType == 1
+                ? 'l_uploadAudioWork'
+                : 'l_uploadImgWork'
+              }?id=${this.queryInfo.id}`
+          });
+        }
+      }
+    };
+
+    events = {
+      changePopupStatus() {
+        this.isShowImage = false;
+        this.isShowHelpTip = false;
+      },
+      nextStep() {
+        this.getAudio(6);
+      },
+      back () {
+        wx.reLaunch({
+          url: `/pages/lessonDetail?id=${this.queryInfo.id}`
+        });
+      }
+    };
+
+    onLoad(query) {
+      this.queryInfo = query;
+    }
+
+    onShow() {
+      this.getLessonInfo();
+      this.getMyHomework();
+    }
+
+    onShareAppMessage() {
+      return {
+        title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
+        path: `/pages/index`,
+        imageUrl: 'https://pub.file.k12.vip/tbzw/v2/logo2.png'
+      };
+    }
+  }
+</script>
+
+<style lang="scss">
+  @import '../assets/style/mixin.scss';
+
+  .p-l_submitHomework {
+    height: calc(100vh - 166px);
+
+    &-center {
+      position: relative;
+      top: 22px;
+
+      .-center-blackboard {
+        position: relative;
+        background: url("https://pub.file.k12.vip/2019/12/16/1206478572177993729.png");
+        background-size: 100%;
+        margin: 0 auto;
+        width: 679px;
+        height: 393px;
+
+        &-title {
+          @include flex-center;
+          padding-top: 11px;
+          height: 50px;
+          font-size:30px;
+          font-weight:bold;
+          color:rgba(255,255,255,1);
+          text-shadow:0px 5px 0px rgba(254,109,13,0.2);
+          line-height: 50px;
+        }
+
+        &-content {
+          display: inline-block;
+          margin: 40px 64px 0;
+          font-size: 28px;
+          font-weight: 500;
+          color: rgba(255, 255, 255, 0.9);
+          line-height: 40px;
+          overflow: hidden;
+        }
+      }
+
+      .-center-work {
+        position: relative;
+        margin-top: 30px;
+        /*border-top: 10px solid #f6f5f4;*/
+
+        &-top {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 0 48px;
+          margin: 0 0 32px;
+
+          .-top-left {
+            @include flex-center;
+
+            &-img {
+              margin-right: 29px;
+              width: 87px;
+              height: 87px;
+              border-radius: 50%;
+            }
+
+            &-name {
+              height:25px;
+              font-size:27px;
+              font-weight:bold;
+              color:rgba(71,73,88,1);
+              line-height:25px;
+            }
+          }
+
+          .-top-right {
+            &-time {
+              height: 32px;
+              font-size: 23px;
+              font-weight: 400;
+              color: #C1C4CE;
+              line-height: 32px;
+            }
+          }
+        }
+
+        &-down {
+          display: flex;
+          padding: 0 48px;
+
+          &-img {
+            margin-right: 19px;
+            width:208px;
+            height:208px;
+            border-radius:20px;
+          }
+
+          &-audio {
+            @include flex-center;
+
+            justify-content: space-between;
+            width:448px;
+            height:100px;
+            background:linear-gradient(-37deg,rgba(255,142,74,1),rgba(255,122,50,1));
+            box-shadow:0px 12px 12px 0px rgba(255,122,50,0.4);
+            border-radius:0px 50px 50px 55px;
+
+            .-reply-icon {
+              margin: 18px 0 16px 44px;
+
+              .icon {
+                background: url('https://pub.file.k12.vip/2019/12/04/1202071888211087362.png');
+                background-size: 100%;
+                width: 52px;
+                height: 41px;
+              }
+
+              .playIcon {
+                background: url('https://pub.file.k12.vip/2019/12/04/1202108006889558018.gif');
+                background-size: 100%;
+                width: 52px;
+                height: 41px;
+              }
+            }
+
+            .-reply-time {
+              margin: 0 30px 0 0;
+              font-size: 40px;
+              color: #ffffff;
+            }
+          }
+        }
+
+        &-footer {
+          position: relative;
+          display: flex;
+          justify-content: flex-end;
+          padding: 0 48px 22px;
+          line-height: 66px;
+          font-size: 24px;
+          font-weight: 600;
+          color: #999999;
+          line-height: 32px;
+
+          &-wrap {
+            @include flex-center;
+            margin-right: 32px;
+
+            .-img {
+              margin-right: 14px;
+              width: 32px;
+              height: 32px;
+            }
+
+            &:last-child {
+              margin-right: 0;
+            }
+          }
+        }
+
+        .-footer-my {
+          padding-bottom: 0;
+        }
+      }
+    }
+    
+    &-footer {
+      position: absolute;
+      bottom: 0px;
+      width: 100%;
+
+      .-footer-btn {
+        margin: 0 auto;
+        text-align: center;
+        width: 620px;
+        height: 104px;
+        background: rgba(255, 192, 0, 1);
+        border-radius: 52px;
+        font-size: 32px;
+        font-weight: 500;
+        color: #ffffff;
+        line-height: 104px;
+      }
+    }
+
+    &-teacher {
+      display: flex;
+      align-items: center;
+      position: fixed;
+      bottom: 250px;
+      right: 32px;
+      width:360px;
+      height:100px;
+      background:rgba(255,242,203,1);
+      border-radius:50px;
+      font-size:26px;
+      line-height: 100px;
+      font-weight:bold;
+      color:rgba(255,156,0,1);
+
+      .-card-img {
+        margin: 15px 9px 0 15px;
+        width: 93px;
+        height: 83px;
+      }
+    }
+  }
+</style>

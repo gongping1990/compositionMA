@@ -1,64 +1,74 @@
 <!--  -->
 <template>
-  <view class='container ready'>
-    <mHeader title="课前热身"
-             flag="4"></mHeader>
-    <view class="container-scroll"
-          style="margin-top:{{height}}px">
+  <view class="container ready">
+    <mHeader title="课前热身" flag="4"></mHeader>
+    <view class="container-scroll" style="margin-top:{{height}}px">
       <view class="header">
         <view class="header-left">
-          <image class="header-avatar"
-                 src="{{roomData.teacherImg}}" />
-          <text class="header-title">{{roomData.teacherName}}</text>
+          <image class="header-avatar" src="{{roomData.teacherImg}}" />
+          <text class="header-title">{{ roomData.teacherName }}</text>
           <text class="header-subtitle">写作老师</text>
         </view>
         <view class="header-right {{isReady && 'isReady'}}">
-          <view class="header-student {{readyArr[index] && 'isReady'}}"
-                wx:for="{{mateInfo}}"
-                wx:key="{{item.mateId}}">
-            <image class="header-student-avatar"
-                   src="{{item.mateImg}}" />
-            <view class="header-status">{{readyArr[index] ? '已准备' : '准备中...'}}</view>
+          <view
+            class="header-student {{readyArr[index] && 'isReady'}}"
+            wx:for="{{mateInfo}}"
+            wx:key="{{item.mateId}}"
+          >
+            <image class="header-student-avatar" src="{{item.mateImg}}" />
+            <view class="header-status">{{
+              readyArr[index] ? '已准备' : '准备中...'
+            }}</view>
           </view>
         </view>
       </view>
-      <view class="content"
-            style="height:calc(100vh - 254rpx - {{height * 2}}rpx)">
+      <view
+        class="content"
+        style="height:calc(100vh - 254rpx - {{height * 2}}rpx)"
+      >
         <view class="chart-item">
-          <image class="chart-avatar"
-                 src="{{roomData.teacherImg}}" />
+          <image class="chart-avatar" src="{{roomData.teacherImg}}" />
           <view class="chart-right">
-            <text class="chart-title">{{roomData.teacherName}}</text>
+            <text class="chart-title">{{ roomData.teacherName }}</text>
             <view class="chart-content-wrap">
-
               <view class="chart-content voice" @tap="bindClickVoice">
                 <view class="icon {{paused && 'paused'}}"></view>
               </view>
-              <view class="chart-time">{{timeText}}</view>
+              <view class="chart-time">{{ timeText }}</view>
             </view>
           </view>
         </view>
       </view>
     </view>
-
-    <view class="ready-btn {{isReady && 'show'}}"
-          @tap="clickStudy">{{time ? '开始上课（' + time + '）s' : '开始上课'}}</view>
-    <loading wx:if="{{loading}}"></loading>
-    <downTime :show.sync="showDownTime"></downTime>
+    <form report-submit="true" @submit="submit">
+      <button
+        form-type="submit"
+        class="ready-btn {{isReady && 'show'}}"
+        @tap="clickStudy"
+      >
+        {{ time ? '开始上课（' + time + '）s' : '开始上课' }}
+      </button>
+    </form>
+    <view class="loading-progress {{showDownTime && 'show'}}">
+      <view class="loading-progress-img"></view>
+      <view class="loading-progress-bar {{showDownTime && 'show'}}">
+        <view class="{{showDownTime && 'show'}}"></view>
+      </view>
+      <view class="loading-progress-text">loading…</view>
+    </view>
   </view>
 </template>
 <script>
 import wepy from 'wepy'
+import { saveFormId } from '../utils'
 import mHeader from '@/components/header'
-import loading from '@/components/loading'
-import downTime from '@/components/downTime'
 export default class Example extends wepy.page {
   config = {
     navigationBarTitleText: '',
-    'usingComponents': {
+    usingComponents: {
       'van-popup': '../vant/popup/index'
     }
-  };
+  }
   data = {
     lessonId: 0,
     audioContext: null,
@@ -71,23 +81,24 @@ export default class Example extends wepy.page {
     time: 3,
     loading: true,
     isReady: false,
-    showContinueDiaolig: true,
+    showContinueDiaolig: false,
     timeText: '00:00',
     showDownTime: false,
     paused: false
-  };
+  }
   components = {
-    mHeader,
-    loading,
-    downTime
-  };
+    mHeader
+  }
   methods = {
-    clickStudy () {
+    submit(e) {
+      saveFormId(e.detail.formId)
+    },
+    clickStudy() {
       let { audioContext, playSound } = this.$parent.globalData
       playSound(audioContext, 1)
       this.time = 0
     },
-    bindClickVoice () {
+    bindClickVoice() {
       if (this.paused) {
         this.paused = false
         this.audioContext.seek(0)
@@ -98,24 +109,22 @@ export default class Example extends wepy.page {
       }
       this.$apply()
     }
-  };
+  }
   events = {
-    back () {
-      wx.redirectTo({ url: '/pages/catalog' })
-    },
-    downTimeEnd () {
-      this.showDownTime = false
-      wx.redirectTo({ url: '/pages/study?id=' + this.lessonId })
+    back() {
+      wx.navigateBack({
+        delta: 1 // 返回的页面数，如果 delta 大于现有页面数，则返回到首页,
+      })
     }
-  };
-  watch = {};
+  }
+  watch = {}
   computed = {
-    height () {
+    height() {
       return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
     }
-  };
+  }
 
-  imitateReady () {
+  imitateReady() {
     let { readyArr } = this
     let random = parseInt(Math.random() * 3)
     this.readyArr[random] = 1
@@ -125,11 +134,10 @@ export default class Example extends wepy.page {
         this.$apply()
       }, 300)
     } else {
-
     }
   }
 
-  downTime () {
+  downTime() {
     if (this.time >= 1) {
       this.time -= 1
       setTimeout(() => {
@@ -138,12 +146,19 @@ export default class Example extends wepy.page {
     } else {
       this.readyArr[3] = 1
       this.showDownTime = true
-      this.$broadcast('startDownTime')
+      this.downTimeEnd()
     }
     this.$apply()
   }
 
-  initAudio (src) {
+  downTimeEnd() {
+    setTimeout(() => {
+      this.showDownTime = false
+      wx.redirectTo({ url: '/pages/study?id=' + this.lessonId })
+    }, 4000)
+  }
+
+  initAudio(src) {
     let { audioContext } = this
     audioContext.obeyMuteSwitch = false
     audioContext.src = src
@@ -152,7 +167,7 @@ export default class Example extends wepy.page {
     }, 500)
   }
 
-  formatTimeText () {
+  formatTimeText() {
     let { currentTime, duration } = this
     let minute = 0
     let second = 0
@@ -165,38 +180,43 @@ export default class Example extends wepy.page {
     this.$apply()
   }
 
-  initPage () {
+  initPage() {
+    this.showDownTime = true
     this.joinRoom()
     this.getClassInfo()
   }
 
-  joinRoom () {
+  joinRoom() {
     let { api } = this.$parent.globalData
-    api.study.joinRoom({
-      lessonId: this.lessonId
-    }).then(({ data }) => {
-      this.roomData = data.resultData
-      this.mateInfo = data.resultData.mateInfo
-      this.$apply()
-    })
-  }
-
-  getClassInfo () {
-    let { api } = this.$parent.globalData
-    api.course.getClassInfo({
-      lessonId: this.lessonId
-    }).then(({ data }) => {
-      this.courseInfo = data.resultData
-      setTimeout(() => {
-        this.loading = false
-        this.initAudio(data.resultData.guideAudio)
+    api.study
+      .joinRoom({
+        lessonId: this.lessonId
+      })
+      .then(({ data }) => {
+        this.roomData = data.resultData
+        this.mateInfo = data.resultData.mateInfo
         this.$apply()
-      }, 1000)
-      this.$apply()
-    })
+      })
   }
 
-  onLoad (option) {
+  getClassInfo() {
+    let { api } = this.$parent.globalData
+    api.course
+      .getClassInfo({
+        lessonId: this.lessonId
+      })
+      .then(({ data }) => {
+        this.courseInfo = data.resultData
+        setTimeout(() => {
+          this.showDownTime = false
+          this.initAudio(data.resultData.guideAudio)
+          this.$apply()
+        }, 1000)
+        this.$apply()
+      })
+  }
+
+  onLoad(option) {
     this.audioContext = wx.createInnerAudioContext()
     this.lessonId = option.id
     this.audioContext.onEnded(() => {
@@ -205,12 +225,9 @@ export default class Example extends wepy.page {
       setTimeout(() => {
         this.downTime()
       }, 1500)
-      // this.randomImitateReady()
       this.$apply()
     })
-    this.audioContext.onPlay(() => {
-
-    })
+    this.audioContext.onPlay(() => {})
     this.audioContext.onTimeUpdate(() => {
       if (!this.currentTime) {
         this.duration = parseInt(this.audioContext.duration)
@@ -222,19 +239,19 @@ export default class Example extends wepy.page {
       this.$apply()
     })
   }
-  onShow () {
+  onShow() {
     this.initPage()
   }
-  onHide () {
+  onHide() {
     this.$parent.globalData.audioContext.stop()
     this.audioContext.stop()
   }
-  onUnload () {
+  onUnload() {
     this.$parent.globalData.audioContext.stop()
     this.audioContext.stop()
     this.audioContext.destroy()
   }
-  onShareAppMessage () {
+  onShareAppMessage() {
     return {
       title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
       path: `/pages/index`,
@@ -243,7 +260,7 @@ export default class Example extends wepy.page {
   }
 }
 </script>
-<style lang='scss'>
+<style lang="scss">
 @import '../assets/style/mixin.scss';
 .ready {
   position: relative;
@@ -364,8 +381,8 @@ export default class Example extends wepy.page {
           45deg,
           transparent 0,
           transparent 25%,
-          rgba(61,53,45,0.1) 0,
-          rgba(61,53,45,0.1) 50%
+          rgba(61, 53, 45, 0.1) 0,
+          rgba(61, 53, 45, 0.1) 50%
         );
       background-size: 20px 20px;
       border: 4px dashed transparent;
@@ -431,6 +448,59 @@ export default class Example extends wepy.page {
   }
   .content {
     overflow-y: auto;
+  }
+  .loading-progress {
+    @include flex-column-center;
+    visibility: hidden;
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 3000;
+    background: rgba($color: #000, $alpha: 0.7);
+    &.show {
+      visibility: visible;
+    }
+    &-img {
+      width: 320px;
+      height: 202px;
+      background: url('https://pub.file.k12.vip/tbzw/1.5/classroom/loading-sz.gif')
+        no-repeat;
+      background-size: 100%;
+    }
+    &-bar {
+      opacity: 0;
+      position: relative;
+      width: 582px;
+      height: 14px;
+      background: rgba(255, 245, 213, 1);
+      border-radius: 19px;
+      border: 4px solid rgba(255, 255, 255, 1);
+      overflow: hidden;
+      &.show {
+        opacity: 1;
+      }
+      view {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 0;
+        background: #ffc000;
+        border-radius: 19px;
+        transition: all 3s ease-out;
+        &.show {
+          width: 100%;
+        }
+      }
+    }
+    &-text {
+      margin-bottom: 100px;
+      margin-top: 10px;
+      font-size: 32px;
+      color: #fff;
+    }
   }
 }
 @keyframes antsAnime {

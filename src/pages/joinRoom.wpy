@@ -1,0 +1,165 @@
+<!--  -->
+<template>
+  <view class="container joinRoom">
+    <mHeader title="进入教室"></mHeader>
+    <view class="joinRoom-pop">
+      <view class="joinRoom-content">
+        <view class="joinRoom-title">{{
+          start ? '正在进入教室...' : '同伴加入中...'
+        }}</view>
+        <view class="joinRoom-student">
+          <view
+            class="joinRoom-student-item"
+            wx:for="{{mateInfo}}"
+            wx:key="{{index}}"
+          >
+            <view class="joinRoom-student-img">
+              <image
+                class="joinRoom-student-avatar {{show && 'show'}}"
+                style="transition-delay: {{index * 0.8}}s"
+                src="{{item.mateImg}}"
+              />
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import mHeader from '../components/header'
+export default class Classroom extends wepy.page {
+  config = {
+    navigationBarTitleText: '进入教室'
+  }
+  components = {
+    mHeader
+  }
+  data = {
+    start: false,
+    lessonId: 0,
+    typeClass: ['one', 'two', 'three', 'four'],
+    show: false,
+    mateInfo: []
+  }
+  computed = {
+    height() {
+      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+    }
+  }
+
+  initPage() {
+    this.joinRoom()
+  }
+
+  joinRoom() {
+    let { api } = this.$parent.globalData
+    api.study
+      .joinRoom({
+        lessonId: this.lessonId
+      })
+      .then(({ data }) => {
+        this.mateInfo = data.resultData.mateInfo
+        setTimeout(() => {
+          this.show = true
+          this.readyRoom()
+          this.$apply()
+        }, 500)
+        this.$apply()
+      })
+  }
+
+  readyRoom() {
+    setTimeout(() => {
+      this.start = true
+      this.$apply()
+      wx.redirectTo({ url: '/pages/ready?id=' + this.lessonId })
+    }, 4000)
+  }
+
+  onLoad(option) {
+    this.lessonId = option.id
+  }
+
+  onShow() {
+    this.initPage()
+  }
+  onShareAppMessage() {
+    return {
+      title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
+      path: `/pages/index`,
+      imageUrl: 'https://pub.file.k12.vip/tbzw/v2/logo2.png'
+    }
+  }
+}
+</script>
+<style lang="scss">
+@import '../assets/style/mixin.scss';
+.joinRoom {
+  &-pop {
+    @include flex-center;
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 1000;
+  }
+  &-title {
+    @include flex-center;
+    width: 212px;
+    height: 56px;
+    background: rgba(255, 227, 206, 1);
+    box-shadow: 0px 2px 2px 0px rgba(255, 255, 255, 0.53);
+    border-radius: 28px;
+    font-size: 26px;
+    font-weight: 400;
+    color: rgba(172, 113, 74, 1);
+  }
+  &-content {
+    @include flex-column-center;
+    @include bg('/1.8/classroom/pop_sk.png');
+    width: 686px;
+    height: 600px;
+  }
+  &-student {
+    @include flex-center;
+    margin-top: 48px;
+    margin-bottom: 60px;
+
+    &-item {
+      @include flex-column-center;
+      margin: 0 20px;
+    }
+    &-img {
+      width: 118px;
+      height: 118px;
+      border-radius: 50%;
+      background: url('https://pub.file.k12.vip/tbzw/1.5/classroom/avatar.gif')
+        no-repeat;
+      background-size: 100%;
+    }
+    &-avatar {
+      opacity: 0;
+      box-sizing: border-box;
+      width: 118px;
+      height: 118px;
+      border: 6px solid #ffc001;
+      border-radius: 50%;
+      transition: all 0.7s;
+      &.show {
+        opacity: 1;
+      }
+    }
+    &-name {
+      @include text-overflow;
+      text-align: center;
+      width: 120px;
+      font-size: 28px;
+      color: #333333;
+    }
+  }
+}
+</style>

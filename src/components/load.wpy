@@ -1,0 +1,54 @@
+<!--  -->
+<template>
+  <view class='-loading'>
+    <image class="-loading-img"
+           src="https://pub.file.k12.vip/tbzw/1.3/refresh.gif" />
+    <text class="-loading-text">{{text}}</text>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+export default class Example extends wepy.component {
+  props = {
+    text: {
+      type: String,
+      default: '加载中...'
+    }
+  };
+  data = {};
+  components = {};
+  methods = {};
+  events = {};
+  watch = {};
+  computed = {};
+  onLoad () { };
+}
+</script>
+<style lang='scss'>
+.-loading {
+  position: fixed;
+  width: 250px;
+  height: 250px;
+  background-color: rgba($color: #000000, $alpha: 0.7);
+  box-shadow: 0 4px 10px 4px rgba($color: #000000, $alpha: 0.1);
+  left: 50%;
+  top: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  transform: translate(-50%, -50%);
+  border-radius: 20px;
+  z-index: 500;
+  &-img {
+    width: 130px;
+    height: 160px;
+  }
+  &-text {
+    margin-top: 13px;
+    font-size: 28px;
+    color: #fff;
+    font-weight: 500;
+  }
+}
+</style>

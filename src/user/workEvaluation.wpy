@@ -1,0 +1,186 @@
+<template>
+  <view class="container evaluation">
+    <mHeader title="老师点评通知"></mHeader>
+    <view class="container-scroll"
+          style="margin-top:{{height}}px">
+      <scroll-view class="item-scroll"
+                   wx:if="{{dataList.length}}"
+                   @scrolltolower="bindLoadItem"
+                   scroll-y
+                   scroll-with-animation>
+        <view class="evaluation-item"
+              wx:for="{{dataList}}"
+              wx:key="{{item.workId}}"
+              @tap="toWorkDetail({{item}})">
+          <view class="evaluation-item-header van-hairline--bottom">
+            <text class="evaluation-item-header-msg">{{item.teacherName}}给你发来了课后作业讲解</text>
+            <view class="evaluation-item-header-icon"
+                  wx:if="{{!item.know}}"></view>
+          </view>
+          <view class="evaluation-item-body">
+            <image class="evaluation-item-cover"
+                   src="{{item.coverphoto}}" />
+            <div class="evaluation-item-info">
+              <view>
+                <text class="evaluation-item-title van-ellipsis">{{item.lessonName}}</text>
+                <text class="evaluation-item-text van-multi-ellipsis--l2">{{item.courseName}}</text>
+              </view>
+              <text class="evaluation-item-time">{{item.formatTime}}</text>
+            </div>
+          </view>
+        </view>
+      </scroll-view>
+      <view wx:if="{{!dataList.length}}">
+        <emptyState :emptyInfo="emptyOption"></emptyState>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import api from '../request/api'
+import dayjs from 'dayjs'
+import mHeader from '../components/header'
+import emptyState from '../components/emptyState'
+
+export default class Notice extends wepy.page {
+  config = {
+    navigationBarTitleText: '点赞通知'
+  };
+  components = {
+    mHeader,
+    emptyState
+  };
+  computed = {
+    height () {
+      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+    }
+  };
+
+  data = {
+    page: {
+      current: 1,
+      size: 10,
+      total: ''
+    },
+    emptyOption: {
+      url: 'https://pub.file.k12.vip/tbzw/v2/empty/dz.png',
+      text: '暂时没有老师给你点评！'
+    },
+    dataList: []
+  };
+
+  getList () {
+    api.study.listReplyByPage({
+      current: this.page.current,
+      size: this.page.size
+    })
+      .then(({ data }) => {
+        this.dataList = [...this.dataList, ...data.resultData.records]
+        this.dataList = this.dataList.map(item => {
+          item.formatTime = dayjs(Number(item.datetime)).format('YYYY-MM-DD HH:mm')
+          return item
+        })
+        this.page.total = data.resultData.total
+        this.$apply()
+      })
+  };
+
+  methods = {
+    toWorkDetail (data) {
+      wx.navigateTo({ url: `/user/completionOfWork?type=1&id=${data.lessonId}` })
+    },
+    bindLoadItem (data) {
+      if (this.dataList.length < this.page.total) {
+        this.page.current++
+        this.getList()
+      }
+    }
+  };
+
+  onShow () {
+    this.dataList = []
+    this.getList()
+  }
+
+  onShareAppMessage () {
+    return {
+      title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
+      path: `/pages/index`,
+      imageUrl: 'https://pub.file.k12.vip/tbzw/v2/logo2.png'
+    }
+  }
+}
+</script>
+<style lang="scss">
+@import '../assets/style/mixin.scss';
+
+.evaluation {
+  .item-scroll {
+    height: 100vh;
+    background-color: #f9fafc;
+  }
+
+  &-item {
+    margin-bottom: 20px;
+    background-color: #fff;
+    &-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 100px;
+      padding: 0 32px;
+      &-msg {
+        font-size: 28px;
+        color: #999999;
+      }
+      &-icon {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: rgba(255, 137, 131, 1);
+      }
+    }
+    &-body {
+      display: flex;
+      padding: 34px 32px;
+    }
+    &-cover {
+      margin-right: 30px;
+      width: 160px;
+      height: 200px;
+      border-radius: 20px;
+      background-color: #ccc;
+    }
+    &-info {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex: 1;
+      div {
+        display: flex;
+        flex-direction: column;
+      }
+    }
+    &-title {
+      margin-bottom: 10px;
+      margin-top: 12px;
+      font-size: 36px;
+      font-weight: bold;
+      color: #333333;
+      line-height: 50px;
+    }
+    &-text,
+    &-time {
+      font-size: 26px;
+      color: #999;
+      line-height: 36px;
+    }
+    &-time {
+      font-size: 24px;
+      margin-bottom: 0;
+    }
+  }
+}
+</style>

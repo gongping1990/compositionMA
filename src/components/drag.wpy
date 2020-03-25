@@ -1,0 +1,237 @@
+<template>
+  <view class="drag {{show && 'show'}}">
+    <view class="drag-content">
+      <view
+        class="drop {{questionList.length == 3 && 'three' }} {{questionList.length == 2 && 'two'}}"
+        id="drop"
+      >
+        <view
+          class="drop-item"
+          wx:for="{{questionList}}"
+          wx:key="{{index}}"
+        ></view>
+      </view>
+      <div class="bg">
+        <view
+          class="bg-item"
+          wx:for="{{listData}}"
+          wx:key="{{index}}"
+          style="top:{{item._y}}px;left:{{item._x}}px"
+        ></view>
+      </div>
+      <movable-area class="drag-area">
+        <movable-view
+          class="drag-item"
+          wx:for="{{listData}}"
+          wx:key="{{index}}"
+          x="{{item.x}}"
+          y="{{item.y}}"
+          style="z-index: {{item.zIndex}}"
+          data-list="{{item}}"
+          data-index="{{index}}"
+          direction="all"
+          out-of-bounds="{{true}}"
+          animation="{{false}}"
+          disabled="{{item.disabled}}"
+          bindtouchend="bindtouchend"
+          bindtouchstart="bindtouchstart"
+        >
+        </movable-view>
+      </movable-area>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+export default class Drag extends wepy.component {
+  props = {
+    questionData: Object
+  }
+  data = {
+    show: false,
+    type: 0,
+    dropWrapEl: null,
+    questionList: [{ index: 0 }, { index: 0 }, { index: 0 }],
+    dropList: [],
+    dragList: [],
+    listData: [
+      {
+        x: 0,
+        y: 0,
+        zIndex: 100,
+        disabled: false
+      },
+      {
+        x: 0,
+        y: 0,
+        zIndex: 100,
+        disabled: false
+      },
+      {
+        x: 0,
+        y: 0,
+        zIndex: 100,
+        disabled: false
+      },
+      {
+        x: 0,
+        y: 0,
+        zIndex: 100,
+        disabled: false
+      }
+    ]
+  }
+  components = {}
+  methods = {
+    bindtouchstart(e) {
+      let { index } = e.target.dataset
+      this.listData[index].zIndex += 1
+    },
+    bindtouchend(e) {
+      let { clientX, clientY } = e.changedTouches[0]
+      let { index } = e.target.dataset
+      let { dropWrapEl } = this
+      let activeItem = this.listData[index]
+      let _item = null
+      let _index = null
+      this.dropList.forEach((_e, i) => {
+        let { left, top, width, height } = _e
+        let right = left + width
+        let bottom = top + height
+        if (
+          left < clientX &&
+          right > clientX &&
+          top < clientY &&
+          bottom > clientY
+        ) {
+          _item = _e
+          _index = i
+        }
+        this.$apply()
+      })
+
+      if (_item && this.dropList[_index].isSelectIndex == undefined) {
+        let x = _item.left - dropWrapEl.left
+        let y = _item.top - dropWrapEl.top
+        this.listData[index].x = x
+        this.listData[index].y = y
+        this.listData[index].disabled = true
+        this.dropList[_index].isSelectIndex = index
+        return
+      }
+
+      this.listData[index].x =
+        activeItem._x == activeItem.x ? activeItem.x + 0.1 : activeItem.x - 0.1
+      this.listData[index].y =
+        activeItem._y == activeItem.y ? activeItem.y + 0.1 : activeItem.y - 0.1
+
+      this.listData[index].zIndex -= 1
+    }
+  }
+  events = {
+    showQuestion() {
+      setTimeout(() => {
+        this.init()
+      }, 500)
+    }
+  }
+  watch = {}
+  computed = {}
+  init() {
+    let { listData } = this
+    const length = this.listData.length
+    const query = wx.createSelectorQuery()
+    query.select('#drop').boundingClientRect()
+    query.select('.drag-item').boundingClientRect()
+    query.selectAll('.drop-item').boundingClientRect()
+    query.exec(res => {
+      const _query = wx.createSelectorQuery()
+      let center = res[0].width / 2
+      this.listData = this.listData.map((e, i) => {
+        e.y = res[0].height + 30
+
+        switch (length) {
+          case 2:
+            e.x = i ? center + 16 : center - 16 - res[1].width
+            break
+          case 3:
+            e.x = (res[1].width + 10) * i
+            break
+          case 4:
+            e.x = i % 2 ? center - 16 - res[1].width : center + 16
+            if (i > 1) {
+              e.y = res[0].height + 50 + res[1].height
+            }
+        }
+        e._y = e.y
+        e._x = e.x
+        return e
+      })
+      this.dropWrapEl = res[0]
+      this.dropList = res[2]
+
+      setTimeout(() => {
+        this.show = true
+        this.animation = true
+        _query.selectAll('.drag-item').boundingClientRect()
+        _query.exec(_res => {
+          this.dragList = _res[0]
+        })
+        this.$apply()
+      }, 100)
+      this.$apply()
+    })
+  }
+  onLoad() {}
+}
+</script>
+<style lang="scss">
+@import '../assets/style/mixin.scss';
+.drag {
+  opacity: 0;
+  &.show {
+    opacity: 1;
+  }
+  &-content {
+    position: relative;
+  }
+  .drop {
+    @include flex-center;
+    position: absolute;
+    left: 0;
+    top: 0;
+    padding-top: 80px;
+    width: 100%;
+  }
+  .two {
+    .drop-item {
+      margin: 0 32px;
+    }
+  }
+  .three {
+    justify-content: space-between;
+  }
+  &-item,
+  .drop-item,
+  .bg-item {
+    box-sizing: border-box;
+    width: 220px;
+    height: 220px;
+    background: rgba(14, 30, 49, 0.15);
+    box-shadow: 0px 6px 0px 0px rgba(0, 0, 0, 0.25);
+    border-radius: 40px;
+    border: 8px solid rgba(255, 255, 255, 0.6);
+  }
+
+  .bg-item {
+    position: absolute;
+  }
+  .drag-area {
+    width: 100%;
+    height: 930px;
+  }
+  movable-view {
+    z-index: 99;
+  }
+}
+</style>

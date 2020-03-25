@@ -78,15 +78,15 @@ export default class Notice extends wepy.page {
       size: this.page.size
     })
       .then(({ data }) => {
+        data.resultData.records.forEach(item => {
+          item.datetime = dayjs(new Date(+item.datetime)).format('YYYY-MM-DD HH:mm')
+        })
+
         if (this.page.current > 1) {
           this.dataList = this.dataList.concat(data.resultData.records)
         } else {
           this.dataList = data.resultData.records
         }
-
-        this.dataList.forEach(item => {
-          item.datetime = dayjs(+item.datetime).format('YYYY-MM-DD HH:mm')
-        })
 
         this.page.total = data.resultData.total
         this.$apply()
@@ -95,7 +95,7 @@ export default class Notice extends wepy.page {
 
   methods = {
     toWorkDetail (data) {
-      wx.navigateTo({ url: `/user/completionOfWork?type=2&id=${data.workId}` })
+      wx.navigateTo({ url: `/user/completionOfWork?type=1&id=${data.lessonId}` })
     },
     bindLoadItem (data) {
       if (this.page.current < Math.ceil(this.page.total / this.page.size)) {

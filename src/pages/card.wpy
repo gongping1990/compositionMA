@@ -1,52 +1,48 @@
 <!--  -->
 <template>
-  <view class='container card'>
-    <mHeader flag="0" title="打卡记录"></mHeader>
-    <view class="container-scroll"
-          style="margin-top:{{height}}px">
+  <view class="container card">
+    <mHeader title="打卡记录"></mHeader>
+    <view class="container-scroll" style="margin-top:{{height}}px">
       <view class="card-header">
         <view class="card-day">
           <view class="card-day-left">
-            <view class="card-day-time">你好，截止今天 ({{todayTime}})</view>
+            <view class="card-day-time">你好，截止今天 ({{ todayTime }})</view>
             <view class="card-day-num">
-              {{cardDetail.totaldays||0}}天
+              {{ cardDetail.totaldays || 0 }}天
               <text>累计打卡</text>
             </view>
             <view class="card-day-num">
-              {{cardDetail.continuousdays||0}}天
+              {{ cardDetail.continuousdays || 0 }}天
               <text>连续打卡</text>
             </view>
           </view>
           <view class="card-day-right"></view>
         </view>
-        <view class="card-btn {{cardDetail.todayCard ? 'isCard' : ''}}"
-              @tap="addMyCard">
-          {{cardDetail.todayCard ? '真棒！今天已打卡' : '未打卡，立即打卡'}}
+        <view
+          class="card-btn {{cardDetail.todayCard ? 'isCard' : ''}}"
+          @tap="addMyCard"
+        >
+          {{ cardDetail.todayCard ? '真棒！今天已打卡' : '未打卡，立即打卡' }}
         </view>
       </view>
       <view class="card-content">
         <view class="card-content-header">
           <text class="card-content-title">打卡记录</text>
           <view class="canlendar-control">
-            <view class="canlendar-control-pre"
-                  @tap="bindClickPre"></view>
-            <text class="canlendar-control-title">{{today}}</text>
-            <view class="canlendar-control-next"
-                  @tap="bindClickNext"></view>
+            <view class="canlendar-control-pre" @tap="bindClickPre"></view>
+            <text class="canlendar-control-title">{{ today }}</text>
+            <view class="canlendar-control-next" @tap="bindClickNext"></view>
           </view>
         </view>
         <calendar :card.sync="cardList"></calendar>
       </view>
-      <van-popup show="{{ show }}"
-                 bind:close="onClose">
+      <van-popup show="{{ show }}" bind:close="onClose">
         <view class="dialog">
           <view class="dialog-icon"></view>
           <text class="dialog-text">今日已打卡成功</text>
-          <view class="dialog-btn"
-                @tap="bindClose">我知道了</view>
+          <view class="dialog-btn" @tap="bindClose">我知道了</view>
         </view>
       </van-popup>
-
 
       <van-popup show="{{showNoLearn}}">
         <view class="card-popup">
@@ -56,65 +52,28 @@
           </view>
 
           <view class="card-popup-flex">
-            <button class="card-popup-btn" @tap="closePopup">稍后学习</button>
-            <button class="card-popup-btn card-popup-btn2" @tap="toLearn">立即学习</button>
+            <button class="card-popup-btn card-popup-btn2" @tap="closePopup">
+              我知道了
+            </button>
+            <!--<button class="card-popup-btn card-popup-btn2"-->
+            <!--@tap="toLearn">立即学习</button>-->
           </view>
-
         </view>
 
-        <van-icon name="close"
-                  class="p-submitHomework-close"
-                  color="#fff"
-                  size="36px"
-                  @click="closePopup" />
+        <van-icon
+          name="close"
+          class="p-submitHomework-close"
+          color="#fff"
+          size="36px"
+          @click="closePopup"
+        />
       </van-popup>
-
     </view>
-    <van-tabbar active="2"
-                active-color="#58422B"
-                bind:change="onChangeTabbar">
-      <van-tabbar-item>
-        <image slot="icon"
-               src="../assets/image/icon-jrxx.png"
-               mode="aspectFit" />
-        <image slot="icon-active"
-               src="../assets/image/icon-jrxx1.png"
-               mode="aspectFit" />
-        今日学习
-      </van-tabbar-item>
-      <van-tabbar-item>
-        <image slot="icon"
-               src="../assets/image/icon-zpbz.png"
-               mode="aspectFit" />
-        <image slot="icon-active"
-               src="../assets/image/icon-zpbz1.png"
-               mode="aspectFit" />
-        作品表彰
-      </van-tabbar-item>
-      <van-tabbar-item dot="{{remindData.todaycard}}">
-        <image slot="icon"
-               src="../assets/image/icon-dkjl.png"
-               mode="aspectFit" />
-        <image slot="icon-active"
-               src="../assets/image/icon-dkjl1.png"
-               mode="aspectFit" />
-        打卡记录
-      </van-tabbar-item>
-      <van-tabbar-item dot="{{remindData.uctip}}">
-        <image slot="icon"
-               src="../assets/image/icon-grzx.png"
-               mode="aspectFit" />
-        <image slot="icon-active"
-               src="../assets/image/icon-grzx1.png"
-               mode="aspectFit" />
-        个人中心
-      </van-tabbar-item>
-    </van-tabbar>
   </view>
 </template>
 <script>
 import wepy from 'wepy'
-import {connect} from 'wepy-redux'
+import { connect } from 'wepy-redux'
 import api from '../request/api'
 import dayjs from 'dayjs'
 import calendar from '../components/calendar'
@@ -122,10 +81,10 @@ import mHeader from '../components/header'
 import testMixin from '../mixins/test'
 
 @connect({
-  userInfo (state) {
+  userInfo(state) {
     return state.user.userInfo
   },
-  remindData (state) {
+  remindData(state) {
     return state.user.remindData
   }
 })
@@ -133,80 +92,87 @@ export default class Example extends wepy.page {
   config = {
     navigationBarTitleText: '',
     usingComponents: {
-      'van-tabbar': '../vant/tabbar/index',
-      'van-tabbar-item': '../vant/tabbar-item/index',
       'van-popup': '../vant/popup/index'
     }
-  };
+  }
   data = {
     today: '',
     cardDetail: '',
     show: false,
     showNoLearn: false
-  };
+  }
   components = {
     calendar,
     mHeader
-  };
-  mixins = [testMixin];
+  }
+  mixins = [testMixin]
 
-  getCardInfo () {
-    api.study.countCard()
-      .then(res => {
-        this.cardDetail = res.data.resultData
-        this.$apply()
-      })
-  };
+  getCardInfo() {
+    api.study.countCard().then(res => {
+      this.cardDetail = res.data.resultData
+      this.$apply()
+    })
+  }
 
   methods = {
-    toLearn () {
-      wx.navigateTo({ url: `/pages/classroom?id=${this.cardDetail.todayLessonId}` })
+    toLearn() {
+      wx.navigateTo({
+        url: `/pages/classroom?id=${this.cardDetail.todayLessonId}`
+      })
     },
-    addMyCard () {
+    addMyCard() {
+      let { _sa } = this.$parent.globalData
       if (this.cardDetail.todayLearned) {
         if (this.cardDetail.todayCard) return
-        api.study.addCard()
-          .then(() => {
-            this.show = true
-            this.$invoke('calendar', 'getCardList')
-            this.$apply()
+        api.study.addCard().then(() => {
+          this.show = true
+          this.$invoke('calendar', 'getCardList')
+          this.$apply()
+          _sa.track('courseClockRecord', {
+            courseID: '',
+            courseTitle: '',
+            isSuccess: true,
+            classID: '',
+            className: '',
+            classType: ''
           })
+        })
       } else {
         this.showNoLearn = true
       }
     },
-    closePopup () {
+    closePopup() {
       this.showNoLearn = false
     },
-    bindClose () {
+    bindClose() {
       this.show = !this.show
       this.getCardInfo()
     },
-    bindClickPre () {
+    bindClickPre() {
       this.$invoke('calendar', 'preMonth')
     },
-    bindClickNext () {
+    bindClickNext() {
       this.$invoke('calendar', 'nextMonth')
     }
-  };
+  }
   events = {
-    today (date) {
+    today(date) {
       this.today = date
     }
-  };
-  watch = {};
+  }
+  watch = {}
   computed = {
-    height () {
+    height() {
       return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
     },
     todayTime() {
       return dayjs(new Date()).format('MM月DD日')
     }
-  };
+  }
 
-  onShow () {
+  onShow() {
     this.getCardInfo()
-  };
+  }
 
   onUnload() {
     this.showNoLearn = false
@@ -216,7 +182,7 @@ export default class Example extends wepy.page {
     this.showNoLearn = false
   }
 
-  onShareAppMessage () {
+  onShareAppMessage() {
     return {
       title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
       path: `/pages/index`,
@@ -225,7 +191,7 @@ export default class Example extends wepy.page {
   }
 }
 </script>
-<style lang='scss'>
+<style lang="scss">
 @import '../assets/style/mixin.scss';
 
 .card {
@@ -319,8 +285,8 @@ export default class Example extends wepy.page {
     border-radius: 50px;
     &.isCard {
       box-shadow: none;
-      background:rgba(242,242,242,1);
-      color:rgba(88,66,43,0.3);
+      background: rgba(242, 242, 242, 1);
+      color: rgba(88, 66, 43, 0.3);
     }
   }
   &-day {
@@ -331,18 +297,18 @@ export default class Example extends wepy.page {
       margin-bottom: 44px;
       font-size: 32px;
       font-weight: 600;
-      color: #3B3F3C;
+      color: #3b3f3c;
     }
     &-num {
       margin-bottom: 16px;
       font-size: 36px;
       font-weight: bold;
       line-height: 50px;
-      color: #FFD129;
+      color: #ffd129;
       text {
         font-weight: normal;
         font-size: 22px;
-        color: #3B3F3C;
+        color: #3b3f3c;
       }
     }
     &-right {
@@ -365,50 +331,53 @@ export default class Example extends wepy.page {
     height: 320px;
   }
   &-popup {
-    width:590px;
-    height:366px;
-    background:rgba(255,255,255,1);
-    border-radius:32px;
+    width: 590px;
+    height: 366px;
+    background: rgba(255, 255, 255, 1);
+    border-radius: 32px;
 
     &-title {
       padding-top: 72px;
       text-align: center;
       margin: 0 auto 48px;
-      width:496px;
-      height:100px;
-      font-size:36px;
-      font-weight:500;
-      color:rgba(88,66,43,1);
-      line-height:50px;
+      width: 496px;
+      height: 100px;
+      font-size: 36px;
+      font-weight: 500;
+      color: rgba(88, 66, 43, 1);
+      line-height: 50px;
     }
 
     &-flex {
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
       margin: 0 48px;
     }
 
     &-btn {
       text-align: center;
-      width:224px;
-      height:76px;
-      border-radius:40px;
-      border:2px solid rgba(88,66,43,0.1);
-      font-size:32px;
-      font-weight:400;
-      color:rgba(88,66,43,0.5);
-      line-height:76px;
+      width: 224px;
+      height: 76px;
+      border-radius: 40px;
+      border: 2px solid rgba(88, 66, 43, 0.1);
+      font-size: 32px;
+      font-weight: 400;
+      color: rgba(88, 66, 43, 0.5);
+      line-height: 76px;
     }
 
     &-btn2 {
       border: none;
-      background:linear-gradient(90deg,rgba(249,230,11,1) 0%,rgba(253,219,85,1) 100%);
-      box-shadow:0px 8px 16px 4px rgba(230,194,81,0.4);
-      font-weight:500;
-      color:rgba(70,65,60,1);
+      background: linear-gradient(
+        90deg,
+        rgba(249, 230, 11, 1) 0%,
+        rgba(253, 219, 85, 1) 100%
+      );
+      box-shadow: 0px 8px 16px 4px rgba(230, 194, 81, 0.4);
+      font-weight: 500;
+      color: rgba(70, 65, 60, 1);
     }
-
   }
 }
 </style>

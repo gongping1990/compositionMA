@@ -6,6 +6,8 @@ import operate from './operate'
 import study from './study'
 import order from './order'
 import appointment from './appointment'
+import center from './center'
+import dubbing from './dubbing'
 
 export default {
   user,
@@ -14,5 +16,7 @@ export default {
   operate,
   study,
   order,
-  appointment
+  appointment,
+  center,
+  dubbing
 }

@@ -1,39 +1,48 @@
 <!--  -->
 <template>
-  <view class='container classroom'>
+  <view class="container classroom">
     <mHeader title="进入教室"></mHeader>
-    <view class="container-scroll" style="margin-top:{{height}}px">
+    <view
+      class="container-scroll classroom-scroll"
+      style="height:calc(100vh - {{height}}px); margin-top: {{height}}px"
+    >
       <view class="classroom-header">
-        <image class="classroom-img"
-               src="{{lessonData.coverphoto}}" />
+        <image class="classroom-img" src="{{lessonData.coverphoto}}" />
         <view class="classroom-info">
           <view class="classroom-text">
-            <text class="classroom-title">{{lessonData.name}}</text>
+            <text class="classroom-title">{{ lessonData.name }}</text>
             <text class="classroom-subtitle">《小语轻作文》</text>
           </view>
-          <text class="classroom-num">{{lessonData.uv}} 人已学</text>
+          <text class="classroom-num">{{ lessonData.uv }} 人已学</text>
         </view>
       </view>
-      <view class="classroom-list">
-        <view class="classroom-item" @tap="bindClickRoom">
-          <image class="classroom-item-img"
-                 src="https://pub.file.k12.vip/tbzw/romm.png" />
-          <view class="classroom-item-btn">1号小教室</view>
-        </view>
-        <view class="classroom-item" @tap="bindClickRoom">
-          <image class="classroom-item-img"
-                 src="https://pub.file.k12.vip/tbzw/romm.png" />
-          <view class="classroom-item-btn">2号小教室</view>
-        </view>
-        <view class="classroom-item" @tap="bindClickRoom">
-          <image class="classroom-item-img"
-                 src="https://pub.file.k12.vip/tbzw/romm.png" />
-          <view class="classroom-item-btn">3号小教室</view>
-        </view>
-        <view class="classroom-item" @tap="bindClickRoom">
-          <image class="classroom-item-img"
-                 src="https://pub.file.k12.vip/tbzw/romm.png" />
-          <view class="classroom-item-btn">4号小教室</view>
+      <view class="classroom-content">
+        <view class="classroom-content-title">—— 选择教室 ——</view>
+        <view class="classroom-list">
+          <view class="classroom-item" @tap="bindClickRoom">
+            <image
+              class="classroom-item-img"
+              src="https://pub.file.k12.vip/tbzw/1.8/classroom/1.png"
+            />
+          </view>
+          <view class="classroom-item" @tap="bindClickRoom">
+            <image
+              class="classroom-item-img"
+              src="https://pub.file.k12.vip/tbzw/1.8/classroom/2.png"
+            />
+          </view>
+          <view class="classroom-item" @tap="bindClickRoom">
+            <image
+              class="classroom-item-img"
+              src="https://pub.file.k12.vip/tbzw/1.8/classroom/3.png"
+            />
+          </view>
+          <view class="classroom-item" @tap="bindClickRoom">
+            <image
+              class="classroom-item-img"
+              src="https://pub.file.k12.vip/tbzw/1.8/classroom/4.png"
+            />
+          </view>
         </view>
       </view>
       <view class="classroom-btn" @tap="bindClickRoom">快速进入教室</view>
@@ -42,30 +51,37 @@
 </template>
 <script>
 import wepy from 'wepy'
+import { saveFormId } from '../utils'
 import mHeader from '../components/header'
 export default class Classroom extends wepy.page {
   config = {
     navigationBarTitleText: '进入教室'
-  };
+  }
   components = {
     mHeader
-  };
+  }
   data = {
     lessonId: 0,
     lessonData: {},
     roomData: {}
   }
   computed = {
-    height () {
+    height() {
       return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
     }
-  };
+  }
   methods = {
+    submit(e) {
+      saveFormId(e.detail.formId)
+    },
     bindClickRoom() {
+      let { audioContext, playSound } = this.$parent.globalData
+      playSound(audioContext, 1)
       if (this.roomData && this.roomData.stage === 1) {
         wx.redirectTo({ url: '/pages/study?id=' + this.lessonId })
       } else {
-        wx.redirectTo({ url: '/pages/ready?id=' + this.lessonId })
+        let url = '/pages/joinRoom?id=' + this.lessonId
+        wx.redirectTo({ url })
       }
     }
   }
@@ -77,22 +93,26 @@ export default class Classroom extends wepy.page {
 
   getLessonRoom() {
     let { api } = this.$parent.globalData
-    api.study.getLessonRoom({
-      lessonId: this.lessonId
-    }).then(({data}) => {
-      this.roomData = data.resultData
-      this.$apply()
-    })
+    api.study
+      .getLessonRoom({
+        lessonId: this.lessonId
+      })
+      .then(({ data }) => {
+        this.roomData = data.resultData
+        this.$apply()
+      })
   }
 
   viewLesson() {
-    let {api} = this.$parent.globalData
-    api.study.viewLesson({
-      lessonId: this.lessonId
-    }).then(({data}) => {
-      this.lessonData = data.resultData
-      this.$apply()
-    })
+    let { api } = this.$parent.globalData
+    api.study
+      .viewLesson({
+        lessonId: this.lessonId
+      })
+      .then(({ data }) => {
+        this.lessonData = data.resultData
+        this.$apply()
+      })
   }
 
   onLoad(option) {
@@ -102,7 +122,7 @@ export default class Classroom extends wepy.page {
   onShow() {
     this.initPage()
   }
-  onShareAppMessage () {
+  onShareAppMessage() {
     return {
       title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
       path: `/pages/index`,
@@ -111,10 +131,13 @@ export default class Classroom extends wepy.page {
   }
 }
 </script>
-<style lang='scss'>
+<style lang="scss">
 @import '../assets/style/mixin.scss';
 .classroom {
   color: #58422b;
+  &-scroll {
+    overflow: hidden;
+  }
   &-btn {
     @include flex-center;
     position: fixed;
@@ -123,6 +146,7 @@ export default class Classroom extends wepy.page {
     width: 470px;
     height: 100px;
     font-size: 32px;
+    color: #fff;
     background: linear-gradient(
       90deg,
       rgba(249, 230, 11, 1) 0%,
@@ -132,48 +156,40 @@ export default class Classroom extends wepy.page {
     border-radius: 50px;
     transform: translateX(-50%);
   }
+  &-content {
+    padding-top: 40px;
+    height: 100vh;
+    box-shadow: 0px 4px 32px 0px rgba(237, 239, 243, 1);
+    border-radius: 48px 48px 0px 0px;
+    &-title {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #999;
+      font-size: 26px;
+    }
+  }
   &-list {
     display: flex;
     flex-wrap: wrap;
     padding: 0 8px;
   }
   &-item {
-    margin: 0 39px;
-    margin-top: 48px;
-    width: 288px;
-    height: 312px;
-    background: rgba(255, 255, 255, 1);
-    box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.08);
-    border-radius: 16px;
+    margin: 0 18px;
+    margin-top: 36px;
     &-img {
-      width: 288px;
-      height: 216px;
-      border-radius: 16px 16px 0px 0px;
-      opacity: 0.7951;
-      background: #ccc;
-    }
-    &-btn {
-      @include flex-center;
-      margin: 0 auto;
-      margin-top: 6px;
-      width: 164px;
-      height: 56px;
-      font-size: 24px;
-      color: rgba($color: #58422b, $alpha: 0.5);
-      border-radius: 32px;
-      border: 3px solid rgba(61, 53, 45, 0.1);
+      width: 330px;
+      height: 258px;
     }
   }
   &-header {
     display: flex;
     padding: 40px 46px;
-    box-shadow: 0px 8px 24px 0px rgba(236, 194, 96, 0.1);
   }
   &-img {
-    margin-right: 32px;
-    width: 180px;
-    height: 240px;
-    box-shadow: 0px 0px 24px 0px rgba(236, 194, 96, 0.24);
+    margin-right: 28px;
+    width: 148px;
+    height: 187px;
+    box-shadow: 0px 4px 8px 0px rgba(237, 239, 243, 1);
     border-radius: 16px;
   }
   &-info {
@@ -187,7 +203,7 @@ export default class Classroom extends wepy.page {
     flex-direction: column;
   }
   &-title {
-    font-size: 36px;
+    font-size: 32px;
     line-height: 50px;
   }
   &-subtitle {

@@ -2,43 +2,56 @@
 <template>
   <view class='address-componet'>
     <view class="_input">
+      <text class="_input-label">收货人</text>
       <input value="{{form.name}}"
              bindinput="bindClickName"
              type="text"
+             class="van-hairline--bottom"
              placeholder-class="placeholder"
-             placeholder="收货人姓名" />
+             placeholder="请输入收货人姓名" />
     </view>
     <view class="_input">
+      <text class="_input-label">手机号</text>
       <input value="{{form.telephone}}"
              bindinput="bindClickPhone"
              type="number"
+             class="van-hairline--bottom"
              placeholder-class="placeholder"
-             placeholder="收货人手机号" />
+             placeholder="请输入11位手机号" />
     </view>
-    <view class="_input select"
-          @tap="bindClickRegion">
-      <text class="placeholder"
-            wx:if="{{!form.areas}}">请选择省/市/区（县）</text>
-      <text class="_input-text"
-            wx:if="{{form.areas}}">{{form.areas}}</text>
-      <view class="icon"></view>
+    <view class="_input">
+      <text class="_input-label">所在地区</text>
+      <view class="select van-hairline--bottom"
+            @tap="bindClickRegion">
+        <text class="placeholder"
+              wx:if="{{!form.areas}}">请选择省/市/区（县）</text>
+        <text class="_input-text"
+              wx:if="{{form.areas}}">{{form.areas}}</text>
+        <view class="icon"></view>
+      </view>
     </view>
     <view class="_input textarea">
-      <textarea value="{{form.address}}"
-                bindinput="bindClickAddress"
-                placeholder-class="placeholder"
-                placeholder="详细地址 街道、小区、门牌等信息" />
-      </view>
-      <view class="_btn" @tap="save">{{btnText}}</view>
-    <van-popup position="bottom" show="{{ show }}">
-      <van-area area-list="{{ areaList }}" @confirm="bindClickConfirm" @cancel="bindClickRegion" />
+      <text class="_input-label">详细地址</text>
+      <input value="{{form.address}}"
+             bindinput="bindClickAddress"
+             class="van-hairline--bottom"
+             placeholder-class="placeholder"
+             placeholder="详细地址 街道、小区、门牌等信息" />
+    </view>
+    <view class="_btn"
+          @tap="save">{{btnText}}</view>
+    <van-popup position="bottom"
+               show="{{ show }}">
+      <van-area area-list="{{ areaList }}"
+                @confirm="bindClickConfirm"
+                @cancel="bindClickRegion" />
     </van-popup>
   </view>
 </template>
 <script>
-import wepy from 'wepy'
-import api from '../request/api'
-import areaList from '../assets/comJS/area'
+import wepy from 'wepy';
+import api from '../request/api';
+import areaList from '../assets/comJS/area';
 export default class Example extends wepy.component {
   props = {
     btnText: {
@@ -57,48 +70,52 @@ export default class Example extends wepy.component {
     areaList: Object.assign({}, areaList)
   };
   components = {};
-  onLoad () {
-    this.getList()
-  };
-  getList () {
-    api.order.getRecipient()
-      .then(({ data }) => {
-        if (data.resultData !== null) {
-          this.form = data.resultData
-        }
-        this.$apply()
-      })
-  };
+  onLoad() {
+    this.getList();
+  }
+  getList() {
+    api.center.getRecipient().then(({ data }) => {
+      if (data.resultData !== null) {
+        this.form = data.resultData;
+      }
+      this.$apply();
+    });
+  }
   methods = {
-    bindClickName (event, name) {
-      this.form.name = event.detail.value
+    bindClickName(event, name) {
+      this.form.name = event.detail.value;
     },
-    bindClickPhone (event, name) {
-      this.form.telephone = event.detail.value
+    bindClickPhone(event, name) {
+      this.form.telephone = event.detail.value;
     },
-    bindClickAddress (event, name) {
-      this.form.address = event.detail.value
+    bindClickAddress(event, name) {
+      this.form.address = event.detail.value;
     },
-    bindClickConfirm (event) {
-      let { values } = event.detail
-      let arr = []
+    bindClickConfirm(event) {
+      let { values } = event.detail;
+      let arr = [];
       values.forEach((e, i) => {
-        arr.push(e.name)
-      })
-      this.form.areas = arr.join('/')
-      this.show = false
+        arr.push(e.name);
+      });
+      this.form.areas = arr.join('/');
+      this.show = false;
     },
-    bindClickRegion () {
-      this.show = !this.show
+    bindClickRegion() {
+      this.show = !this.show;
     },
-    save () {
-      if (!this.form.name || !this.form.telephone || !this.form.address || !this.form.areas) {
+    save() {
+      if (
+        !this.form.name ||
+        !this.form.telephone ||
+        !this.form.address ||
+        !this.form.areas
+      ) {
         return wx.showToast({
           icon: 'none',
           title: '请输入完整的收货信息哟~'
-        })
+        });
       }
-      this.$emit('save', this.form)
+      this.$emit('save', this.form);
     }
   };
   events = {};
@@ -109,57 +126,63 @@ export default class Example extends wepy.component {
 <style lang='scss'>
 @import '../assets/style/mixin.scss';
 .address-componet {
-  padding-top: 48px;
   ._btn {
     @include flex-center;
     position: fixed;
     left: 50%;
     bottom: 48px;
-    width: 654px;
-    height: 100px;
     font-size: 32px;
+    color: #fff;
+    font-weight: 600;
+    width: 686px;
+    height: 100px;
     background: linear-gradient(
       90deg,
-      rgba(249, 230, 11, 1) 0%,
-      rgba(253, 219, 85, 1) 100%
+      rgba(255, 192, 0, 1) 0%,
+      rgba(254, 179, 18, 1) 100%
     );
-    box-shadow: 0px 8px 16px 4px rgba(230, 194, 81, 0.4);
-    border-radius: 54px;
+    box-shadow: 0px 4px 10px 0px rgba(254, 182, 15, 0.45);
+    border-radius: 50px;
     transform: translateX(-50%);
   }
   ._input {
-    @include flex-center;
     box-sizing: border-box;
-    padding-left: 32px;
-    margin: 0 48px;
-    margin-bottom: 24px;
-    width: 654px;
-    height: 96px;
-    background: rgba(246, 246, 246, 1);
-    border-radius: 48px;
+    padding: 0 32px;
+    margin-top: 32px;
+    background: #fff;
+    &-label {
+      margin-bottom: 8px;
+      font-size: 26px;
+      font-weight: 500;
+      color: #333;
+    }
     input,
     &-text {
       width: 100%;
       height: 96px;
       font-size: 34px;
-      color: #58422b;
+      font-weight: 500;
+      color: #333333;
     }
     &-text {
       display: flex;
       align-items: center;
     }
     &.textarea {
-      padding-top: 48px;
-      height: 240px;
+      height: 96px;
       textarea {
+        padding-top: 24px;
         width: 100%;
-        height: 240px;
+        height: 96px;
         font-size: 34px;
-        color: #58422b;
+        color: #333333;
       }
     }
-    &.select {
+    .select {
+      display: flex;
+      align-items: center;
       position: relative;
+      height: 96px;
       .icon {
         @include bg('/course/my-icon-arrow.png');
         position: absolute;
@@ -173,8 +196,8 @@ export default class Example extends wepy.component {
   }
   .placeholder {
     width: 100%;
-    font-size: 28px;
-    color: rgba($color: #58422b, $alpha: 0.5);
+    font-size: 34px;
+    color: #999999;
   }
 }
 </style>

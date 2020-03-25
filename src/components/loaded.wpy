@@ -1,0 +1,92 @@
+<!--  -->
+<template>
+  <view class="loaded" wx:if="{{show}}">
+    <image
+      class="loaded-img"
+      src="https://pub.file.k12.vip/tbzw/1.4/loading.gif"
+    />
+    <view class="loaded-item {{active > 0 && 'active'}}">
+      <view class="loaded-icon"></view>
+      作品上传成功
+    </view>
+    <view class="loaded-item {{active > 1 && 'active'}}">
+      <view class="loaded-icon"></view>
+      通知点评老师
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+export default class Example extends wepy.component {
+  data = {
+    active: 0,
+    show: false
+  }
+  components = {}
+  methods = {}
+  events = {
+    show() {
+      this.show = true
+      this.downTime()
+    },
+    destroy() {
+      setTimeout(() => {
+        this.show = false
+        this.active = 0
+        this.$apply()
+      }, 1000)
+    }
+  }
+
+  downTime() {
+    if (this.active < 2) {
+      setTimeout(() => {
+        this.active += 1
+        this.downTime()
+      }, 2000)
+    } else {
+      this.$emit('success')
+    }
+    this.$apply()
+  }
+}
+</script>
+<style lang="scss">
+@import '../assets/style/mixin.scss';
+.loaded {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: #fff;
+  z-index: 1200;
+  &-img {
+    margin-top: 340px;
+    margin-bottom: 26px;
+    width: 236px;
+    height: 206px;
+  }
+  &-icon {
+    @include bg('/1.4/icon-unselected.png');
+    margin-right: 28px;
+    width: 46px;
+    height: 30px;
+  }
+  &-item {
+    @include flex-center;
+    margin-top: 30px;
+    color: #c5c5c5;
+    font-size: 36px;
+    &.active {
+      color: #333;
+      .loaded-icon {
+        background-image: url('https://pub.file.k12.vip/tbzw/1.4/icon-selected.png');
+      }
+    }
+  }
+}
+</style>

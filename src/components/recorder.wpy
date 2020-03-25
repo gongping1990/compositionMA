@@ -1,0 +1,161 @@
+<template>
+  <view class="ly">
+    <image class="ly-img" mode="widthFix" src="{{questionData.imgUrl}}" />
+    <view class="ly-control">
+      <view class="ly-control-item tj " @tap="clickPlay">
+        <view class="tj-icon {{icon}}"></view>
+        <text>{{
+          !type
+            ? '开始录音'
+            : type == 1
+            ? '点我提交'
+            : type == 2
+            ? '上传中..'
+            : '上传成功 '
+        }}</text>
+      </view>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+const RecorderManager = wx.getRecorderManager()
+const options = {
+  duration: 10000,
+  sampleRate: 44100,
+  numberOfChannels: 1,
+  encodeBitRate: 192000,
+  format: 'aac',
+  frameSize: 50
+}
+export default class Recorder extends wepy.component {
+  props = {
+    questionData: Object
+  }
+  data = {
+    type: 0
+  }
+  components = {}
+  methods = {
+    clickPlay() {
+      let { audioContext, playSound } = this.$parent.$parent.globalData
+      playSound(audioContext, 1)
+      let { type } = this
+      switch (type) {
+        case 0:
+          RecorderManager.start(options)
+          break
+        case 1:
+          RecorderManager.stop()
+          break
+      }
+    }
+  }
+  events = {
+    recorderUploadSuccess() {
+      this.type = 3
+    },
+    recorderStop() {
+      RecorderManager.stop()
+    },
+    reset() {
+      console.log('reset')
+      this.type = 0
+    }
+  }
+  watch = {}
+  computed = {
+    icon() {
+      let { type } = this
+      return !type ? '' : type < 3 ? 'play' : 'pause'
+    }
+  }
+  onLoad() {
+    RecorderManager.onStart(() => {
+      this.$emit('start')
+      this.type = 1
+      this.$apply()
+    })
+    RecorderManager.onStop(res => {
+      this.$emit('stop', res)
+      this.type = 2
+      this.$apply()
+    })
+  }
+}
+</script>
+<style lang="scss">
+@import '../assets/style/mixin.scss';
+.ly {
+  @include flex-column-center;
+  margin-top: 56px;
+  &-img {
+    margin-bottom: 136px;
+    width: 590px;
+    height: 440px;
+    box-shadow: 0px 6px 0px 0px #fec001;
+    border-radius: 40px;
+    border: 8px solid rgba(255, 255, 255, 1);
+  }
+  &-control {
+    position: relative;
+    height: 230px;
+    width: 100%;
+    &-item {
+      @include flex-column-center;
+      text {
+        @include flex-center;
+        width: 138px;
+        height: 53px;
+        background: rgba(255, 255, 255, 1);
+        box-shadow: 0px 6px 0px 0px rgba(255, 234, 193, 1);
+        border-radius: 27px;
+        font-size: 24px;
+        font-weight: 500;
+        color: rgba(51, 51, 51, 1);
+        line-height: 48px;
+      }
+    }
+    .cl {
+      position: absolute;
+      left: 32px;
+      top: 24px;
+      &-icon {
+        @include bg('/1.8/video/sp_icon_cl.png');
+        margin-bottom: 40px;
+        width: 112px;
+        height: 112px;
+      }
+    }
+    .tj {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      transform: translateX(-50%);
+      &-icon {
+        @include bg('/1.8/video/sp_icon_ly.png');
+        margin-bottom: 21px;
+        width: 160px;
+        height: 164px;
+        &.play {
+          @include bg('/1.8/video/ly.gif');
+        }
+        &.pause {
+          @include bg('/1.8/video/sp_icon_ly2.png');
+        }
+      }
+    }
+    .st {
+      position: absolute;
+      right: 32px;
+      top: 24px;
+      &-icon {
+        @include bg('/1.8/video/sp_icon_st.png');
+        margin-bottom: 40px;
+        width: 112px;
+        height: 112px;
+      }
+    }
+  }
+}
+</style>

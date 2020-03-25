@@ -1,0 +1,255 @@
+<template>
+  <view class="container lessonDetail">
+    <mHeader title="课时详情" flag="4"></mHeader>
+    <view
+      class="container-scroll"
+      style="margin-top:{{height}}px;height: calc(100vh - {{height}}px)"
+    >
+      <view class="lessonDetail-header">
+        <view class="lessonDetail-header-left">
+          <view class="lessonDetail-header-title">{{
+            lessonData.lessonName
+          }}</view>
+          <view class="lessonDetail-header-num">
+            {{ lessonData.learnNum }}人已学
+          </view>
+          <view class="lessonDetail-header-flower">
+            <view class="lessonDetail-header-icon"></view>
+            x {{ lessonData.score }}
+          </view>
+        </view>
+        <image
+          class="lessonDetail-header-cover"
+          src="{{lessonData.coverphoto}}"
+        />
+      </view>
+      <scroll-view
+        scroll-y
+        scroll-with-animation
+        style="height: calc(100vh - {{height + 175}}px)"
+      >
+        <view class="lessonDetail-scroll">
+          <view
+            class="lessonDetail-item {{!item.unlocked && 'disabled'}}"
+            style="background: {{item.colouratla}}"
+            wx:for="{{lessonData.checkPointList}}"
+            wx:key="{{index}}"
+            @tap="bindClickItem({{item}})"
+          >
+            <image src="{{item.icon}}" class="lessonDetail-item-cover" />
+            <view class="lessonDetail-item-content">
+              <view class="lessonDetail-item-title">{{ item.name }}</view>
+              <view class="lessonDetail-item-flower">
+                <view
+                  wx:for="{{item.flowerTotal}}"
+                  wx:for-item="flower"
+                  wx:key="{{index}}"
+                >
+                  <view
+                    class="lessonDetail-item-flower-icon empty"
+                    wx:if="{{index >= item.flower}}"
+                  >
+                  </view>
+                  <view class="lessonDetail-item-flower-icon" wx:else> </view>
+                </view>
+              </view>
+            </view>
+            <view
+              class="lessonDetail-item-icon"
+              wx:if="{{item.passed || !item.unlocked}}"
+            ></view>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import mHeader from '../components/header'
+export default class Example extends wepy.page {
+  config = {
+    navigationBarTitleText: ''
+  }
+  data = {
+    lessonId: 0,
+    lessonData: {}
+  }
+  components = {
+    mHeader
+  }
+  methods = {
+    bindClickItem(item) {
+      let { audioContext, playSound } = this.$parent.globalData
+      let url =
+        item.type == 1
+          ? '/pages/picture?id=' + item.id
+          : '/pages/video?id=' + item.id
+      if (item.passed) {
+        url += '&lookback=1'
+      }
+      if (!item.unlocked) return
+      playSound(audioContext, 1)
+      if (item.workCp) {
+        wx.navigateTo({
+          url: `/literacy/l_submitHomework?id=${item.id}`
+        })
+        return
+      }
+      if (item.type == 1) {
+        wx.navigateTo({ url })
+      } else {
+        wx.navigateTo({ url })
+      }
+    }
+  }
+  events = {
+    back() {
+      wx.navigateBack({
+        delta: 1 //返回的页面数，如果 delta 大于现有页面数，则返回到首页,
+      })
+    }
+  }
+  watch = {}
+  computed = {
+    height() {
+      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+    }
+  }
+
+  getThreeLessonInfo() {
+    let { api } = this.$parent.globalData
+    api.study
+      .getThreeLessonInfo({
+        lessonId: this.lessonId
+      })
+      .then(({ data }) => {
+        this.lessonData = data.resultData
+        this.$apply()
+      })
+  }
+  onLoad(option) {
+    this.lessonId = option.id
+  }
+  onShow() {
+    this.getThreeLessonInfo()
+  }
+}
+</script>
+<style lang="scss">
+@import '../assets/style/mixin.scss';
+.lessonDetail {
+  &-header {
+    display: flex;
+    justify-content: space-between;
+    box-sizing: border-box;
+    padding: 0 60px;
+    padding-top: 60px;
+    height: 350px;
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0px 0px 60px 0px rgba(206, 210, 218, 1);
+    border-radius: 0px 0px 60px 60px;
+    &-title {
+      @include text-overflow;
+      width: 400px;
+      margin-bottom: 27px;
+      font-size: 42px;
+      font-weight: bold;
+      color: #333;
+    }
+    &-num {
+      font-size: 28px;
+      color: #999;
+    }
+    &-flower {
+      @include flex-center;
+      margin-top: 34px;
+      width: 200px;
+      height: 70px;
+      background: rgba(255, 195, 46, 1);
+      border-radius: 35px;
+      font-size: 36px;
+      color: #fff;
+      font-weight: 500;
+    }
+    &-icon {
+      @include bg('/1.8/lesson/flower-icon.png');
+      margin-right: 13px;
+      width: 44px;
+      height: 54px;
+    }
+    &-cover {
+      width: 200px;
+      height: 250px;
+      border-radius: 30px;
+    }
+  }
+  &-scroll {
+    padding: 50px;
+  }
+  &-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    padding: 40px;
+    margin-bottom: 32px;
+    width: 650px;
+    height: 200px;
+    background: rgba(99, 196, 255, 1);
+    border-radius: 50px;
+    &.kt {
+      background: #98de39;
+    }
+    &.jn {
+      background: #ff698c;
+    }
+    &.bp {
+      background: #ff7d54;
+    }
+    &.disabled {
+      background: #e2eaf1 !important;
+    }
+    &-cover {
+      width: 74px;
+      height: 101px;
+    }
+    &-content {
+      flex: 1;
+      margin-left: 36px;
+      margin-right: 90px;
+    }
+    &-title {
+      margin-bottom: 12px;
+      font-size: 36px;
+      font-weight: 500;
+      color: #fff;
+      .disabled & {
+        color: #91a5ae;
+      }
+    }
+    &-flower {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      &-icon {
+        @include bg('/1.8/lesson/h.png');
+        margin-right: 10px;
+        width: 49px;
+        height: 51px;
+        &.empty {
+          @include bg('/1.8/lesson/h-empty.png');
+        }
+      }
+    }
+    &-icon {
+      @include bg('/1.8/lesson/right.png');
+      width: 61px;
+      height: 65px;
+      .disabled & {
+        @include bg('/1.8/lesson/suo.png');
+      }
+    }
+  }
+}
+</style>

@@ -4,16 +4,16 @@
       <text
         wx:for="{{sentenceFormatData}}"
         wx:key="{{index}}"
-      ><text class="sentence-text {{item.selected && 'show'}}">{{item.problem}}</text></text>
+      ><text class="sentence-text {{item.selected && 'show'}}">{{item.value}}</text></text>
     </view>
     <view class="sentence-list">
       <view
         class="sentence-item {{item.selected && 'hide'}}"
         wx:for="{{sentenceData}}"
-        wx:key="{{item.mark}}"
+        wx:key="{{item.index}}"
         @tap="bindClickSentence({{item}}, {{index}})"
       >
-        {{ item.problem }}
+        {{ item.value }}
       </view>
     </view>
   </view>
@@ -21,43 +21,58 @@
 <script>
 import wepy from 'wepy'
 export default class Example extends wepy.component {
-  props = {}
+  props = {
+    questionData:Object
+  }
   data = {
     selectedIndex: 1,
-    sentenceData: [
-      {
-        selected: false,
-        index: 10,
-        mark: '1',
-        problem: 'dasdsa'
-      },
-      {
-        selected: false,
-        index: 10,
-        mark: '1',
-        problem: 'dasdsa'
-      }
-    ],
+    sentenceData: [],
     sentenceArr: []
   }
   components = {}
   methods = {
     bindClickSentence(item, i) {
+      let { audioContext, playSound } = this.$parent.$parent.globalData
+      playSound(audioContext, 1)
       if (item.selected) return
-      this.sentenceData[i].index = this.selectedIndex
+      this.sentenceData[i]._index = this.selectedIndex
       this.sentenceData[i].selected = true
-      this.sentenceArr.push(item.mark)
+      this.sentenceArr.push(item.index)
       this.selectedIndex += 1
-      this.$emit('bindClickInput', this.sentenceArr.join(''))
+
     }
   }
-  events = {}
-  watch = {}
+  events = {
+    reset() {
+      this.selectedIndex = 1
+      this.sentenceArr = []
+    },
+    init() {
+      if(this.questionData.type == 10) {
+        this.sentenceData = this.questionData.optionList.map(e => {
+          return {
+            ...e,
+            selected: false,
+            _index: 10
+          }
+        })
+      }
+    }
+  }
+  watch = {
+    sentenceArr(v) {
+      if(v.length == this.questionData.optionList.length) {
+        let {answer} = this.questionData
+        let str = this.sentenceArr.join(',')
+        this.$emit('end', answer == str ? 1 : 2)
+      }
+    }
+  }
   computed = {
     sentenceFormatData() {
       let arr = [...this.sentenceData]
       arr = arr.sort((a, b) => {
-        return a.index - b.index
+        return a._index - b._index
       })
       return arr
     }
@@ -108,14 +123,14 @@ export default class Example extends wepy.component {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    margin-top: 45px;
+    margin-top: 85px;
   }
   &-item {
     @include flex-center;
     opacity: 1;
     margin-right: 32px;
     padding: 0 16px;
-    margin-bottom: 16px;
+    margin-bottom: 26px;
     height:80px;
     background:rgba(255,255,255,1);
     box-shadow:0px 5px 0px 0px rgba(243,217,164,0.44);

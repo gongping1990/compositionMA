@@ -164,7 +164,7 @@ import { setStore } from 'wepy-redux'
 import configStore from './store'
 // eslint-disable-next-line no-unused-vars
 import api from './request/api'
-const userInfo = wx.getStorageInfoSync('userInfo')
+const userInfo = wx.getStorageSync('userInfo');
 const _sa = require('./utils/sensorsdata.min.js')
 
 _sa.setPara({
@@ -186,7 +186,7 @@ _sa.setPara({
   allow_amend_share_path: true
 })
 if (userInfo && (userInfo.id || userInfo.userId)) {
-  _sa.setOpenid(res.openid)
+  _sa.setOpenid(userInfo.openid)
   _sa.login(userInfo.id || userInfo.userId)
   _sa.init()
 }

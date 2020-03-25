@@ -27,8 +27,6 @@
           x="{{item.x}}"
           y="{{item.y}}"
           style="z-index: {{item.zIndex}}"
-          data-list="{{item}}"
-          data-index="{{index}}"
           direction="all"
           out-of-bounds="{{true}}"
           animation="{{false}}"
@@ -36,6 +34,12 @@
           bindtouchend="bindtouchend"
           bindtouchstart="bindtouchstart"
         >
+          <image
+            class="drag-item-img"
+            src="{{item.value}}"
+            data-data="{{item}}"
+            data-index="{{index}}"
+           />
         </movable-view>
       </movable-area>
     </view>
@@ -49,51 +53,30 @@ export default class Drag extends wepy.component {
   }
   data = {
     show: false,
-    type: 0,
     dropWrapEl: null,
-    questionList: [{ index: 0 }, { index: 0 }, { index: 0 }],
+    questionList: [],
     dropList: [],
     dragList: [],
-    listData: [
-      {
-        x: 0,
-        y: 0,
-        zIndex: 100,
-        disabled: false
-      },
-      {
-        x: 0,
-        y: 0,
-        zIndex: 100,
-        disabled: false
-      },
-      {
-        x: 0,
-        y: 0,
-        zIndex: 100,
-        disabled: false
-      },
-      {
-        x: 0,
-        y: 0,
-        zIndex: 100,
-        disabled: false
-      }
-    ]
+    listData: []
   }
   components = {}
   methods = {
     bindtouchstart(e) {
+      let { audioContext, playSound } = this.$parent.$parent.globalData
+      playSound(audioContext, 1)
       let { index } = e.target.dataset
       this.listData[index].zIndex += 1
     },
     bindtouchend(e) {
+      let { audioContext, playSound } = this.$parent.$parent.globalData
+      playSound(audioContext, 1)
       let { clientX, clientY } = e.changedTouches[0]
-      let { index } = e.target.dataset
+      let { index, data } = e.target.dataset
       let { dropWrapEl } = this
       let activeItem = this.listData[index]
       let _item = null
       let _index = null
+
       this.dropList.forEach((_e, i) => {
         let { left, top, width, height } = _e
         let right = left + width
@@ -109,7 +92,7 @@ export default class Drag extends wepy.component {
         }
         this.$apply()
       })
-
+      this.listData[index].zIndex -= 1
       if (_item && this.dropList[_index].isSelectIndex == undefined) {
         let x = _item.left - dropWrapEl.left
         let y = _item.top - dropWrapEl.top
@@ -117,6 +100,7 @@ export default class Drag extends wepy.component {
         this.listData[index].y = y
         this.listData[index].disabled = true
         this.dropList[_index].isSelectIndex = index
+        this.dropList[_index].index = data.index
         return
       }
 
@@ -124,21 +108,61 @@ export default class Drag extends wepy.component {
         activeItem._x == activeItem.x ? activeItem.x + 0.1 : activeItem.x - 0.1
       this.listData[index].y =
         activeItem._y == activeItem.y ? activeItem.y + 0.1 : activeItem.y - 0.1
-
-      this.listData[index].zIndex -= 1
     }
   }
   events = {
-    showQuestion() {
+    reset() {
+      this.show = false
+      this.questionList = []
+      this.listData = []
+    },
+    init() {
+      let {questionData} = this
+      console.log(questionData)
+      let arr = []
+      let length = 0
+      if(!(questionData.type == 5 || questionData.type == 6)) return
+      console.log(111)
+      length = questionData.type == 5 ? 1 : questionData.multAnswer.length
+
+      for (let index = 0; index < length; index++) {
+        arr.push({
+          index: 0
+        })
+      }
+      this.questionList = arr
+      this.listData = questionData.optionList.map(e => {
+        return {
+          ...e,
+          x: 0,
+          y: 0,
+          zIndex: 100,
+          disabled: false
+        }
+      })
       setTimeout(() => {
         this.init()
       }, 500)
     }
   }
-  watch = {}
+  watch = {
+    dropList(v) {
+      let {multAnswer} = this.questionData
+      let arr = v.filter(e => e.isSelectIndex != undefined)
+      let success = true
+      if(arr.length != multAnswer.length) return this.$emit('selected', 3)
+      arr.forEach(e => {
+        let isHas = multAnswer.indexOf(e.index) != -1
+        !isHas && (success = false)
+      })
+      this.$emit('selected', success ? 1: 2)
+      this.$emit('end')
+    }
+  }
   computed = {}
   init() {
     let { listData } = this
+    console.log(listData)
     const length = this.listData.length
     const query = wx.createSelectorQuery()
     query.select('#drop').boundingClientRect()
@@ -189,6 +213,7 @@ export default class Drag extends wepy.component {
 @import '../assets/style/mixin.scss';
 .drag {
   opacity: 0;
+  width: 100%;
   &.show {
     opacity: 1;
   }
@@ -221,6 +246,7 @@ export default class Drag extends wepy.component {
     box-shadow: 0px 6px 0px 0px rgba(0, 0, 0, 0.25);
     border-radius: 40px;
     border: 8px solid rgba(255, 255, 255, 0.6);
+    overflow: hidden;
   }
 
   .bg-item {
@@ -229,6 +255,12 @@ export default class Drag extends wepy.component {
   .drag-area {
     width: 100%;
     height: 930px;
+  }
+  .drag-item {
+    &-img {
+      width: 100%;
+      height: 100%;
+    }
   }
   movable-view {
     z-index: 99;

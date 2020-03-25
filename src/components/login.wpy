@@ -81,8 +81,6 @@ export default class Example extends wepy.component {
 
   getLogin() {
     let { _sa } = this.$parent.$parent.globalData
-    console.log(wepy)
-    console.log(this)
     wx.showLoading({
       title: '登录中..',
       mask: true

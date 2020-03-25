@@ -1,0 +1,134 @@
+<template>
+  <view class="section">
+    <view class="section-content">
+      <block wx:for="{{titleArr}}" wx:key="{{index}}">
+        <text
+          class="{{item.selected && 'selected'}}"
+          @tap="clickText({{item}}, {{index}})"
+          >{{ item.text }}</text>
+      </block>
+    </view>
+    <view class="section-btn {{end && 'disabled'}}" @tap="submit">{{end ? '已确认答案' : '确认答案'}}</view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+export default class Example extends wepy.component {
+  props = {
+    questionData: Object
+  }
+  data = {
+    titleArr: [],
+    end: false,
+  }
+  components = {}
+  methods = {
+    submit() {
+      if(this.end) return
+      let {circleList} = this.questionData
+      let selectArr = this.titleArr.filter(e => {
+        return e.selected
+      })
+      let length = selectArr.length
+      let isRight = length == circleList.length
+      this.end = true
+      this.$emit('end', isRight ? 1 : 2)
+    },
+    clickText(item, index) {
+      this.$emit('clickText')
+      if (!item.isClick || item.selected) return
+      this.titleArr[index].selected = true
+    }
+  }
+  events = {
+    init() {
+      if(this.questionData.type == 11) {
+        this.init()
+      }
+    },
+    reset() {
+      this.titleArr = []
+      this.end = false
+    }
+  }
+  watch = {}
+  computed = {}
+  init() {
+    let { id, contentv2, circleList } = this.questionData
+    let arr = []
+    circleList.forEach((e, i) => {
+      let prveIndex = i - 1
+      let length = circleList.length - 1
+      if (!i && e.start) {
+        arr.push({
+          isClick: false,
+          text: contentv2.slice(0, e.start).replace('[##]','\n')
+        })
+      } else if (i) {
+        arr.push({
+          isClick: false,
+          text: contentv2.slice(circleList[prveIndex].end, e.start).replace('[##]','\n')
+        })
+      }
+      arr.push({
+        isClick: true,
+        selected: false,
+        text: contentv2.slice(e.start, e.end).replace('[##]','\n')
+      })
+
+      i == length &&
+        contentv2.slice(e.end) &&
+        arr.push({
+          isClick: false,
+          text: contentv2.slice(e.end).replace('[##]','\n')
+        })
+    })
+    this.titleArr = arr
+    this.$apply()
+  }
+  onLoad() {}
+}
+</script>
+<style lang="scss">
+@import '../assets/style/mixin.scss';
+.section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0 20px;
+  &-content {
+    box-sizing: border-box;
+    padding: 61px 31px;
+    width: 100%;
+    background: rgba(255, 255, 255, 1);
+    border: 5px solid #ffc000;
+    box-shadow: 0px 5px 0px 0px rgba(243, 217, 164, 0.44);
+    border-radius: 40px;
+    font-size: 32px;
+    font-weight: 500;
+    color: rgba(122, 73, 33, 1);
+    line-height: 48px;
+    .selected {
+      color: #fe6d0d;
+      text-decoration: underline;
+      text-decoration-color: #fe6d0d;
+    }
+  }
+  &-btn {
+    @include flex-center;
+    margin-top: 65px;
+    width: 600px;
+    height: 98px;
+    background: rgba(255, 192, 0, 1);
+    border-radius: 49px;
+    font-size: 36px;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 1);
+    &.disabled {
+      background: #C3C3C3;
+    }
+  }
+}
+</style>

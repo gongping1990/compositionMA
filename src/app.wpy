@@ -164,7 +164,7 @@ import { setStore } from 'wepy-redux'
 import configStore from './store'
 // eslint-disable-next-line no-unused-vars
 import api from './request/api'
-const userInfo = wx.getStorageInfoSync('userInfo')
+const userInfo = wx.getStorageSync('userInfo');
 const _sa = require('./utils/sensorsdata.min.js')
 
 _sa.setPara({

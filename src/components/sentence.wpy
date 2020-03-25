@@ -69,10 +69,11 @@ export default class Example extends wepy.component {
 @import '../assets/style/mixin.scss';
 .sentence {
   position: relative;
+  padding: 0 56px;
   &-content {
     margin: 32px 0;
     height: 130px;
-    border-bottom: 2px solid #eceef2;
+    border-bottom: 2px solid #FEBF03;
     &::before {
       content: '';
       position: absolute;
@@ -80,7 +81,7 @@ export default class Example extends wepy.component {
       right: 0;
       top: 64px;
       height: 2px;
-      background-color: #eceef2;
+      background-color: #FEBF03;
       transform: translateY(-50%);
     }
   }
@@ -106,6 +107,7 @@ export default class Example extends wepy.component {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
+    margin-top: 30px;
   }
   &-item {
     @include flex-center;
@@ -113,14 +115,18 @@ export default class Example extends wepy.component {
     margin-right: 32px;
     padding: 0 16px;
     margin-bottom: 16px;
-    height: 72px;
-    background: rgba(255, 255, 255, 1);
-    border: 3px solid rgba(236, 238, 242, 1);
-    box-shadow: 0px 2px 0px 0px rgba(236, 238, 242, 1);
-    border-radius: 20px;
+    height:80px;
+    background:rgba(255,255,255,1);
+    box-shadow:0px 5px 0px 0px rgba(243,217,164,0.44);
+    border-radius:30px;
+    font-size:34px;
+    font-weight:500;
+    color:rgba(122,73,33,1);
+    line-height:48px;
     transition: all 0.3s;
     &.hide {
-      opacity: 0;
+      color:#F8EBD0;
+      background: #F8EBD0;
     }
   }
 }

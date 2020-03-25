@@ -187,11 +187,11 @@ _sa.setPara({
 })
 if (userInfo && userInfo.id) {
   _sa.login(userInfo.id)
+  _sa.init()
 }
 _sa.registerApp({
   platform: 'miniprogram'
 })
-_sa.init()
 
 const store = configStore()
 setStore(store)

@@ -170,6 +170,7 @@ export default class Login extends wepy.page {
           wx.navigateBack()
         })
         _sa.login(data.resultData.userId)
+        _sa.init()
       })
     }
   }

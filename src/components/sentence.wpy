@@ -70,8 +70,9 @@ export default class Example extends wepy.component {
 .sentence {
   position: relative;
   padding: 0 56px;
+  padding-top: 56px;
   &-content {
-    margin: 32px 0;
+    position: relative;
     height: 130px;
     border-bottom: 2px solid #FEBF03;
     &::before {
@@ -107,7 +108,7 @@ export default class Example extends wepy.component {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    margin-top: 30px;
+    margin-top: 45px;
   }
   &-item {
     @include flex-center;

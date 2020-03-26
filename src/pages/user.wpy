@@ -184,7 +184,7 @@ export default class User extends wepy.page {
         id: 7,
         num: 0,
         isBuy: true,
-        name: '打开日历',
+        name: '打卡日历',
         url: 'https://pub.file.k12.vip/2020/03/25/1242630322870034434.png'
       },
       {

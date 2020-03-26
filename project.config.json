@@ -182,10 +182,10 @@
 					"scene": null
 				},
 				{
-					"id": -1,
+					"id": 18,
 					"name": "pages/card",
 					"pathName": "pages/card",
-					"query": "",
+					"query": "courseId=1215894788046995457&name=%E4%B9%90%E5%B0%8F%E7%8B%AE%E5%86%99%E5%AD%97%E8%AF%BE%EF%BC%88%E6%B5%8B%E8%AF%95%EF%BC%89",
 					"scene": null
 				}
 			]

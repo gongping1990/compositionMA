@@ -115,7 +115,7 @@
       }).then(({ data }) => {
         this.flowerInfo = data.resultData;
         this.flowerOption.flowerNum = this.flowerInfo.count;
-        this.flowerOption.path = `/pages/writeStudy?id=${this.queryInfo.id}`;
+        this.flowerOption.path = `/user/writeStudy?id=${this.queryInfo.id}`;
         this.$apply();
       });
     }
@@ -207,7 +207,7 @@
                   this.isOpenPopup = true;
                 } else {
                   wx.navigateTo({
-                    url: `/pages/writeStudy?id=${this.queryInfo.id}`
+                    url: `/user/writeStudy?id=${this.queryInfo.id}`
                   });
                 }
                 this.$apply();

@@ -1,0 +1,115 @@
+<!--  -->
+<template>
+  <view class="loaded" wx:if="{{show}}">
+    <image
+      class="loaded-img"
+      src="https://pub.file.k12.vip/tbzw/1.4/loading.gif"
+    />
+
+    <view wx:for="{{dataList}}"
+          wx:key="{{index}}">
+      <view class="loaded-item {{active > index && 'active'}}">
+        <view class="loaded-icon"></view>
+        {{item}}
+      </view>
+    </view>
+
+    <!--<view class="loaded-item {{active > 0 && 'active'}}">-->
+      <!--<view class="loaded-icon"></view>-->
+      <!--3月9日打卡成功-->
+    <!--</view>-->
+    <!--<view class="loaded-item {{active > 1 && 'active'}}">-->
+      <!--<view class="loaded-icon"></view>-->
+      <!--获得{{option.flowerNum}}朵小红花-->
+    <!--</view>-->
+    <!--<view class="loaded-item {{active > 2 && 'active'}}">-->
+      <!--<view class="loaded-icon"></view>-->
+      <!--制作精美打卡海报-->
+    <!--</view>-->
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+export default class Example extends wepy.component {
+  props = {
+    optionList: {
+      type: Array,
+      default: []
+    }
+  }
+  data = {
+    active: 0,
+    show: false,
+    dataList: this.optionList || []
+  }
+  components = {}
+  methods = {}
+  events = {
+    destroy() {
+      setTimeout(() => {
+        this.show = false
+        this.active = 0
+        this.$apply()
+      }, 1000)
+    }
+  }
+
+  downTime() {
+    this.dataList = this.optionList
+    this.show = true
+    if (this.active < this.dataList.length) {
+      setTimeout(() => {
+        this.active += 1
+        this.downTime()
+      }, 2000)
+    } else {
+      this.$emit('success')
+    }
+    this.$apply()
+  }
+}
+</script>
+<style lang="scss">
+@import '../assets/style/mixin.scss';
+.loaded {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: #fff;
+  z-index: 1200;
+  &-img {
+    margin-top: 340px;
+    margin-bottom: 26px;
+    width: 236px;
+    height: 206px;
+  }
+  &-icon {
+    background: url("https://pub.file.k12.vip/2020/03/26/1243105605109145602.png");
+    background-size: 100%;
+    margin-right: 28px;
+    width: 32px;
+    height: 32px;
+  }
+  &-item {
+    display: flex;
+    align-items: center;
+    margin-top: 30px;
+    color: #c5c5c5;
+    font-size: 34px;
+    width: 340px;
+    text-align: left;
+    &.active {
+      color: #333;
+      .loaded-icon {
+        background-image: url('https://pub.file.k12.vip/2020/03/26/1243093177868738561.png');
+        background-size: 100%;
+      }
+    }
+  }
+}
+</style>

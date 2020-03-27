@@ -1,265 +1,371 @@
 <template>
   <view class="container">
-    <mHeader title="课后作业"></mHeader>
-    <view class="container-scroll p-submitHomework"
-          style="margin-top:{{height}}px">
-      <view class="p-submitHomework-header">
-        <view class="p-submitHomework-header-top">
-          <view class="-top-left">
-            <image class="-left-img"
-                   src="{{lessonDetail.coverphoto}}"></image>
-          </view>
-          <view class="-top-right">
-            <view>
-              <view class="-title">{{lessonDetail.name}}</view>
-              <view class="-text">《小语轻作文》</view>
-            </view>
-
-            <view class="-right-down">
-              <view class="-num">{{lessonDetail.uv || 0}}人已学</view>
-              <view class="-btn"
-                    @tap="changePopup({{'1'}})">
-                <image class="-icon"
-                       src="https://pub.file.k12.vip/2019/06/06/1136518673440460801.png"></image>
-                课程回看
-              </view>
-            </view>
-          </view>
-        </view>
-
-        <view class="p-submitHomework-header-down">
-          <view class="-down-text {{tabActive === '1' ? '-active' : ''}}"
-                @tap="changeTab({{'1'}})">
-            <view class="-text">我的作业</view>
-          </view>
-          <view class="-down-text {{tabActive === '2' ? '-active' : ''}}"
-                @tap="changeTab({{'2'}})">
-            <view class="-text">同学作业</view>
-          </view>
-        </view>
-      </view>
-
-      <view class="p-submitHomework-center"
-            wx:if="{{tabActive === '1'}}">
-        <view class="-center-blackboard">
-          <view class="-center-blackboard-title">课后作业</view>
-          <view class="-center-blackboard-name">{{lessonDetail.homework}}</view>
-          <view class="-center-blackboard-content">{{lessonDetail.homeworkClaim}}</view>
-        </view>
-
-        <view class="-center-mask"
-              wx:if="{{isSuccessWork}}">
-          <image class="-mask-img"
-                 src="https://pub.file.k12.vip/tbzw/khzy/success.png"></image>
-        </view>
-
-        <view class="-center-work"
-              wx:if="{{isSuccessWork}}">
-          <view class="-center-work-top -center-work-my">
+    <mHeader title="课后作业" flag="4"></mHeader>
+    <view
+      class="container-scroll p-submitHomework"
+      style="margin-top:{{height}}px"
+    >
+      <form report-submit="true" @submit="submit">
+        <view class="p-submitHomework-header">
+          <view class="p-submitHomework-header-top">
             <view class="-top-left">
-              <image class="-top-left-img"
-                     src="{{workDetail.stuImg}}"></image>
+              <image
+                class="-left-img"
+                src="{{lessonDetail.coverphoto}}"
+              ></image>
             </view>
             <view class="-top-right">
-              <view class="-top-right-name">{{workDetail.nickname}}</view>
-              <view class="-top-right-time">{{workDetail.workTime}}</view>
-            </view>
-          </view>
-          <view class="-center-work-down">
-            <image class="-center-work-down-img"
-                   wx:for="{{workDetail.workImgSrc}}"
-                   wx:key="{{item}}"
-                   wx:if="{{lessonDetail.homeworkType == 2}}"
-                   @tap="enlargeImage({{item}},index)"
-                   src="{{item}}"></image>
-
-            <view class="-center-work-down-audio"
-                  @tap="changeMyAudioStatus({{workDetail}},1)"
-                  wx:if="{{lessonDetail.homeworkType == 1}}">
-              <view class="-reply-icon">
-                <view class="icon"
-                      wx:if="{{!isPlay}}"></view>
-                <view class="playIcon"
-                      wx:if="{{isPlay}}"></view>
+              <view>
+                <view class="-title">{{ lessonDetail.name }}</view>
+                <view class="-num">{{ lessonDetail.uv || 0 }}人已学</view>
               </view>
-              <view class="-reply-time">{{workDetail.duration}}</view>
+
+              <view class="-right-down">
+                <button
+                  form-type="submit"
+                  class="-btn"
+                  @tap="changePopup({{'1'}})"
+                >
+                  <image
+                    class="-icon"
+                    src="https://pub.file.k12.vip/2020/03/26/1243011702493814785.png"
+                  ></image>
+                  课程回看
+                </button>
+
+                <image
+                  class="-right-img"
+                  src="{{cardObj[nowCardNum]}}"
+                  @tap="toJumpCard({{'1'}})"
+                ></image>
+              </view>
             </view>
           </view>
-          <view class="-center-work-footer">
-            <view class="-center-work-footer-wrap">
-              <image class="-img"
-                     src="https://pub.file.k12.vip/tbzw/word-detail/icon-give-pre.png"></image>
-              <text>{{workDetail.likenum}}</text>
+
+          <view class="p-submitHomework-header-down">
+            <view
+              class="-down-text {{tabActive === '1' ? '-active' : ''}}"
+              @tap="changeTab({{'1'}})"
+            >
+              <view class="-text">我的作业</view>
             </view>
-            <view class="-center-work-footer-wrap"
-                  @tap="lookWorkDetail({{workDetail}})">
-              <image class="-img"
-                     src="https://pub.file.k12.vip/poem/1_2/zybz-icon-review@3x.png"></image>
-              <text>看点评</text>
+            <view
+              class="-down-text -down-text-two {{tabActive === '2' ? '-active' : ''}}"
+              @tap="changeTab({{'2'}})"
+            >
+              <view class="-text">同学作业</view>
             </view>
           </view>
         </view>
-      </view>
 
-      <view class="p-submitHomework-footer"
-            wx:if="{{!isSuccessWork && tabActive === '1'}}">
-        <button class="-footer-btn"
-                @tap="submitWork">上交作业
-        </button>
-      </view>
+        <view class="p-submitHomework-center" wx:if="{{tabActive === '1'}}">
+          <view class="-center-blackboard">
+            <view class="-center-blackboard-title">{{
+              lessonDetail.istoday ? '今日作业' : '课后作业'
+            }}</view>
+            <text class="-center-blackboard-content">{{
+              lessonDetail.homeworkClaim
+            }}</text>
+            <view class="-center-blackboard-ok" wx:if="{{isSuccessWork}}">
+              已完成
+            </view>
+          </view>
 
-      <view class="p-submitHomework-card"
-            wx:if="{{tabActive === '1' && cardDetail.todayLearned}}"
-            @tap="addMyCard">
-        <view class="-text">{{cardDetail.todayCard ? '已打卡' : '点我打卡'}}</view>
-      </view>
-
-      <scroll-view class="p-submitHomework-center p-submitHomework-list"
-                   @scrolltolower="bindLoadItem"
-                   scroll-y
-                   scroll-with-animation
-                   wx:if="{{tabActive === '2'}}">
-        <repeat for="{{dataList}}"
-                wx:if="{{dataList.length && isSuccessWork}}"
-                key="index"
-                index="index"
-                item="item">
-          <view class="-center-work -center-other">
-            <view class="-center-work-top">
+          <view class="-center-work" wx:if="{{isSuccessWork}}">
+            <view class="-center-work-top -center-work-my">
               <view class="-top-left">
-                <image class="-top-left-img"
-                       src="{{item.stuImg}}"></image>
+                <image
+                  class="-top-left-img"
+                  src="{{workDetail.stuImg}}"
+                ></image>
+                <view class="-top-left-name">{{ workDetail.nickname }}</view>
               </view>
               <view class="-top-right">
-                <view class="-top-right-name">{{item.nickname}}</view>
-                <view class="-top-right-time">{{item.workTime}}</view>
+                <view class="-top-right-time">{{ workDetail.workTime }}</view>
               </view>
             </view>
-
             <view class="-center-work-down">
-              <image class="-center-work-down-img"
-                     wx:for="{{item.workImgSrc}}"
-                     wx:key="{{item}}"
-                     wx:if="{{lessonDetail.homeworkType == 2}}"
-                     @tap="enlargeImage({{item}}, index)"
-                     src="{{item}}"></image>
+              <image
+                class="-center-work-down-img"
+                wx:for="{{workDetail.workImgSrc}}"
+                wx:key="{{item}}"
+                wx:if="{{lessonDetail.homeworkType == 2}}"
+                @tap="enlargeImage({{index}}, {{workDetail.workImgSrc}})"
+                src="{{item}}"
+              ></image>
 
-              <view class="-center-work-down-audio"
-                    @tap="changeMyAudioStatus({{item}})"
-                    wx:if="{{lessonDetail.homeworkType == 1}}">
+              <view
+                class="-center-work-down-audio"
+                @tap="changeMyAudioStatus({{workDetail}},1)"
+                wx:if="{{lessonDetail.homeworkType == 1}}"
+              >
                 <view class="-reply-icon">
-                  <view class="icon"
-                        wx:if="{{!item.isPlay}}"></view>
-                  <view class="playIcon"
-                        wx:if="{{item.isPlay}}"></view>
+                  <view class="icon" wx:if="{{!isPlay}}"></view>
+                  <view class="playIcon" wx:if="{{isPlay}}"></view>
                 </view>
-                <view class="-reply-time">{{item.duration}}</view>
+                <view class="-reply-time">{{ workDetail.duration }}</view>
               </view>
             </view>
+            <!--<view class="-center-work-footer -footer-my">-->
+              <!--<view-->
+                <!--class="-center-work-footer-wrap"-->
+                <!--@tap="lookWorkDetail({{workDetail}})"-->
+              <!--&gt;-->
+                <!--<image-->
+                  <!--class="-img"-->
+                  <!--src="https://pub.file.k12.vip/tbzw/1.5/work/zybz-icon-review@2x.png"-->
+                <!--&gt;</image>-->
+                <!--<text>看点评</text>-->
+              <!--</view>-->
 
-            <view class="-center-work-footer">
-              <view class="-center-work-footer-wrap"
-                    @tap="addLike({{item}})">
-                <view class="-texiao"
-                      wx:if="{{dataItem.id === item.id}}"
-                      style="background-position-y:-{{backgroundY}}rpx;">
-                </view>
-                <image class="-img {{dataItem.id === item.id ? '-icon-animation' : ''}}"
-                       wx:if="{{!item.otherLike}}"
-                       src="https://pub.file.k12.vip/tbzw/word-detail/icon-give-pre.png"></image>
-                <image class="-img"
-                       wx:if="{{item.otherLike}}"
-                       src="https://pub.file.k12.vip/2019/06/06/1136572565700235266.png"></image>
-                <text>{{item.likenum}}</text>
-              </view>
-              <view class="-center-work-footer-wrap"
-                    @tap="lookWorkDetail({{item}})">
-                <image class="-img"
-                       src="https://pub.file.k12.vip/poem/1_2/zybz-icon-review@3x.png"></image>
-                <text>看点评</text>
-              </view>
-            </view>
+              <!--<view class="-center-work-footer-wrap">-->
+                <!--<image-->
+                  <!--class="-img"-->
+                  <!--src="https://pub.file.k12.vip/tbzw/1.5/work/zpbz_icon_givealike@2x.png"-->
+                <!--&gt;</image>-->
+                <!--<text>{{ workDetail.likenum }}</text>-->
+              <!--</view>-->
+            <!--</view>-->
           </view>
-        </repeat>
-        <view class="-center-other-no"
-              wx:if="{{(!dataList.length && isSuccessWork) || !isSuccessWork }}">
-          <image class="-no-icon"
-                 src="https://pub.file.k12.vip/tbzw/empty/zy.png"></image>
-          <view class="-no-text">自己写完作业后，才能查看同伴作业哦～</view>
         </view>
-      </scroll-view>
 
+        <view class="p-submitHomework-footer" wx:if="{{tabActive === '1'}}">
+          <button class="-footer-btn {{isSuccessWork && 'success'}}" form-type="submit" @tap="submitWork"
+                  wx:if="{{!workDetail.replyTime}}">
+            {{isSuccessWork ? '重新提交' : '上交作业'}}
+          </button>
+          <view wx:else class="-footer-btn -footer-btn2" @tap="lookWorkDetail({{workDetail}})">
+            <image
+              class="-footer-icon"
+              src="https://pub.file.k12.vip/2020/03/26/1243023171616776194.png"
+            ></image>
+            <text class="-footer-text">来看看老师怎么说~</text>
+          </view>
+        </view>
+
+        <!--<view class="p-submitHomework-card"-->
+        <!--wx:if="{{tabActive === '1'}}"-->
+        <!--&gt;-->
+        <!--<view class="-yes-card" @tap="toJump"-->
+        <!--wx:if="{{cardDetail.todayCard || !cardDetail.todayLearned || !lessonDetail.canCard}}"></view>-->
+        <!--<view class="-no-card" @tap="addMyCard"-->
+        <!--wx:if="{{!cardDetail.todayCard && cardDetail.todayLearned && lessonDetail.canCard}}"></view>-->
+        <!--</view>-->
+        <view class="p-submitHomework-card" @tap="toJump">
+          <image
+            class="-card-img"
+            src="{{levelObj[lessonDetail.level]}}"
+          ></image>
+        </view>
+
+        <scroll-view
+          class="p-submitHomework-center p-submitHomework-list"
+          @scrolltolower="bindLoadItem"
+          scroll-y
+          scroll-with-animation
+          wx:if="{{tabActive === '2'}}"
+        >
+          <repeat
+            for="{{dataList}}"
+            wx:if="{{dataList.length && isSuccessWork}}"
+            key="index"
+            index="index"
+            item="item"
+          >
+            <view class="-center-work -center-other">
+              <view class="-center-work-top">
+                <view class="-top-left">
+                  <image class="-top-left-img" src="{{item.stuImg}}"></image>
+                  <view class="-top-left-name">{{ item.nickname }}</view>
+                </view>
+                <view class="-top-right">
+                  <view class="-top-right-time">{{ item.workTime }}</view>
+                </view>
+              </view>
+
+              <view class="-center-work-down">
+                <image
+                  class="-center-work-down-img"
+                  wx:for="{{item.workImgSrc}}"
+                  wx:key="{{item}}"
+                  wx:if="{{lessonDetail.homeworkType == 2}}"
+                  wx:for-item="list"
+                  @tap="enlargeImage({{index}}, {{item.workImgSrc}})"
+                  src="{{list}}"
+                ></image>
+
+                <view
+                  class="-center-work-down-audio"
+                  @tap="changeMyAudioStatus({{item}})"
+                  wx:if="{{lessonDetail.homeworkType == 1}}"
+                >
+                  <view class="-reply-icon">
+                    <view class="icon" wx:if="{{!item.isPlay}}"></view>
+                    <view class="playIcon" wx:if="{{item.isPlay}}"></view>
+                  </view>
+                  <view class="-reply-time">{{ item.duration }}</view>
+                </view>
+              </view>
+
+              <view class="-center-work-footer">
+                <view
+                  class="-center-work-footer-wrap"
+                  @tap="lookWorkDetail({{item}})"
+                >
+                  <image
+                    class="-img"
+                    src="https://pub.file.k12.vip/tbzw/1.5/work/zybz-icon-review@2x.png"
+                  ></image>
+                  <text>看点评</text>
+                </view>
+
+                <view class="-center-work-footer-wrap" @tap="addLike({{item}})">
+                  <view
+                    class="-texiao"
+                    wx:if="{{dataItem.id === item.id}}"
+                    style="background-position-y:-{{backgroundY}}rpx;"
+                  >
+                  </view>
+                  <image
+                    class="-img {{dataItem.id === item.id ? '-icon-animation' : ''}}"
+                    wx:if="{{!item.otherLike}}"
+                    src="https://pub.file.k12.vip/tbzw/1.5/work/zpbz_icon_givealike@2x.png"
+                  ></image>
+                  <image
+                    class="-img"
+                    wx:if="{{item.otherLike}}"
+                    src="https://pub.file.k12.vip/tbzw/1.3/course/dianzan.png"
+                  ></image>
+                  <text>{{ item.likenum }}</text>
+                </view>
+              </view>
+            </view>
+          </repeat>
+          <view
+            class="-center-other-no"
+            wx:if="{{(!dataList.length && isSuccessWork) || !isSuccessWork }}"
+          >
+            <image
+              class="-no-icon"
+              src="https://pub.file.k12.vip/tbzw/empty/zy.png"
+            ></image>
+            <view class="-no-text">自己写完作业后，才能查看同伴作业哦～</view>
+          </view>
+        </scroll-view>
+      </form>
     </view>
-    <lookImage :isShow.sync="isShowImage"
-               :imgUrl.sync="itemUrl"></lookImage>
+
+    <lookImage
+      :isShow.sync="isShowImage"
+      :index.sync="imgIndex"
+      :imgUrl.sync="itemUrl"
+    ></lookImage>
+
     <van-popup show="{{isOpenPopup}}">
-      <view class="p-submitHomework-popup"
-            wx:if="{{isCard}}">
-        <image class="-popup-icon"
-               src="https://pub.file.k12.vip/tbzw/jrxx/calendar.png"></image>
+      <view class="p-submitHomework-popup" wx:if="{{isCard}}">
+        <image
+          class="-popup-icon"
+          src="https://pub.file.k12.vip/tbzw/1.3/course/icon-Clock in@3x.png"
+        ></image>
         <view class="-popup-title">今日已打卡成功</view>
         <view class="-popup-text">
-          <view>{{cardDetail.time}}</view>
-          <view>已累计打卡{{cardDetail.totaldays}}天，连续打卡{{cardDetail.continuousdays}}天</view>
+          <view>{{ cardDetail.time }}</view>
+          <view>
+            已累计打卡{{ cardDetail.totaldays }}天，连续打卡{{
+              cardDetail.continuousdays
+            }}天
+          </view>
         </view>
       </view>
 
-      <view class="p-submitHomework-popup-look"
-            wx:if="{{!isCard}}">
+      <view class="p-submitHomework-popup-look" wx:if="{{!isCard}}">
         <view class="-popup-look-title">请选择要学习的内容</view>
         <view class="-popup-look-content">
           <view @tap="openUrl({{1}})">
-            <image class="-popup-look-img"
-                   src="https://pub.file.k12.vip/2019/06/06/1136558111751163906.png"></image>
+            <image
+              class="-popup-look-img"
+              src="https://pub.file.k12.vip/tbzw/1.5/work/icon-course@2x.png"
+            ></image>
             <view>回看课程</view>
           </view>
           <view @tap="openUrl({{2}})">
-            <image class="-popup-look-img"
-                   src="https://pub.file.k12.vip/2019/06/06/1136558295600091137.png"></image>
+            <image
+              class="-popup-look-img"
+              src="https://pub.file.k12.vip/tbzw/1.5/work/icon-jc.png"
+            ></image>
             <view>随堂检测</view>
           </view>
         </view>
       </view>
 
-      <van-icon name="close"
-                class="p-submitHomework-close"
-                color="#fff"
-                size="36px"
-                @click="changePopup" />
+      <van-icon
+        name="close"
+        class="p-submitHomework-close"
+        color="#fff"
+        size="36px"
+        @click="changePopup"
+      />
     </van-popup>
+
+    <load wx:if="{{isFetching}}"></load>
+
+    <workPageTip :isShow.sync="isShowHelpTip"></workPageTip>
+
+    <ConfirmModal :isShow.sync="isShowConfirm"
+                  contentText="重新提交作业成功后，将会覆盖上次的内容，确定重交？"
+                  okText="确认"></ConfirmModal>
   </view>
 </template>
 
 <script>
 import wepy from 'wepy'
 import api from '../request/api'
+import { saveFormId } from '../utils'
 import dayjs from 'dayjs'
 import { connect } from 'wepy-redux'
+import getDateDiff from '../utils/getDateDiff'
 import mHeader from '../components/header'
+import load from '../components/load'
 import lookImage from '../components/lookImage'
+import workPageTip from '../components/workPageTip'
+import ConfirmModal from '../components/confirmModal';
 
 @connect({
-  userInfo (state) {
+  userInfo(state) {
     return state.user.userInfo
   }
 })
 export default class SubmitHomework extends wepy.page {
   config = {
     navigationBarTitleText: '课后作业',
-    'usingComponents': {
+    usingComponents: {
       'van-icon': '../vant/icon/index',
       'van-popup': '../vant/popup/index'
     }
-  };
+  }
   components = {
     mHeader,
-    lookImage
-  };
+    lookImage,
+    workPageTip,
+    load,
+    ConfirmModal
+  }
   computed = {
-    height () {
+    height() {
       return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+    },
+    nowCardNum () {
+      let num = 1
+      if (this.lessonDetail.canCard && !this.cardDetail.todayCard) {
+        num = 1
+      } else if (this.lessonDetail.canCard && this.cardDetail.todayCard) {
+        num = 2
+      } else {
+        num = 3
+      }
+      return num
     }
-  };
+  }
 
   data = {
     page: {
@@ -267,102 +373,145 @@ export default class SubmitHomework extends wepy.page {
       size: 10,
       total: ''
     },
+    levelObj: {
+      '1': 'https://pub.file.k12.vip/tbzw/1.5/baogao/s_1.png',
+      '2': 'https://pub.file.k12.vip/tbzw/1.5/baogao/s_2.png',
+      '3': 'https://pub.file.k12.vip/tbzw/1.5/baogao/s_3.png'
+    },
+    cardObj: {
+      '1': 'https://pub.file.k12.vip/2020/03/26/1243011509643911169.png',
+      '2': 'https://pub.file.k12.vip/2020/03/26/1243011579806228481.png',
+      '3': 'https://pub.file.k12.vip/2020/03/26/1243011643287019521.png'
+    },
     dataItem: '',
     backgroundY: 0,
     tabActive: '1',
-    itemUrl: '',
+    itemUrl: [],
+    imgIndex: '',
     isSuccessWork: false,
+    isFetching: false,
     isOpenPopup: false,
     isShowImage: false,
+    isShowHelpTip: false,
+    isShowConfirm: false,
     isCard: false,
     isPlay: false,
     workDetail: '',
     lessonDetail: '',
     cardDetail: '',
-    lessonId: '',
+    queryInfo: {},
     innerAudioContext: '',
     dataList: []
-  };
+  }
 
-  getLessonInfo () {
-    api.study.getLessonDetail({
-      lessonId: this.lessonId
-    }).then(res => {
-      this.lessonDetail = res.data.resultData
-      this.$apply()
-    })
-  };
-
-  getCardInfo () {
-    api.study.countCard()
+  getAudio(num) {
+    api.dubbing
+      .getDubbingByType({
+        type: num
+      })
       .then(res => {
-        this.cardDetail = res.data.resultData
-        this.cardDetail.time = dayjs(+res.data.timestamp).format('YYYY-MM-DD')
+        let data = res.data.resultData
+        this.playGuideAudio(data.oathvfUrl)
         this.$apply()
       })
-  };
+  }
 
-  getMyHomework () {
-    api.study.viewMyHomework({
-      lessonId: this.lessonId
-    }).then(res => {
-      this.workDetail = res.data.resultData
-      if (this.workDetail) {
-        this.isSuccessWork = true
-        this.workDetail.workTime = dayjs(+this.workDetail.workTime).format('YYYY-MM-DD HH:mm')
-        this.workDetail.workImg = this.workDetail.workImg && this.workDetail.workImg.split(',')
-        this.workDetail.workImgSrc = this.workDetail.workImgSrc && this.workDetail.workImgSrc.split(',')
-        this.workDetail.duration = this.timeToFormat(this.workDetail.duration)
-      }
-      this.$apply()
-    })
-  };
+  playGuideAudio(src) {
+    let { audioContext, playSound } = this.$parent.globalData
+    playSound(audioContext, 1, src)
+  }
 
-  getOtherHomeWork () {
-    api.study.listHomeworkByLesson({
-      current: this.page.current,
-      size: this.page.size,
-      lessonId: this.lessonId
-    }).then(({ data }) => {
-      if (this.page.current > 1) {
-        this.dataList = this.dataList.concat(data.resultData.records)
-      } else {
-        this.dataList = data.resultData.records
-      }
-
-      this.dataList.forEach(item => {
-        item.workTime = dayjs(+item.workTime).format('YYYY-MM-DD HH:mm')
-        item.workImg = item.workImg && item.workImg.split(',')
-        item.workImgSrc = item.workImgSrc && item.workImgSrc.split(',')
-        item.replyImg = item.replyImg && item.replyImg.split(',')
-        item.duration = this.timeToFormat(item.duration)
-        item.isPlay = false
+  getLessonInfo() {
+    api.study
+      .getLessonDetail({
+        lessonId: this.queryInfo.id
       })
+      .then(res => {
+        this.lessonDetail = res.data.resultData
+        this.isShowHelpTip = this.lessonDetail.remindSubmit
+        this.isShowHelpTip && this.getAudio(5)
+        this.$apply()
+      })
+  }
 
-      this.page.total = data.resultData.total
+  getCardInfo() {
+    api.study.countCard().then(res => {
+      this.cardDetail = res.data.resultData
+      this.cardDetail.time = dayjs(+res.data.timestamp).format('YYYY-MM-DD')
       this.$apply()
     })
-  };
+  }
 
-  startLikeAnimation () {
-    const base = 270 / 414
-    const bgBase = 13865 / 414
-    const width = 276
-    let height = width * base
-    let time = (1000 * 0.75) / 51
-    let bgHeight = parseInt(width * bgBase)
-    setTimeout(() => {
-      if (this.backgroundY < bgHeight) {
-        this.backgroundY += height
-        this.startLikeAnimation()
-      } else {
-        this.backgroundY = 0
-      }
-      this.$apply()
-    }, time)
-  };
+  getMyHomework() {
+    this.isFetching = true
+    api.study
+      .viewMyHomework({
+        lessonId: this.queryInfo.id
+      })
+      .then(
+        res => {
+          this.workDetail = res.data.resultData
+          if (this.workDetail) {
+            this.isSuccessWork = true
+            this.workDetail.workTime = getDateDiff.getDateDiff(
+              this.workDetail.workTime
+            )
+            this.workDetail.workImg =
+              this.workDetail.workImg && this.workDetail.workImg.split(',')
+            this.workDetail.workImgSrc =
+              this.workDetail.workImgSrc &&
+              this.workDetail.workImgSrc.split(',')
+            this.workDetail.duration = this.timeToFormat(
+              this.workDetail.duration
+            )
+          }
+          this.isFetching = false
+          this.$apply()
+        },
+        () => {
+          this.isFetching = false
+          this.$apply()
+        }
+      )
+  }
 
-  initPlayAudio (src) {
+  getOtherHomeWork() {
+    this.isFetching = true
+    api.study
+      .listHomeworkByLesson({
+        current: this.page.current,
+        size: this.page.size,
+        lessonId: this.queryInfo.id
+      })
+      .then(
+        ({ data }) => {
+          if (this.page.current > 1) {
+            this.dataList = this.dataList.concat(data.resultData.records)
+          } else {
+            this.dataList = data.resultData.records
+          }
+
+          this.dataList.forEach(item => {
+            item.workTime = getDateDiff.getDateDiff(item.workTime)
+            item.workImg = item.workImg && item.workImg.split(',')
+            item.workImgSrc = item.workImgSrc && item.workImgSrc.split(',')
+            item.replyImg = item.replyImg && item.replyImg.split(',')
+            item.duration = this.timeToFormat(item.duration)
+            item.isPlay = false
+          })
+
+          this.page.total = data.resultData.total
+          this.isFetching = false
+          this.$apply()
+        },
+        () => {
+          this.isFetching = false
+          this.$apply()
+        }
+      )
+  }
+
+  initPlayAudio(src) {
     this.innerAudioContext && this.innerAudioContext.destroy()
     this.innerAudioContext = wx.createInnerAudioContext()
 
@@ -381,7 +530,7 @@ export default class SubmitHomework extends wepy.page {
     })
   }
 
-  timeToFormat (times) {
+  timeToFormat(times) {
     var result = '00 : 00'
     var minute, second
     if (times > 0) {
@@ -397,9 +546,45 @@ export default class SubmitHomework extends wepy.page {
       result = `${minute} : ${second}`
     }
     return result
-  };
+  }
+
+  addMyCard() {
+    let { _sa } = this.$parent.globalData
+    api.study.addCard().then(({ data }) => {
+      // this.cardDetail.continuousdays = data.resultData.continuousdays;
+      // this.cardDetail.totaldays = data.resultData.totaldays;
+      // this.isShowFlower = true;
+      // this.$apply();
+      _sa.track('courseClockRecord', {
+        courseID: this.lessonDetail.courseId,
+        courseTitle: this.lessonDetail.courseName,
+        isSuccess: true,
+        classID: this.lessonDetail.lessonId,
+        className: this.lessonDetail.lessonName,
+        classType: this.lessonDetail.category
+      })
+    });
+  }
+
   methods = {
-    changeMyAudioStatus (item, num) {
+    toJumpCard () {
+      switch (this.nowCardNum) {
+        case 1:
+          this.addCard()
+          break
+        case 2:
+          break
+        case 3:
+          wx.navigateTo({
+            url: `/pages/card?courseId=${this.lessonDetail.courseId}&name=${this.lessonDetail.courseName}`
+          })
+          break
+      }
+    },
+    submit(e) {
+      saveFormId(e.detail.formId)
+    },
+    changeMyAudioStatus(item, num) {
       let url = item.workAudio
       this.initPlayAudio(url)
       if (num == 1) {
@@ -417,7 +602,14 @@ export default class SubmitHomework extends wepy.page {
       } else {
         for (let data of this.dataList) {
           if (data.id == item.id) {
-            data.isPlay = !data.isPlay
+            // data.isPlay = !data.isPlay;
+            if (data.isPlay) {
+              data.isPlay = false
+              this.innerAudioContext.stop()
+            } else {
+              data.isPlay = true
+              this.innerAudioContext.play()
+            }
           } else {
             data.isPlay = false
           }
@@ -425,32 +617,44 @@ export default class SubmitHomework extends wepy.page {
         this.isPlay = false
       }
     },
-    enlargeImage (url, index) {
-      this.itemUrl = url
+    enlargeImage(idx, list) {
+      this.imgIndex = idx
+      this.itemUrl = list
       this.isShowImage = true
     },
-    openUrl (num) {
+    openUrl(num) {
+      let { lessonDetail } = this
+      let { _sa } = this.$parent.globalData
       if (num === 1) {
-        wx.navigateTo({ url: `/pages/study?id=${this.lessonId}&lookback=1` })
-      } else {
-        wx.navigateTo({ url: `/pages/test?id=${this.lessonId}&lookback=1` })
-      }
-    },
-    addLike (item) {
-      if (!item.otherLike) {
-        api.study.addLike({
-          workId: item.id
-        }).then(() => {
-          this.dataItem = item
-          setTimeout(() => {
-            this.startLikeAnimation()
-          }, 500)
-
-          setTimeout(() => {
-            this.getOtherHomeWork()
-            this.$apply()
-          }, 900)
+        wx.navigateTo({
+          url: `/user/study?id=${this.queryInfo.id}&lookback=1`
         })
+      } else {
+        wx.navigateTo({ url: `/user/test?id=${this.queryInfo.id}&lookback=1` })
+      }
+      _sa.track('playBack', {
+        courseID: lessonDetail.courseID,
+        courseTitle: lessonDetail.courseName,
+        classID: this.queryInfo.id,
+        className: lessonDetail.name,
+        classType: lessonDetail.category == 1 ? '作文' : '读写',
+        playBackContent: num == 1 ? '回看课程' : '随堂检测'
+      })
+    },
+    addLike(item) {
+      if (!item.otherLike) {
+        api.study
+          .addLike({
+            workId: item.id
+          })
+          .then(() => {
+            this.dataItem = item
+
+            setTimeout(() => {
+              this.getOtherHomeWork()
+              this.$apply()
+            }, 900)
+          })
       } else {
         wx.showToast({
           icon: 'none',
@@ -458,19 +662,13 @@ export default class SubmitHomework extends wepy.page {
         })
       }
     },
-    addMyCard () {
-      if (this.cardDetail.todayCard) return
-      api.study.addCard()
-        .then(({ data }) => {
-          this.cardDetail.continuousdays = data.resultData.continuousdays
-          this.cardDetail.totaldays = data.resultData.totaldays
-          this.isCard = true
-          this.isOpenPopup = true
-          this.getCardInfo()
-          this.$apply()
-        })
+
+    toJump() {
+      wx.navigateTo({
+        url: `/user/learningReport?lessonId=${this.queryInfo.id}`
+      })
     },
-    changePopup (num) {
+    changePopup(num) {
       if (num === '1') {
         this.isCard = false
       } else if (num === '2') {
@@ -478,44 +676,95 @@ export default class SubmitHomework extends wepy.page {
       }
       this.isOpenPopup = !this.isOpenPopup
     },
-    submitWork () {
+    submitWork() {
+      let { audioContext, playSound, _sa } = this.$parent.globalData
+      let { lessonDetail } = this
+      playSound(audioContext, 1)
+
+      if(this.isSuccessWork && !this.workDetail.replayTime) {
+        return this.isShowConfirm = true
+      }
+
       wx.navigateTo({
-        url: `/user/${this.lessonDetail.homeworkType == 1 ? 'uploadAudioWork' : 'uploadImgWork'}?id=${this.lessonId}`
+        url: `/user/${
+          this.lessonDetail.homeworkType == 1
+            ? 'uploadAudioWork'
+            : 'uploadImgWork'
+          }?id=${this.queryInfo.id}`
+      });
+
+      _sa.track('clickHomework', {
+        courseID: lessonDetail.courseId,
+        courseTitle: lessonDetail.courseName,
+        classID: this.queryInfo.id,
+        className: lessonDetail.name,
+        classType: lessonDetail.category == 1 ? '作文' : '读写',
+        homeworkID: lessonDetail.id,
+        homeworkType: lessonDetail.homeworkType == 1 ? '音频' : '图片'
       })
     },
-    lookWorkDetail (data) {
+    lookWorkDetail(data) {
       if (data.self && data.replyTime) {
         api.study.knowReply({
           id: data.id
         })
       }
-      wx.navigateTo({ url: `/user/completionOfWork?type=${data.self ? 1 : 2}&id=${data.self ? data.lessonId : data.id}` })
+      wx.navigateTo({
+        url: `/user/completionOfWork?type=${data.self ? 1 : 2}&id=${
+          data.self ? data.lessonId : data.id
+        }`
+      })
     },
-    changeTab (num) {
+    changeTab(num) {
       num === '2' && this.getOtherHomeWork()
       this.tabActive = num
       this.innerAudioContext && this.innerAudioContext.destroy()
       this.isPlay = false
     },
-    bindLoadItem (data) {
+    bindLoadItem(data) {
       if (this.page.current < Math.ceil(this.page.total / this.page.size)) {
         this.page.current++
         this.getOtherHomeWork()
       }
     }
-  };
-
-  events = {
-    changePopupStatus () {
-      this.isShowImage = false
-    }
-  };
-
-  onLoad (query) {
-    this.lessonId = query.id
   }
 
-  onShow () {
+  events = {
+    changePopupStatus() {
+      this.isShowImage = false
+      this.isShowHelpTip = false
+    },
+    changeOkStatus(bool) {
+      this.isShowConfirm = false;
+      if (bool === 'true') {
+        wx.navigateTo({
+          url: `/user/${
+            this.lessonDetail.homeworkType == 1
+              ? 'uploadAudioWork'
+              : 'uploadImgWork'
+            }?id=${this.queryInfo.id}`
+        });
+      }
+    },
+    nextStep() {
+      this.getAudio(6)
+    },
+    back() {
+      if (this.queryInfo.isFromLesson) {
+        wx.navigateBack()
+      } else {
+        wx.reLaunch({
+          url: '/pages/lesson'
+        })
+      }
+    }
+  }
+
+  onLoad(query) {
+    this.queryInfo = query
+  }
+
+  onShow() {
     this.getLessonInfo()
     this.getCardInfo()
 
@@ -526,7 +775,7 @@ export default class SubmitHomework extends wepy.page {
     }
   }
 
-  onShareAppMessage () {
+  onShareAppMessage() {
     return {
       title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
       path: `/pages/index`,
@@ -547,16 +796,16 @@ export default class SubmitHomework extends wepy.page {
       no-repeat;
     background-size: 100%;
     width: 100%;
-    height: 502px;
 
     &-top {
       display: flex;
-      padding: 40px 32px 0;
+      padding: 22px 32px 0;
+      height: 200px;
 
       .-top-left {
         overflow: hidden;
-        min-width: 180px;
-        height: 240px;
+        min-width: 160px;
+        height: 200px;
         box-shadow: 0px 0px 24px 0px rgba(236, 194, 96, 0.24);
         border-radius: 16px;
         margin-right: 32px;
@@ -564,6 +813,7 @@ export default class SubmitHomework extends wepy.page {
         .-left-img {
           width: 100%;
           height: 100%;
+
         }
       }
 
@@ -576,65 +826,62 @@ export default class SubmitHomework extends wepy.page {
         .-right-down {
           display: flex;
           justify-content: space-between;
-          align-items: center;
+          align-items: flex-end;
+          transform: translateY(-30px);
+        }
+
+        .-right-img {
+          width: 100px;
+          height: 125px;
+          transform: translateY(8px);
         }
 
         .-title {
           /*height: 50px;*/
-          font-size: 36px;
+          font-size: 30px;
           font-weight: 500;
-          color: rgba(88, 66, 43, 1);
-          line-height: 50px;
-        }
-
-        .-text {
-          margin-top: 8px;
-          height: 40px;
-          font-size: 28px;
-          font-weight: 300;
-          color: rgba(88, 66, 43, 0.5);
-          line-height: 40px;
+          color: #333333;
         }
 
         .-num {
-          width: 160px;
-          height: 36px;
-          font-size: 26px;
+          margin-top: 29px;
+          font-size: 28px;
           font-weight: 500;
-          color: rgba(88, 66, 43, 1);
-          line-height: 36px;
+          color: #999999;
         }
 
         .-btn {
           @include flex-center;
-          width: 160px;
-          height: 46px;
-          background: rgba(34, 234, 171, 1);
-          border-radius: 22px;
-          font-size: 24px;
-          font-family: PingFangSC-Medium;
+          text-align: center;
+          width:200px;
+          height:60px;
+          background:linear-gradient(-37deg,rgba(255,192,0,1),rgba(254,179,18,1));
+          box-shadow:0px 8px 8px 0px rgba(255,181,76,0.4);
+          border-radius:30px;
+          font-size: 28px;
           font-weight: 500;
           color: rgba(255, 255, 255, 1);
-          line-height: 34px;
+          line-height: 60px;
         }
 
         .-icon {
-          margin-right: 4px;
-          width: 24px;
-          height: 24px;
+          margin-right: 6px;
+          width: 30px;
+          height: 30px;
         }
       }
     }
 
     &-down {
       display: flex;
-      justify-content: space-between;
+      /*justify-content: space-between;*/
       align-items: center;
-      padding: 0 230px;
+      padding: 0 58px;
+      margin-top: 6px;
       border-bottom: 1px solid #f5f5f5;
 
       .-down-text {
-        padding: 34px 0 24px 0;
+        padding: 34px 0 18px 0;
         height: 40px;
         font-size: 28px;
         font-weight: 400;
@@ -648,163 +895,160 @@ export default class SubmitHomework extends wepy.page {
         }
       }
 
+      .-down-text-two {
+        margin-left: 104px;
+      }
+
       .-active {
         font-weight: 500;
         color: rgba(88, 66, 43, 1);
-        border-bottom: 8px solid rgba(249, 230, 11, 1);
+        border-bottom: 8px solid #ffc000;
       }
     }
   }
 
   &-center {
     position: relative;
-    top: -70px;
+    top: 50px;
+    margin-bottom: 150px;
 
     .-center-blackboard {
-      @include bg('/khzy/hb.png');
+      position: relative;
+      background: url('https://pub.file.k12.vip/2019/12/16/1206478572177993729.png');
+      background-size: 100%;
       margin: 0 auto;
-      width: 622px;
-      height: 368px;
+      width: 679px;
+      height: 393px;
 
       &-title {
         @include flex-center;
-        padding-top: 56px;
+        padding-top: 11px;
         height: 50px;
-        font-size: 36px;
-        font-family: PingFangSC-Semibold;
-        font-weight: 600;
-        color: rgba(255, 255, 255, 0.9);
+        font-size: 30px;
+        font-weight: bold;
+        color: rgba(255, 255, 255, 1);
+        text-shadow: 0px 5px 0px rgba(254, 109, 13, 0.2);
         line-height: 50px;
       }
 
-      &-name {
-        margin-top: 8px;
-        margin-left: 62px;
-        height: 34px;
-        font-size: 24px;
-        font-weight: 500;
-        color: rgba(255, 255, 255, 0.9);
-        line-height: 34px;
-      }
-
       &-content {
-        width: 500px;
-        margin-top: 12px;
-        margin-left: 62px;
-        font-size: 24px;
+        display: inline-block;
+        margin: 40px 64px 0;
+        font-size: 28px;
         font-weight: 500;
         color: rgba(255, 255, 255, 0.9);
-        line-height: 34px;
-        height: 135px;
+        line-height: 40px;
         overflow: hidden;
       }
-    }
 
-    .-center-mask {
-      position: absolute;
-      top: 40px;
-      left: 100px;
-      margin: 0 auto;
-      width: 550px;
-      height: 290px;
-      background-color: rgba(0, 0, 0, 0.4);
-      border-radius: 20px;
-      text-align: right;
-
-      .-mask-img {
-        margin-top: 36px;
-        margin-right: 40px;
-        width: 218px;
-        height: 218px;
+      &-ok {
+        position: absolute;
+        bottom: 43px;
+        left: 35px;
+        text-align: center;
+        width: 121px;
+        height: 44px;
+        background: rgba(34, 206, 183, 1);
+        border-radius: 0 20px 0 20px;
+        font-size: 24px;
+        font-weight: bold;
+        color: rgba(255, 255, 255, 1);
+        line-height: 44px;
       }
     }
 
     .-center-work {
       position: relative;
-      margin-top: 54px;
-      border-top: 10px solid #f6f5f4;
+      /*margin-top: 54px;*/
+      /*border-top: 10px solid #f6f5f4;*/
 
       &-my {
-        margin-top: 48px !important;
+        margin-top: 26px !important;
       }
 
       &-top {
         display: flex;
         align-items: center;
-        padding-left: 32px;
-        margin: 0 0 32px;
+        justify-content: space-between;
+        padding: 0 48px;
+        margin: 0 0 38px;
 
         .-top-left {
           @include flex-center;
 
           &-img {
-            margin-right: 12px;
-            width: 56px;
-            height: 56px;
+            margin-right: 29px;
+            width: 87px;
+            height: 87px;
             border-radius: 50%;
+          }
+
+          &-name {
+            font-size: 27px;
+            font-weight: 500;
+            color: rgba(51, 51, 51, 1);
           }
         }
 
         .-top-right {
-          &-name {
-            height: 40px;
-            font-size: 28px;
-            font-weight: 500;
-            color: rgba(88, 66, 43, 1);
-            line-height: 40px;
-          }
-
           &-time {
-            height: 28px;
-            font-size: 20px;
+            height: 32px;
+            font-size: 23px;
             font-weight: 400;
-            color: rgba(88, 66, 43, 0.5);
-            line-height: 28px;
+            color: #c1c4ce;
+            line-height: 32px;
           }
         }
       }
 
       &-down {
         display: flex;
-        padding-left: 32px;
-        padding-bottom: 24px;
-        border-bottom: 3px solid #f6f5f4;
+        padding-left: 45px;
+        padding-bottom: 28px;
 
         &-img {
-          margin-right: 12px;
-          width: 220px;
-          height: 220px;
+          margin-right: 30px;
+          width: 198px;
+          height: 198px;
+          border-radius: 20px;
         }
 
         &-audio {
           @include flex-center;
           justify-content: space-between;
-          padding: 20px 32px 18px;
-          width: 488px;
-          background: rgba(255, 245, 209, 1);
-          border-radius: 39px;
-          border: 3px solid rgba(232, 197, 157, 1);
+          width: 448px;
+          height: 100px;
+          background: linear-gradient(
+            -37deg,
+            rgba(255, 142, 74, 1),
+            rgba(255, 122, 50, 1)
+          );
+          box-shadow: 0px 12px 12px 0px rgba(255, 122, 50, 0.4);
+          border-radius: 0px 50px 50px 55px;
 
           .-reply-icon {
+            margin: 30px 0 29px 44px;
+
             .icon {
-              @include bg('/sk/icon-audio.png');
-              width: 26px;
-              height: 43px;
+              background: url('https://pub.file.k12.vip/2019/12/04/1202071888211087362.png');
+              background-size: 100%;
+              width: 53px;
+              height: 41px;
             }
 
             .playIcon {
-              @include bg('/v2/audio-pay.gif');
-              width: 26px;
-              height: 43px;
+              background: url('https://pub.file.k12.vip/2019/12/04/1202108006889558018.gif');
+              background-size: 100%;
+              width: 53px;
+              height: 41px;
             }
           }
 
           .-reply-time {
-            height: 26px;
-            font-size: 19px;
+            margin: 14px 30px 16px 0;
+            font-size: 40px;
             font-weight: 600;
-            color: rgba(209, 138, 59, 1);
-            line-height: 26px;
+            color: #ffffff;
           }
         }
       }
@@ -812,34 +1056,32 @@ export default class SubmitHomework extends wepy.page {
       &-footer {
         position: relative;
         display: flex;
-        padding-bottom: 20px;
-        height: 66px;
+        justify-content: flex-end;
+        padding: 0 48px 22px;
         line-height: 66px;
         font-size: 24px;
         font-weight: 600;
-        color: rgba(171, 160, 149, 1);
+        color: #999999;
         line-height: 32px;
 
         &-wrap {
-          width: 50%;
           @include flex-center;
-
-          .-texiao {
-            @include texiao;
-            left: 40px;
-            bottom: 25px;
-          }
-
-          .-icon-animation {
-            @include texiao-icon;
-          }
+          margin-right: 32px;
 
           .-img {
-            margin-right: 8px;
-            width: 40px;
-            height: 40px;
+            margin-right: 14px;
+            width: 32px;
+            height: 32px;
+          }
+
+          &:last-child {
+            margin-right: 0;
           }
         }
+      }
+
+      .-footer-my {
+        padding-bottom: 0;
       }
     }
 
@@ -923,50 +1165,79 @@ export default class SubmitHomework extends wepy.page {
   }
 
   &-list {
-    height: 55vh;
+    margin-bottom: 0;
+    /*height: 55vh;*/
   }
 
   &-footer {
-    position: absolute;
-    bottom: 42px;
+    position: fixed;
+    bottom: 0;
+    background: #ffffff;
     width: 100%;
+    height: 98px;
+    padding: 20px 0;
 
     .-footer-btn {
       margin: 0 auto;
       text-align: center;
-      width: 470px;
-      height: 100px;
-      background: linear-gradient(
-        90deg,
-        rgba(249, 230, 11, 1) 0%,
-        rgba(253, 219, 85, 1) 100%
-      );
-      box-shadow: 0px 8px 16px 4px rgba(230, 194, 81, 0.4);
-      border-radius: 50px;
-      font-size: 32px;
+      width: 620px;
+      height: 98px;
+      background: rgba(255, 192, 0, 1);
+      border-radius: 49px;
+      font-size: 36px;
       font-weight: 500;
-      color: rgba(88, 66, 43, 1);
-      line-height: 100px;
+      color: #ffffff;
+      line-height: 90px;
+
+      &.success {
+        background: #CCCCCC;
+      }
+    }
+
+    .-footer-btn2 {
+      position: relative;
+      background: #FFF2CB;
+      color: #FF9C00;
+    }
+
+    .-footer-icon {
+      position: absolute;
+      bottom: 0;
+      left: 61px;
+      width: 98px;
+      height: 131px;
+    }
+
+    .-footer-text {
+      display: inline-block;
+      margin-left: 50px;
     }
   }
 
   &-card {
-    background: url('https://pub.file.k12.vip/poem/1_2/clock in.png');
-    background-size: 100%;
     position: fixed;
     bottom: 200px;
-    right: 0;
-    width: 140px;
-    height: 140px;
+    right: 44px;
+    width: 199px;
+    height: 161px;
+    /*z-index: 9999;*/
 
-    .-text {
-      text-align: center;
-      padding-top: 90px;
-      height: 34px;
-      font-size: 24px;
-      font-weight: 400;
-      color: #58422b;
-      line-height: 34px;
+    .-yes-card {
+      background: url('https://pub.file.k12.vip/2019/09/19/1174615812725411842.png');
+      background-size: 100%;
+      width: 100%;
+      height: 100%;
+    }
+
+    .-no-card {
+      @include bg('/1.3/course/clock in.png');
+      width: 100%;
+      height: 100%;
+    }
+
+    .-card-img {
+      width: 199px;
+      height: 161px;
     }
   }
 
@@ -1027,9 +1298,9 @@ export default class SubmitHomework extends wepy.page {
       justify-content: space-between;
       align-items: center;
       padding: 0 110px;
-      font-size: 24px;
+      font-size: 32px;
       font-weight: 500;
-      color: rgba(88, 66, 43, 1);
+      color: #666666;
     }
 
     .-popup-look-img {

@@ -6,10 +6,9 @@
           <view class="-content-top-name">
             <text class="-title">{{dataInfo.nickName}}</text> 同学
           </view>
-          <view class="-content-top-body">
-            作文“{{dataInfo.homework}}“被评为
+          <view class="-content-top-body">《{{dataInfo.lessonName}}》的课后作业被评为
             <text class="-red">优秀作品</text>
-            特发此状，以此鼓励
+            特发此状，以资鼓励
           </view>
           <view class="-content-top-text">小语轻作文</view>
           <view class="-content-top-text">{{dataInfo.citeTime}}</view>
@@ -21,7 +20,7 @@
             <view class="-title-name">{{dataInfo.teacherName}}</view>
           </view>
           <view class="-content-down-des">
-            {{dataInfo.nickName}}，你的作文“{{dataInfo.homework}}”写的太棒啦，
+            {{dataInfo.nickName}}，《{{dataInfo.lessonName}}》的课后作业你写的太棒啦，
             老师要将它推荐到作品表彰墙，让小朋友们都向你学习
           </view>
         </view>
@@ -29,7 +28,7 @@
       <view class="praise-pop-btn">
         <button class="-btn"
                 wx:if="{{typeProps==='2'}}"
-                @tap="toHomeWork">查看作业</button>
+                @tap="toPoster">生成专属海报</button>
         <button class="-btn"
                 style="margin-left:{{ typeProps==='2' ? '30' : 'none'}}px"
                 open-type="share">炫耀一下</button>
@@ -47,7 +46,8 @@ export default class PariseModal extends wepy.component {
   props = {
     isShow: {
       type: Boolean,
-      default: false
+      default: false,
+      twoWay: true
     },
     typeProps: {
       type: String,
@@ -66,10 +66,11 @@ export default class PariseModal extends wepy.component {
   };
 
   methods = {
-    toHomeWork () {
-      wx.navigateTo({ url: `/user/completionOfWork?type=1&id=${this.dataInfo.lessonId}` })
+    toPoster () {
+      wx.navigateTo({ url: `/user/praisePoster?id=${this.dataInfo.homeworkId}` })
     },
     onClose () {
+      this.isShow = false
       this.$emit('changePopupStatus')
     }
   };

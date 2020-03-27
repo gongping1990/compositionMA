@@ -1,0 +1,162 @@
+<template>
+  <van-popup show="{{ isShow }}"
+             class="p-copyText"
+             @close="closeCopy()">
+    <view class="p-copyText-content">
+      <image
+        class="-content-logo"
+        src="https://pub.file.k12.vip/2020/03/27/1243357494627262466.png"
+      ></image>
+      <image
+        class="-content-icon"
+        src="https://pub.file.k12.vip/2020/03/27/1243357567251636226.png"
+      ></image>
+      <view class="-content-title">分享时加上下面的文案，会获得更多点赞哦~</view>
+      <view class="-content-text">
+        {{text}}
+      </view>
+      <view class="-content-btns">
+        <view class="-btn-cancle" @tap="closeCopy()">不用了</view>
+        <view class="-btn-ok" @tap="copyTextFn()">复制文案</view>
+      </view>
+    </view>
+    <view class="p-copyText-close">
+      <van-icon name="close"
+                color="#fff"
+                size="36px"
+                @click="closeCopy"/>
+    </view>
+  </van-popup>
+</template>
+
+<script>
+  import wepy from 'wepy';
+
+  export default class copyTextTemplate extends wepy.component {
+    props = {
+      isShow: {
+        type: Boolean,
+        default: false
+      },
+      text: {
+        type: String,
+        default: ''
+      }
+    };
+
+    computed = {};
+
+    data = {
+    };
+
+    methods = {
+      closeCopy() {
+        console.log(11)
+        this.$emit('closeModalFn');
+      },
+      copyTextFn() {
+        let self = this;
+        wx.setClipboardData({
+          data: self.text,
+          success: function(res) {
+            wx.getClipboardData({
+              success: function(res) {
+
+              }
+            });
+          }
+        });
+      }
+    };
+
+    events = {};
+  }
+</script>
+<style lang="scss">
+  @import '../assets/style/mixin.scss';
+
+  .p-copyText {
+
+    &-content {
+      text-align: center;
+      box-sizing: border-box;
+      padding: 0 46px 54px;
+      width:602px;
+      background:rgba(255,255,255,1);
+      border-radius:40px;
+
+      .-content-logo {
+        position: absolute;
+        top: -108px;
+        left: 50%;
+        transform: translate(-50%);
+        width: 216px;
+        height: 216px;
+        border-radius: 50%;
+      }
+      .-content-icon {
+        margin:131px auto 24px;
+        width: 265px;
+        height: 64px;
+      }
+
+      .-content-title {
+        text-align: left;
+        font-size:30px;
+        font-weight:500;
+        color:rgba(51,51,51,1);
+      }
+
+      .-content-text {
+        text-align: left;
+        box-sizing: border-box;
+        margin: 24px auto 33px;
+        padding: 32px;
+        width:521px;
+        min-height:246px;
+        background:rgba(255,247,231,1);
+        border:5px solid #F8BE10;
+        box-shadow:0px 5px 0px 0px rgba(243,217,164,0.44);
+        border-radius:30px;
+        font-size:26px;
+        font-weight:500;
+        color:rgba(123,87,57,1);
+      }
+
+      .-content-btns {
+        @include flex-center;
+        justify-content: space-between;
+
+        .-btn-cancle {
+          text-align: center;
+          width:241px;
+          height:88px;
+          background:rgba(204,204,204,1);
+          border-radius:44px;
+          font-size:32px;
+          font-weight:500;
+          line-height: 88px;
+          color:rgba(255,255,255,1);
+        }
+
+        .-btn-ok {
+          text-align: center;
+          width:241px;
+          height:88px;
+          background:#FFC000;
+          border-radius:44px;
+          font-size:32px;
+          font-weight:500;
+          line-height: 88px;
+          color:rgba(255,255,255,1);
+        }
+      }
+    }
+
+    &-close {
+      margin-top: 75px;
+      width: 602px;
+      text-align: center;
+    }
+  }
+</style>

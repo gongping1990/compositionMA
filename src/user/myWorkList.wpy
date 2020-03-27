@@ -1,0 +1,183 @@
+ <template>
+  <view class='container course'>
+    <mHeader title="我的作业"></mHeader>
+    <view class="no-login"
+          wx:if="{{!logined}}">
+      <image class="no-login-icon"
+             src="https://pub.file.k12.vip/tbzw/1.3/login/lion_bg.png" />
+      <text class="no-login-title">请登陆后查看作业情况~</text>
+      <button class="no-login-btn"
+              @tap="clickLoginBtn">立即登录</button>
+    </view>
+    <view class="container-scroll"
+          style="margin-top:{{height}}px">
+      <view class="course-list"
+            wx:for="{{dataList}}"
+            wx:key="{{index}}"
+            @tap="toCourseDetail({{item}})">
+        <view class="course-item van-hairline--bottom">
+          <image class="course-cover"
+                 src="{{item.coverphoto}}" />
+          <view class="course-info">
+            <text class="course-title">{{item.name}}</text>
+            <text class="course-text {{!item.submited ? 'wj' : ''}}">
+              已学{{item.studys}}节 | {{!item.submited ? item.nosubmits+'次作业未交' : '作业已交齐'}}
+            </text>
+          </view>
+        </view>
+      </view>
+    </view>
+    <load wx:if="{{loading}}"></load>
+    <login :showPopup.sync="showPopup"
+           :show.sync="showSelect"></login>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import { connect } from 'wepy-redux'
+import api from '../request/api'
+import mHeader from '../components/header'
+import login from '../components/login'
+import load from '../components/load'
+@connect({
+  logined (state) {
+    return state.user.logined
+  }
+})
+export default class Example extends wepy.page {
+  config = {
+    navigationBarTitleText: '',
+    'usingComponents': {
+      'van-area': '../vant/area/index',
+      'van-popup': '../vant/popup/index'
+    }
+  };
+  data = {
+    loading: false,
+    showPopup: false,
+    showSelect: false,
+    dataList: []
+  };
+  components = {
+    mHeader,
+    login
+  };
+  onShow () {
+    if (this.logined) {
+      this.getList()
+    }
+  }
+
+  getList () {
+    this.loading = true
+    api.center.getMyCourse()
+      .then(({ data }) => {
+        this.loading = false
+        this.dataList = data.resultData
+        this.$apply()
+      })
+  };
+  methods = {
+    clickLoginBtn () {
+      this.showSelect = true
+    },
+    toCourseDetail (data) {
+      wx.navigateTo({ url: `/user/myWork?id=${data.courseId}&name=${data.name}` })
+    }
+  };
+  events = {
+    login () {
+      this.getList()
+    }
+  };
+  watch = {};
+  computed = {
+    height () {
+      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+    }
+  };
+
+  onShareAppMessage () {
+    return {
+      title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
+      path: `/pages/index`,
+      imageUrl: 'https://pub.file.k12.vip/tbzw/v2/logo2.png'
+    }
+  }
+}
+</script>
+<style lang='scss'>
+@import '../assets/style/mixin.scss';
+.course {
+  .no-login {
+    @include flex-column-center;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 105px;
+    z-index: 20;
+    background-color: #fff;
+    &-icon {
+      width: 401px;
+      height: 401px;
+      margin-bottom: 54px;
+    }
+    &-title {
+      font-size: 32px;
+      color: #333;
+      font-weight: 500;
+    }
+    &-btn {
+      @include flex-center;
+      margin-top: 39px;
+      width: 267px;
+      height: 73px;
+      font-size: 32px;
+      color: #fff;
+      font-weight: 500;
+      background: linear-gradient(
+        -37deg,
+        rgba(255, 192, 0, 1),
+        rgba(254, 179, 18, 1)
+      );
+      box-shadow: 0px 5px 5px 0px rgba(255, 181, 76, 0.4);
+      border-radius: 37px;
+    }
+  }
+  &-list {
+    padding: 16px 32px;
+  }
+  &-item {
+    @include flex-center;
+    padding: 32px 0;
+  }
+  &-cover {
+    margin-right: 24px;
+    width: 254px;
+    height: 168px;
+    box-shadow: 8px 0px 18px 0px rgba(234, 241, 247, 0.7);
+    border-radius: 16px;
+  }
+  &-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  &-title {
+    font-size: 36px;
+    line-height: 50px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #4a4a4a;
+  }
+  &-text {
+    font-size: 26px;
+    color: #999;
+
+    &.wj {
+      color: #ff7c76;
+    }
+  }
+}
+</style>

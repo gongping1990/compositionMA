@@ -17,12 +17,13 @@
       </view>
     </view>
     <view class="calendar-body">
-      <view class="calendar-day"
+      <view class="calendar-day  {{cardList[item.formatDate].lessonSchedul && item.showDate && item.formatDate != today &&'isClass'}}"
             wx:for="{{monthDate}}"
             wx:key="{{item.date}}"
             @tap="bindClickDay({{item}})">
-        <view class="calendar-day-content {{item.formatDate == selectDay && 'select'}} {{item.formatDate == today && 'isToday'}} {{cardList[item.formatDate] && 'success'}}">
+        <view class="calendar-day-content {{item.showDate ? (cardList[item.formatDate].lessonSchedul ? (cardList[item.formatDate].card ? 'success' : 'error') : '') : ''}} {{item.formatDate == today && 'isToday'}} {{cardList[item.formatDate].started && 'isBegin'}}">
           {{ item.showDate }}
+          <view class="calendar-day-begin"></view>
           <view class="calendar-day-icon"></view>
         </view>
       </view>
@@ -36,8 +37,8 @@ import dayjs from 'dayjs'
 export default class Example extends wepy.component {
   props = {
     card: {
-      type: Object,
-      default: () => ({})
+      type: Array,
+      default: []
     },
     showHeader: {
       type: Boolean,
@@ -50,15 +51,7 @@ export default class Example extends wepy.component {
     month: '',
     selectDay: '',
     monthDate: [],
-    cardList: {},
     weekArr: ['一', '二', '三', '四', '五', '六', '日']
-  };
-  getCardList () {
-    api.study.listCard()
-      .then(res => {
-        this.cardList = res.data.resultData
-        this.$apply()
-      })
   };
   components = {};
   methods = {
@@ -76,6 +69,17 @@ export default class Example extends wepy.component {
   events = {};
   watch = {};
   computed = {
+    cardList () {
+      let cardObj = {}
+      this.card.map(function (e, item) {
+        cardObj[e.day] = {
+          card: e.card,
+          lessonSchedul:e.lessonSchedul,
+          started:e.started
+        };
+      });
+      return cardObj
+    },
     formatDate () {
       let { year, month } = this
       if (!year && !month) {
@@ -86,7 +90,7 @@ export default class Example extends wepy.component {
       }
     },
     today () {
-      return dayjs(new Date()).format('YYYY-MM-DD')
+      return dayjs(new Date()).format('YYYY/MM/DD')
     }
   };
   init () {
@@ -102,11 +106,12 @@ export default class Example extends wepy.component {
   }
   preMonth () {
     this.month -= 1
+    console.log(this.year, this.month)
     this.getMonthDate(this.year, this.month)
   }
   getMonthDate (year, month) {
     let ret = []
-    if (!year || !month) {
+    if (!year && !month) {
       let today = new Date()
       year = today.getFullYear()
       month = today.getMonth() + 1
@@ -129,7 +134,6 @@ export default class Example extends wepy.component {
       var date = i + 1 - preMonthDayCount
       var showDate = date
       var thisMonth = month
-
       if (date <= 0) {
         thisMonth = month - 1
         showDate = ''
@@ -139,27 +143,29 @@ export default class Example extends wepy.component {
       }
 
       if (thisMonth === 0) {
-        thisMonth = 12
+        // thisMonth = 12
         ret.push({
           month: thisMonth,
           date,
           showDate,
           time: new Date(year - 1, thisMonth - 1, showDate).getTime(),
           formatDate: dayjs(new Date(year, thisMonth - 1, showDate)).format(
-            'YYYY-MM-DD'
+            'YYYY/MM/DD'
           )
         })
+        console.log('c1')
       } else if (thisMonth === 13) {
-        thisMonth = 1
+        // thisMonth = 1
         ret.push({
           month: thisMonth,
           date,
           showDate,
           time: new Date(year + 1, thisMonth - 1, showDate).getTime(),
           formatDate: dayjs(new Date(year, thisMonth - 1, showDate)).format(
-            'YYYY-MM-DD'
+            'YYYY/MM/DD'
           )
         })
+        console.log('c2')
       } else {
         ret.push({
           month: thisMonth,
@@ -167,24 +173,26 @@ export default class Example extends wepy.component {
           showDate,
           time: new Date(year, thisMonth - 1, showDate).getTime(),
           formatDate: dayjs(new Date(year, thisMonth - 1, showDate)).format(
-            'YYYY-MM-DD'
+            'YYYY/MM/DD'
           )
         })
+        console.log('c3')
       }
     }
     this.monthDate = ret
+    console.log(ret,111)
     this.$apply()
   }
   onLoad () {
     this.init()
-    this.getCardList()
+    // this.getCardList()
   };
 }
 </script>
 <style lang='scss'>
 @import '../assets/style/mixin.scss';
 .calendar {
-  padding: 0 38px;
+  /*padding: 0 38px;*/
   font-size: 28px;
   color: rgba($color: #58422b, $alpha: 0.5);
   &-header {
@@ -207,47 +215,77 @@ export default class Example extends wepy.component {
   &-week {
     @include flex-center;
     margin-bottom: 32px;
+
+
     &-item {
       @include flex-center;
+      font-size:30px;
+      font-weight:bold;
+      color:rgba(51,51,51,1);
       width: 96px;
       height: 40px;
     }
   }
   &-body {
     display: flex;
+    justify-content: left;
     flex-wrap: wrap;
+    color: #C9C9C9
   }
   &-day {
     @include flex-center;
     position: relative;
-    margin-bottom: 18px;
-    width: 96px;
-    height: 80px;
+    margin-bottom: 11px;
+    width: 97px;
+    height: 90px;
     font-weight: 600;
+    &.isClass {
+      background-color: #F5F7F9;
+    }
+
     &-content {
-      &.select {
-        @include flex-center;
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        color: #58422b;
-        background: rgba(249, 230, 11, 0.8);
+      &.isBegin {
+        .calendar-day-begin {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 26px;
+          height: 26px;
+          background: url("https://pub.file.k12.vip/2020/03/25/1242704088539078657.png") no-repeat;
+          background-size: 100%;
+        }
       }
       &.isToday {
-        color: #58422b;
+        color: #333333;
+        width:97px;
+        height:97px;
+        background:rgba(255,192,0,1);
+        border-radius:50%;
+        line-height: 97px;
+        text-align: center;
       }
       &.success {
-        color: #ffd129;
+        color: #333333;
         .calendar-day-icon {
           position: absolute;
-          left: 50%;
-          bottom: -4px;
-          width: 16px;
-          height: 16px;
-          border-radius: 50%;
-          background: rgba(255, 209, 41, 1);
-          border: 3px solid rgba(209, 138, 59, 1);
-          transform: translateX(-50%);
+          right: 0;
+          bottom: 0;
+          width: 26px;
+          height: 26px;
+          background: url("https://pub.file.k12.vip/2020/03/25/1242704183523287041.png") no-repeat;
+          background-size: 100%;
+        }
+      }
+      &.error {
+        color: #333333;
+        .calendar-day-icon {
+          position: absolute;
+          right: 0;
+          bottom: 0;
+          width: 26px;
+          height: 26px;
+          background: url("https://pub.file.k12.vip/2020/03/25/1242703951678939138.png") no-repeat;
+          background-size: 100%;
         }
       }
     }

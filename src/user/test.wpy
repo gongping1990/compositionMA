@@ -1,170 +1,231 @@
 <!--  -->
 <template>
-  <view class='container test'>
-    <mHeader title="随堂练习"
-             flag="4"></mHeader>
-    <view class="container-scroll"
-          style="margin-top:{{height}}px">
+  <view class="container test">
+    <mHeader title="随堂练习" flag="4"></mHeader>
+    <view class="container-scroll" style="margin-top:{{height}}px">
       <view class="header">
         <view class="header-left">
-          <image class="header-avatar"
-                 src="{{courseInfo.teacherHeadImage}}" />
-          <text class="header-title">{{courseInfo.teacherName}}</text>
+          <image class="header-avatar" src="{{courseInfo.teacherHeadImage}}" />
+          <text class="header-title">{{ courseInfo.teacherName }}</text>
           <text class="header-subtitle">写作老师</text>
         </view>
         <view class="header-right">
-          <view class="student {{item.status == 1 && 'success'}}"
-                wx:for="{{answerArr}}"
-                wx:key="{{index}}">
-            <image class="student-avatar"
-                   src="{{item.mateImg}}" />
+          <view
+            class="student {{item.status == 1 && 'success'}}"
+            wx:for="{{answerArr}}"
+            wx:key="{{index}}"
+          >
+            <image class="student-avatar" src="{{item.mateImg}}" />
             <view class="student-status">
-              {{item.status ? '已完成' : '答题中...'}}
+              {{ item.status ? '已完成  ' : '答题中...'}}
             </view>
-            <view class="student-flower"
-                  wx:if="{{index == 3}}">
-              <flower :flower.sync="flower"></flower>
+            <view class="student-flower">
+              <flower :flower.sync="flowerOne" wx:if="{{index == 0}}"> </flower>
+              <flower1
+                :flower.sync="flowerTwo"
+                wx:if="{{index == 1}}"
+              ></flower1>
+              <flower2
+                :flower.sync="flowerThree"
+                wx:if="{{index == 2}}"
+              ></flower2>
+              <flower3
+                :flower.sync="flowerFour"
+                wx:if="{{index == 3}}"
+              ></flower3>
             </view>
           </view>
-
         </view>
       </view>
-      <view class="content"
-            style="height:calc(100vh - 254rpx - {{(height + 13) * 2}}rpx)">
-        <view class="question"
-              wx:if="{{showQuestion}}"
-              animation="{{questionAnimate}}">
+      <view
+        class="content"
+        style="height:calc(100vh - 254rpx - {{(height + 13) * 2}}rpx)"
+      >
+        <view
+          class="question"
+          wx:if="{{showQuestion}}"
+          animation="{{questionAnimate}}"
+        >
           <view class="step">
-            <view class="step-item {{stepIndex >= index && (item.isRight == 1 ? 'success' : (item.isRight == 2 && 'error')) }}"
-                  wx:for="{{questionArr}}"
-                  wx:key="{{index}}"></view>
+            <view
+              class="step-item {{stepIndex >= index && (item.isRight == 1 ? 'success' : (item.isRight == 2 && 'error')) }}"
+              wx:for="{{questionArr}}"
+              wx:key="{{index}}"
+            ></view>
           </view>
-          <view animation="{{itemAnimate}}"
-                wx:for="{{questionArr}}"
-                wx:key="{{index}}"
-                wx:if="{{index == stepIndex && !isSummary}}"
-                class="question-content">
-            <scroll-view scroll-y class="question-scroll" scroll-top="{{scrollTop}}">
+          <view
+            animation="{{itemAnimate}}"
+            wx:for="{{questionArr}}"
+            wx:key="{{index}}"
+            wx:if="{{index == stepIndex && !isSummary}}"
+            class="question-content"
+          >
+            <scroll-view
+              scroll-y
+              class="question-scroll"
+              scroll-top="{{scrollTop}}"
+            >
               <view class="chart-item">
-                <image class="chart-avatar"
-                       src="{{courseInfo.teacherHeadImage}}" />
+                <image
+                  class="chart-avatar"
+                  src="{{courseInfo.teacherHeadImage}}"
+                />
                 <view class="chart-right">
-                  <text class="chart-title">{{courseInfo.teacherName}}</text>
+                  <text class="chart-title">{{ courseInfo.teacherName }}</text>
                   <view class="chart-content-wrap">
-                    <view class="chart-content">{{item.name}}</view>
+                    <view class="chart-content">{{ item.name }}</view>
                   </view>
                 </view>
               </view>
               <view class="input-list">
-                <view class="input-item {{selectIndex == optionItem.mark && 'select'}} {{(setAnswerStatusEnd && (correctAnswer == optionItem.mark)) && 'success'}} {{setAnswerStatusEnd && ((selectIndex == optionItem.mark) && (correctAnswer != optionItem.mark)) && 'error'}}"
-                      wx:for="{{item.optionList}}"
-                      wx:key="{{index}}"
-                      wx:for-item="optionItem"
-                      @tap="bindClickInput({{optionItem.mark}})">
-                  {{optionItem.problem}}
+                <view
+                  class="input-item {{selectIndex == optionItem.mark && 'select'}} {{(setAnswerStatusEnd && (correctAnswer == optionItem.mark)) && 'success'}} {{setAnswerStatusEnd && ((selectIndex == optionItem.mark) && (correctAnswer != optionItem.mark)) && 'error'}}"
+                  wx:for="{{item.optionList}}"
+                  wx:key="{{index}}"
+                  wx:for-item="optionItem"
+                  @tap="bindClickInput({{optionItem.mark}})"
+                >
+                  {{ optionItem.problem }}
                 </view>
               </view>
-              <view class="chart-item"
-                    wx:if="{{showNextBtn && (isSuccess ? item.rightAudio : item.errorAudio )}}">
-                <image class="chart-avatar"
-                       src="{{courseInfo.teacherHeadImage}}" />
+              <view
+                class="chart-item"
+                wx:if="{{showNextBtn && (isSuccess ? item.rightAudio : item.errorAudio )}}"
+              >
+                <image
+                  class="chart-avatar"
+                  src="{{courseInfo.teacherHeadImage}}"
+                />
                 <view class="chart-right">
-                  <text class="chart-title">{{courseInfo.teacherName}}</text>
+                  <text class="chart-title">{{ courseInfo.teacherName }}</text>
                   <view class="chart-content-wrap">
-
-                    <view class="chart-content voice"
-                          @tap="bindClickVoice">
+                    <view class="chart-content voice" @tap="bindClickVoice">
                       <view class="icon {{paused && 'paused'}}"></view>
                     </view>
-                    <view class="chart-time">{{timeText}}</view>
+                    <view class="chart-time">{{ timeText }}</view>
                   </view>
                 </view>
               </view>
             </scroll-view>
-
           </view>
-          <scroll-view scroll-y scroll-top="{{summaryScrollTop}}" class="summary"
-                wx:if="{{isSummary}}">
+          <scroll-view
+            scroll-y
+            scroll-top="{{summaryScrollTop}}"
+            class="summary"
+            wx:if="{{isSummary}}"
+          >
             <view class="summary-list">
-              <view class="chart-item summary-item {{summaryIndex >= index && summaryAnimateIndex >= index && 'show'}}"
-                    wx:if="{{summaryIndex >= index }}"
-                    wx:for="{{summaryArr}}"
-                    wx:key="{{index}}">
-                <image class="chart-avatar"
-                       src="{{courseInfo.teacherHeadImage}}" />
+              <view
+                class="chart-item summary-item {{summaryIndex >= index && summaryAnimateIndex >= index && 'show'}}"
+                wx:if="{{summaryIndex >= index }}"
+                wx:for="{{summaryArr}}"
+                wx:key="{{index}}"
+              >
+                <image
+                  class="chart-avatar"
+                  src="{{courseInfo.teacherHeadImage}}"
+                />
                 <view class="chart-right">
-                  <text class="chart-title">{{courseInfo.teacherName}}</text>
+                  <text class="chart-title">{{ courseInfo.teacherName }}</text>
                   <view class="chart-content-wrap">
-                    <view class="chart-content">{{item}}</view>
+                    <view class="chart-content">{{ item }}</view>
                   </view>
                 </view>
               </view>
             </view>
-
           </scroll-view>
         </view>
-        <view class="chart-item"
-              wx:if="{{!showQuestion}}"
-              animation="{{chartAnimate}}">
-          <image class="chart-avatar"
-                 src="{{courseInfo.teacherHeadImage}}" />
+        <view
+          class="chart-item"
+          wx:if="{{!showQuestion}}"
+          animation="{{chartAnimate}}"
+        >
+          <image class="chart-avatar" src="{{courseInfo.teacherHeadImage}}" />
           <view class="chart-right">
-            <text class="chart-title">{{courseInfo.teacherName}}</text>
+            <text class="chart-title">{{ courseInfo.teacherName }}</text>
             <view class="chart-content-wrap">
-
-              <view class="chart-content voice"
-                    @tap="bindClickVoice">
+              <view class="chart-content voice" @tap="bindClickVoice">
                 <view class="icon {{paused && 'paused'}}"></view>
               </view>
-              <view class="chart-time">{{timeText}}</view>
+              <view class="chart-time">{{ timeText }}</view>
             </view>
           </view>
         </view>
-        <view class="question-btn-wrap"
-              wx:if="{{showQuestion}}">
-          <view class="question-btn"
-                wx:if="{{!isSummary && !showNextBtn}}"
-                @tap="clickStudy">确定</view>
-          <view class="question-btn"
-                wx:if="{{!isSummary && showNextBtn}}"
-                @tap="clickNext">{{stepIndex != questionArr.length - 1 ? '下一题' : '完成答题'}}</view>
-          <view class="question-btn"
-                wx:if="{{setSummaryEnd}}"
-                @tap="clickLinkHomeWork">去完成课后作业</view>
-        </view>
+        <form report-submit="true" @submit="submit">
+          <view class="question-btn-wrap" wx:if="{{showQuestion}}">
+            <button
+              form-type="submit"
+              class="question-btn"
+              wx:if="{{!isSummary && !showNextBtn}}"
+              @tap="clickStudy"
+            >
+              确定
+            </button>
+            <button
+              form-type="submit"
+              class="question-btn"
+              wx:if="{{!isSummary && showNextBtn}}"
+              @tap="clickNext"
+            >
+              {{ stepIndex != questionArr.length - 1 ? '下一题' : '完成答题' }}
+            </button>
+            <button
+              form-type="submit"
+              class="question-btn"
+              wx:if="{{setSummaryEnd}}"
+              @tap="choiceOpenFlower"
+            >
+              去完成课后作业
+            </button>
+          </view>
+        </form>
       </view>
     </view>
-    <van-popup show="{{ showAlert }}"
-               overlay="{{false}}">
+    <van-popup show="{{ showAlert }}">
       <view class="dialog">
-        <image class="dialog-icon"
-               src="{{isSuccess ? 'https://pub.file.k12.vip/tbzw/v2/time/true.gif' : 'https://pub.file.k12.vip/tbzw/v2/time/fause.gif'}}" />
-        <text class="dialog-text {{isSuccess ? 'success' : 'error'}}">{{isSuccess ? '回答正确' : '回答错误'}}</text>
+        <image
+          class="dialog-icon"
+          src="{{isSuccess ? 'https://pub.file.k12.vip/tbzw/1.5/test/true.gif' : 'https://pub.file.k12.vip/tbzw/1.5/test/false.gif'}}"
+        />
       </view>
     </van-popup>
-    <loading wx:if="{{loading}}"></loading>
+    <loading></loading>
+
+    <successFlowerTemplate :isShow.sync="isOpenFlower" :option.sync="flowerOption"></successFlowerTemplate>
   </view>
 </template>
 <script>
 import wepy from 'wepy'
+import { saveFormId } from '../utils'
 import mHeader from '@/components/header'
 import loading from '@/components/loading'
 import flower from '@/components/flower'
+import flower1 from '../components/flower1'
+import flower2 from '../components/flower2'
+import flower3 from '../components/flower3'
+import successFlowerTemplate from '../components/successFlowerTemplate';
+
 export default class Example extends wepy.page {
   config = {
     navigationBarTitleText: '',
-    'usingComponents': {
+    usingComponents: {
       'van-popup': '../vant/popup/index'
     }
-  };
+  }
   data = {
+    flowerOption: {
+      oneText: '完成上课和随堂练习',
+      flowerNum: 0,
+      twoText: '赶快去完成课后作业吧',
+      path: ''
+    },
     loading: true,
     summaryScrollTop: 0,
     scrollTop: 0,
     lessonId: 0,
     summaryIndex: 0,
     summaryAnimateIndex: 0,
-    stepIndex: 0,
+    stepIndex: -1,
     aduioContext: null,
     showAlert: false,
     isSuccess: false,
@@ -176,6 +237,7 @@ export default class Example extends wepy.page {
     readyEnd: false,
     setAnswerStatusEnd: false,
     publishEnd: false,
+    isOpenFlower: false,
     currentTime: 0,
     duration: 0,
     timeText: '00:00',
@@ -194,18 +256,35 @@ export default class Example extends wepy.page {
     setSummaryEnd: false,
     flower: 0,
     paused: false,
-    showNextBtn: false
-  };
+    showNextBtn: false,
+    flowerOne: 0,
+    flowerTwo: 0,
+    flowerThree: 0,
+    flowerFour: 0
+  }
   components = {
     mHeader,
     loading,
-    flower
-  };
+    flower,
+    flower1,
+    flower2,
+    flower3,
+    successFlowerTemplate
+  }
   methods = {
-    clickLinkHomeWork () {
-      wx.redirectTo({ url: '/user/submitHomework?id=' + this.lessonId })
+    submit(e) {
+      saveFormId(e.detail.formId)
     },
-    clickStudy () {
+    choiceOpenFlower () {
+      if (this.roomData.stage === 2) {
+        this.isOpenFlower = true
+        this.getSorceByRecordSource()
+      } else {
+        this.clickLinkHomeWork()
+      }
+    },
+
+    clickStudy() {
       if (this.answerEnd) {
         return
       }
@@ -222,7 +301,7 @@ export default class Example extends wepy.page {
       this.answerEnd = true
       this.publishAnswer()
     },
-    bindClickVoice () {
+    bindClickVoice() {
       if (this.paused) {
         this.paused = false
         this.audioContext.seek(0)
@@ -233,7 +312,7 @@ export default class Example extends wepy.page {
       }
       this.$apply()
     },
-    bindClickInput (i) {
+    bindClickInput(i) {
       if (this.showNextBtn) {
         return
       }
@@ -241,41 +320,46 @@ export default class Example extends wepy.page {
       playSound(audioContext, 1)
       this.selectIndex = i
     },
-    clickNext () {
+    clickNext() {
+      let { audioContext, playSound } = this.$parent.globalData
       this.stop()
+      this.changeLearnInfo(2)
       if (this.stepIndex === this.questionArr.length - 1) {
-        let { audioContext, playSound } = this.$parent.globalData
         playSound(audioContext, 6)
-        this.changeLearnStage(3)
         this.setSummary()
         this.answerArr[3].status = 1
         this.publishEnd = true
         this.isSummary = true
         this.setSummaryIndex()
       } else {
+        playSound(audioContext, 1)
         this.changeQuestion()
       }
+
       this.scrollTop = 0
       this.showNextBtn = false
     }
-  };
+  }
   events = {
-    back () {
-      wx.redirectTo({ url: '/pages/catalog' })
+    back() {
+      wx.navigateBack({
+        delta: 1 // 返回的页面数，如果 delta 大于现有页面数，则返回到首页,
+      })
     }
-  };
+  }
   watch = {
-    stepIndex (n) {
-      if (n === this.questionArr.length - 1) {
-        this.imitateReady()
-      }
+    stepIndex(n) {
+      let type = (n === this.questionArr.length - 1) ? 2 : 1
+      setTimeout(() => {
+        this.imitateReady(type)
+      }, 4000)
     }
-  };
+  }
   computed = {
-    height () {
+    height() {
       return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
     },
-    anwserTimeText () {
+    anwserTimeText() {
       if (this.answerTime) {
         let minute = 0
         let second = 0
@@ -289,39 +373,69 @@ export default class Example extends wepy.page {
         return '00分00秒'
       }
     }
-  };
+  }
 
-  play () {
+  changeLearnInfo(stage) {
+    if (this.lookback) {
+      return
+    }
+    let { api } = this.$parent.globalData
+    let mate = this.answerArr.map(e => {
+      let obj = {}
+      obj.testCorrectNum = e.flower
+      obj.mateId = e.mateId
+      return obj
+    })
+    api.study.changeLearnInfo({
+      id: this.roomData.id,
+      mate,
+      stage
+    })
+  }
+
+  play() {
     this.audioContext.play()
   }
 
-  stop () {
+  stop() {
     this.audioContext.stop()
   }
 
-  alertError () {
+  alertError() {
     let { audioContext, playSound } = this.$parent.globalData
     playSound(audioContext, 2)
     this.isSuccess = false
     this.changeAlertVisible()
   }
 
-  alertSuccess () {
+  alertSuccess() {
     let { audioContext, playSound } = this.$parent.globalData
     playSound(audioContext, 3)
     this.isSuccess = true
     this.changeAlertVisible()
   }
+
+  clickLinkHomeWork() {
+    let { audioContext, playSound } = this.$parent.globalData
+    this.changeLearnStage(3)
+    playSound(audioContext, 1)
+    wx.redirectTo({ url: '/user/submitHomework?id=' + this.lessonId })
+  }
+
   // 设置答题完成后的总结
-  setSummary () {
+  setSummary() {
     let numText = ['一', '二', '三', '四', '五']
     let { answerArr, questionArr } = this
     let arr = []
     let errorNum = answerArr[3].answerError
     if (errorNum) {
-      arr.push(`${answerArr[3].mateName}，恭喜你完成了随堂测验。用时${this.anwserTimeText}。你做错了${errorNum}道，不要灰心，来听听下面老师的错题分析，下次会更棒哦！`)
+      arr.push(
+        `${answerArr[3].mateName}，恭喜你完成了随堂测验。用时${this.anwserTimeText}。你做错了${errorNum}道，不要灰心，来听听下面老师的错题分析，下次会更棒哦！`
+      )
     } else {
-      arr.push(`${answerArr[3].mateName}，真棒，随堂测验你全部答对了。用时${this.anwserTimeText}。继续加油，保持优秀！`)
+      arr.push(
+        `${answerArr[3].mateName}，真棒，随堂测验你全部答对了。用时${this.anwserTimeText}。继续加油，保持优秀！`
+      )
     }
     questionArr.forEach((e, i) => {
       if (e.isRight === 2) {
@@ -333,7 +447,7 @@ export default class Example extends wepy.page {
   }
 
   // 设置显示答题的索引
-  setSummaryIndex () {
+  setSummaryIndex() {
     let { summaryIndex, summaryArr } = this
     if (summaryIndex !== summaryArr.length) {
       setTimeout(() => {
@@ -355,11 +469,13 @@ export default class Example extends wepy.page {
   }
 
   // 弹窗结束后切换题目
-  changeAlertVisible () {
-    let {isSuccess, questionArr, stepIndex} = this
+  changeAlertVisible() {
+    let { isSuccess, questionArr, stepIndex } = this
     this.showAlert = true
     setTimeout(() => {
-      let url = isSuccess ? questionArr[stepIndex].rightAudio : questionArr[stepIndex].errorAudio
+      let url = isSuccess
+        ? questionArr[stepIndex].rightAudio
+        : questionArr[stepIndex].errorAudio
       this.showAlert = false
       this.showNextBtn = true
       if (url) {
@@ -370,13 +486,20 @@ export default class Example extends wepy.page {
   }
 
   // 模拟其他用户完成答题
-  imitateReady () {
+  imitateReady(type) {
+    let numArr = ['One', 'Two', 'Three']
+    let isErr = parseInt(Math.random() * 6)
     let { answerArr } = this
     let random = parseInt(Math.random() * 3)
-    this.answerArr[random].status = 1
-    if (!(answerArr[0].status && answerArr[1].status && answerArr[2].status)) {
+    if (isErr && !this.answerArr[random].isAnswer) {
+      this.answerArr[random].flower += 1
+      this[`flower${numArr[random]}`] = this.answerArr[random].flower
+    }
+    this.answerArr[random].isAnswer = 1
+    type == 2 && (this.answerArr[random].status = 1)
+    if (!(answerArr[0].isAnswer && answerArr[1].isAnswer && answerArr[2].isAnswer)) {
       setTimeout(() => {
-        this.imitateReady()
+        this.imitateReady(type)
         this.$apply()
       }, 600)
     } else {
@@ -385,12 +508,12 @@ export default class Example extends wepy.page {
   }
 
   // 公布答案
-  publishAnswer () {
+  publishAnswer() {
     if (this.selectIndex === this.correctAnswer) {
       this.alertSuccess()
       this.questionArr[this.stepIndex].isRight = 1
       this.answerArr[3].flower += 1
-      this.flower += 1
+      this.flowerFour = this.answerArr[3].flower
     } else {
       this.questionArr[this.stepIndex].isRight = 2
       this.answerArr[3].answerError += 1
@@ -400,7 +523,7 @@ export default class Example extends wepy.page {
   }
 
   // 设置答题正确还是错误
-  setAnswerStatus () {
+  setAnswerStatus() {
     let isErr = parseInt(Math.random() * 3)
     let index = parseInt(Math.random() * 3)
     for (let i = 0; i < 3; i++) {
@@ -414,28 +537,34 @@ export default class Example extends wepy.page {
     this.$apply()
   }
 
-  randomImitateReady () {
+  randomImitateReady() {
     let base = parseInt(Math.random() * 3 + 3)
     setTimeout(() => {
       this.imitateReady()
     }, base * 1000)
   }
 
-  changeQuestion () {
+  changeQuestion() {
     this.app.show(this, 'itemAnimate', 0)
     setTimeout(() => {
       this.stepIndex += 1
       this.answerEnd = false
       this.selectIndex = -1
+      this.readyEnd = false
       this.correctAnswer = this.questionArr[this.stepIndex].answer
+      this.answerArr = this.answerArr.map(e => {
+        e.isAnswer = 0
+        return e
+      })
       this.app.show(this, 'itemAnimate', 1)
       this.$apply()
     }, 500)
   }
 
-  initQuestion () {
+  initQuestion() {
     this.showQuestion = true
     this.correctAnswer = this.questionArr[0].answer
+    this.stepIndex = 0
     this.app.show(this, 'questionAnimate', 1)
     this.timer = setInterval(() => {
       if (this.publishEnd) {
@@ -448,7 +577,7 @@ export default class Example extends wepy.page {
     this.$apply()
   }
 
-  initAudio (src) {
+  initAudio(src) {
     let { audioContext } = this
     audioContext.obeyMuteSwitch = false
     audioContext.src = src
@@ -457,17 +586,19 @@ export default class Example extends wepy.page {
     }, 500)
   }
 
-  playAudio (type) {
+  playAudio(type) {
     let { audioContext, isSuccess, questionArr, stepIndex } = this
     this.paused = false
-    audioContext.src = questionArr[stepIndex][isSuccess ? 'rightAudio' : 'errorAudio']
+    audioContext.src =
+      questionArr[stepIndex][isSuccess ? 'rightAudio' : 'errorAudio']
     setTimeout(() => {
       this.scrollTop = 1000
       audioContext.play()
     }, 500)
   }
 
-  reset () {
+  reset() {
+    this.stepIndex = -1
     this.selectIndex = -1
     this.readyEnd = false
     this.isSuccess = false
@@ -478,12 +609,13 @@ export default class Example extends wepy.page {
     this.answerArr = this.answerArr.map(e => {
       e.status = 0
       e.answer = 0
+      e.answerError = 0
+      e.flower = 0
       return e
     })
-    this.setRandomTime()
   }
 
-  formatTimeText () {
+  formatTimeText() {
     let { currentTime, duration } = this
     let minute = 0
     let second = 0
@@ -497,51 +629,61 @@ export default class Example extends wepy.page {
   }
 
   // 获取教室信息
-  getLessonRoom (type) {
+  getLessonRoom(type) {
     let { api } = this.$parent.globalData
-    api.study.getLessonRoom({
-      lessonId: this.lessonId
-    }).then(({ data }) => {
-      this.roomData = data.resultData
-      this.mateInfo = data.resultData.mateInfo
-      this.answerArr = this.mateInfo.map(e => {
-        e.status = 0
-        e.answer = 0
-        e.answerError = 0
-        e.flower = this.lookback ? 0 : e.correctNum
-        return e
+    api.study
+      .getLessonRoom({
+        lessonId: this.lessonId
       })
-      this.flower = this.answerArr[3].flower
-      this.$apply()
-    })
+      .then(({ data }) => {
+        this.roomData = data.resultData
+        this.mateInfo = data.resultData.mateInfo
+        this.answerArr = this.mateInfo.map(e => {
+          e.status = 0
+          e.answer = 0
+          e.isAnswer = 0
+          e.answerError = 0
+          e.flower = 0
+          return e
+        })
+        console.log(this.answerArr)
+        this.flowerOne = 0
+        this.flowerTwo = 0
+        this.flowerThree = 0
+        this.flowerFour = 0
+        this.$apply()
+      })
   }
 
   // 获取教室试题等信息
-  getClassInfo () {
+  getClassInfo() {
     let { api } = this.$parent.globalData
-    api.course.getClassInfo({
-      lessonId: this.lessonId
-    }).then(({ data }) => {
-      this.courseInfo = data.resultData
-      this.questionArr = data.resultData.quizList.map(e => {
-        e.isRight = 3
-        return e
+    api.course
+      .getClassInfo({
+        lessonId: this.lessonId
       })
-      setTimeout(() => {
-        this.loading = false
-        if (this.lookback) {
-          this.initQuestion()
-        } else {
-          this.initAudio(this.courseInfo.voiceUrl)
-        }
+      .then(({ data }) => {
+        this.courseInfo = data.resultData
+        this.questionArr = data.resultData.quizList.map(e => {
+          e.isRight = 3
+          return e
+        })
+        setTimeout(() => {
+          this.$broadcast('hide')
+          if (this.lookback) {
+            this.initQuestion()
+          } else {
+            this.initAudio(this.courseInfo.voiceUrl)
+          }
+          this.$apply()
+        }, 1000)
         this.$apply()
-      }, 1000)
-      this.$apply()
-    })
+      })
   }
 
   // 更新课程状态
-  changeLearnStage (type) {
+  changeLearnStage(type) {
+    if(this.lookback) return
     let { api } = this.$parent.globalData
     api.study.changeLearnStage({
       id: this.roomData.id,
@@ -549,7 +691,21 @@ export default class Example extends wepy.page {
     })
   }
 
-  onLoad (option) {
+  // 获取小红花
+  getSorceByRecordSource() {
+    let { api } = this.$parent.globalData
+    api.center.getSorceByRecordSource({
+      lessonId: this.lessonId,
+      source: 3
+    }).then(({ data }) => {
+      this.flowerOption.flowerNum = data.resultData.count;
+      this.flowerOption.path = `/user/submitHomework?id=${this.lessonId}`
+      this.changeLearnStage(3)
+      this.$apply();
+    });
+  }
+
+  onLoad(option) {
     this.lessonId = option.id
     this.lookback = option.lookback
     // eslint-disable-next-line no-undef
@@ -576,20 +732,24 @@ export default class Example extends wepy.page {
       this.$apply()
     })
   }
-  onShow () {
+  onShow() {
+    this.$broadcast('show')
+    // wepy.$log.info('test info')
     this.getClassInfo()
     this.getLessonRoom()
   }
-  onHide () {
+  onHide() {
     this.audioContext.stop()
     clearInterval(this.timer)
+    // wepy.$log.error('test error', this.answerArr, this.roomData)
+    // wepy.$log.warn('test warn', this.answerArr, this.roomData)
   }
-  onUnload () {
+  onUnload() {
     this.audioContext.stop()
     this.audioContext.destroy()
     clearInterval(this.timer)
   }
-  onShareAppMessage () {
+  onShareAppMessage() {
     return {
       title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
       path: `/pages/index`,
@@ -598,32 +758,15 @@ export default class Example extends wepy.page {
   }
 }
 </script>
-<style lang='scss'>
+<style lang="scss">
 @import '../assets/style/mixin.scss';
 .test {
   position: relative;
   .dialog {
     @include flex-column-center;
-    box-sizing: border-box;
-    padding: 40px;
-    width: 320px;
-    height: 320px;
-    background: rgba(255, 255, 255, 0.9);
-    box-shadow: 0px 0px 24px 0px rgba(165, 124, 31, 0.1);
-    border-radius: 32px;
     &-icon {
-      margin-bottom: 36px;
-      width: 162px;
-      height: 162px;
-    }
-    &-text {
-      font-size: 36px;
-      &.success {
-        color: #39dda9;
-      }
-      &.error {
-        color: #ff7c76;
-      }
+      width: 750px;
+      height: 304px;
     }
   }
   .input {

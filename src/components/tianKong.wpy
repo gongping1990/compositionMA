@@ -1,0 +1,185 @@
+<!-- 单独填空题 -->
+<template>
+  <view class="tiankong">
+    <view class="tiankong-title">
+      <view
+        class="tiankong-audio {{audioPause && 'paused'}}"
+        @tap="resetAudio"
+      ></view>
+      <block
+        wx:for="{{contentArr}}"
+        wx:key="{{index}}">
+        <text wx:if="{{!item.isUnderline}}">{{item.text}}</text>
+        <text class="underline" style="width: {{maxLength * 50}}rpx" wx:else><text class="{{selectedValue != '0' && 'show'}}">{{selectedValue}}</text></text>
+      </block>
+
+    </view>
+    <image wx:if="{{questionData.subjectImg}}" class="tiankong-cover" mode="widthFix" src="{{questionData.subjectImg}}" />
+    <view class="tiankong-radio" wx:if="{{questionData.optionList}}">
+      <block
+        wx:for="{{questionData.optionList}}"
+        wx:key="{{index}}">
+        <view
+          class="tiankong-radio-item {{selectedIndex == item.index && 'hide'}}"
+          @tap="clickItem({{item}})"
+        >
+          {{item.value}}
+        </view>
+      </block>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+export default class Tiankong extends wepy.component {
+  props = {
+    questionData: Object
+  }
+  data = {
+    audioPause: true,
+    selectedIndex: null,
+    selectedValue: '0',
+    contentArr: []
+  }
+  components = {}
+  methods = {
+    resetAudio() {
+      this.$emit('resetAudio')
+    },
+    clickItem(item) {
+      let {answer} = this.questionData
+      if(this.selectedIndex) return
+      this.selectedIndex = item.index
+      this.selectedValue = item.value
+      this.$emit('end', item.index == answer ? 1 : 2)
+    }
+  }
+  events = {
+    tiankongPause(v) {
+      this.audioPause = v
+    },
+    reset() {
+      this.contentArr = []
+      this.selectedValue = '0'
+      this.audioPause = true
+      this.selectedIndex = null
+    },
+    init() {
+      if(this.questionData.type == 9) this.init()
+    }
+  }
+  watch = {}
+  computed = {
+    maxLength() {
+      let {optionList} = this.questionData
+      let maxLength = 0
+      if(!optionList) return 0
+      optionList.forEach(e => {
+        let {length} = e.value
+        length > maxLength && (maxLength = length)
+      })
+      return maxLength
+    }
+  }
+  init() {
+    let stringValue = this.questionData.content;
+    let positions = new Array();
+    let pos = stringValue.indexOf("[##]");
+
+    while(pos > -1){
+      pos && positions.push({isUnderline: false, text: stringValue.slice(0, pos)});
+      positions.push({isUnderline: true, text: '0'})
+      stringValue = stringValue.slice(pos + 4)
+      pos = stringValue.indexOf("[##]");
+      pos == -1 && stringValue.slice(0) && positions.push({isUnderline: false, text: stringValue.slice(0)});
+    }
+    this.contentArr = positions
+  }
+  onLoad() {
+
+  }
+}
+</script>
+<style lang="scss">
+@import '../assets/style/mixin.scss';
+.tiankong {
+  box-sizing: border-box;
+  padding: 0 56px;
+  width: 100%;
+  &-title {
+    display: flex;
+    align-items: center;
+    align-self: flex-start;
+    box-sizing: border-box;
+    width: 100%;
+    text {
+      max-width: 502px;
+      font-size: 34px;
+      color: #000000;
+      line-height: 46px;
+      &.underline {
+        position: relative;
+        width: 40px;
+        text-align: center;
+        border-bottom: 2px #000 solid;
+        text {
+          opacity: 0;
+          transition: all 0.3s;
+          &.show {
+            opacity: 1;
+            color: #FE6D0D;
+          }
+        }
+      }
+    }
+  }
+  &-audio {
+    @include bg('/1.9/video/sp_icon.png');
+    margin-right: 24px;
+    width: 68px;
+    height: 74px;
+    &.paused {
+      @include bg('/1.9/video/sp_icon.png');
+    }
+  }
+  &-cover {
+    margin: 0 auto;
+    margin-top: 56px;
+    width: 590px;
+    height: 440px;
+    box-shadow: 0px 6px 0px 0px #fec001;
+    border-radius: 40px;
+    border: 8px solid rgba(255, 255, 255, 1);
+  }
+  &-radio {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 83px;
+    &-item {
+      @include flex-center;
+      box-sizing: border-box;
+      margin-right: 25px;
+      margin-bottom: 34px;
+      padding: 0 24px;
+      min-width:180px;
+      height:80px;
+      background:rgba(255,255,255,1);
+      box-shadow:0px 5px 0px 0px rgba(243,217,164,0.44);
+      border-radius:34px;
+      font-size:34px;
+      font-weight:500;
+      color:rgba(122,73,33,1);
+      line-height:48px;
+      transition: all 0.3s;
+      &:last-child {
+        margin-right: 0;
+      }
+      &.hide {
+        color: #F8EBD0;
+        background: #F8EBD0;
+      }
+    }
+  }
+}
+</style>

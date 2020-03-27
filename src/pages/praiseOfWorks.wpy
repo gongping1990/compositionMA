@@ -241,7 +241,6 @@ export default class PraiseOfWorks extends wepy.page {
     this.innerAudioContext.src = src
 
     this.innerAudioContext.onPlay(() => {
-      console.log('监听开始播放')
     })
 
     this.innerAudioContext.onEnded(() => {

@@ -1,0 +1,123 @@
+<template>
+  <scroll-view
+    class="catalog"
+    style="height: calc(100vh - {{height}}px)"
+    scroll-into-view="{{scrollView}}"
+    scroll-y
+    scroll-with-animation
+  >
+    <view
+      class="catalog-item"
+      id="{{item.present && 'present'}}"
+      wx:for="{{lessonList}}"
+      wx:key="{{item.lessonId}}"
+      @tap="clickItem({{item}})"
+    >
+      <view class="{{item.passed && 'success'}} {{!item.unLock && 'disabled'}}">
+        <view class="catalog-item-left">
+          <view class="catalog-item-title">{{ item.lessonName }}</view>
+          <view class="catalog-item-text">{{ item.mark }}</view>
+        </view>
+        <view class="catalog-item-icon "></view>
+      </view>
+    </view>
+  </scroll-view>
+</template>
+<script>
+import wepy from 'wepy'
+export default class Catalog extends wepy.component {
+  props = {
+    lessonList: Array,
+    height: {
+      type: Number,
+      default: 200
+    }
+  }
+  data = {
+    scrollView: ''
+  }
+  components = {}
+  methods = {
+    clickItem(item) {
+      this.$emit('clickItem', item)
+    }
+  }
+  events = {
+    scrollView() {
+      this.scrollView = ''
+      setTimeout(() => {
+        this.scrollView = 'present'
+        this.$apply()
+      }, 1000)
+    }
+  }
+  watch = {}
+  computed = {}
+  onLoad() {
+    setTimeout(() => {
+      this.scrollView = 'present'
+      this.$apply()
+    }, 1000)
+  }
+}
+</script>
+<style lang="scss">
+@import '../assets/style/mixin.scss';
+.catalog {
+  box-sizing: border-box;
+  width: 100vw;
+  background: #fff;
+  padding: 32px 0;
+  padding-top: 0;
+  overflow-y: auto;
+  border-radius: 20px 20px 0 0;
+  &-item {
+    box-sizing: border-box;
+    margin: 0 32px;
+    margin-bottom: 32px;
+
+    width: 686px;
+    height: 180px;
+    background: #fff;
+    box-shadow: 0px 0px 60px 0px rgba(237, 239, 243, 1);
+    border-radius: 20px;
+    &:first-child {
+      margin-top: 32px;
+    }
+    & > view {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-sizing: border-box;
+      height: 180px;
+      padding: 0 45px;
+    }
+    &-title {
+      margin-bottom: 25px;
+      font-size: 30px;
+      color: #333;
+      font-weight: 500;
+      .disabled & {
+        color: #999;
+      }
+    }
+    &-text {
+      font-size: 28px;
+      color: #333333;
+      .disabled & {
+        color: #999;
+      }
+    }
+    &-icon {
+      width: 60px;
+      height: 60px;
+      .success & {
+        @include bg('/1.8/work/success.png');
+      }
+      .disabled & {
+        @include bg('/1.8/work/suo.png');
+      }
+    }
+  }
+}
+</style>

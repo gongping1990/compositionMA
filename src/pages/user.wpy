@@ -4,12 +4,51 @@
              title="个人中心"></mHeader>
     <view class="container-scroll p-user"
           style="margin-top:{{height}}px">
-      <view class="p-user-header">
-        <image class="-avatar"
-               src="{{userInfo.headimgurl}}" />
-        <view class="-info">
-          <text class="-name">{{userInfo.nickname}}</text>
-          <view class="-btn">切换账号</view>
+      <view class="p-user-headerwrap">
+        <view class="p-user-header">
+          <image class="-avatar"
+                 @tap="loginOut"
+                 src="{{logined ? userInfo.headimgurl : 'https://pub.file.k12.vip/tbzw/1.3/user/avatar_def.png'}}" />
+          <view class="-info">
+            <text class="-name">{{logined ? userInfo.nickname: '未登录'}}</text>
+            <view class="-btn"
+                  @tap="clickLoginBtn">{{logined ? '切换账号': '立即登录'}}</view>
+          </view>
+        </view>
+        <view class="p-user-headerDown">
+          <view class="-headerDown-item">
+            <view class="-item-num">{{noticeInfo.learndays || 0}}</view>
+            <view class="-item-text">坚持(天)</view>
+          </view>
+          <view class="-headerDown-item">
+            <view class="-item-num">{{noticeInfo.carddays || 0}}</view>
+            <view class="-item-text">打卡(天)</view>
+          </view>
+          <view class="-headerDown-item">
+            <view class="-item-num">{{noticeInfo.flowernum || 0}}</view>
+            <view class="-item-text">小红花(朵)</view>
+          </view>
+        </view>
+      </view>
+
+      <view class="p-user-center">
+        <view class="-center-item" @tap="toJump({{2}})">
+          <image class="-center-item-img"
+                 src="https://pub.file.k12.vip/tbzw/1.3/user/zy.png"
+                 mode="widthFix"></image>
+          <view class="-center-item-text">
+            <view class="-text-name">我的作业</view>
+            <view class="-text-num">{{noticeInfo.nowork || 0}}个未提交</view>
+          </view>
+        </view>
+        <view class="-center-item" @tap="toJump({{1}})">
+          <image class="-center-item-img"
+                 src="https://pub.file.k12.vip/tbzw/1.5/new/zuoye.png"
+                 mode="widthFix"></image>
+          <view class="-center-item-text">
+            <view class="-text-name">我的课程</view>
+            <view class="-text-num">{{noticeInfo.coursenum || 0}}个课程</view>
+          </view>
         </view>
       </view>
 
@@ -29,7 +68,7 @@
             </view>
             <view class="-content-item-right">
               <view class="-right-tip"
-                    wx:if="{{index!==3}}">{{item.num}}</view>
+                    wx:if="{{item.num>0}}"></view>
               <image class="-right-img"
                      src="https://pub.file.k12.vip/tbzw/course/my-icon-arrow.png"
                      mode="widthFix"></image>
@@ -38,7 +77,7 @@
         </repeat>
       </view>
 
-      <view class="p-user-footer">
+      <!-- <view class="p-user-footer">
         <view class="-footer-btn"
               @tap="toJump({{'6'}})">
           <image class="-btn-img"
@@ -46,26 +85,10 @@
           <text class="-btn-text">约课</text>
         </view>
         <text class="-footer-text">随时约课随时学，赶紧来体验吧～</text>
-      </view>
+      </view> -->
     </view>
 
-    <van-popup show="{{ showKF }}"
-               position="bottom"
-               @close="onClose">
-      <view class="p-user-kf-pop">
-        <text class="p-user-kf-pop-title">添加老师微信</text>
-        <image src="https://pub.file.k12.vip/gif/donghua_2.gif"
-               class="p-user-kf-pop-img" />
-        <text class="p-user-kf-pop-text">点击下方按钮</text>
-        <text class="p-user-kf-pop-text red">回复“2”即可添加老师微信</text>
-        <button class="p-user-kf-pop-btn"
-                open-type="contact">
-          回复“2”立即添加
-        </button>
-      </view>
-    </van-popup>
-
-    <van-tabbar active="0"
+    <van-tabbar active="3"
                 active-color="#58422B"
                 bind:change="onChangeTabbar">
       <van-tabbar-item>
@@ -86,7 +109,7 @@
                mode="aspectFit" />
         上课
       </van-tabbar-item>
-      <van-tabbar-item dot="{{remindData.todaycard}}">
+      <van-tabbar-item dot="{{remindData.servicetip}}">
         <image slot="icon"
                src="../assets/image/serve-def.png"
                mode="aspectFit" />
@@ -105,6 +128,8 @@
         我的
       </van-tabbar-item>
     </van-tabbar>
+    <login :showPopup.sync="showPopup"
+           :show.sync="showSelect"></login>
   </view>
 </template>
 
@@ -114,13 +139,13 @@ import api from '../request/api'
 import { connect } from 'wepy-redux'
 import testMixin from '../mixins/test'
 import mHeader from '../components/header'
-
+import login from '../components/login'
 @connect({
-  userInfo (state) {
+  userInfo(state) {
     return state.user.userInfo
   },
-  remindData (state) {
-    return state.user.remindData
+  logined(state) {
+    return state.user.logined
   }
 })
 export default class User extends wepy.page {
@@ -131,107 +156,118 @@ export default class User extends wepy.page {
       'van-tabbar-item': '../vant/tabbar-item/index',
       'van-popup': '../vant/popup/index'
     }
-  };
-  mixins = [testMixin];
+  }
+  mixins = [testMixin]
   components = {
-    mHeader
-  };
+    mHeader,
+    login
+  }
   computed = {
-    height () {
+    height() {
       return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
     }
-  };
+  }
 
   data = {
-    showKF: false,
+    showPopup: false,
+    showSelect: false,
     noticeInfo: '',
-    itemList: []
-  };
+    itemList: [
+      {
+        id: 4,
+        num: 0,
+        isBuy: true,
+        name: '我的孩子',
+        url: 'https://pub.file.k12.vip/tbzw/1.4/my_child.png'
+      },
+      {
+        id: 7,
+        num: 0,
+        isBuy: true,
+        name: '打卡日历',
+        url: 'https://pub.file.k12.vip/2020/03/25/1242630322870034434.png'
+      },
+      {
+        id: 3,
+        name: '我的礼包',
+        isBuy: true,
+        url: 'https://pub.file.k12.vip/tbzw/1.3/user/wdlb.png'
+      }
+    ]
+  }
 
-  getUCRemindVO () {
-    api.study.getUCRemindVO()
-      .then(res => {
-        this.noticeInfo = res.data.resultData
-        this.itemList = [
-          {
-            id: 2,
-            num: this.noticeInfo.nowork,
-            isBuy: true,
-            name: '我的作业',
-            url: 'https://pub.file.k12.vip/tbzw/course/my-icon- homework.png'
-          },
-          {
-            id: 3,
-            num: this.noticeInfo.like,
-            isBuy: true,
-            name: '点赞通知',
-            url: 'https://pub.file.k12.vip/tbzw/course/my-icon-give a like.png'
-          },
-          {
-            id: 4,
-            num: this.noticeInfo.praise,
-            isBuy: true,
-            name: '表扬通知',
-            url: 'https://pub.file.k12.vip/tbzw/course/my-icon-praise.png'
-          },
-          {
-            id: 5,
-            name: '我的礼包',
-            isBuy: this.noticeInfo.buyStatus === 2 || this.noticeInfo.buyStatus === 4,
-            url: 'https://pub.file.k12.vip/tbzw/course/my-icon-address.png'
-          }
-        ]
-        this.$apply()
-      })
+  getUCRemindVO() {
+    if (!this.logined) return
+    api.center.getUCRemindVO().then(res => {
+      this.noticeInfo = res.data.resultData
+      this.$apply()
+    })
   }
 
   methods = {
-    changeAccount () {
-      wx.redirectTo({ url: '/pages/login' })
+    loginOut() {
+      api.user.loginOut()
     },
-    onClose () {
-      this.showKF = !this.showKF
-      this.$apply()
+    changeAccount() {
+      wx.navigateTo({ url: '/pages/login' })
     },
-    toJump (data) {
+    clickLoginBtn() {
+      this.showSelect = true
+    },
+    toJump(data) {
+      if (!this.logined) {
+        this.showPopup = true
+        return
+      }
       switch (+data) {
+        case 1:
+          wx.navigateTo({ url: '/user/myCourse' })
+          break
         case 2:
-          wx.navigateTo({ url: '/user/myWork' })
+          wx.navigateTo({ url: '/user/myWorkList' })
           break
         case 3:
-          wx.navigateTo({ url: '/user/pointNotice' })
+          wx.navigateTo({ url: '/user/gift' })
           break
         case 4:
-          wx.navigateTo({ url: '/user/recognitionNotice' })
+          wx.navigateTo({ url: '/user/child' })
           break
         case 5:
-          wx.navigateTo({ url: '/user/address' })
+          wx.navigateTo({ url: `/user/myCourse?isErrorBook=true` })
           break
-        case 6:
-          if (this.noticeInfo.finishcourse === 0) {
-            wx.showToast({
-              icon: 'none',
-              title: '你已经学完了全部作文课程，可以直接回看~'
-            })
-          } else if (this.noticeInfo.finishcourse === -1) {
-            wx.navigateTo({ url: '/pages/subscribe' })
-          } else if (this.noticeInfo.finishcourse === 1) {
-            wx.showToast({
-              icon: 'none',
-              title: '购买课程后才能预约上课哦~'
-            })
-          }
+        case 7:
+          wx.navigateTo({ url: `/user/myCardCourse` })
           break
+        // case 6:
+        //   if (this.noticeInfo.finishcourse === 0) {
+        //     wx.showToast({
+        //       icon: 'none',
+        //       title: '你已经学完了全部作文课程，可以直接回看~'
+        //     })
+        //   } else if (this.noticeInfo.finishcourse === -1) {
+        //     wx.navigateTo({ url: '/pages/subscribe' })
+        //   } else if (this.noticeInfo.finishcourse === 1) {
+        //     wx.showToast({
+        //       icon: 'none',
+        //       title: '购买课程后才能预约上课哦~'
+        //     })
+        //   }
+        //   break
       }
     }
-  };
+  }
 
-  events = {};
+  events = {
+    login() {
+      this.getBottomTipsVO()
+      this.getUCRemindVO()
+    }
+  }
 
-  onShow () {
+  onShow() {
     this.getUCRemindVO()
   }
-  onShareAppMessage () {
+  onShareAppMessage() {
     return {
       title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
       path: `/pages/index`,
@@ -245,15 +281,35 @@ export default class User extends wepy.page {
 
 .p-user {
   margin-bottom: 120px;
+  .-btn {
+    @include flex-center;
+    margin-top: 16px;
+    width: 120px;
+    height: 37px;
+    color: #fff;
+    font-size: 21px;
+    border: 1px solid rgba(255, 255, 255, 1);
+    border-radius: 19px;
+  }
+
+  &-headerwrap {
+    margin: 0 auto 47px;
+    width:686px;
+    height:473px;
+    background:rgba(255,255,255,1);
+    box-shadow:0px 0px 33px 0px rgba(216,215,234,0.5);
+    border-radius:33px;
+  }
 
   &-header {
     display: flex;
     align-items: center;
     position: relative;
-    width: 712px;
-    height: 326px;
+    width: 687px;
+    height: 301px;
     margin: 0 auto;
-    background: url('https://pub.file.k12.vip/tbzw/1.3/lion-bg.png') no-repeat;
+    margin-bottom: 28px;
+    background: url('https://pub.file.k12.vip/2019/12/11/1204677790214664194.png') no-repeat;
     background-size: 100%;
     /*height: 326px;*/
     .-avatar {
@@ -269,6 +325,67 @@ export default class User extends wepy.page {
     .-name {
       font-size: 40px;
       color: #fff;
+    }
+  }
+
+  &-headerDown {
+    @include flex-center;
+    justify-content: space-between;
+
+    .-headerDown-item {
+      padding: 0 56px;
+      text-align: center;
+
+      .-item-num {
+        display: inline-block;
+        font-size:40px;
+        font-weight:800;
+        color:rgba(71,73,88,1);
+      }
+
+      .-item-text {
+        margin-top: 11px;
+        font-size:25px;
+        font-weight:500;
+        color:rgba(168,168,175,1);
+      }
+    }
+  }
+
+  &-center {
+    @include flex-center;
+    margin: 0 33px 50px;
+    justify-content: space-between;
+
+    .-center-item {
+      display: flex;
+      width:327px;
+      box-sizing: border-box;
+      padding: 50px 0 53px 31px;
+      background:rgba(255,255,255,1);
+      box-shadow:0px 0px 33px 0px rgba(216,215,234,0.5);
+      border-radius:20px;
+
+      &-img {
+        width:88px;
+        height:93px;
+        margin-right: 25px;
+      }
+
+      &-text {
+        .-text-name {
+          font-size:32px;
+          font-weight:bold;
+          color:rgba(71,73,88,1);
+        }
+
+        .-text-num {
+          margin-top: 13px;
+          font-size:25px;
+          font-weight:400;
+          color:rgba(168,168,175,1);
+        }
+      }
     }
   }
 
@@ -305,8 +422,8 @@ export default class User extends wepy.page {
         .-right-tip {
           @include flex-center;
 
-          width: 32px;
-          height: 32px;
+          width: 12px;
+          height: 12px;
           background: rgba(255, 137, 131, 1);
           border-radius: 50%;
           font-size: 20px;

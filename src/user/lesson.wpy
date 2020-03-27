@@ -1,0 +1,454 @@
+<template>
+  <view class="container lesson">
+    <mHeader title="我的课程"></mHeader>
+    <view class="container-scroll" style="margin-top:{{height}}px">
+      <view class="lesson-nav">
+        <view class="lesson-nav-btn" @tap="onClickShow">
+          {{ year }}年{{ month }}月
+          <view class="lesson-nav-icon"></view>
+        </view>
+      </view>
+      <scroll-view
+        class="lesson-list"
+        scroll-y
+        scroll-top="{{scrollTop}}"
+        scroll-with-animation
+        style="height:calc(100vh - {{height + 50}}px)"
+      >
+        <view class="lesson-wrap">
+          <form report-submit="true" @submit="submit">
+            <view
+              wx:for="{{dataList}}"
+              wx:key="{{index}}"
+              class="lesson-item van-hairline--bottom"
+            >
+              <view class="lesson-info">
+                <text class="lesson-title">{{ item.lessonName }}</text>
+                <text class="lesson-text">
+                  {{ item.schedulingTime }} ({{ weekList[item.week] }})
+                </text>
+              </view>
+              <button
+                form-type="submit"
+                @tap="toJump({{item}})"
+                class="lesson-btn {{statusColorList[item.studyStatus]}}"
+              >
+                {{
+                  item.showOpenTime && item.studyStatus == 4
+                    ? item.openTime + '开课'
+                    : statusList[item.studyStatus]
+                }}
+              </button>
+            </view>
+          </form>
+        </view>
+      </scroll-view>
+    </view>
+    <van-popup show="{{ show }}" bind:close="onClose" position="bottom">
+      <view class="lesson-popup">
+        <view class="lesson-popup-close" @tap="onClose"></view>
+        <view class="lesson-popup-title">切换月份</view>
+        <view class="lesson-popup-list">
+          <view class="lesson-popup-text">年份</view>
+          <view class="lesson-popup-item-wrap">
+            <view
+              class="lesson-popup-item {{year == item.year && 'active'}}"
+              wx:for="{{timeList}}"
+              wx:key="{{index}}"
+              @tap="bindClickYear({{item}}, {{index}})"
+            >
+              {{ item.year }}年
+            </view>
+          </view>
+        </view>
+        <view class="lesson-popup-list">
+          <view class="lesson-popup-text">月份</view>
+          <view class="lesson-popup-item-wrap">
+            <view
+              class="lesson-popup-item {{item.month == month && 'active'}}"
+              wx:for="{{timeList[activeYear].monthList}}"
+              wx:key="{{index}}"
+              @tap="bindClickMonth({{item}})"
+            >
+              {{ item.des }}
+            </view>
+          </view>
+        </view>
+      </view>
+    </van-popup>
+    <load wx:if="{{loading}}"></load>
+    <view class="lesson-empty" wx:if="{{!year}}">
+      <view class="lesson-empty-icon"></view>
+      <text>今天没有要学习的课程</text>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import api from '../request/api'
+import { saveFormId } from '../utils'
+import mHeader from '../components/header'
+import load from '../components/load'
+
+export default class Example extends wepy.page {
+  config = {
+    navigationBarTitleText: '',
+    usingComponents: {
+      'van-area': '../vant/area/index',
+      'van-popup': '../vant/popup/index'
+    }
+  }
+  data = {
+    page: {
+      current: 1,
+      size: 10,
+      total: ''
+    },
+    statusList: {
+      '1': '去学习',
+      '2': '开始学习',
+      '3': '交作业',
+      '4': '待开课',
+      '5': '回看'
+    },
+    statusColorList: {
+      '1': 'bk',
+      '3': 'jzy',
+      '4': 'dkk',
+      '5': 'hk'
+    },
+    weekList: {
+      '1': '周一',
+      '2': '周二',
+      '3': '周三',
+      '4': '周四',
+      '5': '周五',
+      '6': '周六',
+      '7': '周日'
+    },
+    loading: true,
+    activeYear: 0,
+    activeMonth: 0,
+    show: false,
+    scrollTop: 0,
+    courseId: '',
+    dataList: [],
+    timeList: [],
+    year: -1,
+    month: 0
+  }
+  components = {
+    mHeader,
+    load
+  }
+
+  onLoad(query) {
+    this.courseId = query.id
+  }
+
+  onShow() {
+    this.getListDateByCourse()
+  }
+
+  getListDateByCourse() {
+    api.study
+      .listDateByCourse({
+        courseId: this.courseId
+      })
+      .then(({ data }) => {
+        if (data.resultData.yearList.length) {
+          let activeYear = data.resultData.yearList.findIndex(e => {
+            return e.year == data.resultData.year
+          })
+          let activeMonth = data.resultData.yearList[
+            activeYear
+          ].monthList.findIndex(e => {
+            return e.month == data.resultData.month
+          })
+          this.activeYear = activeYear
+          this.activeMonth = activeMonth
+          this.timeList = data.resultData.yearList
+        }
+
+        this.year = data.resultData.year
+        this.month = data.resultData.month
+
+        this.$apply()
+        this.getList()
+      })
+  }
+
+  getList() {
+    this.loading = true
+    api.study
+      .listLessonCatalogByCourse({
+        year: this.year,
+        month: this.month,
+        courseId: this.courseId
+      })
+      .then(({ data }) => {
+        this.loading = false
+        this.dataList = data.resultData
+        this.show = false
+        this.scrollTop = this.scrollTop ? 0 : 1
+        this.$apply()
+      })
+  }
+
+  methods = {
+    onClickShow() {
+      this.show = true
+    },
+    onClose() {
+      this.show = false
+    },
+    bindClickYear(item, index) {
+      this.activeYear = index
+      this.year = item.year
+      this.month = 0
+    },
+    bindClickMonth(item) {
+      this.loading = true
+      this.month = item.month
+      this.getList()
+    },
+    submit(e) {
+      saveFormId(e.detail.formId)
+    },
+    bindLoadItem(data) {
+      let num = Math.ceil(this.page.total / this.page.size)
+      if (this.page.current < num) {
+        this.page.current++
+        this.getList()
+      }
+    },
+    toJump(data) {
+      if (data.category == 1) {
+        if (!data.stage) {
+          if (data.studyStatus !== 4) {
+            wx.navigateTo({ url: '/user/classroom?id=' + data.lessonId })
+          } else {
+            wx.showToast({
+              title: '课程尚未开始，先看看其他课程吧！', // 提示的内容,
+              icon: 'none', // 图标,
+              duration: 2000, // 延迟时间,
+              mask: true
+            })
+          }
+        } else if (data.stage === 1) {
+          wx.navigateTo({ url: '/user/study?id=' + data.lessonId })
+        } else if (data.stage === 2) {
+          wx.navigateTo({ url: '/user/test?id=' + data.lessonId })
+        } else {
+          wx.navigateTo({
+            url: `/user/submitHomework?id=${data.lessonId}&isFromLesson=true`
+          })
+        }
+      } else {
+        wx.navigateTo({ url: '/pages/lessonDetail?id=' + data.lessonId })
+      }
+    }
+  }
+  events = {}
+  watch = {}
+  computed = {
+    height() {
+      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+    }
+  }
+
+  onShareAppMessage() {
+    return {
+      title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
+      path: `/pages/index`,
+      imageUrl: 'https://pub.file.k12.vip/tbzw/v2/logo2.png'
+    }
+  }
+}
+</script>
+<style lang="scss">
+@import '../assets/style/mixin.scss';
+
+.lesson {
+  .container-scroll {
+    position: relative;
+  }
+  &-list {
+    position: relative;
+  }
+  &-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    background: #fff;
+    &-icon {
+      @include bg('/1.8/lesson/empty.png');
+      margin-bottom: 20px;
+      width: 360px;
+      height: 360px;
+    }
+    text {
+      font-size: 34px;
+      color: #000;
+    }
+  }
+  &-nav {
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+    height: 100px;
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0px 6px 12px 0px rgba(55, 60, 56, 0.05);
+    &-btn {
+      @include flex-center;
+      height: 100px;
+      padding: 0 32px;
+      font-size: 32px;
+      color: #333333;
+      font-weight: 500;
+    }
+    &-icon {
+      margin-left: 16px;
+      width: 34px;
+      height: 20px;
+      background: url('https://pub.file.k12.vip/tbzw/1.5/home/arrow.png');
+      background-size: 100%;
+    }
+  }
+  &-popup {
+    position: relative;
+    box-sizing: border-box;
+    padding: 32px;
+    padding-bottom: 80px;
+    width: 100%;
+    background: rgba(255, 255, 255, 1);
+    border-radius: 24px 24px 0px 0px;
+    &-close {
+      position: absolute;
+      right: 32px;
+      top: 32px;
+      width: 32px;
+      height: 32px;
+      background: url('https://pub.file.k12.vip/tbzw/1.5/home/icon-close.png');
+      background-size: 100%;
+    }
+    &-title {
+      text-align: center;
+      font-size: 36px;
+      color: #333;
+      font-weight: 500;
+    }
+    &-list {
+      margin-top: 32px;
+    }
+    &-text {
+      font-size: 36px;
+      color: #333;
+    }
+    &-item {
+      @include flex-center;
+      margin-top: 32px;
+      margin-right: 28px;
+      box-sizing: border-box;
+      width: 150px;
+      height: 60px;
+      border-radius: 30px;
+      border: 2px solid rgba(153, 153, 153, 1);
+      font-size: 32px;
+      color: #999999;
+      &:nth-child(4n) {
+        margin-right: 0;
+      }
+      &.active {
+        border: none;
+        color: #fff;
+        background: linear-gradient(
+          90deg,
+          rgba(255, 192, 0, 1) 0%,
+          rgba(254, 179, 18, 1) 100%
+        );
+        box-shadow: 0px 4px 8px 0px rgba(254, 179, 18, 0.35);
+      }
+      &-wrap {
+        display: flex;
+        flex-wrap: wrap;
+      }
+    }
+  }
+
+  &-wrap {
+    padding: 16px 32px;
+  }
+
+  &-item {
+    @include flex-center;
+    justify-content: space-between;
+    padding: 40px 0;
+  }
+  &-btn {
+    @include flex-center;
+    width: 152px;
+    height: 64px;
+    font-size: 26px;
+    color: #fff;
+    font-weight: 500;
+    background: linear-gradient(
+      90deg,
+      rgba(67, 155, 255, 1) 0%,
+      rgba(71, 132, 255, 1) 100%
+    );
+    box-shadow: 0px 4px 10px 0px rgba(69, 146, 255, 0.45);
+    border-radius: 32px;
+    &.bk {
+      background: linear-gradient(
+        90deg,
+        rgba(15, 218, 130, 1) 0%,
+        rgba(0, 209, 118, 1) 100%
+      );
+      box-shadow: 0px 4px 10px 0px rgba(5, 202, 115, 0.32);
+    }
+    &.jzy {
+      background: linear-gradient(
+        90deg,
+        rgba(255, 191, 0, 1) 0%,
+        rgba(254, 178, 13, 1) 100%
+      );
+      box-shadow: 0px 4px 10px 0px rgba(255, 185, 7, 0.32);
+    }
+    &.dkk {
+      background: rgba(216, 213, 226, 1);
+      box-shadow: none;
+    }
+    &.hk {
+      background: linear-gradient(
+        105deg,
+        rgba(255, 142, 74, 1) 0%,
+        rgba(255, 122, 50, 1) 100%
+      );
+      box-shadow: 0px 4px 10px 0px rgba(254, 182, 15, 0.45);
+    }
+  }
+  &-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  &-title {
+    font-size: 32px;
+    line-height: 50px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #4a4a4a;
+  }
+  &-text {
+    font-size: 26px;
+    color: #999;
+  }
+}
+</style>

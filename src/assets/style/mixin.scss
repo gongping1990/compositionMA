@@ -102,3 +102,19 @@
     }
   }
 }
+
+@mixin g-animation-icon {
+  animation: zero 1s infinite;
+
+  @keyframes zero {
+    0% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(10px);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+}

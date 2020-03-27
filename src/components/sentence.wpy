@@ -1,0 +1,149 @@
+<template>
+  <view class="sentence">
+    <view class="sentence-content">
+      <text
+        wx:for="{{sentenceFormatData}}"
+        wx:key="{{index}}"
+      ><text class="sentence-text {{item.selected && 'show'}}">{{item.value}}</text></text>
+    </view>
+    <view class="sentence-list">
+      <view
+        class="sentence-item {{item.selected && 'hide'}}"
+        wx:for="{{sentenceData}}"
+        wx:key="{{item.index}}"
+        @tap="bindClickSentence({{item}}, {{index}})"
+      >
+        {{ item.value }}
+      </view>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+export default class Example extends wepy.component {
+  props = {
+    questionData:Object
+  }
+  data = {
+    selectedIndex: 1,
+    sentenceData: [],
+    sentenceArr: []
+  }
+  components = {}
+  methods = {
+    bindClickSentence(item, i) {
+      let { audioContext, playSound } = this.$parent.$parent.globalData
+      playSound(audioContext, 1)
+      if (item.selected) return
+      this.sentenceData[i]._index = this.selectedIndex
+      this.sentenceData[i].selected = true
+      this.sentenceArr.push(item.index)
+      this.selectedIndex += 1
+
+    }
+  }
+  events = {
+    reset() {
+      this.selectedIndex = 1
+      this.sentenceArr = []
+    },
+    init() {
+      if(this.questionData.type == 10) {
+        this.sentenceData = this.questionData.optionList.map(e => {
+          return {
+            ...e,
+            selected: false,
+            _index: 10
+          }
+        })
+      }
+    }
+  }
+  watch = {
+    sentenceArr(v) {
+      if(v.length == this.questionData.optionList.length) {
+        let {answer} = this.questionData
+        let str = this.sentenceArr.join(',')
+        this.$emit('end', answer == str ? 1 : 2)
+      }
+    }
+  }
+  computed = {
+    sentenceFormatData() {
+      let arr = [...this.sentenceData]
+      arr = arr.sort((a, b) => {
+        return a._index - b._index
+      })
+      return arr
+    }
+  }
+  onLoad() {}
+}
+</script>
+<style lang="scss">
+@import '../assets/style/mixin.scss';
+.sentence {
+  position: relative;
+  padding: 0 56px;
+  padding-top: 56px;
+  &-content {
+    position: relative;
+    height: 130px;
+    border-bottom: 2px solid #FEBF03;
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 64px;
+      height: 2px;
+      background-color: #FEBF03;
+      transform: translateY(-50%);
+    }
+  }
+  &-text {
+    opacity: 0;
+    margin-right: 25px;
+    color: #ffc000;
+    font-size: 32px;
+    font-weight: 500;
+    line-height: 70px;
+    transition: all 0.3s;
+    &.show {
+      opacity: 1;
+    }
+    &.success {
+      color: #08d67d;
+    }
+    &.error {
+      color: #ff7b33;
+    }
+  }
+  &-list {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 85px;
+  }
+  &-item {
+    @include flex-center;
+    opacity: 1;
+    margin-right: 32px;
+    padding: 0 16px;
+    margin-bottom: 26px;
+    height:80px;
+    background:rgba(255,255,255,1);
+    box-shadow:0px 5px 0px 0px rgba(243,217,164,0.44);
+    border-radius:30px;
+    font-size:34px;
+    font-weight:500;
+    color:rgba(122,73,33,1);
+    line-height:48px;
+    transition: all 0.3s;
+    &.hide {
+      color:#F8EBD0;
+      background: #F8EBD0;
+    }
+  }
+}
+</style>

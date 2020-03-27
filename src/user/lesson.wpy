@@ -226,7 +226,7 @@ export default class Example extends wepy.page {
       if (data.category == 1) {
         if (!data.stage) {
           if (data.studyStatus !== 4) {
-            wx.navigateTo({ url: '/pages/classroom?id=' + data.lessonId })
+            wx.navigateTo({ url: '/user/classroom?id=' + data.lessonId })
           } else {
             wx.showToast({
               title: '课程尚未开始，先看看其他课程吧！', // 提示的内容,
@@ -236,9 +236,9 @@ export default class Example extends wepy.page {
             })
           }
         } else if (data.stage === 1) {
-          wx.navigateTo({ url: '/pages/study?id=' + data.lessonId })
+          wx.navigateTo({ url: '/user/study?id=' + data.lessonId })
         } else if (data.stage === 2) {
-          wx.navigateTo({ url: '/pages/test?id=' + data.lessonId })
+          wx.navigateTo({ url: '/user/test?id=' + data.lessonId })
         } else {
           wx.navigateTo({
             url: `/user/submitHomework?id=${data.lessonId}&isFromLesson=true`

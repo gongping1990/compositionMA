@@ -154,7 +154,7 @@ export default class Example extends wepy.page {
   downTimeEnd() {
     setTimeout(() => {
       this.showDownTime = false
-      wx.redirectTo({ url: '/pages/study?id=' + this.lessonId })
+      wx.redirectTo({ url: '/user/study?id=' + this.lessonId })
     }, 4000)
   }
 

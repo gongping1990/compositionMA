@@ -34,6 +34,10 @@
     </view>
     <view class="enroll-btn-wrap">
       <view class="enroll-btn"
+            @tap="bindClickLogin">
+        我要登录
+      </view>
+      <view class="enroll-btn"
             @tap="bindClickBtn">
         我要报名
       </view>
@@ -72,6 +76,9 @@ export default class Enroll extends wepy.page {
     mHeader
   };
   methods = {
+    bindClickLogin () {
+      wx.redirectTo({ url: '/pages/login' })
+    },
     bindClickBtn () {
       this.showKF = true
     },
@@ -146,7 +153,7 @@ export default class Enroll extends wepy.page {
     }
     &-btn {
       @include flex-center;
-      margin: 32px 0;
+      margin: 32px 20px;
       width: 654px;
       height: 100px;
       font-size: 32px;

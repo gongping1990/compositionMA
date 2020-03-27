@@ -17,11 +17,10 @@
             <view class="-top-right">
               <view>
                 <view class="-title">{{ lessonDetail.name }}</view>
-                <view class="-text">《{{ lessonDetail.courseName }}》</view>
+                <view class="-num">{{ lessonDetail.uv || 0 }}人已学</view>
               </view>
 
               <view class="-right-down">
-                <view class="-num">{{ lessonDetail.uv || 0 }}人已学</view>
                 <button
                   form-type="submit"
                   class="-btn"
@@ -29,10 +28,16 @@
                 >
                   <image
                     class="-icon"
-                    src="https://pub.file.k12.vip/2019/06/06/1136518673440460801.png"
+                    src="https://pub.file.k12.vip/2020/03/26/1243011702493814785.png"
                   ></image>
                   课程回看
                 </button>
+
+                <image
+                  class="-right-img"
+                  src="{{cardObj[nowCardNum]}}"
+                  @tap="toJumpCard({{'1'}})"
+                ></image>
               </view>
             </view>
           </view>
@@ -101,36 +106,41 @@
                 <view class="-reply-time">{{ workDetail.duration }}</view>
               </view>
             </view>
-            <view class="-center-work-footer -footer-my">
-              <view
-                class="-center-work-footer-wrap"
-                @tap="lookWorkDetail({{workDetail}})"
-              >
-                <image
-                  class="-img"
-                  src="https://pub.file.k12.vip/tbzw/1.5/work/zybz-icon-review@2x.png"
-                ></image>
-                <text>看点评</text>
-              </view>
+            <!--<view class="-center-work-footer -footer-my">-->
+              <!--<view-->
+                <!--class="-center-work-footer-wrap"-->
+                <!--@tap="lookWorkDetail({{workDetail}})"-->
+              <!--&gt;-->
+                <!--<image-->
+                  <!--class="-img"-->
+                  <!--src="https://pub.file.k12.vip/tbzw/1.5/work/zybz-icon-review@2x.png"-->
+                <!--&gt;</image>-->
+                <!--<text>看点评</text>-->
+              <!--</view>-->
 
-              <view class="-center-work-footer-wrap">
-                <image
-                  class="-img"
-                  src="https://pub.file.k12.vip/tbzw/1.5/work/zpbz_icon_givealike@2x.png"
-                ></image>
-                <text>{{ workDetail.likenum }}</text>
-              </view>
-            </view>
+              <!--<view class="-center-work-footer-wrap">-->
+                <!--<image-->
+                  <!--class="-img"-->
+                  <!--src="https://pub.file.k12.vip/tbzw/1.5/work/zpbz_icon_givealike@2x.png"-->
+                <!--&gt;</image>-->
+                <!--<text>{{ workDetail.likenum }}</text>-->
+              <!--</view>-->
+            <!--</view>-->
           </view>
         </view>
 
-        <view
-          class="p-submitHomework-footer"
-          wx:if="{{!isSuccessWork && tabActive === '1'}}"
-        >
-          <button class="-footer-btn" form-type="submit" @tap="submitWork">
-            上交作业
+        <view class="p-submitHomework-footer" wx:if="{{tabActive === '1'}}">
+          <button class="-footer-btn {{isSuccessWork && 'success'}}" form-type="submit" @tap="submitWork"
+                  wx:if="{{!workDetail.replyTime}}">
+            {{isSuccessWork ? '重新提交' : '上交作业'}}
           </button>
+          <view wx:else class="-footer-btn -footer-btn2" @tap="lookWorkDetail({{workDetail}})">
+            <image
+              class="-footer-icon"
+              src="https://pub.file.k12.vip/2020/03/26/1243023171616776194.png"
+            ></image>
+            <text class="-footer-text">来看看老师怎么说~</text>
+          </view>
         </view>
 
         <!--<view class="p-submitHomework-card"-->
@@ -244,11 +254,13 @@
         </scroll-view>
       </form>
     </view>
+
     <lookImage
       :isShow.sync="isShowImage"
       :index.sync="imgIndex"
       :imgUrl.sync="itemUrl"
     ></lookImage>
+
     <van-popup show="{{isOpenPopup}}">
       <view class="p-submitHomework-popup" wx:if="{{isCard}}">
         <image
@@ -294,8 +306,14 @@
         @click="changePopup"
       />
     </van-popup>
+
     <load wx:if="{{isFetching}}"></load>
+
     <workPageTip :isShow.sync="isShowHelpTip"></workPageTip>
+
+    <ConfirmModal :isShow.sync="isShowConfirm"
+                  contentText="重新提交作业成功后，将会覆盖上次的内容，确定重交？"
+                  okText="确认"></ConfirmModal>
   </view>
 </template>
 
@@ -310,6 +328,7 @@ import mHeader from '../components/header'
 import load from '../components/load'
 import lookImage from '../components/lookImage'
 import workPageTip from '../components/workPageTip'
+import ConfirmModal from '../components/confirmModal';
 
 @connect({
   userInfo(state) {
@@ -328,11 +347,23 @@ export default class SubmitHomework extends wepy.page {
     mHeader,
     lookImage,
     workPageTip,
-    load
+    load,
+    ConfirmModal
   }
   computed = {
     height() {
       return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+    },
+    nowCardNum () {
+      let num = 1
+      if (this.lessonDetail.canCard && !this.cardDetail.todayCard) {
+        num = 1
+      } else if (this.lessonDetail.canCard && this.cardDetail.todayCard) {
+        num = 2
+      } else {
+        num = 3
+      }
+      return num
     }
   }
 
@@ -347,6 +378,11 @@ export default class SubmitHomework extends wepy.page {
       '2': 'https://pub.file.k12.vip/tbzw/1.5/baogao/s_2.png',
       '3': 'https://pub.file.k12.vip/tbzw/1.5/baogao/s_3.png'
     },
+    cardObj: {
+      '1': 'https://pub.file.k12.vip/2020/03/26/1243011509643911169.png',
+      '2': 'https://pub.file.k12.vip/2020/03/26/1243011579806228481.png',
+      '3': 'https://pub.file.k12.vip/2020/03/26/1243011643287019521.png'
+    },
     dataItem: '',
     backgroundY: 0,
     tabActive: '1',
@@ -357,6 +393,7 @@ export default class SubmitHomework extends wepy.page {
     isOpenPopup: false,
     isShowImage: false,
     isShowHelpTip: false,
+    isShowConfirm: false,
     isCard: false,
     isPlay: false,
     workDetail: '',
@@ -474,24 +511,6 @@ export default class SubmitHomework extends wepy.page {
       )
   }
 
-  startLikeAnimation() {
-    const base = 270 / 414
-    const bgBase = 13865 / 414
-    const width = 276
-    let height = width * base
-    let time = (1000 * 0.75) / 51
-    let bgHeight = parseInt(width * bgBase)
-    setTimeout(() => {
-      if (this.backgroundY < bgHeight) {
-        this.backgroundY += height
-        this.startLikeAnimation()
-      } else {
-        this.backgroundY = 0
-      }
-      this.$apply()
-    }, time)
-  }
-
   initPlayAudio(src) {
     this.innerAudioContext && this.innerAudioContext.destroy()
     this.innerAudioContext = wx.createInnerAudioContext()
@@ -529,7 +548,39 @@ export default class SubmitHomework extends wepy.page {
     return result
   }
 
+  addMyCard() {
+    let { _sa } = this.$parent.globalData
+    api.study.addCard().then(({ data }) => {
+      // this.cardDetail.continuousdays = data.resultData.continuousdays;
+      // this.cardDetail.totaldays = data.resultData.totaldays;
+      // this.isShowFlower = true;
+      // this.$apply();
+      _sa.track('courseClockRecord', {
+        courseID: this.lessonDetail.courseId,
+        courseTitle: this.lessonDetail.courseName,
+        isSuccess: true,
+        classID: this.lessonDetail.lessonId,
+        className: this.lessonDetail.lessonName,
+        classType: this.lessonDetail.category
+      })
+    });
+  }
+
   methods = {
+    toJumpCard () {
+      switch (this.nowCardNum) {
+        case 1:
+          this.addCard()
+          break
+        case 2:
+          break
+        case 3:
+          wx.navigateTo({
+            url: `/pages/card?courseId=${this.lessonDetail.courseId}&name=${this.lessonDetail.courseName}`
+          })
+          break
+      }
+    },
     submit(e) {
       saveFormId(e.detail.formId)
     },
@@ -598,9 +649,6 @@ export default class SubmitHomework extends wepy.page {
           })
           .then(() => {
             this.dataItem = item
-            setTimeout(() => {
-              this.startLikeAnimation()
-            }, 500)
 
             setTimeout(() => {
               this.getOtherHomeWork()
@@ -632,13 +680,19 @@ export default class SubmitHomework extends wepy.page {
       let { audioContext, playSound, _sa } = this.$parent.globalData
       let { lessonDetail } = this
       playSound(audioContext, 1)
+
+      if(this.isSuccessWork && !this.workDetail.replayTime) {
+        return this.isShowConfirm = true
+      }
+
       wx.navigateTo({
         url: `/user/${
           this.lessonDetail.homeworkType == 1
             ? 'uploadAudioWork'
             : 'uploadImgWork'
-        }?id=${this.queryInfo.id}`
-      })
+          }?id=${this.queryInfo.id}`
+      });
+
       _sa.track('clickHomework', {
         courseID: lessonDetail.courseId,
         courseTitle: lessonDetail.courseName,
@@ -679,6 +733,18 @@ export default class SubmitHomework extends wepy.page {
     changePopupStatus() {
       this.isShowImage = false
       this.isShowHelpTip = false
+    },
+    changeOkStatus(bool) {
+      this.isShowConfirm = false;
+      if (bool === 'true') {
+        wx.navigateTo({
+          url: `/user/${
+            this.lessonDetail.homeworkType == 1
+              ? 'uploadAudioWork'
+              : 'uploadImgWork'
+            }?id=${this.queryInfo.id}`
+        });
+      }
     },
     nextStep() {
       this.getAudio(6)
@@ -730,16 +796,16 @@ export default class SubmitHomework extends wepy.page {
       no-repeat;
     background-size: 100%;
     width: 100%;
-    height: 502px;
 
     &-top {
       display: flex;
-      padding: 40px 32px 0;
+      padding: 22px 32px 0;
+      height: 200px;
 
       .-top-left {
         overflow: hidden;
-        min-width: 180px;
-        height: 240px;
+        min-width: 160px;
+        height: 200px;
         box-shadow: 0px 0px 24px 0px rgba(236, 194, 96, 0.24);
         border-radius: 16px;
         margin-right: 32px;
@@ -747,6 +813,7 @@ export default class SubmitHomework extends wepy.page {
         .-left-img {
           width: 100%;
           height: 100%;
+
         }
       }
 
@@ -759,47 +826,42 @@ export default class SubmitHomework extends wepy.page {
         .-right-down {
           display: flex;
           justify-content: space-between;
-          align-items: center;
+          align-items: flex-end;
+          transform: translateY(-30px);
+        }
+
+        .-right-img {
+          width: 100px;
+          height: 125px;
+          transform: translateY(8px);
         }
 
         .-title {
           /*height: 50px;*/
-          font-size: 36px;
+          font-size: 30px;
           font-weight: 500;
           color: #333333;
-          line-height: 50px;
-        }
-
-        .-text {
-          margin-top: 8px;
-          height: 40px;
-          font-size: 28px;
-          font-weight: 300;
-          color: rgba(51, 51, 51, 0.4);
-          line-height: 40px;
         }
 
         .-num {
-          width: 160px;
-          height: 36px;
-          font-size: 26px;
+          margin-top: 29px;
+          font-size: 28px;
           font-weight: 500;
-          color: rgba(88, 66, 43, 1);
-          line-height: 36px;
+          color: #999999;
         }
 
         .-btn {
           @include flex-center;
-          width: 166px;
-          height: 56px;
-          background: rgba(254, 182, 13, 1);
-          box-shadow: 0px 4px 8px 0px rgba(232, 175, 0, 0.54);
-          border-radius: 28px;
-          font-size: 24px;
-          font-family: PingFangSC-Medium;
+          text-align: center;
+          width:200px;
+          height:60px;
+          background:linear-gradient(-37deg,rgba(255,192,0,1),rgba(254,179,18,1));
+          box-shadow:0px 8px 8px 0px rgba(255,181,76,0.4);
+          border-radius:30px;
+          font-size: 28px;
           font-weight: 500;
           color: rgba(255, 255, 255, 1);
-          line-height: 34px;
+          line-height: 60px;
         }
 
         .-icon {
@@ -847,7 +909,8 @@ export default class SubmitHomework extends wepy.page {
 
   &-center {
     position: relative;
-    top: -70px;
+    top: 50px;
+    margin-bottom: 150px;
 
     .-center-blackboard {
       position: relative;
@@ -896,11 +959,11 @@ export default class SubmitHomework extends wepy.page {
 
     .-center-work {
       position: relative;
-      margin-top: 54px;
+      /*margin-top: 54px;*/
       /*border-top: 10px solid #f6f5f4;*/
 
       &-my {
-        margin-top: 48px !important;
+        margin-top: 26px !important;
       }
 
       &-top {
@@ -947,6 +1010,7 @@ export default class SubmitHomework extends wepy.page {
           margin-right: 30px;
           width: 198px;
           height: 198px;
+          border-radius: 20px;
         }
 
         &-audio {
@@ -1101,25 +1165,52 @@ export default class SubmitHomework extends wepy.page {
   }
 
   &-list {
-    height: 55vh;
+    margin-bottom: 0;
+    /*height: 55vh;*/
   }
 
   &-footer {
-    position: absolute;
-    bottom: 0px;
+    position: fixed;
+    bottom: 0;
+    background: #ffffff;
     width: 100%;
+    height: 98px;
+    padding: 20px 0;
 
     .-footer-btn {
       margin: 0 auto;
       text-align: center;
-      width: 622px;
-      height: 104px;
+      width: 620px;
+      height: 98px;
       background: rgba(255, 192, 0, 1);
-      border-radius: 52px;
-      font-size: 32px;
+      border-radius: 49px;
+      font-size: 36px;
       font-weight: 500;
       color: #ffffff;
-      line-height: 104px;
+      line-height: 90px;
+
+      &.success {
+        background: #CCCCCC;
+      }
+    }
+
+    .-footer-btn2 {
+      position: relative;
+      background: #FFF2CB;
+      color: #FF9C00;
+    }
+
+    .-footer-icon {
+      position: absolute;
+      bottom: 0;
+      left: 61px;
+      width: 98px;
+      height: 131px;
+    }
+
+    .-footer-text {
+      display: inline-block;
+      margin-left: 50px;
     }
   }
 
@@ -1129,7 +1220,7 @@ export default class SubmitHomework extends wepy.page {
     right: 44px;
     width: 199px;
     height: 161px;
-    z-index: 9999;
+    /*z-index: 9999;*/
 
     .-yes-card {
       background: url('https://pub.file.k12.vip/2019/09/19/1174615812725411842.png');

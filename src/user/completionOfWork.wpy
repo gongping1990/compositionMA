@@ -1,252 +1,237 @@
 <template>
-   <scroll-view
+  <scroll-view
     scroll-y
     scroll-with-animation
     scroll-top="{{scrollTop}}"
     class="p-completionOfWork-scroll"
-    >
+  >
     <view class="p-completionOfWork">
-    <view class="p-completionOfWork-body" id="scorllCompletion">
-      <Text class="-body-back" @tap="backPre">
-        <van-icon size="26px" name="arrow-left"/>
-      </Text>
-      <view class="-body-bg"></view>
-      <view class="-body-content">
-        <view class="-body-content-icon"></view>
-        <view class="-body-content-top">
-          <view class="-top-left">
-            <image class="-top-left-img" src="{{workDetail.stuImg}}"></image>
-            <view class="-top-left-text">
-              <view>{{workDetail.nickname}}</view>
-              <view class="-tip">{{workDetail.lessonName}}</view>
-            </view>
-          </view>
-          <view class="-top-right">{{workDetail.workTime}}</view>
-        </view>
-        <view class="-body-content-down {{workDetail.category === 3 && 'write'}}">
-          <swiper class="-content-down-swiper"
-                  wx:if="{{workDetail.homeworkType == 2}}"
-                  indicator-dots="{{swiperOptions.indicatorDots}}"
-                  indicator-active-color="{{swiperOptions.indicatorActiveColor}}"
-                  autoplay="{{swiperOptions.autoplay}}"
-                  interval="{{swiperOptions.interval}}"
-                  duration="{{swiperOptions.duration}}">
-            <block wx:for="{{workDetail.workImg}}" wx:key="{{index}}">
-              <swiper-item>
-                <view class="-content-down-img-wrap">
-                  <image class="-content-down-img"
-                        mode="widthFix"
-                       src="{{workDetail.category === 3 ? workDetail.workImgSrc[0] : item}}" @tap="enlargeImage({{index}}, {{workDetail.workImgSrc}})"></image>
-                  <view
-                    class="-content-down-img-point {{item.time < _currentTime && 'show'}}"
-                    wx:for="{{workDetail.audioTags}}"
-                    wx:key="{{index}}"
-                    style="width:{{item.width + 'rpx'}};height:{{item.width + 'rpx'}};left:{{item.x + 'rpx'}};top:{{item.y + 'rpx'}};border-color: {{item.color}}"
-                  ></view>
-                  <view class="-content-down-bh" wx:if="{{_currentTime > workDetail.strokeStartTime && _currentTime < workDetail.strokeEndTime}}">
-                    <image
-                      class="-content-down-gif"
-                      mode="widthFix"
-                      src="{{workDetail.strokeImg}}"
-                    />
-                  </view>
-                </view>
-              </swiper-item>
-            </block>
-          </swiper>
-          <view class="-content-down-wrap" wx:if="{{workDetail.homeworkType == 1}}">
-            <image class="-img" src="{{workDetail.coverphoto}}"></image>
-            <view class="-reply-btn" @tap="changeMyAudioStatus">
-              <view class="-reply-icon">
-                <view class="icon"
-                      wx:if="{{!isMyPlay}}"></view>
-                <view class="playIcon"
-                      wx:if="{{isMyPlay}}"></view>
+      <view class="p-completionOfWork-body" id="scorllCompletion">
+        <Text class="-body-back" @tap="backPre">
+          <van-icon size="26px" name="arrow-left"/>
+        </Text>
+        <view class="-body-bg"></view>
+        <view class="-body-content">
+          <view class="-body-content-icon"></view>
+          <view class="-body-content-top">
+            <view class="-top-left">
+              <image class="-top-left-img" src="{{workDetail.stuImg}}"></image>
+              <view class="-top-left-text">
+                <view>{{workDetail.nickname}}</view>
+                <view class="-tip">{{workDetail.lessonName}}</view>
               </view>
-              <view class="-reply-time">{{workDetail.duration}}</view>
+            </view>
+            <view class="-top-right">{{workDetail.workTime}}</view>
+          </view>
+          <view class="-body-content-down {{workDetail.category === 3 && 'write'}}">
+            <swiper class="-content-down-swiper"
+                    wx:if="{{workDetail.homeworkType == 2}}"
+                    indicator-dots="{{swiperOptions.indicatorDots}}"
+                    indicator-active-color="{{swiperOptions.indicatorActiveColor}}"
+                    autoplay="{{swiperOptions.autoplay}}"
+                    interval="{{swiperOptions.interval}}"
+                    duration="{{swiperOptions.duration}}">
+              <block wx:for="{{workDetail.workImg}}" wx:key="{{index}}">
+                <swiper-item>
+                  <view class="-content-down-img-wrap">
+                    <image class="-content-down-img"
+                           mode="widthFix"
+                           src="{{workDetail.category === 3 ? workDetail.workImgSrc[0] : item}}"
+                           @tap="enlargeImage({{index}}, {{workDetail.workImgSrc}})"></image>
+                    <view
+                      class="-content-down-img-point {{item.time < _currentTime && 'show'}}"
+                      wx:for="{{workDetail.audioTags}}"
+                      wx:key="{{index}}"
+                      style="width:{{item.width + 'rpx'}};height:{{item.width + 'rpx'}};left:{{item.x + 'rpx'}};top:{{item.y + 'rpx'}};border-color: {{item.color}}"
+                    ></view>
+                    <view class="-content-down-bh"
+                          wx:if="{{_currentTime > workDetail.strokeStartTime && _currentTime < workDetail.strokeEndTime}}">
+                      <image
+                        class="-content-down-gif"
+                        mode="widthFix"
+                        src="{{workDetail.strokeImg}}"
+                      />
+                    </view>
+                  </view>
+                </swiper-item>
+              </block>
+            </swiper>
+            <view class="-content-down-wrap" wx:if="{{workDetail.homeworkType == 1}}">
+              <image class="-img" src="{{workDetail.coverphoto}}"></image>
+              <view class="-reply-btn" @tap="changeMyAudioStatus">
+                <view class="-reply-icon">
+                  <view class="icon"
+                        wx:if="{{!isMyPlay}}"></view>
+                  <view class="playIcon"
+                        wx:if="{{isMyPlay}}"></view>
+                </view>
+                <view class="-reply-time">{{workDetail.duration}}</view>
+              </view>
             </view>
           </view>
         </view>
-      </view>
 
-      <view class="-body-btn" wx:if="{{(workDetail.self && !isReply) || workDetail.status==1}}" @tap="resultHomework">
-        重新提交
-      </view>
+        <view class="-body-btn" wx:if="{{(workDetail.self && !isReply) || workDetail.status==1}}" @tap="resultHomework">
+          重新提交
+        </view>
 
-      <view class="-body-teacher">
-        <view class="-body-teacher-reply" wx:if="{{isReply}}">
-          <view class="-reply-title">{{workDetail.replyTeacher}}核心点拨：</view>
-          <view class="-reply-text" wx:if="{{workDetail.replyText}}">{{workDetail.replyText}}</view>
-          <view class="-reply-img-wrap" wx:if="{{workDetail.replyImg.length}}">
-            <image class="-img"
-                   wx:for="{{workDetail.replyImg}}"
-                   wx:key="{{item}}"
-                   @tap="enlargeImage({{index}}, {{workDetail.replyImg}})"
-                   src="{{item}}"></image>
+        <view class="-body-teacher">
+          <view class="-body-teacher-reply" wx:if="{{isReply}}">
+            <view class="-reply-title">{{workDetail.replyTeacher}}核心点拨：</view>
+            <view class="-reply-text" wx:if="{{workDetail.replyText}}">{{workDetail.replyText}}</view>
+            <view class="-reply-img-wrap" wx:if="{{workDetail.replyImg.length}}">
+              <image class="-img"
+                     wx:for="{{workDetail.replyImg}}"
+                     wx:key="{{item}}"
+                     @tap="enlargeImage({{index}}, {{workDetail.replyImg}})"
+                     src="{{item}}"></image>
+            </view>
+          </view>
+          <view class="-body-teacher-tip" @tap="praiseTeacher"
+                wx:if="{{isReply && workDetail.status!==1 && workDetail.evaluation==null && workDetail.self}}">
+            看完点评，点击这里给老师一个评价吧 >
           </view>
         </view>
-        <view class="-body-teacher-tip" @tap="praiseTeacher"
-              wx:if="{{isReply && workDetail.status!==1 && workDetail.evaluation==null && workDetail.self}}">
-          看完点评，点击这里给老师一个评价吧 >
-        </view>
       </view>
-    </view>
 
-    <view class="p-completionOfWork-footer">
-      <view class="-footer-left" wx:if="{{!isOpenAudio}}">
-        <image class="-footer-left-img" src="{{workDetail.replyTeacherImg}}"></image>
-        <view class="-footer-left-text">
-          <view>{{workDetail.replyTeacher}}</view>
-          <view class="-tip">{{workDetail.replyTime ? workDetail.replyTime : '老师随后为你点评，请留意微信通知'}}</view>
+      <view class="p-completionOfWork-footer">
+        <view class="-footer-left" wx:if="{{!isOpenAudio}}">
+          <image class="-footer-left-img" src="{{workDetail.replyTeacherImg}}"></image>
+          <view class="-footer-left-text">
+            <view>{{workDetail.replyTeacher}}</view>
+            <view class="-tip">{{workDetail.replyTime ? workDetail.replyTime : '老师随后为你点评，请留意微信通知'}}</view>
+          </view>
         </view>
-      </view>
-      <view class="-footer-center" wx:if="{{workDetail.replyTime && workDetail.replyAudio && !isOpenAudio}}"
-            @tap="changeAudioStatus(1)">
-        <text>收听老师点评</text>
-        <image class="-footer-center-img1"
-               src="https://pub.file.k12.vip/tbzw/1.3/course/bofang.png"></image>
-      </view>
-      <view class="-footer-audio" wx:if="{{workDetail.replyTime && workDetail.replyAudio && isOpenAudio}}">
-        <image class="-icon" @tap="changeAudioStatus" wx:if="{{!isPlay}}"
-               src="https://pub.file.k12.vip/tbzw/1.3/course/play-audio.png"></image>
-        <image class="-icon" @tap="changeAudioStatus" wx:if="{{isPlay}}"
-               src="https://pub.file.k12.vip/tbzw/1.3/course/stop-audio.png"></image>
-        <view class="-prossage">
-          <van-slider bar-height="6px"
-                      inactive-color="#ffffff"
-                      active-color="#FFD703"
-                      value="{{currentTime}}"
-                      use-button-slot
-                      bind:drag="changeSlider">
-            <view class="-prossage-btn" slot="button"></view>
-          </van-slider>
+        <view class="-footer-center" wx:if="{{workDetail.replyTime && workDetail.replyAudio && !isOpenAudio}}"
+              @tap="changeAudioStatus(1)">
+          <text>收听老师点评</text>
+          <image class="-footer-center-img1"
+                 src="https://pub.file.k12.vip/tbzw/1.3/course/bofang.png"></image>
         </view>
-      </view>
-      <view class="-footer-center" wx:if="{{workDetail.replyTime && !workDetail.replyAudio}}" @tap="scrollToFn">
-        <text>查看老师点评</text>
-        <image class="-footer-center-img2"
-               src="https://pub.file.k12.vip/tbzw/1.3/course/look.png"></image>
-      </view>
-      <view class="-footer-right">
-        <button class="-footer-right-btn"
-                open-type="share" wx:if="{{workDetail.homeworkType === 1 || !workDetail.self}}">
-          <image class="-footer-right-img"
+        <view class="-footer-audio" wx:if="{{workDetail.replyTime && workDetail.replyAudio && isOpenAudio}}">
+          <image class="-icon" @tap="changeAudioStatus" wx:if="{{!isPlay}}"
+                 src="https://pub.file.k12.vip/tbzw/1.3/course/play-audio.png"></image>
+          <image class="-icon" @tap="changeAudioStatus" wx:if="{{isPlay}}"
+                 src="https://pub.file.k12.vip/tbzw/1.3/course/stop-audio.png"></image>
+          <view class="-prossage">
+            <van-slider bar-height="6px"
+                        inactive-color="#ffffff"
+                        active-color="#FFD703"
+                        value="{{currentTime}}"
+                        use-button-slot
+                        bind:drag="changeSlider">
+              <view class="-prossage-btn" slot="button"></view>
+            </van-slider>
+          </view>
+        </view>
+        <view class="-footer-center" wx:if="{{workDetail.replyTime && !workDetail.replyAudio}}" @tap="scrollToFn">
+          <text>查看老师点评</text>
+          <image class="-footer-center-img2"
+                 src="https://pub.file.k12.vip/tbzw/1.3/course/look.png"></image>
+        </view>
+        <view class="-footer-right">
+          <button class="-footer-right-btn"
+                  open-type="share" wx:if="{{workDetail.homeworkType === 1 || !workDetail.self}}">
+            <image class="-footer-right-img"
+                   src="https://pub.file.k12.vip/tbzw/1.3/course/icon-1.png"></image>
+          </button>
+          <image @tap="openShareModal" class="-footer-right-img"
+                 wx:if="{{workDetail.homeworkType === 2 && workDetail.self}}"
                  src="https://pub.file.k12.vip/tbzw/1.3/course/icon-1.png"></image>
-        </button>
-        <image @tap="openShareModal" class="-footer-right-img"
-               wx:if="{{workDetail.homeworkType === 2 && workDetail.self}}"
-               src="https://pub.file.k12.vip/tbzw/1.3/course/icon-1.png"></image>
-        <view class="-footer-right-wrap" @tap="addLike">
-          <view class="-tip">{{workDetail.likenum}}</view>
-          <image class="-footer-right-img -img-two" src="https://pub.file.k12.vip/tbzw/1.3/course/icon-2.png"></image>
+          <view class="-footer-right-wrap" @tap="addLike">
+            <view class="-tip">{{workDetail.likenum}}</view>
+            <image class="-footer-right-img -img-two" src="https://pub.file.k12.vip/tbzw/1.3/course/icon-2.png"></image>
+          </view>
+        </view>
+        <view class="-footer-icon" wx:if="{{workDetail.replyRemind}}">
+          <image class="-footer-icon-img -footer-icon-ania"
+                 src="https://pub.file.k12.vip/2019/12/04/1202110438063345666.png"></image>
         </view>
       </view>
-      <view class="-footer-icon" wx:if="{{workDetail.replyRemind}}">
-        <image class="-footer-icon-img -footer-icon-ania" src="https://pub.file.k12.vip/2019/12/04/1202110438063345666.png"></image>
-      </view>
-    </view>
 
-    <van-popup show="{{isOpenPopup}}">
-      <view class="p-completionOfWork-popup-dp"
-            wx:if="{{!isEvaluate}}">
-        <view class="-popup-title">评价老师的点评</view>
-        <view class="-popup-text">评价标签对老师不可见，请放心选择</view>
-        <view class="-popup-list">
-          <view @tap="choiceTab({{'0'}})">
-            <image wx:if="{{isActive !== '0'}}"
-                   class="-list-img"
-                   src="https://pub.file.k12.vip/tbzw/lspj/icon-discontent.png"></image>
-            <image wx:if="{{isActive === '0'}}"
-                   class="-list-img"
-                   src="https://pub.file.k12.vip/tbzw/lspj/icon-discontent-selected.png"></image>
-            <view class="-list-text {{isActive === '0' ? '-active-text' : ''}}">不满意</view>
+      <van-popup show="{{isOpenPopup}}">
+        <view class="p-completionOfWork-popup-dp"
+              wx:if="{{!isEvaluate}}">
+          <view class="-popup-title">评价老师的点评</view>
+          <view class="-popup-text">评价标签对老师不可见，请放心选择</view>
+          <view class="-popup-list">
+            <view @tap="choiceTab({{'0'}})">
+              <image wx:if="{{isActive !== '0'}}"
+                     class="-list-img"
+                     src="https://pub.file.k12.vip/tbzw/lspj/icon-discontent.png"></image>
+              <image wx:if="{{isActive === '0'}}"
+                     class="-list-img"
+                     src="https://pub.file.k12.vip/tbzw/lspj/icon-discontent-selected.png"></image>
+              <view class="-list-text {{isActive === '0' ? '-active-text' : ''}}">不满意</view>
+            </view>
+            <view @tap="choiceTab({{'1'}})">
+              <image wx:if="{{isActive !== '1'}}"
+                     class="-list-img"
+                     src="https://pub.file.k12.vip/tbzw/lspj/icon-general.png"></image>
+              <image wx:if="{{isActive === '1'}}"
+                     class="-list-img"
+                     src="https://pub.file.k12.vip/tbzw/lspj/icon-general-selected.png"></image>
+              <view class="-list-text {{isActive === '1' ? '-active-text' : ''}}">一般有待改进</view>
+            </view>
+            <view @tap="choiceTab({{'2'}})">
+              <image wx:if="{{isActive !== '2'}}"
+                     class="-list-img"
+                     src="https://pub.file.k12.vip/tbzw/lspj/icon-satisfaction.png"></image>
+              <image wx:if="{{isActive === '2'}}"
+                     class="-list-img"
+                     src="https://pub.file.k12.vip/tbzw/lspj/icon-satisfaction-selected.png"></image>
+              <view class="-list-text {{isActive === '2' ? '-active-text' : ''}}">满意</view>
+            </view>
           </view>
-          <view @tap="choiceTab({{'1'}})">
-            <image wx:if="{{isActive !== '1'}}"
-                   class="-list-img"
-                   src="https://pub.file.k12.vip/tbzw/lspj/icon-general.png"></image>
-            <image wx:if="{{isActive === '1'}}"
-                   class="-list-img"
-                   src="https://pub.file.k12.vip/tbzw/lspj/icon-general-selected.png"></image>
-            <view class="-list-text {{isActive === '1' ? '-active-text' : ''}}">一般有待改进</view>
-          </view>
-          <view @tap="choiceTab({{'2'}})">
-            <image wx:if="{{isActive !== '2'}}"
-                   class="-list-img"
-                   src="https://pub.file.k12.vip/tbzw/lspj/icon-satisfaction.png"></image>
-            <image wx:if="{{isActive === '2'}}"
-                   class="-list-img"
-                   src="https://pub.file.k12.vip/tbzw/lspj/icon-satisfaction-selected.png"></image>
-            <view class="-list-text {{isActive === '2' ? '-active-text' : ''}}">满意</view>
-          </view>
-        </view>
-        <view class="-popup-input">
+          <view class="-popup-input">
             <textarea class="-input"
                       value="{{stumsg}}"
                       bindinput="bindClickMessage"
                       placeholder="你想对点评老师说…"
                       placeholder-style="font-size: 15px;"/>
+          </view>
+          <button class="-popup-btn" @tap="submitEvaluate">提交</button>
         </view>
-        <button class="-popup-btn" @tap="submitEvaluate">提交</button>
-      </view>
 
-      <view class="p-completionOfWork-popup-jg {{isActive !== '0' ? 'p-completionOfWork-popup-height' : ''}}"
-            wx:if="{{isEvaluate}}">
-        <image wx:if="{{isActive === '0'}}" class="-popup-jg-img"
-               src="https://pub.file.k12.vip/tbzw/lspj/icon-discontent-selected.png"></image>
-        <image wx:if="{{isActive === '1'}}" class="-popup-jg-img"
-               src="https://pub.file.k12.vip/tbzw/lspj/icon-general-selected.png"></image>
-        <image wx:if="{{isActive === '2'}}" class="-popup-jg-img"
-               src="https://pub.file.k12.vip/tbzw/lspj/icon-satisfaction-selected.png"></image>
-        <view class="-popup-jg-text">
-          {{isActive === '0' ? ' 抱歉给你带来了不好的学习体验， 我们将持续改进！' : '感谢你评价和反馈，我们将持续改进'}}
+        <view class="p-completionOfWork-popup-jg {{isActive !== '0' ? 'p-completionOfWork-popup-height' : ''}}"
+              wx:if="{{isEvaluate}}">
+          <image wx:if="{{isActive === '0'}}" class="-popup-jg-img"
+                 src="https://pub.file.k12.vip/tbzw/lspj/icon-discontent-selected.png"></image>
+          <image wx:if="{{isActive === '1'}}" class="-popup-jg-img"
+                 src="https://pub.file.k12.vip/tbzw/lspj/icon-general-selected.png"></image>
+          <image wx:if="{{isActive === '2'}}" class="-popup-jg-img"
+                 src="https://pub.file.k12.vip/tbzw/lspj/icon-satisfaction-selected.png"></image>
+          <view class="-popup-jg-text">
+            {{isActive === '0' ? ' 抱歉给你带来了不好的学习体验， 我们将持续改进！' : '感谢你评价和反馈，我们将持续改进'}}
+          </view>
+          <view class="-popup-jd-text-two" wx:if="{{isActive !== '0'}}">
+            如果觉得老师点评的好， 记得分享给好友哦～
+          </view>
+          <button class="-popup-jg-btn -one" wx:if="{{isActive === '0'}}" @tap="changePopup">好的，我知道了</button>
+          <button class="-popup-jg-btn" open-type="share" wx:if="{{isActive !== '0' && workDetail.homeworkType === 1}}"
+                  @tap="shareFriend">分享给好友
+          </button>
+          <button class="-popup-jg-btn" wx:if="{{isActive !== '0' && workDetail.homeworkType === 2}}"
+                  @tap="openShareModal">分享
+          </button>
         </view>
-        <view class="-popup-jd-text-two" wx:if="{{isActive !== '0'}}">
-          如果觉得老师点评的好， 记得分享给好友哦～
-        </view>
-        <button class="-popup-jg-btn -one" wx:if="{{isActive === '0'}}" @tap="changePopup">好的，我知道了</button>
-        <button class="-popup-jg-btn" open-type="share" wx:if="{{isActive !== '0' && workDetail.homeworkType === 1}}"
-                @tap="shareFriend">分享给好友
-        </button>
-        <button class="-popup-jg-btn" wx:if="{{isActive !== '0' && workDetail.homeworkType === 2}}"
-                @tap="openShareModal">分享
-        </button>
-      </view>
 
-      <van-icon name="close"
-                class="p-completionOfWork-popup-close"
-                color="#fff"
-                size="36px"
-                @click="changePopup"/>
-    </van-popup>
+        <van-icon name="close"
+                  class="p-completionOfWork-popup-close"
+                  color="#fff"
+                  size="36px"
+                  @click="changePopup"/>
+      </van-popup>
 
-    <ConfirmModal :isShow.sync="isShowConfirm"
-                  contentText="重新提交作业成功后，将会覆盖上次的内容，确定提交？"
-                  okText="确认覆盖"></ConfirmModal>
+      <ConfirmModal :isShow.sync="isShowConfirm"
+                    contentText="重新提交作业成功后，将会覆盖上次的内容，确定提交？"
+                    okText="确认覆盖"></ConfirmModal>
 
-    <lookImage :isShow.sync="isShowImage" :imgUrl.sync="itemUrl" :index.sync="imgIndex"></lookImage>
+      <lookImage :isShow.sync="isShowImage" :imgUrl.sync="itemUrl" :index.sync="imgIndex"></lookImage>
 
-    <van-popup show="{{isOpenShareModal}}" class="p-completionOfWork-share">
-      <view class="-share-content">
-        <view class="-share-content-title">
-          <image class="-img" src="https://pub.file.k12.vip/2019/08/26/1165830591817195521.png"></image>
-        </view>
-        <view class="-share-content-text -share-content-top">作业写的真棒</view>
-        <view class="-share-content-text">赶快分享给大家看看吧！</view>
-        <view class="-share-content-btn-wrap">
-          <view class="-btn-cancle" @tap="openPoster">生成专属海报</view>
-          <button class="-btn-ok" open-type="share">分享给好友</button>
-        </view>
-      </view>
-      <van-icon name="close"
-                class="-share-close"
-                color="#fff"
-                size="36px"
-                @click="openShareModal"/>
-    </van-popup>
 
-    <load wx:if="{{isFetching}}"></load>
-  </view>
+      <load wx:if="{{isFetching}}"></load>
+    </view>
   </scroll-view>
 
 </template>
@@ -293,7 +278,6 @@
       isZan: false,
       isShowImage: false,
       isShowConfirm: false,
-      isOpenShareModal: false,
       isOpenAudio: false,
       isActive: '',
       currentTime: 0,
@@ -327,8 +311,8 @@
         let duration = parseInt(this.myAudio.duration);
 
         this.currentTime = (parseInt(this.myAudio.currentTime) / duration) * 100;
-        this._currentTime = this.myAudio.currentTime * 1000
-        console.log(this._currentTime)
+        this._currentTime = this.myAudio.currentTime * 1000;
+        console.log(this._currentTime);
         this.$apply();
       });
       this.myAudio.onEnded(() => {
@@ -371,19 +355,19 @@
         this.workDetail.replyImg = this.workDetail.replyImg && this.workDetail.replyImg.split(',');
         this.workDetail.duration = this.timeToFormat(this.workDetail.duration);
         this.workDetail.replyDuration = this.timeToFormat(this.workDetail.replyDuration);
-        this.workDetail.likeRemind && this.getAudio(9)
-        if(this.workDetail.audioTags) {
-          this.workDetail.audioTags = JSON.parse(this.workDetail.audioTags)
+        this.workDetail.likeRemind && this.getAudio(9);
+        if (this.workDetail.audioTags) {
+          this.workDetail.audioTags = JSON.parse(this.workDetail.audioTags);
           this.workDetail.audioTags = this.workDetail.audioTags.map(e => {
-            e.x *= 2
-            e.y *= 2
-            e.width *=2
-            return e
-          })
+            e.x *= 2;
+            e.y *= 2;
+            e.width *= 2;
+            return e;
+          });
         }
 
-        if(this.workDetail.workImgSrc.length == 1) {
-          this.swiperOptions.indicatorDots = false
+        if (this.workDetail.workImgSrc.length == 1) {
+          this.swiperOptions.indicatorDots = false;
         }
         if (this.workDetail.replyTime) {
           this.workDetail.replyTime = getDateDiff.getDateDiff(this.workDetail.replyTime);
@@ -395,7 +379,7 @@
         this.initAudio(false);
         this.isFetching = false;
         this.$apply();
-        console.log(this.workDetail)
+        console.log(this.workDetail);
       }, () => {
         this.isFetching = false;
         this.$apply();
@@ -434,8 +418,8 @@
       api.dubbing.getDubbingByType({
         type: num
       }).then(res => {
-        let data = res.data.resultData
-        this.playGuideAudio(data.oathvfUrl)
+        let data = res.data.resultData;
+        this.playGuideAudio(data.oathvfUrl);
         this.$apply();
       });
     };
@@ -458,7 +442,9 @@
       },
       openShareModal() {
         this.isOpenPopup = false;
-        this.isOpenShareModal = !this.isOpenShareModal;
+        wx.navigateTo({
+          url: `/user/workPoster?id=${this.workDetail.lessonId}`
+        });
       },
       openPoster() {
         wx.navigateTo({
@@ -487,7 +473,7 @@
         }
       },
       changeAudioStatus(i) {
-        if(i == 1 && this.workDetail.category == 3) this.scrollTop = 200
+        if (i == 1 && this.workDetail.category == 3) this.scrollTop = 200;
         this.isMyPlay = false;
         !this.isOpenAudio && this.myAudio.destroy();
         !this.isOpenAudio && this.initAudio(false);
@@ -617,8 +603,8 @@
       this.queryInfo = query;
       if (query.type === '1') {
         this.getMyHomework();
-        if (this.queryInfo.isPlayAudio) {
-          this.getAudio(7)
+        if (this.queryInfo.isPlayAudio == 'true') {
+          this.getAudio(7);
         }
       } else {
         this.getOtherHomework();

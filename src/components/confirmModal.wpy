@@ -1,8 +1,11 @@
 <template>
   <van-popup show="{{isShow}}" class="p-confirm">
     <view class="p-confirm-result">
-      <view class="p-confirm-result-title" wx:if="{{titleText}}">{{titleText}}</view>
-      <view class="p-confirm-result-text {{ titleText ? '' : 'p-confirm-result-noTitle' }}">{{contentText}}</view>
+      <image
+        class="p-confirm-result-icon"
+        src="https://pub.file.k12.vip/2020/03/26/1243074720581820417.png"
+      ></image>
+      <view class="p-confirm-result-text">{{contentText}}</view>
       <view class="p-confirm-result-btn-wrap">
         <view class="-btn-cancle" @tap="sureResult(false)">{{cancelText}}</view>
         <view class="-btn-ok" @tap="sureResult(true)">{{okText}}</view>
@@ -64,61 +67,59 @@
 
     &-result {
       text-align: center;
-      width: 590px;
-      height: 368px;
-      background: rgba(255, 255, 255, 1);
-      border-radius: 32px;
+      padding: 0 46px 46px;
+      width:602px;
+      /*height:424px;*/
+      background:rgba(255,255,255,1);
+      border-radius:40px;
+      box-sizing: border-box;
 
-      &-title {
-        padding: 48px 48px 32px;
-        height: 50px;
-        font-size: 36px;
-        font-weight: 500;
-        color: rgba(88, 66, 43, 1);
-        line-height: 50px;
-      }
-
-      &-noTitle {
-        padding-top: 72px;
+      &-icon {
+        position: absolute;
+        top: -108px;
+        left: 50%;
+        transform: translate(-50%);
+        width: 216px;
+        height: 216px;
+        border-radius: 50%;
       }
 
       &-text {
-        margin: 0 48px;
+        padding-top: 150px;
         font-size: 36px;
         font-weight: 500;
-        color: rgba(88, 66, 43, 1);
+        color: #000000;
         line-height: 50px;
         margin-bottom: 48px;
       }
 
       &-btn-wrap {
         @include flex-center;
+        justify-content: space-between;
 
         .-btn-cancle {
           text-align: center;
-          margin: 0 23px;
-          width: 224px;
-          height: 76px;
+          width:241px;
+          height:88px;
           border-radius: 40px;
-          border: 2px solid rgba(88, 66, 43, 0.1);
           font-size: 32px;
-          font-weight: 400;
-          color: rgba(88, 66, 43, 0.5);
-          line-height: 76px;
+          font-weight: 500;
+          color: #ffffff;
+          line-height: 88px;
+          background: #CCCCCC;
         }
 
         .-btn-ok {
           text-align: center;
-          margin: 0 23px;
-          width:224px;
-          height:76px;
-          background:linear-gradient(90deg,rgba(254,179,18,1) 0%,rgba(255,192,0,1) 100%);
-          box-shadow:0px 2px 8px 4px rgba(255,181,76,0.4);
-          border-radius:40px;
+          /*margin: 0 23px;*/
+          width:241px;
+          height:88px;
+          background:rgba(255,192,0,1);
+          border-radius:44px;
           font-size: 32px;
           font-weight: 500;
           color: #ffffff;
-          line-height: 76px;
+          line-height: 88px;
         }
       }
     }

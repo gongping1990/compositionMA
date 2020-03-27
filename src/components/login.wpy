@@ -106,7 +106,7 @@ export default class Example extends wepy.component {
           this.$emit('login')
           this.$apply()
         })
-        _sa.setOpenid(res.openid);
+        _sa.setOpenid(resultData.openid);
         _sa.login(resultData.id);
         _sa.init();
       })

@@ -5,30 +5,46 @@
       class="loaded-img"
       src="https://pub.file.k12.vip/tbzw/1.4/loading.gif"
     />
-    <view class="loaded-item {{active > 0 && 'active'}}">
-      <view class="loaded-icon"></view>
-      作品上传成功
+
+    <view wx:for="{{dataList}}"
+          wx:key="{{index}}">
+      <view class="loaded-item {{active > index && 'active'}}">
+        <view class="loaded-icon"></view>
+        {{item}}
+      </view>
     </view>
-    <view class="loaded-item {{active > 1 && 'active'}}">
-      <view class="loaded-icon"></view>
-      通知点评老师
-    </view>
+
+    <!--<view class="loaded-item {{active > 0 && 'active'}}">-->
+      <!--<view class="loaded-icon"></view>-->
+      <!--3月9日打卡成功-->
+    <!--</view>-->
+    <!--<view class="loaded-item {{active > 1 && 'active'}}">-->
+      <!--<view class="loaded-icon"></view>-->
+      <!--获得{{option.flowerNum}}朵小红花-->
+    <!--</view>-->
+    <!--<view class="loaded-item {{active > 2 && 'active'}}">-->
+      <!--<view class="loaded-icon"></view>-->
+      <!--制作精美打卡海报-->
+    <!--</view>-->
   </view>
 </template>
 <script>
 import wepy from 'wepy'
 export default class Example extends wepy.component {
+  props = {
+    optionList: {
+      type: Array,
+      default: []
+    }
+  }
   data = {
     active: 0,
-    show: false
+    show: false,
+    dataList: this.optionList || []
   }
   components = {}
   methods = {}
   events = {
-    show() {
-      this.show = true
-      this.downTime()
-    },
     destroy() {
       setTimeout(() => {
         this.show = false
@@ -39,7 +55,9 @@ export default class Example extends wepy.component {
   }
 
   downTime() {
-    if (this.active < 2) {
+    this.dataList = this.optionList
+    this.show = true
+    if (this.active < this.dataList.length) {
       setTimeout(() => {
         this.active += 1
         this.downTime()
@@ -71,20 +89,25 @@ export default class Example extends wepy.component {
     height: 206px;
   }
   &-icon {
-    @include bg('/1.4/icon-unselected.png');
+    background: url("https://pub.file.k12.vip/2020/03/26/1243105605109145602.png");
+    background-size: 100%;
     margin-right: 28px;
-    width: 46px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
   }
   &-item {
-    @include flex-center;
+    display: flex;
+    align-items: center;
     margin-top: 30px;
     color: #c5c5c5;
-    font-size: 36px;
+    font-size: 34px;
+    width: 340px;
+    text-align: left;
     &.active {
       color: #333;
       .loaded-icon {
-        background-image: url('https://pub.file.k12.vip/tbzw/1.4/icon-selected.png');
+        background-image: url('https://pub.file.k12.vip/2020/03/26/1243093177868738561.png');
+        background-size: 100%;
       }
     }
   }

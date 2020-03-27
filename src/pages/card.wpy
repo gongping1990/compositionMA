@@ -4,30 +4,52 @@
     <mHeader title="打卡记录"></mHeader>
     <view class="container-scroll" style="margin-top:{{height}}px">
       <view class="card-header">
-        <view class="card-day">
-          <view class="card-day-left">
-            <view class="card-day-time">你好，截止今天 ({{ todayTime }})</view>
-            <view class="card-day-num">
-              {{ cardDetail.totaldays || 0 }}天
-              <text>累计打卡</text>
-            </view>
-            <view class="card-day-num">
-              {{ cardDetail.continuousdays || 0 }}天
-              <text>连续打卡</text>
-            </view>
-          </view>
-          <view class="card-day-right"></view>
+        <view class="card-header-top" @tap="openPopupCourse">
+          {{dataItem.name}}
+          <van-icon class="-top-icon" name="arrow-down" color="#fff"/>
         </view>
-        <view
-          class="card-btn {{cardDetail.todayCard ? 'isCard' : ''}}"
-          @tap="addMyCard"
-        >
-          {{ cardDetail.todayCard ? '真棒！今天已打卡' : '未打卡，立即打卡' }}
+        <view class="card-header-down">
+          <view class="-headerDown-item">
+            <view class="-item-num">{{cardDetail.totaldays || 0}}</view>
+            <view class="-item-text">累计打卡</view>
+          </view>
+          <view class="-headerDown-item">
+            <view class="-item-num">{{cardDetail.continuousdays || 0}}</view>
+            <view class="-item-text">连续打卡</view>
+          </view>
+          <view class="-headerDown-item">
+            <view class="-item-num">{{cardDetail.totalLearnDays || 0}}</view>
+            <view class="-item-text">最长连续打卡</view>
+          </view>
         </view>
       </view>
+
       <view class="card-content">
         <view class="card-content-header">
-          <text class="card-content-title">打卡记录</text>
+          <view class="-header-top">
+            <text class="-header-top-left">打卡记录</text>
+            <view class="-header-top-right">
+              <view class="-right-item">
+                <image class="-right-img"
+                       src="https://pub.file.k12.vip/2020/03/25/1242704088539078657.png"
+                       mode="widthFix"></image>
+                开始学习
+              </view>
+              <view class="-right-item">
+                <image class="-right-img"
+                       src="https://pub.file.k12.vip/2020/03/25/1242704183523287041.png"
+                       mode="widthFix"></image>
+                已打卡
+              </view>
+              <view class="-right-item">
+                <image class="-right-img"
+                       src="https://pub.file.k12.vip/2020/03/25/1242703951678939138.png"
+                       mode="widthFix"></image>
+                未打卡
+              </view>
+            </view>
+          </view>
+
           <view class="canlendar-control">
             <view class="canlendar-control-pre" @tap="bindClickPre"></view>
             <text class="canlendar-control-title">{{ today }}</text>
@@ -36,33 +58,29 @@
         </view>
         <calendar :card.sync="cardList"></calendar>
       </view>
-      <van-popup show="{{ show }}" bind:close="onClose">
-        <view class="dialog">
-          <view class="dialog-icon"></view>
-          <text class="dialog-text">今日已打卡成功</text>
-          <view class="dialog-btn" @tap="bindClose">我知道了</view>
-        </view>
-      </van-popup>
+
+      <!--<van-popup show="{{ show }}" bind:close="onClose">-->
+        <!--<view class="dialog">-->
+          <!--<view class="dialog-icon"></view>-->
+          <!--<text class="dialog-text">今日已打卡成功</text>-->
+          <!--<view class="dialog-btn" @tap="bindClose">我知道了</view>-->
+        <!--</view>-->
+      <!--</van-popup>-->
 
       <van-popup show="{{showNoLearn}}">
         <view class="card-popup">
           <view class="card-popup-title">
-            <view>小朋友</view>
-            <view>学完今天的课程才能打卡哦</view>
+            请选择课程
           </view>
-
-          <view class="card-popup-flex">
-            <button class="card-popup-btn card-popup-btn2" @tap="closePopup">
-              我知道了
-            </button>
-            <!--<button class="card-popup-btn card-popup-btn2"-->
-            <!--@tap="toLearn">立即学习</button>-->
+          <view class="card-popup-list {{item.courseId === dataItem.courseId && '-active'}}" wx:for="{{dataList}}" wx:key="{{index}}"
+                @tap="toCourseDetail({{item}})">
+            <view class="-list-text">{{ item.name }}</view>
           </view>
         </view>
 
         <van-icon
           name="close"
-          class="p-submitHomework-close"
+          class="card-popupClose"
           color="#fff"
           size="36px"
           @click="closePopup"
@@ -92,12 +110,16 @@ export default class Example extends wepy.page {
   config = {
     navigationBarTitleText: '',
     usingComponents: {
+      'van-icon': '../vant/icon/index',
       'van-popup': '../vant/popup/index'
     }
   }
   data = {
     today: '',
     cardDetail: '',
+    dataItem: {},
+    dataList: [],
+    cardList: [],
     show: false,
     showNoLearn: false
   }
@@ -108,38 +130,67 @@ export default class Example extends wepy.page {
   mixins = [testMixin]
 
   getCardInfo() {
-    api.study.countCard().then(res => {
+    api.study.countCard({
+      courseId: this.dataItem.courseId
+    }).then(res => {
       this.cardDetail = res.data.resultData
       this.$apply()
     })
   }
 
+<<<<<<< HEAD
   methods = {
     toLearn() {
       wx.navigateTo({
         url: `/user/classroom?id=${this.cardDetail.todayLessonId}`
+=======
+  getCourseList() {
+    api.center.getMyCourse().then(({ data }) => {
+      this.dataList = data.resultData
+      this.$apply()
+    })
+  }
+
+  getCardList () {
+    api.study.listCard({
+      courseId: this.dataItem.courseId
+    })
+      .then(res => {
+        this.cardList = res.data.resultData
+        this.$apply()
+>>>>>>> dev
       })
+  };
+
+  methods = {
+    toCourseDetail (data) {
+      this.dataItem = data
+      this.getCardInfo()
+      this.getCardList()
+      this.showNoLearn = false
+      this.$apply()
     },
-    addMyCard() {
-      let { _sa } = this.$parent.globalData
-      if (this.cardDetail.todayLearned) {
-        if (this.cardDetail.todayCard) return
-        api.study.addCard().then(() => {
-          this.show = true
-          this.$invoke('calendar', 'getCardList')
-          this.$apply()
-          _sa.track('courseClockRecord', {
-            courseID: '',
-            courseTitle: '',
-            isSuccess: true,
-            classID: '',
-            className: '',
-            classType: ''
-          })
-        })
-      } else {
-        this.showNoLearn = true
-      }
+    openPopupCourse() {
+      // let { _sa } = this.$parent.globalData
+      // if (this.cardDetail.todayLearned) {
+      //   if (this.cardDetail.todayCard) return
+      //   api.study.addCard().then(() => {
+      //     this.show = true
+      //     this.$invoke('calendar', 'getCardList')
+      //     this.$apply()
+      //     _sa.track('courseClockRecord', {
+      //       courseID: '',
+      //       courseTitle: '',
+      //       isSuccess: true,
+      //       classID: '',
+      //       className: '',
+      //       classType: ''
+      //     })
+      //   })
+      // } else {
+      //   this.showNoLearn = true
+      // }
+      this.showNoLearn = true
     },
     closePopup() {
       this.showNoLearn = false
@@ -172,6 +223,12 @@ export default class Example extends wepy.page {
 
   onShow() {
     this.getCardInfo()
+    this.getCardList()
+    this.getCourseList()
+  }
+
+  onLoad(query) {
+    this.dataItem = query
   }
 
   onUnload() {
@@ -237,34 +294,71 @@ export default class Example extends wepy.page {
   .canlendar-control {
     @include flex-center;
     &-title {
-      margin: 0 24px;
-      font-size: 28px;
-      line-height: 40px;
+      margin: 0 216px;
+      font-size:30px;
+      font-weight:bold;
+      color:rgba(51,51,51,1);
     }
     &-pre,
     &-next {
       @include bg('/card/button-select.png');
-      background-position: center;
-      background-size: 18px 34px;
-      width: 32px;
-      height: 34px;
+      background-size: 100%;
+      width: 14px;
+      height: 23px;
     }
     &-pre {
       @include bg('/card/button-select1.png');
-      background-size: 18px 34px;
+      background-size: 100%;
     }
   }
   &-content {
-    padding-top: 14px;
-    &-title {
-      font-size: 32px;
-      font-weight: 500;
-    }
+    padding: 38px 32px;
+
     &-header {
-      @include flex-center;
-      margin-bottom: 48px;
-      justify-content: space-between;
-      padding: 0 48px;
+      margin-bottom: 50px;
+
+      .-header-top {
+        @include flex-center;
+        justify-content: space-between;
+        margin-bottom: 92px;
+
+        &-left {
+          @include flex-center;
+          font-size:32px;
+          font-weight:bold;
+          color:rgba(51,51,51,1);
+
+          &::before {
+            content: '';
+            display: inline-block;
+            width:10px;
+            height:30px;
+            background:rgba(255,192,0,1);
+            border-radius:5px;
+            margin-right: 19px;
+          }
+        }
+
+        &-right {
+          @include flex-center;
+          justify-content: space-between;
+
+          .-right-item {
+            @include flex-center;
+            margin-right: 22px;
+            font-size:24px;
+            font-weight:bold;
+            color:rgba(51,51,51,1);
+          }
+
+          .-right-img {
+            /*background-color: red;*/
+            margin-right: 15px;
+            width: 26px;
+            height: 26px;
+          }
+        }
+      }
     }
   }
   &-btn {
@@ -289,95 +383,88 @@ export default class Example extends wepy.page {
       color: rgba(88, 66, 43, 0.3);
     }
   }
-  &-day {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 40px;
-    &-time {
-      margin-bottom: 44px;
-      font-size: 32px;
-      font-weight: 600;
-      color: #3b3f3c;
-    }
-    &-num {
-      margin-bottom: 16px;
-      font-size: 36px;
-      font-weight: bold;
-      line-height: 50px;
-      color: #ffd129;
-      text {
-        font-weight: normal;
-        font-size: 22px;
-        color: #3b3f3c;
+  &-header {
+    padding: 56px 80px 67px;
+    text-align: center;
+    background:rgba(255,192,0,1);
+    box-shadow:0px 4px 35px 0px rgba(193,196,206,0.25);
+    border-radius:0px 0px 40px 40px;
+    color: #FEFFFA;
+
+    &-top {
+      @include flex-center;
+      font-size:30px;
+      font-weight:500;
+      margin-bottom: 103px;
+
+      .-top-icon {
+        margin-top: 10px;
       }
     }
-    &-right {
-      @include bg('/card/icon-lock in.png');
-      margin-top: 10px;
-      width: 108px;
-      height: 116px;
+
+    &-down {
+      @include flex-center;
+      justify-content: space-between;
+
+      .-headerDown-item {
+        text-align: center;
+
+        .-item-num {
+          display: inline-block;
+          font-size:72px;
+          font-weight:bold;
+        }
+
+        .-item-text {
+          margin-top: 37px;
+          height:28px;
+          font-size:30px;
+          font-weight:500;
+        }
+      }
     }
-    &-left {
-      @include flex-column-center;
-      align-items: flex-start;
-      font-size: 32px;
-      color: #58422b;
-    }
-  }
-  &-header {
-    position: relative;
-    padding: 0 96px;
-    padding-top: 88px;
-    height: 320px;
   }
   &-popup {
-    width: 590px;
-    height: 366px;
-    background: rgba(255, 255, 255, 1);
-    border-radius: 32px;
+    box-sizing: border-box;
+    text-align: center;
+    width:542px;
+    background:rgba(255,255,255,1);
+    border-radius:50px;
+    padding: 44px 91px 62px;
 
     &-title {
-      padding-top: 72px;
-      text-align: center;
-      margin: 0 auto 48px;
-      width: 496px;
-      height: 100px;
-      font-size: 36px;
-      font-weight: 500;
-      color: rgba(88, 66, 43, 1);
-      line-height: 50px;
+      font-size:34px;
+      font-weight:bold;
+      color:rgba(51,51,51,1);
+      margin-bottom: 57px;
     }
 
-    &-flex {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin: 0 48px;
+    &-list {
+      /*width:360px;*/
+      padding:25px 53px;
+      background:rgba(245,247,249,1);
+      border-radius:40px;
+      margin-bottom: 37px;
+      font-size:28px;
+      font-weight:500;
+      color: #333333;
+
+      .-list-text {
+        @include text-overflow(250px)
+      }
+
+      &.-active {
+        background-color: #FFC102;
+        color: #FFFFFF;
+      }
     }
 
-    &-btn {
-      text-align: center;
-      width: 224px;
-      height: 76px;
-      border-radius: 40px;
-      border: 2px solid rgba(88, 66, 43, 0.1);
-      font-size: 32px;
-      font-weight: 400;
-      color: rgba(88, 66, 43, 0.5);
-      line-height: 76px;
-    }
-
-    &-btn2 {
-      border: none;
-      background: linear-gradient(
-        90deg,
-        rgba(249, 230, 11, 1) 0%,
-        rgba(253, 219, 85, 1) 100%
-      );
-      box-shadow: 0px 8px 16px 4px rgba(230, 194, 81, 0.4);
-      font-weight: 500;
-      color: rgba(70, 65, 60, 1);
-    }
+  }
+  &-popupClose {
+    margin-top: 72px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
   }
 }
 </style>

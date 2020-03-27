@@ -20,7 +20,9 @@
                  src="{{item.coverphoto}}" />
           <view class="course-info">
             <text class="course-title">{{item.name}}</text>
-            <text class="course-text {{!item.submited ? 'wj' : ''}}">{{!item.submited ? '有作业未交' : '作业已交齐'}}</text>
+            <text class="course-text {{!item.submited ? 'wj' : ''}}">
+              已学{{item.studys}}节 | {{!item.submited ? item.nosubmits+'次作业未交' : '作业已交齐'}}
+            </text>
           </view>
         </view>
       </view>

@@ -258,7 +258,8 @@ export default class extends wepy.app {
           'learningReport',
           'errorBook',
           'myCardCourse',
-          'workPoster'
+          'workPoster',
+          'cardPoster'
         ]
       },
       {

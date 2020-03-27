@@ -13,7 +13,7 @@
           <view class="course-info">
             <text class="course-title">{{ item.name }}</text>
             <text class="course-text">
-              累计打卡{{ item.lessons }}天 | 连续打卡{{ item.studys }}天
+              累计打卡{{ item.totalCard }}天 | 连续打卡{{ item.continueCard }}天
             </text>
           </view>
         </view>

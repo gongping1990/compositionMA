@@ -175,9 +175,12 @@ export default class Matching extends wepy.component {
   z-index: 10;
 }
 .matching {
+  box-sizing: border-box;
   display: flex;
   justify-content: space-between;
   width: 100%;
+  padding: 0 56px;
+  margin-top: 56px;
   &-left,
   &-right {
     position: relative;

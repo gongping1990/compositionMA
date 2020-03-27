@@ -185,16 +185,14 @@ _sa.setPara({
   // 是否允许修改onShareAppMessage里return的path，用来增加(用户id，分享层级，当前的path)，在app onShow中自动获取这些参数来查看具体分享来源，层级等
   allow_amend_share_path: true
 })
-_sa.registerApp({
-  platform: 'miniprogram'
-})
 if (userInfo && (userInfo.id || userInfo.userId)) {
   _sa.setOpenid(userInfo.openid)
   _sa.login(userInfo.id || userInfo.userId)
   _sa.init()
 }
-
-
+_sa.registerApp({
+  platform: 'miniprogram'
+})
 
 const store = configStore()
 setStore(store)
@@ -204,22 +202,13 @@ export default class extends wepy.app {
     pages: [
       'pages/index',
       'pages/detail',
-      'pages/write',
-      'pages/writeStudy',
       'pages/lesson',
-      'pages/video',
       'pages/lessonDetail',
-      'pages/joinRoom',
       'pages/server',
       'pages/login',
       'pages/resetPwd',
       'pages/card',
-      'pages/catalog',
-      'pages/classroom',
-      'pages/ready',
-      'pages/study',
       'pages/picture',
-      'pages/test',
       'pages/user',
       'pages/praiseOfWorks',
       'pages/shareHomework',
@@ -227,15 +216,22 @@ export default class extends wepy.app {
       'pages/authorize',
       'pages/enroll',
       'pages/sharePoster',
-      'pages/result',
-      'pages/writeCatalog'
+      'pages/result'
     ],
     subPackages: [
       {
         root: 'user',
         pages: [
           'info',
+          'joinRoom',
+          'classroom',
+          'ready',
+          'test',
+          'study',
+          'writeStudy',
           'teacher',
+          'video',
+          'writeCatalog',
           'child',
           'gift',
           'giftActive',
@@ -274,7 +270,7 @@ export default class extends wepy.app {
     window: {
       backgroundTextStyle: 'light',
       navigationBarBackgroundColor: '#fff',
-      navigationBarTitleText: 'WeChat',
+      navigationBarTitleText: '乐小狮大语文',
       navigationBarTextStyle: 'black',
       navigationStyle: 'custom'
     }

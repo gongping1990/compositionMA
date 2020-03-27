@@ -24,19 +24,13 @@
     <van-popup show="{{ show }}" overlay="{{true}}" position="bottom">
       <view class="video-popup">
         <view class="video-time">
-          <view class="video-circle" wx:if="{{show && !showIcon}}">
-            <van-circle
-              size="{{46}}"
-              value="{{timeProgress}}"
-              layer-color="#fff"
-              color="#FFC001"
-            >
-              <view class="video-circle-text">{{ time }}</view>
-            </van-circle>
+          <view class="video-time-text">
+            倒计时
           </view>
+          <view class="video-time-num">{{ time }}</view>
         </view>
         <view class="video-content">
-          <view class="video-title">
+          <view class="video-title" wx:if="{{questionData.type != 9}}">
             <view
               class="video-audio {{audioPause && 'paused'}}"
               wx:if="{{questionData.authVfUrl}}"
@@ -44,18 +38,18 @@
             ></view>
             <text>{{ questionData.subject }}</text>
           </view>
-          <matching
-            :questionData.sync="questionData"
-            @end.user="matchingEnd"
-            @selected.user="matchingSelected"
-            wx:if="{{questionData.type == 3}}"
-          ></matching>
+          <image wx:if="{{(questionData.subjectImg || questionData.imgUrl) && questionData.type != 9}}" class="video-cover" src="{{questionData.subjectImg || questionData.imgUrl}}" />
+
+          <!-- 录音题 start -->
           <recorder
             wx:if="{{questionData.type == 1}}"
             :questionData.sync="questionData"
             @stop.user="recorderStop"
             @start.user="recorderStart"
-          ></recorder>
+          />
+          <!-- 录音题 end -->
+
+          <!-- 单选题 start -->
           <view class="choice" wx:if="{{questionData.type == 2}}">
             <block wx:for="{{questionArr}}" wx:key="{{index}}">
               <view
@@ -69,6 +63,85 @@
               </view>
             </block>
           </view>
+          <!-- 单选题 end -->
+
+          <!-- 连线题 start -->
+          <matching
+            :questionData.sync="questionData"
+            @end.user="answerEnd"
+            @selected.user="matchingSelected"
+            wx:if="{{questionData.type == 3}}"
+          />
+          <!-- 连线题 end -->
+
+          <!-- 多选题 start -->
+          <view class="choice-wrap checked" wx:if="{{questionData.type == 4}}">
+            <view class="choice" >
+              <block wx:for="{{checkedArr}}" wx:key="{{index}}">
+                <view
+                  class="choice-item {{item.selected && 'selected'}} {{checkedEnd && item.checked && item.selected && 'success'}} {{checkedEnd && !item.checked && item.selected && 'error'}}"
+                  @tap="clickChecked({{item}}, {{index}})"
+                >
+                  <image class="choice-item-img" src="{{item.value}}" />
+                  <view class="choice-item-tag">
+                    {{ item.index }}
+                  </view>
+                </view>
+              </block>
+            </view>
+            <view
+              class="choice-btn {{checkedEnd && 'disabled'}}"
+              @tap="submitChecked"
+              wx:if="{{checkedArr.length}}"
+            >
+              确认答案
+            </view>
+          </view>
+          <!-- 多选题 end -->
+
+          <!-- 拖拽题 start -->
+          <drag
+            wx:if="{{questionData.type == 5 || questionData.type == 6}}"
+            :questionData.sync="questionData"
+            @selected.user="dragSelected"
+            @end.user="answerEnd"
+          />
+          <!-- 拖拽题 end -->
+
+          <!-- 判断题 start -->
+          <view class="judge" wx:if="{{questionData.type == 7}}">
+            <view class="judge-item success {{judgeActive == 1 && 'selected'}}" @tap="clickJudge({{1}})"></view>
+            <view class="judge-item error {{judgeActive == 2 && 'selected'}}" @tap="clickJudge({{2}})"></view>
+          </view>
+
+          <!-- 判断题 end -->
+
+          <!-- 单独填空 start -->
+          <tianKong
+            wx:if="{{questionData.type == 9}}"
+            :questionData.sync="questionData"
+            @resetAudio.user="resetAudio"
+            @end.user="tianKongSelected"
+           />
+          <!-- 单独填空 end -->
+
+          <!-- 组句题 start -->
+          <sentence
+            wx:if="{{questionData.type == 10}}"
+            :questionData.sync="questionData"
+            @end.user="tianKongSelected"
+          />
+          <!-- 组句题 end -->
+
+          <!-- 段落圈选 start -->
+          <section
+             wx:if="{{questionData.type == 11}}"
+            :questionData.sync="questionData"
+            @click.user="clickPlaySound"
+            @end.user="tianKongSelected"
+           />
+          <!-- 段落圈选 end -->
+
         </view>
       </view>
     </van-popup>
@@ -111,7 +184,11 @@
 import wepy from 'wepy'
 import mHeader from '../components/header'
 import recorder from '../components/recorder'
+import drag from '../components/drag'
 import matching from '../components/matching'
+import sentence from '../components/sentence'
+import tianKong from '../components/tianKong'
+import section from '../components/section'
 import load from '../components/load'
 let __timer = null
 export default class Example extends wepy.page {
@@ -127,6 +204,7 @@ export default class Example extends wepy.page {
     loading: false,
     showIcon: false,
     showBtn: false,
+    showMutual: false,
     show: false,
     showDialog: false,
     showBack: false,
@@ -147,24 +225,78 @@ export default class Example extends wepy.page {
     questionData: {},
     questionArr: [],
     matchingAnwswr: {},
-    InnerAudioContext: null
+    InnerAudioContext: null,
+    status: 3,
+    // 多选题
+    checkedArr: [],
+    checkedEnd: false,
+    // 判断题
+    judgeActive: null,
   }
   components = {
     mHeader,
+    section,
+    sentence,
     recorder,
+    tianKong,
+    drag,
     matching,
     load
   }
   methods = {
-    matchingEnd() {
+    // 答题完成
+    answerEnd() {
       this.time = 0
     },
+    clickPlaySound() {
+      this.playSound()
+    },
+    // 填空题
+    tianKongSelected(status) {
+      this.playSound()
+      this.time = 0
+      this.status = status
+    },
+    //拖拽题
+    dragSelected(status) {
+      this.status = status
+    },
+    // 连线题
     matchingSelected(selectedObj) {
       this.matchingAnwswr = selectedObj
     },
+    // 判断题
+    clickJudge(index) {
+      let {answerOption} = this.questionData
+      this.playSound()
+      this.judgeActive = index
+      this.status = answerOption == index ? 1 : 2
+      this.time = 0
+    },
+    // 多选题
+    clickChecked(item, index) {
+      this.playSound()
+      this.checkedArr[index].selected = !this.checkedArr[index].selected
+    },
+    submitChecked() {
+
+      let {multAnswer} = this.questionData
+      let status = 1
+      let selectedArr = this.checkedArr.filter(e => e.selected)
+      if(this.checkedEnd) return
+      if(selectedArr.length != multAnswer.length) return this.status = 2
+
+      selectedArr.forEach(e => {
+        !e.checked && (status = 2)
+      })
+      this.status = status
+      this.checkedEnd = true
+      this.time = 0
+      this.$apply()
+    },
+    // 单选题
     clickChoice(index) {
-      let { audioContext, playSound } = this.$parent.globalData
-      playSound(audioContext, 1)
+      this.playSound()
       this.choiceSeleced = index
       this.time = 0
     },
@@ -233,8 +365,7 @@ export default class Example extends wepy.page {
     },
     // 点击题干小喇叭 重置音频
     resetAudio() {
-      let { audioContext, playSound } = this.$parent.globalData
-      playSound(audioContext, 1)
+      this.playSound()
       this.InnerAudioContext.stop()
       setTimeout(() => {
         this.InnerAudioContext.play()
@@ -303,7 +434,13 @@ export default class Example extends wepy.page {
           this.videoContext.pause()
 
           setTimeout(() => {
-            this.show = true
+            if(data.type != 8) {
+              this.show = true
+              this.$broadcast('init')
+            } else {
+              this.showMutual = true
+            }
+            // this.$broadcast('showQuestion')
             this.$apply()
           }, 500)
           setTimeout(() => {
@@ -311,6 +448,15 @@ export default class Example extends wepy.page {
             if (data.authVfUrl) {
               this.InnerAudioContext.src = data.authVfUrl
               this.InnerAudioContext.play()
+            }
+
+            if(data.type == 4) {
+              this.checkedArr = data.optionList.map((e,i) => {
+                return {
+                  ...e,
+                  selected: false,
+                }
+              })
             }
 
             if (data.type != 1) {
@@ -371,26 +517,35 @@ export default class Example extends wepy.page {
       return progress
     },
     anwserStatus() {
-      let status = 0
-      let { choiceSeleced, matchingAnwswr } = this
+      let {
+        choiceSeleced,
+        matchingAnwswr,
+        status,
+        judgeActive
+      } = this
       let { id, type, answer, linkAnswerMap } = this.questionData
       if (!id) return status
-      if (type == 2) {
-        if (!choiceSeleced) return 3
-        return choiceSeleced == answer ? 1 : 2
-      } else if (type == 3) {
-        let isRight = true
-        let keys = Object.keys(matchingAnwswr)
-        if (!keys.length) return 3
-        for (let key in linkAnswerMap) {
-          if (matchingAnwswr[key] != linkAnswerMap[key]) {
-            isRight = false
+      switch(type) {
+        case 2:
+          if (!choiceSeleced) return 3
+          return choiceSeleced == answer ? 1 : 2
+        case 3:
+          let isRight = true
+          let keys = Object.keys(matchingAnwswr)
+          if (!keys.length) return 3
+          for (let key in linkAnswerMap) {
+            if (matchingAnwswr[key] != linkAnswerMap[key]) {
+              isRight = false
+            }
           }
-        }
-        return isRight ? 1 : 2
+          return isRight ? 1 : 2
       }
       return status
     }
+  }
+  playSound() {
+    let { audioContext, playSound } = this.$parent.globalData
+    playSound(audioContext, 1)
   }
   // 获取关卡内容
   getThreeLearnInfo() {
@@ -466,6 +621,11 @@ export default class Example extends wepy.page {
         setTimeout(() => {
           this.showIcon = false
           this.show = false
+          this.judgeActive = null
+          this.checkedArr = []
+          this.status = 3
+          this.checkedEnd = false
+          this.choiceSeleced = ''
           this.$broadcast('reset')
           this.videoContext.play()
           this.InnerAudioContext.stop()
@@ -482,30 +642,37 @@ export default class Example extends wepy.page {
   downTime() {
     let { choiceSeleced } = this
     let { type, answer } = this.questionData
+    console.log(this.time)
     if (this.time >= 1) {
       this.time -= 1
       __timer = setTimeout(() => {
         this.downTime()
       }, 1000)
     } else {
-      if (type == 1) {
-        this.$broadcast('recorderStop')
-      } else {
-        if (type == 3) {
-          this.$broadcast('matchingEnd')
-        }
-        this.updateAnswer({
-          answer: this.anwserStatus == 1 ? true : false
-        })
-        this.showIcon = true
+      if(type == 8) {
+        this.showMutual = false
+        this.videoContext.play()
         this.InnerAudioContext.stop()
-        this.InnerAudioContext.src =
-          this.anwserStatus == 1
-            ? this.learnData.rightAnswerUrl
-            : this.anwserStatus == 2
-            ? this.learnData.errorAnswerUrl
-            : this.learnData.giveupAnswerUrl
-        this.InnerAudioContext.play()
+      } else {
+        if (type == 1) {
+          this.$broadcast('recorderStop')
+        } else {
+          if (type == 3) {
+            this.$broadcast('matchingEnd')
+          }
+          this.updateAnswer({
+            answer: this.anwserStatus == 1 ? true : false
+          })
+          this.showIcon = true
+          this.InnerAudioContext.stop()
+          this.InnerAudioContext.src =
+            this.anwserStatus == 1
+              ? this.learnData.rightAnswerUrl
+              : this.anwserStatus == 2
+              ? this.learnData.errorAnswerUrl
+              : this.learnData.giveupAnswerUrl
+          this.InnerAudioContext.play()
+        }
       }
     }
     this.$apply()
@@ -537,14 +704,17 @@ export default class Example extends wepy.page {
     this.InnerAudioContext.obeyMuteSwitch = false
     this.InnerAudioContext.onPlay(() => {
       this.audioPause = false
+      this.$broadcast('tiankongPause', false)
       this.$apply()
     })
     this.InnerAudioContext.onStop(() => {
       this.audioPause = true
+      this.$broadcast('tiankongPause', true)
       this.$apply()
     })
     this.InnerAudioContext.onEnded(() => {
       this.audioPause = true
+      this.$broadcast('tiankongPause', true)
       this.$apply()
     })
   }
@@ -595,60 +765,122 @@ export default class Example extends wepy.page {
     height: 100vh;
   }
   &-content {
-    padding: 144px 80px 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 144px 24px 60px;
   }
   &-title {
     display: flex;
     align-items: center;
-    margin-bottom: 50px;
+    align-self: flex-start;
+    margin: 0 28px;
     text {
       max-width: 502px;
       font-size: 34px;
-      color: #fff;
+      color: #000000;
       line-height: 46px;
     }
   }
+  &-cover {
+    margin: 0 auto;
+    margin-top: 56px;
+    width: 590px;
+    height: 440px;
+    box-shadow: 0px 6px 0px 0px #fec001;
+    border-radius: 40px;
+    border: 8px solid rgba(255, 255, 255, 1);
+  }
   &-audio {
-    @include bg('/1.8/video/play.gif');
+    @include bg('/1.9/video/sp_icon.png');
     margin-right: 24px;
-    width: 64px;
-    height: 64px;
+    width: 68px;
+    height: 74px;
     &.paused {
-      @include bg('/1.8/video/sp_icon.png');
+      @include bg('/1.9/video/sp_icon.png');
     }
   }
   &-popup {
     position: relative;
     width: 100vw;
-    min-height: 80vh;
-    background: rgba(162, 173, 255, 1);
-    border-radius: 48px 48px 0px 0px;
+    min-height: 100vh;
+    background: #fff7e7;
   }
   &-time {
+    @include flex-center;
     position: absolute;
     left: 50%;
-    top: 0;
-    width: 112px;
-    height: 112px;
-    background: #fff;
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-  }
-  &-circle {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -45%);
+    bottom: 0;
+    width: 170px;
+    height: 58px;
+    background: rgba(0, 0, 0, 1);
+    opacity: 0.3;
+    border-radius: 29px 29px 0px 0px;
+    transform: translateX(-50%);
     &-text {
-      font-size: 48px;
-      color: #ffc001;
+      font-size: 24px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 1);
+      line-height: 48px;
+    }
+    &-num {
+      margin-left: 17px;
+      font-size: 36px;
       font-weight: bold;
+      color: rgba(255, 255, 255, 1);
+      line-height: 48px;
+    }
+  }
+  .judge {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 0 56px;
+    padding-top: 96px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    &-item {
+      box-sizing: border-box;
+      width: 232px;
+      height: 248px;
+      border-radius: 36px;
+      border: 8px solid #fff;
+      &.selected {
+        border-color: #FFC001;
+      }
+      &.success {
+        @include bg('/1.9/video/judge-sucess.png');
+      }
+      &.error {
+        @include bg('/1.9/video/judge-error.png');
+      }
     }
   }
   .choice {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
+    padding: 0 56px;
+    margin-top: 56px;
+    &-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    &-btn {
+      @include flex-center;
+      margin-top: 100px;
+      width:600px;
+      height:98px;
+      background:rgba(255,192,0,1);
+      border-radius:49px;
+      font-size:36px;
+      font-weight:bold;
+      color:rgba(255,255,255,1);
+      &.disabled {
+        background: #C3C3C3;
+      }
+    }
     &-item {
       position: relative;
       box-sizing: border-box;
@@ -656,7 +888,7 @@ export default class Example extends wepy.page {
       margin-bottom: 60px;
       width: 264px;
       height: 264px;
-      box-shadow: 0px 6px 0px 0px rgba(134, 132, 255, 1);
+      box-shadow: 0px 6px 0px 0px rgba(255,192,0,0.6);
       border-radius: 40px;
       border: 8px solid rgba(255, 255, 255, 1);
       overflow: hidden;

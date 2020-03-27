@@ -576,10 +576,10 @@ export default class SubmitHomework extends wepy.page {
       let { _sa } = this.$parent.globalData
       if (num === 1) {
         wx.navigateTo({
-          url: `/pages/study?id=${this.queryInfo.id}&lookback=1`
+          url: `/user/study?id=${this.queryInfo.id}&lookback=1`
         })
       } else {
-        wx.navigateTo({ url: `/pages/test?id=${this.queryInfo.id}&lookback=1` })
+        wx.navigateTo({ url: `/user/test?id=${this.queryInfo.id}&lookback=1` })
       }
       _sa.track('playBack', {
         courseID: lessonDetail.courseID,

@@ -78,9 +78,9 @@ export default class Classroom extends wepy.page {
       let { audioContext, playSound } = this.$parent.globalData
       playSound(audioContext, 1)
       if (this.roomData && this.roomData.stage === 1) {
-        wx.redirectTo({ url: '/pages/study?id=' + this.lessonId })
+        wx.redirectTo({ url: '/user/study?id=' + this.lessonId })
       } else {
-        let url = '/pages/joinRoom?id=' + this.lessonId
+        let url = '/user/joinRoom?id=' + this.lessonId
         wx.redirectTo({ url })
       }
     }

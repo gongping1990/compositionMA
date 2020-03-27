@@ -368,7 +368,7 @@ export default class Lesson extends wepy.page {
         if (!lesson.stage) {
           wx.navigateTo({ url: '/user/classroom?id=' + lesson.lessonId })
         } else if (lesson.stage === 1) {
-          wx.navigateTo({ url: '/pages/study?id=' + lesson.lessonId })
+          wx.navigateTo({ url: '/user/study?id=' + lesson.lessonId })
         }
       } else {
         wx.navigateTo({ url: '/pages/lessonDetail?id=' + lesson.lessonId })
@@ -422,9 +422,9 @@ export default class Lesson extends wepy.page {
             })
           }
         } else if (lesson.stage === 1) {
-          wx.navigateTo({ url: '/pages/study?id=' + lesson.id })
+          wx.navigateTo({ url: '/user/study?id=' + lesson.id })
         } else if (lesson.stage === 2) {
-          wx.navigateTo({ url: '/pages/test?id=' + lesson.id })
+          wx.navigateTo({ url: '/user/test?id=' + lesson.id })
         } else {
           wx.navigateTo({ url: '/user/submitHomework?id=' + lesson.id })
         }
@@ -449,7 +449,7 @@ export default class Lesson extends wepy.page {
         //   })
         //   return
         // }
-        wx.redirectTo({ url: `/pages/writeStudy?id=${lesson.id}` })
+        wx.redirectTo({ url: `/user/writeStudy?id=${lesson.id}` })
       }
     }
   }

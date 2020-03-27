@@ -250,7 +250,6 @@ export default class extends wepy.app {
           'myWorkAll',
           'submitHomework',
           'completionOfWork',
-          'completionOfWorkNew',
           'uploadAudioWork',
           'uploadImgWork',
           'workEvaluation',
@@ -258,7 +257,8 @@ export default class extends wepy.app {
           'learningReport',
           'errorBook',
           'myCardCourse',
-          'workPoster'
+          'workPoster',
+          'cardPoster'
         ]
       },
       {

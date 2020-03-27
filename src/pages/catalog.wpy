@@ -102,7 +102,7 @@ export default class Index extends wepy.page {
     bindClickBtn(lesson) {
       if (!lesson.stage) {
         if (lesson.studyStatus !== 4) {
-          wx.navigateTo({ url: '/pages/classroom?id=' + lesson.lessonId })
+          wx.navigateTo({ url: '/user/classroom?id=' + lesson.lessonId })
         } else {
           wx.showToast({
             title: '课程尚未开始，先看看其他课程吧！', // 提示的内容,
@@ -127,7 +127,7 @@ export default class Index extends wepy.page {
 
   events = {
     'tap-btn' (num) {
-      wx.navigateTo({ url: '/pages/classroom' })
+      wx.navigateTo({ url: '/user/classroom' })
     },
     back() {
       wx.redirectTo({ url: '/pages/index' })

@@ -117,7 +117,7 @@ export default class Example extends wepy.page {
   methods = {
     toLearn() {
       wx.navigateTo({
-        url: `/pages/classroom?id=${this.cardDetail.todayLessonId}`
+        url: `/user/classroom?id=${this.cardDetail.todayLessonId}`
       })
     },
     addMyCard() {

@@ -201,12 +201,10 @@ export default class extends wepy.app {
   config = {
     pages: [
       'pages/index',
-      'pages/demo',
       'pages/detail',
-      'pages/write',
+      'pages/classroom',
       'pages/writeStudy',
       'pages/lesson',
-      'pages/video',
       'pages/lessonDetail',
       'pages/joinRoom',
       'pages/server',
@@ -214,7 +212,6 @@ export default class extends wepy.app {
       'pages/resetPwd',
       'pages/card',
       'pages/catalog',
-      'pages/classroom',
       'pages/ready',
       'pages/study',
       'pages/picture',
@@ -226,8 +223,7 @@ export default class extends wepy.app {
       'pages/authorize',
       'pages/enroll',
       'pages/sharePoster',
-      'pages/result',
-      'pages/writeCatalog'
+      'pages/result'
     ],
     subPackages: [
       {
@@ -235,6 +231,8 @@ export default class extends wepy.app {
         pages: [
           'info',
           'teacher',
+          'video',
+          'writeCatalog',
           'child',
           'gift',
           'giftActive',
@@ -249,7 +247,6 @@ export default class extends wepy.app {
           'myWorkAll',
           'submitHomework',
           'completionOfWork',
-          'completionOfWorkNew',
           'uploadAudioWork',
           'uploadImgWork',
           'workEvaluation',

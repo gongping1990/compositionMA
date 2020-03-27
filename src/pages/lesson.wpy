@@ -366,7 +366,7 @@ export default class Lesson extends wepy.page {
       let lesson = this.learnRemindData
       if (lesson.category == 1) {
         if (!lesson.stage) {
-          wx.navigateTo({ url: '/pages/classroom?id=' + lesson.lessonId })
+          wx.navigateTo({ url: '/user/classroom?id=' + lesson.lessonId })
         } else if (lesson.stage === 1) {
           wx.navigateTo({ url: '/pages/study?id=' + lesson.lessonId })
         }
@@ -412,7 +412,7 @@ export default class Lesson extends wepy.page {
       if (lesson.category == 1) {
         if (!lesson.stage) {
           if (lesson.state !== 4) {
-            wx.navigateTo({ url: '/pages/classroom?id=' + lesson.id })
+            wx.navigateTo({ url: '/user/classroom?id=' + lesson.id })
           } else {
             wx.showToast({
               title: '课程尚未开始，先看看其他课程吧！', // 提示的内容,

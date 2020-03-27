@@ -1,6 +1,6 @@
 <template>
   <view class="container course">
-    <mHeader title="我的课程"></mHeader>
+    <mHeader title="打卡课程"></mHeader>
     <view class="container-scroll" style="margin-top:{{height}}px">
       <view
         class="course-list"
@@ -12,11 +12,8 @@
           <image class="course-cover" src="{{item.coverphoto}}" />
           <view class="course-info">
             <text class="course-title">{{ item.name }}</text>
-            <text class="course-text" wx:if="{{!queryInfo.isErrorBook}}">
-              共{{ item.lessons }}节 | 已学{{ item.studys }}节
-            </text>
-            <text class="course-text" wx:if="{{queryInfo.isErrorBook}}">
-              共{{ item.wrongSubject }}道
+            <text class="course-text">
+              累计打卡{{ item.lessons }}天 | 连续打卡{{ item.studys }}天
             </text>
           </view>
         </view>
@@ -26,18 +23,9 @@
 </template>
 <script>
 import wepy from 'wepy'
-import { connect } from 'wepy-redux'
 import api from '../request/api'
 import mHeader from '../components/header'
 
-@connect({
-  remindData(state) {
-    return state.user.remindData
-  },
-  logined(state) {
-    return state.user.logined
-  }
-})
 export default class Example extends wepy.page {
   config = {
     navigationBarTitleText: '',
@@ -71,20 +59,8 @@ export default class Example extends wepy.page {
 
   methods = {
     toCourseDetail(data) {
-      if (this.logined && !this.remindData.hasChild) {
-        wx.navigateTo({ url: '/user/info' })
-        return
-      }
-      if (data.ruleType === 4) {
-        wx.navigateTo({
-          url: `/user/writeCatalog?id=${data.courseId}`
-        })
-        return
-      }
       wx.navigateTo({
-        url: `/user/${
-          !this.queryInfo.isErrorBook ? 'lesson' : 'errorBook'
-        }?id=${data.courseId}`
+        url: `/pages/card?courseId=${data.courseId}&name=${data.name}`
       })
     }
   }

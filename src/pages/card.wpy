@@ -56,7 +56,7 @@
             <view class="canlendar-control-next" @tap="bindClickNext"></view>
           </view>
         </view>
-        <calendar :card.sync="cardList"></calendar>
+        <calendar :card.sync="cardList" type="1"></calendar>
       </view>
 
       <!--<van-popup show="{{ show }}" bind:close="onClose">-->

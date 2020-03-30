@@ -201,7 +201,7 @@ export default class Matching extends wepy.component {
       box-sizing: border-box;
       width: 220px;
       height: 220px;
-      box-shadow: 0px 6px 0px 0px rgba(134, 132, 255, 1);
+      box-shadow: 0px 6px 0px 0px #FFC000;
       border-radius: 40px;
       border: 8px solid #fff;
       overflow: hidden;

@@ -149,6 +149,7 @@ export default class Drag extends wepy.component {
       let arr = v.filter(e => e.isSelectIndex != undefined)
       let success = true
       if(arr.length != multAnswer.length) return this.$emit('selected', 3)
+      console.log(arr)
       arr.forEach(e => {
         let isHas = multAnswer.indexOf(e.index) != -1
         !isHas && (success = false)
@@ -179,7 +180,7 @@ export default class Drag extends wepy.component {
             e.x = (res[1].width + 10) * i
             break
           case 4:
-            e.x = i % 2 ? center - 16 - res[1].width : center + 16
+            e.x = (i + 1) % 2 ? center - 16 - res[1].width : center + 16
             if (i > 1) {
               e.y = res[0].height + 50 + res[1].height
             }

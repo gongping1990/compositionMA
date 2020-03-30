@@ -291,7 +291,12 @@ export default class Example extends wepy.page {
       let {answerOption} = this.questionData
       this.playSound()
       this.judgeActive = index
-      this.status = answerOption == index ? 1 : 2
+      if(!answerOption) {
+        this.status = 1
+      } else {
+        this.status = answerOption == index ? 1 : 2
+      }
+
       this.time = 0
     },
     // 多选题
@@ -379,7 +384,8 @@ export default class Example extends wepy.page {
     confirm() {
       this.isReset = false
       this.reset()
-      this.videoContext.seek(this.pointData.ctime - 2)
+      this.videoContext.seek(49)
+      // this.videoContext.seek(this.pointData.ctime - 2)
       this.videoContext.play()
       this.showDialog = false
     },

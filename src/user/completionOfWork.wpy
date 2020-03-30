@@ -448,7 +448,7 @@
       },
       openPoster() {
         wx.navigateTo({
-          url: `/pages/sharePoster?id=${this.workDetail.id}`
+          url: `/user/sharePoster?id=${this.workDetail.id}`
         });
       },
       praiseTeacher() {
@@ -619,7 +619,7 @@
     onShareAppMessage(type) {
       return {
         title: this.queryInfo.type === '1' ? `我已坚持学习${this.workDetail.learnDay}天，刚完成今天的作业，请给我点个赞吧` : `快来给@${this.workDetail.nickname}点个赞，TA已坚持学习了${this.workDetail.learnDay}天`,
-        path: `/pages/shareHomework?id=${this.workDetail.id}`,
+        path: `/user/shareHomework?id=${this.workDetail.id}`,
         imageUrl: this.workDetail.homeworkType === 1 ? '' : this.workDetail.workImg[0]
       };
     }

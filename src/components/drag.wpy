@@ -118,11 +118,9 @@ export default class Drag extends wepy.component {
     },
     init() {
       let {questionData} = this
-      console.log(questionData)
       let arr = []
       let length = 0
       if(!(questionData.type == 5 || questionData.type == 6)) return
-      console.log(111)
       length = questionData.type == 5 ? 1 : questionData.multAnswer.length
 
       for (let index = 0; index < length; index++) {
@@ -162,7 +160,6 @@ export default class Drag extends wepy.component {
   computed = {}
   init() {
     let { listData } = this
-    console.log(listData)
     const length = this.listData.length
     const query = wx.createSelectorQuery()
     query.select('#drop').boundingClientRect()

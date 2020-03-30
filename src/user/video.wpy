@@ -337,7 +337,6 @@ export default class Example extends wepy.page {
         name: 'file',
         header: { 'Content-Type': 'multipart/form-data' },
         success: res => {
-          console.log(res)
           if (res.statusCode !== 200) {
             wx.showModal({
               title: '提示',
@@ -664,7 +663,6 @@ export default class Example extends wepy.page {
   downTime() {
     let { choiceSeleced } = this
     let { type, answer } = this.questionData
-    console.log(this.time)
     if (this.time >= 1) {
       this.time -= 1
       __timer = setTimeout(() => {

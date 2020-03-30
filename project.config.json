@@ -189,6 +189,13 @@
 					"pathName": "user/workPoster",
 					"query": "id=1139442555626065921",
 					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "user/learningReport",
+					"pathName": "user/learningReport",
+					"query": "lessonId=1139442555626065921",
+					"scene": null
 				}
 			]
 		}

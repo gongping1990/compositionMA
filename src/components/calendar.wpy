@@ -16,7 +16,7 @@
         {{item}}
       </view>
     </view>
-    <view class="calendar-body">
+    <view class="calendar-body" wx:if="{{type == '1'}}">
       <view class="calendar-day  {{cardList[item.formatDate].lessonSchedul && item.showDate && item.formatDate != today &&'isClass'}}"
             wx:for="{{monthDate}}"
             wx:key="{{item.date}}"
@@ -25,6 +25,16 @@
           {{ item.showDate }}
           <view class="calendar-day-begin"></view>
           <view class="calendar-day-icon"></view>
+        </view>
+      </view>
+    </view>
+    <view class="calendar-body" wx:if="{{type == '2'}}">
+      <view class="calendar-day  {{cardList[item.formatDate].report && item.showDate && item.formatDate != today &&'isClass'}}"
+            wx:for="{{monthDate}}"
+            wx:key="{{item.date}}"
+            @tap="bindClickDay({{item}})">
+        <view class="calendar-day-content {{item.formatDate == today && 'isToday'}}">
+          {{ item.showDate }}
         </view>
       </view>
     </view>
@@ -43,6 +53,10 @@ export default class Example extends wepy.component {
     showHeader: {
       type: Boolean,
       default: false
+    },
+    type: {
+      type: String,
+      default: '1'
     }
   };
   data = {
@@ -64,6 +78,8 @@ export default class Example extends wepy.component {
     bindClickDay (item) {
       this.selectDay = item.formatDate
       this.$emit('select', item)
+      console.log(this.cardList[item.formatDate])
+      this.cardList[item.formatDate] && this.cardList[item.formatDate].report && this.$emit('changeReport', this.cardList[item.formatDate])
     }
   };
   events = {};
@@ -75,7 +91,9 @@ export default class Example extends wepy.component {
         cardObj[e.day] = {
           card: e.card,
           lessonSchedul:e.lessonSchedul,
-          started:e.started
+          started:e.started,
+          report:e.report,
+          lessonId: e.lessonId
         };
       });
       return cardObj

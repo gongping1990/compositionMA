@@ -164,8 +164,8 @@
 				},
 				{
 					"id": 18,
-					"name": "pages/card",
-					"pathName": "pages/card",
+					"name": "user/card",
+					"pathName": "user/card",
 					"query": "courseId=1215894788046995457&name=%E4%B9%90%E5%B0%8F%E7%8B%AE%E5%86%99%E5%AD%97%E8%AF%BE%EF%BC%88%E6%B5%8B%E8%AF%95%EF%BC%89",
 					"scene": null
 				},
@@ -195,6 +195,13 @@
 					"name": "user/learningReport",
 					"pathName": "user/learningReport",
 					"query": "lessonId=1139442555626065921",
+					"scene": null
+				},
+				{
+					"id": 20,
+					"name": "user/cardPoster",
+					"pathName": "user/cardPoster",
+					"query": "id=1134359706941546498",
 					"scene": null
 				}
 			]

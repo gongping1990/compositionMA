@@ -205,7 +205,7 @@
       imgIndex: '',
       today: '',
       isShowImage: false,
-      isShowMore: true,
+      isShowMore: false,
       levelObj: {
         '1': 'https://pub.file.k12.vip/tbzw/1.5/baogao/h1.png',
         '2': 'https://pub.file.k12.vip/tbzw/1.5/baogao/h2.png',
@@ -272,7 +272,7 @@
       },
       toJumpCard() {
         wx.navigateTo({
-          url: `/pages/card`
+          url: `/user/card`
         });
       },
       addMyCard() {

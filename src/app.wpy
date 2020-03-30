@@ -207,15 +207,12 @@ export default class extends wepy.app {
       'pages/server',
       'pages/login',
       'pages/resetPwd',
-      'pages/card',
       'pages/picture',
       'pages/user',
       'pages/praiseOfWorks',
-      'pages/shareHomework',
       'pages/subscribe',
       'pages/authorize',
       'pages/enroll',
-      'pages/sharePoster',
       'pages/result'
     ],
     subPackages: [
@@ -254,7 +251,10 @@ export default class extends wepy.app {
           'errorBook',
           'myCardCourse',
           'workPoster',
-          'cardPoster'
+          'cardPoster',
+          'card',
+          'shareHomework',
+          'sharePoster'
         ]
       },
       {

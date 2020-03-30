@@ -4,11 +4,11 @@
     <view class="container-scroll p-workPoster" style="margin-top:{{height}}px">
       <view class="p-workPoster-top">
         <view class="-top-content">
-          <!--<view class="-top-content-poster">-->
-            <!--<view id='canvas-container' hidden="{{isOpenShareText}}">-->
-              <!--<canvas canvas-id="myCanvas" class="canvas-wrap"></canvas>-->
-            <!--</view>-->
-          <!--</view>-->
+          <view class="-top-content-poster">
+            <view id='canvas-container' hidden="{{isOpenShareText}}">
+              <canvas canvas-id="myCanvas" class="canvas-wrap"></canvas>
+            </view>
+          </view>
         </view>
         <image
           class="-top-logo"
@@ -74,8 +74,6 @@
         lessonId: this.queryInfo.id
       }).then(res => {
         this.shareDetail = res.data.resultData;
-        this.shareDetail.workImg = this.shareDetail.workImgSrc && this.shareDetail.workImgSrc.split(',');
-        this.shareDetail.stuImg = `${wepy.$appConfig.baseUrl}/compositionv2/user/porxyWXheadimg/${this.shareDetail.stuId}`;
         this.copyText = `今天我在乐小狮作文学习了${this.shareDetail.lessonName}，我已坚持学习了${this.shareDetail.learnDay}天，
         每天听北师大老师讲作文，按时完成作业还能获得老师1对1的点评指导。目前已有${this.shareDetail.pv}位家长和孩子在这里学习，快来加入我们一起学习吧！`;
         this.downloadInit();
@@ -95,17 +93,14 @@
         {
           id: 2,
           name: '海报背景',
-          url: this.shareDetail.shareTemplates
+          url: 'https://pub.file.k12.vip/2020/03/30/1244469216779952129.png'
+        },
+        {
+          id: 3,
+          name: '课程封面',
+          url: this.shareDetail.coverphoto
         }
       ];
-
-      this.shareDetail.workImg.forEach((item, index) => {
-        downFileArray.push({
-          id: 3 + index,
-          name: '作业图片' + index + 1,
-          url: item
-        });
-      });
 
       for (let item of downFileArray) {
         if (item.url) {
@@ -148,22 +143,23 @@
     }
 
     sharePosterCanvas(data) {
-      let [headimgurl, shareUrl, workUrl01, workUrl02, workUrl03] = data;
+
+      let [headimgurl, shareUrl, courseImg] = data;
+
       for (let item of data) {
         if (item.id == '1') {
           headimgurl = item.url;
         } else if (item.id == '2') {
           shareUrl = item.url;
         } else if (item.id == '3') {
-          workUrl01 = item.url;
-        } else if (item.id == '4') {
-          workUrl02 = item.url;
-        } else if (item.id == '5') {
-          workUrl03 = item.url;
+          courseImg= item.url;
         }
       }
+
       const ctx = wx.createCanvasContext('myCanvas');
+
       let that = this;
+
       wx.createSelectorQuery().select('#canvas-container').boundingClientRect(function(rect) {
         var height = rect.height;
         var width = rect.width;
@@ -172,10 +168,10 @@
         ctx.drawImage(shareUrl, 0, 0, width, height);
 
         // 绘制头像
-        var avatarurl_width = 24;    // 绘制的头像宽度
-        var avatarurl_heigth = 24;   // 绘制的头像高度
-        var avatarurl_x = 5;   // 绘制的头像在画布上的位置
-        var avatarurl_y = 5;   // 绘制的头像在画布上的位置
+        var avatarurl_width = width*0.13;    // 绘制的头像宽度
+        var avatarurl_heigth = width*0.13;   // 绘制的头像高度
+        var avatarurl_x = width*0.08;   // 绘制的头像在画布上的位置
+        var avatarurl_y = height*0.03;   // 绘制的头像在画布上的位置
         ctx.save();
         ctx.beginPath(); // 开始绘制
         ctx.arc(avatarurl_width / 2 + avatarurl_x, avatarurl_heigth / 2 + avatarurl_y, avatarurl_width / 2, 0, Math.PI * 2, false);
@@ -188,53 +184,44 @@
 
         const contentArray = canvasWorkBreak(140, 14, nickname);
         ctx.setTextAlign('left');
-        ctx.setFillStyle('#000');
+        ctx.setFillStyle('#FFFFFF');
         ctx.setFontSize(12);
         for (let m = 0; m < contentArray.length; m++) {
-          ctx.fillText(contentArray[m], 32, 20);
+          ctx.fillText(contentArray[m], width * 0.24,  height * 0.06);
         }
 
         // 文章名称
-        let textTip = canvasWorkBreak(160, 14, `${that.shareDetail.learnDay}天`);
-        ctx.setTextAlign('left');
-        ctx.setFillStyle('#885F04');
-        ctx.setFontSize(9);
-        for (let m = 0; m < textTip.length; m++) {
-          ctx.fillText(textTip[m], width * 0.216, height * 0.158);
-        }
+        let textTip = canvasWorkBreak(160, 14, `${that.shareDetail.learnDay}`);
+        ctx.setTextAlign('center');
+        ctx.setFillStyle('#FFF10D');
+        ctx.setShadow(0, 6*0.3, 0, '#DEB924')
+        ctx.setFontSize(70*0.3);
+        ctx.fillText(textTip, width * 0.41, height * 0.244);
 
         // 绘制作业图片
-        let displacementWidth01 = '';
-        let jobWidth01 = '';
-        let displacementWidth02 = '';
-        let jobWidth02 = '';
-        let displacementWidth03 = '';
+        ctx.drawImage(courseImg, width*0.17, height * 0.38, width*0.2, height * 0.15);
 
-        if (workUrl01 && !workUrl02 && !workUrl03) {
-          displacementWidth01 = width * 0.37;
-          jobWidth01 = width * 0.28;
-        } else if (workUrl01 && workUrl02 && !workUrl03) {
-          displacementWidth01 = width * 0.16;
-          displacementWidth02 = width * 0.56;
-          jobWidth01 = width * 0.28;
-          jobWidth02 = width * 0.28;
-        } else if (workUrl01 && workUrl02 && workUrl03) {
-          displacementWidth01 = width * 0.11;
-          displacementWidth02 = width * 0.38;
-          displacementWidth03 = width * 0.65;
-          jobWidth01 = width * 0.24;
-          jobWidth02 = width * 0.24;
+        // 课时名称
+        let textTip2 = canvasWorkBreak(110, 12, `${that.shareDetail.lessonName}`);
+        ctx.setTextAlign('left');
+        ctx.setFillStyle('#FE6D0D');
+        ctx.setShadow(0,0,0, '')
+        ctx.setFontSize(12);
+        for (let m = 0; m < textTip2.length; m++) {
+          ctx.fillText(textTip2[m], width*0.43, height * 0.41*(1+m*0.08));
         }
 
-        ctx.drawImage(workUrl01, displacementWidth01, height * 0.47, jobWidth01, height * 0.23);
-
-        if (workUrl02) {
-          ctx.drawImage(workUrl02, displacementWidth02, height * 0.47, jobWidth02, height * 0.23);
+        // 课时简介
+        let textTip3 = canvasWorkBreak(100, 11, `${that.shareDetail.courseName}`);
+        ctx.setTextAlign('left');
+        ctx.setFillStyle('#333333');
+        ctx.setShadow(0,0,0, '')
+        ctx.setFontSize(11);
+        for (let m = 0; m < textTip3.length; m++) {
+          ctx.fillText(textTip3[m], width*0.43, height * 0.49*(1+m*0.07));
         }
+        console.log(textTip3)
 
-        if (workUrl03) {
-          ctx.drawImage(workUrl03, displacementWidth03, height * 0.47, width * 0.24, height * 0.23);
-        }
 
         function canvasWorkBreak(maxWidth, fontSize, text) {
           const maxLength = maxWidth / fontSize;
@@ -259,7 +246,6 @@
     }
 
     saveCanvasImg() {
-      return this.isOpenShareText = true
       let that = this;
       if (that.isFetching) return;
       wx.showLoading({
@@ -275,7 +261,7 @@
             wx.saveImageToPhotosAlbum({
               filePath: tempFilePath,
               success(res) {
-                this.isOpenShareText = true
+                // this.isOpenShareText = true
                 // wx.showModal({
                 //   content: '图片已保存到相册，赶紧晒一下吧~',
                 //   showCancel: false,
@@ -372,14 +358,15 @@
   @import '../assets/style/mixin.scss';
 
   .p-workPoster {
+    padding-top: 55px;
     background-color: #FFCC00;
     &-top {
       position: relative;
       text-align: center;
 
       .-top-content {
-        display: inline-block;
-        margin: 55px auto 14px;
+        @include flex-center;
+        margin: 0 auto 14px;
         /*margin: 0 auto;*/
         width: 480px;
         height: 772px;
@@ -388,14 +375,10 @@
         border-radius: 40px;
 
         &-poster {
-          height: 740px;
-          border: 8px solid rgba(252, 222, 72, 1);
-          margin: 0 32px;
-
           .canvas-wrap {
-            width: 465px;
-            height: 740px;
-            background-color: #fff;
+            width:406px;
+            height:722px;
+            border-radius:40px;
           }
         }
       }

@@ -131,7 +131,7 @@
       </view>
       <view class="p-learningReport-footer">
         <view class="-footer-down">
-          <view class="-footer-downBtn -footer-co" @tap="toJumpCard">
+          <view class="-footer-downBtn -footer-co" @tap="changeMoreStatus">
             <image class="-footer-icon"
                    src="https://pub.file.k12.vip/2020/03/27/1243422422436405250.png"
                    mode="widthFix"></image>
@@ -155,6 +155,26 @@
     <lookImage :isShow.sync="isShowImage" :imgUrl.sync="itemUrl" :index.sync="imgIndex"></lookImage>
 
     <loaded :optionList.sync="flowerOption"></loaded>
+
+    <van-popup show="{{isShowMore}}" class="p-learningReport-calendar">
+      <view class="-calendar-content">
+        <view class="-calendar-content-title">
+          <view class="-pre" @tap="bindClickPre"></view>
+          <text class="-title">{{ today }}</text>
+          <view class="-next" @tap="bindClickNext"></view>
+        </view>
+
+        <calendar class="-calendar-content-body" :card.sync="cardList"  type="2"></calendar>
+      </view>
+
+      <van-icon
+        name="close"
+        class="-calendar-close"
+        color="#fff"
+        size="36px"
+        @click="changeMoreStatus"
+      />
+    </van-popup>
   </view>
 </template>
 
@@ -165,6 +185,7 @@
   import mHeader from '../components/header';
   import lookImage from '../components/lookImage';
   import loaded from '../components/loaded';
+  import calendar from '../components/calendar'
 
   export default class LearningReport extends wepy.page {
     config = {
@@ -179,10 +200,12 @@
       queryInfo: {},
       cardDetail: {},
       itemUrl: [],
+      cardList: [],
       flowerOption: [],
       imgIndex: '',
+      today: '',
       isShowImage: false,
-      isShowFlower: false,
+      isShowMore: true,
       levelObj: {
         '1': 'https://pub.file.k12.vip/tbzw/1.5/baogao/h1.png',
         '2': 'https://pub.file.k12.vip/tbzw/1.5/baogao/h2.png',
@@ -218,9 +241,19 @@
     components = {
       mHeader,
       lookImage,
-      loaded
+      loaded,
+      calendar
     };
     methods = {
+      changeMoreStatus () {
+        this.isShowMore = !this.isShowMore
+      },
+      bindClickPre() {
+        this.$invoke('calendar', 'preMonth')
+      },
+      bindClickNext() {
+        this.$invoke('calendar', 'nextMonth')
+      },
       clickRightBtn() {
         if (this.nowCardNum === 2) {
           wx.navigateTo({
@@ -271,6 +304,13 @@
       },
       changePopupStatus() {
         this.isShowImage = false;
+      },
+      today(date) {
+        this.today = date
+      },
+      changeReport (data) {
+        this.isShowMore= false
+        this.getLearnReport(data)
       }
     };
     watch = {};
@@ -291,6 +331,16 @@
       }
     };
 
+    getCardList () {
+      api.study.listCard({
+        courseId: this.dataInfo.courseId
+      })
+        .then(res => {
+          this.cardList = res.data.resultData
+          this.$apply()
+        })
+    };
+
     getCardInfo() {
       api.study.countCard().then(res => {
         this.cardDetail = res.data.resultData;
@@ -308,14 +358,15 @@
       });
     }
 
-    getLearnReport() {
+    getLearnReport(data) {
       api.study.getLearnReport({
-        lessonId: this.queryInfo.lessonId
+        lessonId: (data && data.lessonId) || this.queryInfo.lessonId
       }).then(({ data }) => {
         this.dataInfo = data.resultData;
         this.dataInfo.keynotes = this.dataInfo.keynotes ? JSON.parse(this.dataInfo.keynotes) : [];
         this.dataInfo.learncontent = this.dataInfo.learncontent && JSON.parse(this.dataInfo.learncontent);
         this.getCardInfo();
+        this.getCardList();
         this.$apply();
         console.log(this.dataInfo, 1);
       });
@@ -757,6 +808,52 @@
           height: 100%;
         }
       }
+    }
+
+    &-calendar {
+
+      .-calendar-content {
+        width: 750px;
+
+        background:rgba(255,255,255,1);
+
+        &-title {
+          @include flex-center;
+          padding: 38px 0 51px;
+
+          .-title {
+            margin: 0 216px;
+            font-size:30px;
+            font-weight:bold;
+            color:rgba(51,51,51,1);
+          }
+          .-pre,
+          .-next {
+            @include bg('/card/button-select.png');
+            background-size: 100%;
+            width: 14px;
+            height: 23px;
+          }
+          .-pre {
+            @include bg('/card/button-select1.png');
+            background-size: 100%;
+          }
+        }
+
+        &-body {
+         .calendar-body {
+           margin-left: 36px;
+         }
+        }
+      }
+
+      .-calendar-close {
+        display: inline-block;
+        width: 100%;
+        margin-top: 70px;
+        text-align: center;
+      }
+
     }
   }
 </style>

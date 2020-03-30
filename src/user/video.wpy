@@ -178,6 +178,16 @@
         <view class="result-icon_cw" wx:if="{{anwserStatus == 2}}"></view>
       </view>
     </van-popup>
+
+    <view
+      class="jh-img {{questionData.gesture == 1 ? 'js' : 'dz'}} {{showMutualImg && 'show'}}"
+    />
+
+    <view
+      class="jh-icon {{questionData.gesture == 1 ? 'js' : 'dz'}}"
+      wx:if="{{showMutual}}"
+      @tap="clickMutual"
+    />
   </view>
 </template>
 <script>
@@ -205,6 +215,7 @@ export default class Example extends wepy.page {
     showIcon: false,
     showBtn: false,
     showMutual: false,
+    showMutualImg: false,
     show: false,
     showDialog: false,
     showBack: false,
@@ -244,6 +255,16 @@ export default class Example extends wepy.page {
     load
   }
   methods = {
+    clickMutual() {
+      this.playSound()
+      if(this.showMutualImg) return
+      this.showMutualImg = true
+      this.playSound(6)
+      setTimeout(() => {
+        this.showMutualImg = false
+        this.$apply()
+      }, 1500);
+    },
     // 答题完成
     answerEnd() {
       this.time = 0
@@ -359,7 +380,8 @@ export default class Example extends wepy.page {
     confirm() {
       this.isReset = false
       this.reset()
-      this.videoContext.seek(this.pointData.ctime - 2)
+      this.videoContext.seek(88)
+      // this.videoContext.seek(this.pointData.ctime - 2)
       this.videoContext.play()
       this.showDialog = false
     },
@@ -543,9 +565,9 @@ export default class Example extends wepy.page {
       return status
     }
   }
-  playSound() {
+  playSound(type) {
     let { audioContext, playSound } = this.$parent.globalData
-    playSound(audioContext, 1)
+    playSound(audioContext, type || 1)
   }
   // 获取关卡内容
   getThreeLearnInfo() {
@@ -744,6 +766,44 @@ export default class Example extends wepy.page {
 }
 
 .video {
+  .jh-icon {
+    position: fixed;
+    right: 46px;
+    bottom: 200px;
+    z-index: 1000;
+    width: 191px;
+    height: 194px;
+    &.js {
+      @include bg('/1.9/video/js.png');
+    }
+    &.dz {
+      @include bg('/1.9/video/dz.png');
+    }
+  }
+  .jh-img {
+    position: fixed;
+    visibility: hidden;
+    left: 50%;
+    top: 40%;
+    z-index: 1000;
+    width: 399px;
+    height: 468px;
+    transform: translate(-50%, -50%);
+    transform-origin: center;
+    &.js {
+      @include bg('/1.9/video/js-img.png');
+      &.show {
+        animation: showJs 1.2s;
+      }
+    }
+    &.dz {
+      @include bg('/1.9/video/dz-img.png');
+      &.show {
+        animation: showDz 1.2s;
+      }
+    }
+  }
+
   .result-icon {
     & > view {
       width: 602px;
@@ -927,6 +987,36 @@ export default class Example extends wepy.page {
         color: #333;
         font-weight: bold;
       }
+    }
+  }
+
+  @keyframes showDz {
+    0% {
+      visibility: visible;
+      transform: rotate(0) translate(-50%, -50%);
+    }
+    60% {
+      visibility: visible;
+      transform: rotate(-20deg) translate(-50%, -50%);
+    }
+    100% {
+      // visibility: hidden;
+      transform: rotate(0) translate(-50%, -50%);
+    }
+  }
+
+  @keyframes showJs {
+    0% {
+      visibility: visible;
+      transform: scale(1) translate(-50%, -50%);
+    }
+    60% {
+      visibility: visible;
+      transform: scale(1.2) translate(-50%, -50%);
+    }
+    100% {
+      visibility: hidden;
+      transform: rotate(0) translate(-50%, -50%);
     }
   }
 }

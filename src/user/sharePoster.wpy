@@ -42,7 +42,7 @@
 
 <script>
   import wepy from 'wepy'
-import api from '../request/api'
+import api from '../request/api/index'
 import mHeader from '../components/header'
 
 export default class SharePoster extends wepy.page {
@@ -378,7 +378,7 @@ export default class SharePoster extends wepy.page {
 </script>
 
 <style lang="scss">
-  @import '../assets/style/mixin.scss';
+  @import '../assets/style/mixin';
 
   .p-sharePoster {
     border-top: 1px solid transparent;

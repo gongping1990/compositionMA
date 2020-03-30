@@ -166,7 +166,7 @@
 <script>
   import wepy from 'wepy'
 import { connect } from 'wepy-redux'
-import api from '../request/api'
+import api from '../request/api/index'
 import dayjs from 'dayjs'
 import getDateDiff from '../utils/getDateDiff'
 import load from '../components/load'
@@ -410,7 +410,7 @@ import login from '../components/login'
     onShareAppMessage() {
       return {
         title: this.shareInfo.self ? `我已坚持学习${this.shareInfo.learnDay}天，刚完成今天的作业，请给我点个赞吧` : `快来给@${this.shareInfo.nickname}点个赞，TA已坚持学习了${this.shareInfo.learnDay}天`,
-        path: `/pages/shareHomework?id=${this.shareInfo.id}`,
+        path: `/user/shareHomework?id=${this.shareInfo.id}`,
         imageUrl: this.shareInfo.homeworkType === 1 ? '' : this.shareInfo.workImg[0]
       }
     }
@@ -418,7 +418,7 @@ import login from '../components/login'
 </script>
 
 <style lang="scss">
-  @import '../assets/style/mixin.scss';
+  @import '../assets/style/mixin';
 
   .p-shareHomework {
     background-color: #f6ba04;

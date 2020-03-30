@@ -51,7 +51,6 @@
 
     methods = {
       closeCopy() {
-        console.log(11)
         this.$emit('closeModalFn');
       },
       copyTextFn() {

@@ -58,7 +58,6 @@ export default class Recorder extends wepy.component {
       RecorderManager.stop()
     },
     reset() {
-      console.log('reset')
       this.type = 0
     }
   }

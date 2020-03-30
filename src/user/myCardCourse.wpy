@@ -60,7 +60,7 @@ export default class Example extends wepy.page {
   methods = {
     toCourseDetail(data) {
       wx.navigateTo({
-        url: `/pages/card?courseId=${data.courseId}&name=${data.name}`
+        url: `/user/card?courseId=${data.courseId}&name=${data.name}`
       })
     }
   }

@@ -272,7 +272,7 @@
       },
       toJumpCard() {
         wx.navigateTo({
-          url: `/pages/card`
+          url: `/user/card`
         });
       },
       addMyCard() {

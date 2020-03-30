@@ -609,7 +609,7 @@ export default class SubmitHomework extends wepy.page {
           break
         case 3:
           wx.navigateTo({
-            url: `/pages/card?courseId=${this.lessonDetail.courseId}&name=${this.lessonDetail.courseName}`
+            url: `/user/card?courseId=${this.lessonDetail.courseId}&name=${this.lessonDetail.courseName}`
           })
           break
       }

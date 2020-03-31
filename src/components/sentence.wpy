@@ -64,6 +64,7 @@ export default class Example extends wepy.component {
       if(v.length == this.questionData.optionList.length) {
         let {answer} = this.questionData
         let str = this.sentenceArr.join(',')
+        console.log(str)
         this.$emit('end', answer == str ? 1 : 2)
       }
     }

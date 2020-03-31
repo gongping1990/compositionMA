@@ -396,7 +396,8 @@ export default class Example extends wepy.page {
     confirm() {
       this.isReset = false
       this.reset()
-      this.videoContext.seek(this.pointData.ctime - 2)
+      this.videoContext.seek(43)
+      // this.videoContext.seek(this.pointData.ctime - 2)
       this.videoContext.play()
       this.showDialog = false
     },
@@ -842,7 +843,7 @@ export default class Example extends wepy.page {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 144px 24px 60px;
+    padding: 144px 24px 100px;
   }
   &-title {
     display: flex;
@@ -877,20 +878,22 @@ export default class Example extends wepy.page {
   &-popup {
     position: relative;
     width: 100vw;
-    min-height: 100vh;
+    height: 100vh;
     background: #fff7e7;
+    overflow-y: auto;
   }
   &-time {
     @include flex-center;
-    position: absolute;
+    position: fixed;
     left: 50%;
     bottom: 0;
     width: 170px;
     height: 58px;
     background: rgba(0, 0, 0, 1);
-    opacity: 0.3;
+    opacity: 0.5;
     border-radius: 29px 29px 0px 0px;
     transform: translateX(-50%);
+    z-index: 100;
     &-text {
       font-size: 24px;
       font-weight: 500;

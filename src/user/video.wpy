@@ -310,11 +310,14 @@ export default class Example extends wepy.page {
       let status = 1
       let selectedArr = this.checkedArr.filter(e => e.selected)
       if(this.checkedEnd) return
-      if(selectedArr.length < 2) wx.showToast({
-        title: '请至少选择两个答案！', //提示的内容,
-        icon: 'none', //图标,
-        mask: true, //显示透明蒙层，防止触摸穿透,
-      });
+      if(selectedArr.length < 2) {
+        wx.showToast({
+          title: '请至少选择两个答案！', //提示的内容,
+          icon: 'none', //图标,
+          mask: true, //显示透明蒙层，防止触摸穿透,
+        });
+        return
+      }
       if(selectedArr.length != multAnswer.length) {
         this.status = 2
       } else {

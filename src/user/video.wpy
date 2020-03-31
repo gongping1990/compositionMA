@@ -310,12 +310,16 @@ export default class Example extends wepy.page {
       let status = 1
       let selectedArr = this.checkedArr.filter(e => e.selected)
       if(this.checkedEnd) return
-      if(selectedArr.length != multAnswer.length) return this.status = 2
+      if(selectedArr.length != multAnswer.length) {
+        this.status = 2
+      } else {
+        selectedArr.forEach(e => {
+          !e.checked && (status = 2)
+        })
+        this.status = status
+      }
 
-      selectedArr.forEach(e => {
-        !e.checked && (status = 2)
-      })
-      this.status = status
+
       this.checkedEnd = true
       this.time = 0
       this.$apply()

@@ -44,6 +44,7 @@
                   wx:for="{{item.flowerTotal}}"
                   wx:for-item="flower"
                   wx:key="{{index}}"
+                  wx:if="{{item.passed}}"
                 >
                   <view
                     class="lessonDetail-item-flower-icon empty"
@@ -232,6 +233,7 @@ export default class Example extends wepy.page {
       display: flex;
       align-items: center;
       flex-wrap: wrap;
+      height: 51px;
       &-icon {
         @include bg('/1.8/lesson/h.png');
         margin-right: 10px;

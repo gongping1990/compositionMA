@@ -384,8 +384,7 @@ export default class Example extends wepy.page {
     confirm() {
       this.isReset = false
       this.reset()
-      this.videoContext.seek(49)
-      // this.videoContext.seek(this.pointData.ctime - 2)
+      this.videoContext.seek(this.pointData.ctime - 2)
       this.videoContext.play()
       this.showDialog = false
     },
@@ -855,7 +854,7 @@ export default class Example extends wepy.page {
     border: 8px solid rgba(255, 255, 255, 1);
   }
   &-audio {
-    @include bg('/1.9/video/sp_icon.png');
+    @include bg('/1.9/video/sp_icon.gif');
     margin-right: 24px;
     width: 68px;
     height: 74px;

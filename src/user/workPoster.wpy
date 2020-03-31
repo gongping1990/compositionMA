@@ -4,11 +4,11 @@
     <view class="container-scroll p-workPoster" style="margin-top:{{height}}px">
       <view class="p-workPoster-top">
         <view class="-top-content">
-          <!--<view class="-top-content-poster">-->
-            <!--<view id='canvas-container' hidden="{{isOpenShareText}}">-->
-              <!--<canvas canvas-id="myCanvas" class="canvas-wrap"></canvas>-->
-            <!--</view>-->
-          <!--</view>-->
+          <view class="-top-content-poster">
+            <view id='canvas-container' hidden="{{isOpenShareText}}">
+              <canvas canvas-id="myCanvas" class="canvas-wrap"></canvas>
+            </view>
+          </view>
         </view>
         <image
           class="-top-logo"
@@ -260,7 +260,6 @@
     }
 
     saveCanvasImg() {
-      return this.isOpenShareText = true
       let that = this;
       if (that.isFetching) return;
       wx.showLoading({
@@ -276,20 +275,7 @@
             wx.saveImageToPhotosAlbum({
               filePath: tempFilePath,
               success(res) {
-                this.isOpenShareText = true
-                // wx.showModal({
-                //   content: '图片已保存到相册，赶紧晒一下吧~',
-                //   showCancel: false,
-                //   confirmText: '好的',
-                //   confirmColor: '#333',
-                //   success: function(res) {
-                //     if (res.confirm) {
-                //     }
-                //   },
-                //   fail: function(res) {
-                //   }
-                // });
-
+                that.isOpenShareText = true
               },
               fail: function(res) {
                 wx.showToast({
@@ -367,14 +353,15 @@
   @import '../assets/style/mixin.scss';
 
   .p-workPoster {
+    padding-top: 55px;
     background-color: #FFCC00;
     &-top {
       position: relative;
       text-align: center;
 
       .-top-content {
-        display: inline-block;
-        margin: 55px auto 14px;
+        @include flex-center;
+        margin: 0 auto 14px;
         /*margin: 0 auto;*/
         width: 480px;
         height: 772px;
@@ -383,14 +370,10 @@
         border-radius: 40px;
 
         &-poster {
-          height: 740px;
-          border: 8px solid rgba(252, 222, 72, 1);
-          margin: 0 32px;
-
           .canvas-wrap {
-            width: 465px;
-            height: 740px;
-            background-color: #fff;
+            width: 406px;
+            height: 722px;
+            border-radius: 40px;
           }
         }
       }

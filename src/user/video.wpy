@@ -396,8 +396,7 @@ export default class Example extends wepy.page {
     confirm() {
       this.isReset = false
       this.reset()
-      this.videoContext.seek(43)
-      // this.videoContext.seek(this.pointData.ctime - 2)
+      this.videoContext.seek(this.pointData.ctime - 2)
       this.videoContext.play()
       this.showDialog = false
     },

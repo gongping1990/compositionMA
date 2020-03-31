@@ -91,7 +91,7 @@ export default class Example extends wepy.component {
         cardObj[e.day] = {
           card: e.card,
           lessonSchedul:e.lessonSchedul,
-          started:e.started,
+          started: item ? false : true,
           report:e.report,
           lessonId: e.lessonId
         };

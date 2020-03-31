@@ -84,7 +84,7 @@ export default class Example extends wepy.page {
       let { audioContext, playSound } = this.$parent.globalData
       let url =
         item.type == 1
-          ? '/pages/picture?id=' + item.id
+          ? '/user/picture?id=' + item.id
           : '/user/video?id=' + item.id
       if (item.passed) {
         url += '&lookback=1'

@@ -46,7 +46,7 @@ export default class Result extends wepy.page {
       let { type } = this.resultData
       playSound(audioContext, 1)
       wx.redirectTo({
-        url: `/pages/${type > 1 ? 'video' : 'picture'}?id=${
+        url: `/user/${type > 1 ? 'video' : 'picture'}?id=${
           this.pointId
         }&lookback=1`
       })
@@ -61,7 +61,7 @@ export default class Result extends wepy.page {
         })
       } else if (hasNext) {
         wx.redirectTo({
-          url: `/pages/${nextType > 1 ? 'video' : 'picture'}?id=${nextPointId}`
+          url: `/user/${nextType > 1 ? 'video' : 'picture'}?id=${nextPointId}`
         })
       } else {
         wx.navigateBack()

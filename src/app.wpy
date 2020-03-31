@@ -207,7 +207,6 @@ export default class extends wepy.app {
       'pages/server',
       'pages/login',
       'pages/resetPwd',
-      'pages/picture',
       'pages/user',
       'pages/praiseOfWorks',
       'pages/subscribe',
@@ -220,6 +219,7 @@ export default class extends wepy.app {
         root: 'user',
         pages: [
           'info',
+          'picture',
           'joinRoom',
           'classroom',
           'ready',

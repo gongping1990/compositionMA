@@ -10,7 +10,7 @@
             </view>
           </view>
         </view>
-        <image
+        <cover-image
           class="-top-logo"
           src="https://pub.file.k12.vip/2020/03/26/1243111455475359746.png"
         />
@@ -298,19 +298,6 @@
               filePath: tempFilePath,
               success(res) {
                 this.isOpenShareText = true
-                // wx.showModal({
-                //   content: '图片已保存到相册，赶紧晒一下吧~',
-                //   showCancel: false,
-                //   confirmText: '好的',
-                //   confirmColor: '#333',
-                //   success: function(res) {
-                //     if (res.confirm) {
-                //     }
-                //   },
-                //   fail: function(res) {
-                //   }
-                // });
-
               },
               fail: function(res) {
                 wx.showToast({

@@ -10,7 +10,8 @@
             </view>
           </view>
         </view>
-        <image
+        <cover-image
+          wx:if="{{!isOpenShareText}}"
           class="-top-logo"
           src="https://pub.file.k12.vip/2020/03/26/1243111455475359746.png"
         />

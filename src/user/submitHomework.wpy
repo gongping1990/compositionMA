@@ -383,7 +383,7 @@ export default class SubmitHomework extends wepy.page {
       '3': 'https://pub.file.k12.vip/tbzw/1.5/baogao/s_3.png'
     },
     cardObj: {
-      '1': 'https://pub.file.k12.vip/2020/03/26/1243011509643911169.png',
+      '1': 'https://pub.file.k12.vip/2020/04/01/1245174625467621377.gif',
       '2': 'https://pub.file.k12.vip/2020/03/26/1243011579806228481.png',
       '3': 'https://pub.file.k12.vip/2020/03/26/1243011643287019521.png'
     },
@@ -445,7 +445,7 @@ export default class SubmitHomework extends wepy.page {
       this.cardDetail = res.data.resultData
       this.cardDetail.time = dayjs(+res.data.timestamp).format('MM月DD日');
 
-      if (this.nowCardNum === 1) {
+      if (this.lessonDetail.canCard && !this.cardDetail.todayCard) {
         this.getSorceByRecordSource();
       } else {
         this.flowerOption = [
@@ -865,7 +865,6 @@ export default class SubmitHomework extends wepy.page {
           display: flex;
           justify-content: space-between;
           align-items: flex-end;
-          transform: translateY(-30px);
         }
 
         .-right-img {

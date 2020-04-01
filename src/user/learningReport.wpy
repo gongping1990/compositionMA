@@ -244,6 +244,23 @@
       loaded,
       calendar
     };
+    computed = {
+      height() {
+        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
+      },
+      nowCardNum() {
+        let num = 0;
+        // console.log(this.dataInfo.cancard, this.cardDetail.todayCard)
+        if (this.dataInfo.cancard && !this.cardDetail.todayCard) {
+          num = 0;
+        } else if (this.dataInfo.cancard && this.cardDetail.todayCard) {
+          num = 1;
+        } else {
+          num = 2;
+        }
+        return num;
+      }
+    };
     methods = {
       changeMoreStatus () {
         this.isShowMore = !this.isShowMore
@@ -314,23 +331,6 @@
       }
     };
     watch = {};
-    computed = {
-      height() {
-        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
-      },
-      nowCardNum() {
-        let num = 0;
-        if (this.dataInfo.canCard && !this.cardDetail.todayCard) {
-          num = 0;
-        } else if (this.dataInfo.canCard && this.cardDetail.todayCard) {
-          num = 1;
-        } else {
-          num = 2;
-        }
-        return num;
-      }
-    };
-
     getCardList () {
       api.study.listCard({
         courseId: this.dataInfo.courseId
@@ -346,7 +346,7 @@
         this.cardDetail = res.data.resultData;
         this.cardDetail.time = dayjs(+res.data.timestamp).format('MM月DD日');
 
-        if (!this.nowCardNum) {
+        if (this.dataInfo.cancard && !this.cardDetail.todayCard) {
           this.getSorceByRecordSource();
         } else {
           this.flowerOption = [
@@ -388,11 +388,10 @@
 
     onLoad(data) {
       this.queryInfo = data;
+      this.getLearnReport();
     }
 
     onShow() {
-      this.getLearnReport();
-
     }
 
     onShareAppMessage() {

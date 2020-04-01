@@ -157,7 +157,7 @@
 
     sharePosterCanvas(data) {
 
-      let [headimgurl, shareUrl, courseImg, icon, code] = data;
+      let [headimgurl, shareUrl, courseImg, icon, codeUrl] = data;
 
       for (let item of data) {
         if (item.id == '1') {
@@ -169,7 +169,7 @@
         } else if (item.id == '4') {
           icon = item.url;
         } else if (item.id == '5') {
-          code = item.url;
+          codeUrl = item.url;
         }
       }
 
@@ -269,7 +269,7 @@
         }
 
         // 二维码
-        ctx.drawImage(code, width * 0.7, height * 0.86, 167 * 0.3, 167 * 0.3);
+        ctx.drawImage(codeUrl, width * 0.7, height * 0.86, 150 * 0.3, 150 * 0.3);
 
         function canvasWorkBreak(maxWidth, fontSize, text) {
           const maxLength = maxWidth / fontSize;

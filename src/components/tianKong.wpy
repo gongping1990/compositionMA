@@ -64,7 +64,7 @@ export default class Tiankong extends wepy.component {
     },
     reset() {
       this.contentArr = []
-      this.selectedValue = '0'
+      this.selectedValue = ''
       this.audioPause = true
       this.selectedIndex = null
     },

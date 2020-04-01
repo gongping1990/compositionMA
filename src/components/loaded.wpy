@@ -61,7 +61,7 @@ export default class Example extends wepy.component {
       setTimeout(() => {
         this.active += 1
         this.downTime()
-      }, 2000)
+      }, 1000)
     } else {
       this.$emit('success')
     }

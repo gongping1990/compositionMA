@@ -276,6 +276,7 @@
               filePath: tempFilePath,
               success(res) {
                 that.isOpenShareText = true
+                that.$apply()
               },
               fail: function(res) {
                 wx.showToast({

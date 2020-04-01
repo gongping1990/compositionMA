@@ -788,10 +788,10 @@ export default class Example extends wepy.page {
     width: 191px;
     height: 194px;
     &.js {
-      @include bg('/1.9/video/js.png');
+      @include bg('/1.9/video/js.gif');
     }
     &.dz {
-      @include bg('/1.9/video/dz.png');
+      @include bg('/1.9/video/dz.gif');
     }
   }
   .jh-img {

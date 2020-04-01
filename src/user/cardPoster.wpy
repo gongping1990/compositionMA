@@ -11,6 +11,7 @@
           </view>
         </view>
         <cover-image
+          wx:if="{{!isOpenShareText}}"
           class="-top-logo"
           src="https://pub.file.k12.vip/2020/03/26/1243111455475359746.png"
         />
@@ -297,7 +298,9 @@
             wx.saveImageToPhotosAlbum({
               filePath: tempFilePath,
               success(res) {
+                console.log('保存成功')
                 that.isOpenShareText = true
+                that.$apply()
               },
               fail: function(res) {
                 wx.showToast({
@@ -305,9 +308,6 @@
                   icon: 'none',
                   duration: 2000
                 });
-              },
-              complete: function(res) {
-                that.$emit('closeSharePage');
               }
             });
           },

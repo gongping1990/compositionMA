@@ -297,7 +297,7 @@
             wx.saveImageToPhotosAlbum({
               filePath: tempFilePath,
               success(res) {
-                this.isOpenShareText = true
+                that.isOpenShareText = true
               },
               fail: function(res) {
                 wx.showToast({

@@ -1,7 +1,7 @@
 <!-- 辅导老师列表 -->
 <template>
   <view class='container p-learningReport'>
-    <mHeader title="学情报告"></mHeader>
+    <mHeader title="学情报告" flag="4"></mHeader>
     <view class="container-scroll" style="margin-top:{{height}}px">
       <view class="p-learningReport-list">
         <view class="-list-1"></view>
@@ -292,31 +292,17 @@
           url: `/user/card`
         });
       },
-      addMyCard() {
-        let { _sa } = this.$parent.globalData;
-        api.study.addCard({
-          lessonId: this.queryInfo.lessonId
-        }).then(({ data }) => {
-          // this.cardDetail.continuousdays = data.resultData.continuousdays;
-          // this.cardDetail.totaldays = data.resultData.totaldays;
-          this.$invoke('loaded', 'downTime')
-          // this.getCardInfo();
-          this.$apply();
-          _sa.track('courseClockRecord', {
-            courseID: this.dataInfo.courseId,
-            courseTitle: this.dataInfo.courseName,
-            isSuccess: true,
-            classID: this.dataInfo.lessonId,
-            className: this.dataInfo.lessonName,
-            classType: this.dataInfo.category
-          });
-        });
-      }
+
     };
     events = {
       success() {
         wx.navigateTo({
           url: `/user/cardPoster?id=${this.queryInfo.lessonId}&type=2`
+        });
+      },
+      back() {
+        wx.navigateTo({
+          url: `/user/submitHomework?id=${this.queryInfo.lessonId}`
         });
       },
       changePopupStatus() {
@@ -331,6 +317,27 @@
       }
     };
     watch = {};
+    addMyCard() {
+      let { _sa } = this.$parent.globalData;
+      api.study.addCard({
+        lessonId: this.queryInfo.lessonId
+      }).then(({ data }) => {
+        // this.cardDetail.continuousdays = data.resultData.continuousdays;
+        // this.cardDetail.totaldays = data.resultData.totaldays;
+        this.$invoke('loaded', 'downTime')
+        // this.getCardInfo();
+        this.$apply();
+        _sa.track('courseClockRecord', {
+          courseID: this.dataInfo.courseId,
+          courseTitle: this.dataInfo.courseName,
+          isSuccess: true,
+          classID: this.dataInfo.lessonId,
+          className: this.dataInfo.lessonName,
+          classType: this.dataInfo.category
+        });
+      });
+    }
+
     getCardList () {
       api.study.listCard({
         courseId: this.dataInfo.courseId

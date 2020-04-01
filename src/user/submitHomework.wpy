@@ -151,7 +151,7 @@
         <!--<view class="-no-card" @tap="addMyCard"-->
         <!--wx:if="{{!cardDetail.todayCard && cardDetail.todayLearned && lessonDetail.canCard}}"></view>-->
         <!--</view>-->
-        <view class="p-submitHomework-card" @tap="toJump">
+        <view class="p-submitHomework-card" @tap="toJump"  wx:if="{{tabActive === '1'}}">
           <image
             class="-card-img"
             src="{{levelObj[lessonDetail.level]}}"

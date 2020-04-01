@@ -144,7 +144,7 @@
       }).then(({ data }) => {
         this.flowerInfo = data.resultData;
         this.flowerOption.flowerNum = this.flowerInfo.count;
-        this.flowerOption.path = `/literacy/l_submitHomework?id=${this.queryInfo.id}`;
+        this.flowerOption.path = `/literacy/l_submitHomework?id=${this.queryInfo.id}&isFromUploadWork=4`;
         this.$apply();
       });
     }

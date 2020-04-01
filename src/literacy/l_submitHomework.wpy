@@ -1,6 +1,6 @@
 <template>
   <view class="container">
-    <mHeader title="课后作业" flag="4"></mHeader>
+    <mHeader title="课后作业" :flag.sync="queryInfo.isFromUploadWork || '1'"></mHeader>
     <view class="container-scroll p-l_submitHomework"
           style="margin-top:{{height}}px">
       <form
@@ -261,13 +261,23 @@
         this.getAudio(6);
       },
       back () {
-        wx.redirectTo({
-          url: `/pages/lessonDetail?id=${this.queryInfo.id}`
-        });
+        console.log(this.queryInfo.isFromUploadWork,'触发')
+        if (this.queryInfo.isFromUploadWork == '4') {
+          console.log('22')
+          // wx.redirectTo({
+          //   url: `/pages/lessonDetail?id=${this.queryInfo.id}`
+          // });
+          wx.navigateBack({
+            delta: 1
+          })
+        } else {
+          console.log('33')
+        }
       }
     };
 
     onLoad(query) {
+      console.log(this.queryInfo,11)
       this.queryInfo = query;
     }
 

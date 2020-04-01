@@ -56,7 +56,6 @@
           scroll-y
           scroll-with-animation
           scroll-into-view="{{scrollView}}"
-          @scroll="onScroll"
         >
           <view class="lesson-scroll-empty" wx:if="{{isEmpty}}">
             <image

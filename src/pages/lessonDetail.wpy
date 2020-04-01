@@ -39,12 +39,11 @@
             <image src="{{item.icon}}" class="lessonDetail-item-cover" />
             <view class="lessonDetail-item-content">
               <view class="lessonDetail-item-title">{{ item.name }}</view>
-              <view class="lessonDetail-item-flower">
+              <view class="lessonDetail-item-flower"  wx:if="{{item.passed}}">
                 <view
                   wx:for="{{item.flowerTotal}}"
                   wx:for-item="flower"
                   wx:key="{{index}}"
-                  wx:if="{{item.passed}}"
                 >
                   <view
                     class="lessonDetail-item-flower-icon empty"

@@ -4,7 +4,7 @@
 		"ignore": []
 	},
 	"setting": {
-		"urlCheck": true,
+		"urlCheck": false,
 		"es6": true,
 		"enhance": true,
 		"postcss": false,
@@ -201,7 +201,7 @@
 					"id": 20,
 					"name": "user/cardPoster",
 					"pathName": "user/cardPoster",
-					"query": "id=1134359706941546498",
+					"query": "id=1174867249594982402&type=2",
 					"scene": null
 				},
 				{

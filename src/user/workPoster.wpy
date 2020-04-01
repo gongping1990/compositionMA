@@ -1,6 +1,6 @@
 <template>
   <view class="container">
-    <mHeader title="作业海报" flag="4"></mHeader>
+    <mHeader title="作业海报"></mHeader>
     <view class="container-scroll p-workPoster" style="margin-top:{{height}}px">
       <view class="p-workPoster-top">
         <view class="-top-content">
@@ -330,11 +330,11 @@
         this.isOpenShareText = false;
         this.$apply()
       },
-      back() {
-        wx.navigateTo({
-          url: `/user/completionOfWork?type=1&id=${this.queryInfo.id}&isPlayAudio=${this.queryInfo.isFirstUpload}`
-        })
-      }
+      // back() {
+      //   wx.navigateTo({
+      //     url: `/user/completionOfWork?type=1&id=${this.queryInfo.id}&isPlayAudio=${this.queryInfo.isFirstUpload}`
+      //   })
+      // }
     };
 
     onLoad(query) {

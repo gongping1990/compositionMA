@@ -261,7 +261,7 @@
         this.getAudio(6);
       },
       back () {
-        wx.navigateTo({
+        wx.redirectTo({
           url: `/pages/lessonDetail?id=${this.queryInfo.id}`
         });
       }

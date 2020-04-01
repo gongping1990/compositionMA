@@ -18,7 +18,7 @@
             <view class="-item-text">连续打卡</view>
           </view>
           <view class="-headerDown-item">
-            <view class="-item-num">{{cardDetail.totalLearnDays || 0}}</view>
+            <view class="-item-num">{{cardDetail.longerContinueCard || 0}}</view>
             <view class="-item-text">最长连续打卡</view>
           </view>
         </view>

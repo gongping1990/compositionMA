@@ -628,11 +628,11 @@ export default class Home extends wepy.page {
       })
       .then(({ data }) => {
         this.systemConfig = data.resultData
-        if (data.resultData.param == '0') {
+        if (data.resultData.param == '1') {
           wx.redirectTo({ url: '/pages/detail' })
           return
         }
-        if (!this.logined && data.resultData.param == '1') {
+        if (!this.logined && data.resultData.param == '0') {
           this.initWelcome()
         }
       })

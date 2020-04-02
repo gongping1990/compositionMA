@@ -207,15 +207,11 @@ export default class extends wepy.app {
       'pages/server',
       'pages/login',
       'pages/resetPwd',
-      'pages/card',
-      'pages/picture',
       'pages/user',
       'pages/praiseOfWorks',
-      'pages/shareHomework',
       'pages/subscribe',
       'pages/authorize',
       'pages/enroll',
-      'pages/sharePoster',
       'pages/result'
     ],
     subPackages: [
@@ -223,6 +219,7 @@ export default class extends wepy.app {
         root: 'user',
         pages: [
           'info',
+          'picture',
           'joinRoom',
           'classroom',
           'ready',
@@ -253,7 +250,11 @@ export default class extends wepy.app {
           'learningReport',
           'errorBook',
           'myCardCourse',
-          'workPoster'
+          'workPoster',
+          'cardPoster',
+          'card',
+          'shareHomework',
+          'sharePoster'
         ]
       },
       {
@@ -269,7 +270,7 @@ export default class extends wepy.app {
     window: {
       backgroundTextStyle: 'light',
       navigationBarBackgroundColor: '#fff',
-      navigationBarTitleText: 'WeChat',
+      navigationBarTitleText: '乐小狮大语文',
       navigationBarTextStyle: 'black',
       navigationStyle: 'custom'
     }

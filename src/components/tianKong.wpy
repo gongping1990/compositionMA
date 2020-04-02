@@ -6,12 +6,15 @@
         class="tiankong-audio {{audioPause && 'paused'}}"
         @tap="resetAudio"
       ></view>
-      <block
-        wx:for="{{contentArr}}"
-        wx:key="{{index}}">
-        <text wx:if="{{!item.isUnderline}}">{{item.text}}</text>
-        <text class="underline" style="width: {{maxLength * 50}}rpx" wx:else><text class="{{selectedValue != '0' && 'show'}}">{{selectedValue}}</text></text>
-      </block>
+      <view class="tiankong-text">
+        <block
+          wx:for="{{contentArr}}"
+          wx:key="{{index}}">
+          <text wx:if="{{!item.isUnderline}}">{{item.text}}</text>
+          <text class="underline" wx:else><text class="{{selectedValue && 'show'}}">{{selectedValue || initValue}}</text></text>
+        </block>
+      </view>
+
 
     </view>
     <image wx:if="{{questionData.subjectImg}}" class="tiankong-cover" mode="widthFix" src="{{questionData.subjectImg}}" />
@@ -38,7 +41,8 @@ export default class Tiankong extends wepy.component {
   data = {
     audioPause: true,
     selectedIndex: null,
-    selectedValue: '0',
+    initValue: '11111111111',
+    selectedValue: '',
     contentArr: []
   }
   components = {}
@@ -60,7 +64,7 @@ export default class Tiankong extends wepy.component {
     },
     reset() {
       this.contentArr = []
-      this.selectedValue = '0'
+      this.selectedValue = ''
       this.audioPause = true
       this.selectedIndex = null
     },
@@ -86,6 +90,7 @@ export default class Tiankong extends wepy.component {
     let positions = new Array();
     let pos = stringValue.indexOf("[##]");
 
+
     while(pos > -1){
       pos && positions.push({isUnderline: false, text: stringValue.slice(0, pos)});
       positions.push({isUnderline: true, text: '0'})
@@ -106,6 +111,9 @@ export default class Tiankong extends wepy.component {
   box-sizing: border-box;
   padding: 0 56px;
   width: 100%;
+  &-text {
+    width: 500px;
+  }
   &-title {
     display: flex;
     align-items: center;

@@ -56,7 +56,6 @@
           scroll-y
           scroll-with-animation
           scroll-into-view="{{scrollView}}"
-          @scroll="onScroll"
         >
           <view class="lesson-scroll-empty" wx:if="{{isEmpty}}">
             <image
@@ -125,13 +124,15 @@
         <view
           class="lesson-msg {{showMsg && 'show'}}"
           wx:if="{{learnRemindData.lessonId}}"
+          @tap="clickMsgIcon"
         >
-          <view class="lesson-msg-icon" @tap="clickMsgIcon"></view>
+          <view class="lesson-msg-icon"></view>
           <view class="lesson-msg-content">
             <view class="lesson-msg-text">
               {{ formatTime }}的课程你忘记学习咯
             </view>
-            <view class="lesson-msg-btn" @tap="clickContinueLearn">去学习</view>
+            <view class="lesson-msg-btn" catchtap="clickContinueLearn">去学习</view>
+            <view class="lesson-msg-arrow"></view>
           </view>
         </view>
       </view>
@@ -897,13 +898,14 @@ export default class Lesson extends wepy.page {
     }
   }
   &-msg {
+
     position: fixed;
     box-sizing: border-box;
-    padding-left: 110px;
+    padding-left: 98px;
     right: 32px;
     bottom: 140px;
-    width: 112px;
-    height: 110px;
+    width: 100px;
+    height: 100px;
     background: rgba(255, 255, 255, 1);
     box-shadow: 0px 0px 60px 0px rgba(206, 210, 218, 1);
     border-radius: 55px;
@@ -918,20 +920,20 @@ export default class Lesson extends wepy.page {
       align-items: center;
       justify-content: space-between;
       box-sizing: border-box;
-      padding-right: 27px;
-      width: 560px;
-      height: 110px;
-      margin-left: 19px;
+      padding-right: 20px;
+      width: 100%;
+      height: 100%;
     }
     &-icon {
-      @include bg('/1.8/lesson/tx.png');
+      @include bg('/1.9/tx.png');
       position: absolute;
-      left: 5px;
-      top: 4px;
-      width: 102px;
-      height: 102px;
+      left: 10px;
+      top: 10px;
+      width: 80px;
+      height: 80px;
     }
     &-text {
+      @include text-overflow(380px);
       font-size: 28px;
       color: #333;
       font-weight: 500;
@@ -945,6 +947,11 @@ export default class Lesson extends wepy.page {
       font-size: 28px;
       color: #fff;
       font-weight: 500;
+    }
+    &-arrow {
+      width: 21px;
+      height: 38px;
+      @include bg('/1.9/arrow.png');
     }
   }
   ._listen {

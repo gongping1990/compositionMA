@@ -151,7 +151,7 @@
         <!--<view class="-no-card" @tap="addMyCard"-->
         <!--wx:if="{{!cardDetail.todayCard && cardDetail.todayLearned && lessonDetail.canCard}}"></view>-->
         <!--</view>-->
-        <view class="p-submitHomework-card" @tap="toJump">
+        <view class="p-submitHomework-card" @tap="toJump"  wx:if="{{tabActive === '1'}}">
           <image
             class="-card-img"
             src="{{levelObj[lessonDetail.level]}}"
@@ -314,6 +314,8 @@
     <ConfirmModal :isShow.sync="isShowConfirm"
                   contentText="重新提交作业成功后，将会覆盖上次的内容，确定重交？"
                   okText="确认"></ConfirmModal>
+
+    <loaded :optionList.sync="flowerOption"></loaded>
   </view>
 </template>
 
@@ -329,6 +331,7 @@ import load from '../components/load'
 import lookImage from '../components/lookImage'
 import workPageTip from '../components/workPageTip'
 import ConfirmModal from '../components/confirmModal';
+import loaded from '../components/loaded';
 
 @connect({
   userInfo(state) {
@@ -348,7 +351,8 @@ export default class SubmitHomework extends wepy.page {
     lookImage,
     workPageTip,
     load,
-    ConfirmModal
+    ConfirmModal,
+    loaded
   }
   computed = {
     height() {
@@ -379,7 +383,7 @@ export default class SubmitHomework extends wepy.page {
       '3': 'https://pub.file.k12.vip/tbzw/1.5/baogao/s_3.png'
     },
     cardObj: {
-      '1': 'https://pub.file.k12.vip/2020/03/26/1243011509643911169.png',
+      '1': 'https://pub.file.k12.vip/2020/04/01/1245174625467621377.gif',
       '2': 'https://pub.file.k12.vip/2020/03/26/1243011579806228481.png',
       '3': 'https://pub.file.k12.vip/2020/03/26/1243011643287019521.png'
     },
@@ -387,6 +391,7 @@ export default class SubmitHomework extends wepy.page {
     backgroundY: 0,
     tabActive: '1',
     itemUrl: [],
+    flowerOption: [],
     imgIndex: '',
     isSuccessWork: false,
     isFetching: false,
@@ -430,6 +435,7 @@ export default class SubmitHomework extends wepy.page {
         this.lessonDetail = res.data.resultData
         this.isShowHelpTip = this.lessonDetail.remindSubmit
         this.isShowHelpTip && this.getAudio(5)
+        this.getCardInfo()
         this.$apply()
       })
   }
@@ -437,7 +443,16 @@ export default class SubmitHomework extends wepy.page {
   getCardInfo() {
     api.study.countCard().then(res => {
       this.cardDetail = res.data.resultData
-      this.cardDetail.time = dayjs(+res.data.timestamp).format('YYYY-MM-DD')
+      this.cardDetail.time = dayjs(+res.data.timestamp).format('MM月DD日');
+
+      if (this.lessonDetail.canCard && !this.cardDetail.todayCard) {
+        this.getSorceByRecordSource();
+      } else {
+        this.flowerOption = [
+          `${this.cardDetail.time}打卡成功`,
+          `制作精美打卡海报`
+        ];
+      }
       this.$apply()
     })
   }
@@ -548,12 +563,29 @@ export default class SubmitHomework extends wepy.page {
     return result
   }
 
+  getSorceByRecordSource() {
+    api.center.getSorceByRecordSource({
+      lessonId: this.queryInfo.id,
+      source: 2
+    }).then(({ data }) => {
+      this.flowerOption = [
+        `${this.cardDetail.time}打卡成功`,
+        `获得${data.resultData.count}朵小红花`,
+        `制作精美打卡海报`
+      ];
+      this.$apply();
+    });
+  }
+
   addMyCard() {
     let { _sa } = this.$parent.globalData
-    api.study.addCard().then(({ data }) => {
+    api.study.addCard({
+      lessonId: this.queryInfo.id
+    }).then(({ data }) => {
       // this.cardDetail.continuousdays = data.resultData.continuousdays;
       // this.cardDetail.totaldays = data.resultData.totaldays;
       // this.isShowFlower = true;
+      this.$invoke('loaded', 'downTime')
       // this.$apply();
       _sa.track('courseClockRecord', {
         courseID: this.lessonDetail.courseId,
@@ -570,13 +602,14 @@ export default class SubmitHomework extends wepy.page {
     toJumpCard () {
       switch (this.nowCardNum) {
         case 1:
-          this.addCard()
+          this.addMyCard()
           break
         case 2:
+          this.$invoke('loaded', 'downTime')
           break
         case 3:
           wx.navigateTo({
-            url: `/pages/card?courseId=${this.lessonDetail.courseId}&name=${this.lessonDetail.courseName}`
+            url: `/user/card?courseId=${this.lessonDetail.courseId}&name=${this.lessonDetail.courseName}`
           })
           break
       }
@@ -730,6 +763,11 @@ export default class SubmitHomework extends wepy.page {
   }
 
   events = {
+    success() {
+      wx.navigateTo({
+        url: `/user/cardPoster?id=${this.queryInfo.id}&type=1`
+      });
+    },
     changePopupStatus() {
       this.isShowImage = false
       this.isShowHelpTip = false
@@ -766,7 +804,7 @@ export default class SubmitHomework extends wepy.page {
 
   onShow() {
     this.getLessonInfo()
-    this.getCardInfo()
+
 
     if (this.tabActive === '1') {
       this.getMyHomework()
@@ -827,7 +865,6 @@ export default class SubmitHomework extends wepy.page {
           display: flex;
           justify-content: space-between;
           align-items: flex-end;
-          transform: translateY(-30px);
         }
 
         .-right-img {
@@ -1220,7 +1257,7 @@ export default class SubmitHomework extends wepy.page {
     right: 44px;
     width: 199px;
     height: 161px;
-    /*z-index: 9999;*/
+    z-index: 2;
 
     .-yes-card {
       background: url('https://pub.file.k12.vip/2019/09/19/1174615812725411842.png');

@@ -13,7 +13,7 @@
           <view class="course-info">
             <text class="course-title">{{ item.name }}</text>
             <text class="course-text">
-              累计打卡{{ item.lessons }}天 | 连续打卡{{ item.studys }}天
+              累计打卡{{ item.totalCard }}天 | 连续打卡{{ item.continueCard }}天
             </text>
           </view>
         </view>
@@ -60,7 +60,7 @@ export default class Example extends wepy.page {
   methods = {
     toCourseDetail(data) {
       wx.navigateTo({
-        url: `/pages/card?courseId=${data.courseId}&name=${data.name}`
+        url: `/user/card?courseId=${data.courseId}&name=${data.name}`
       })
     }
   }

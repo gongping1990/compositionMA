@@ -1,7 +1,7 @@
 <!-- 辅导老师列表 -->
 <template>
   <view class='container p-learningReport'>
-    <mHeader title="学情报告"></mHeader>
+    <mHeader title="学情报告" flag="4"></mHeader>
     <view class="container-scroll" style="margin-top:{{height}}px">
       <view class="p-learningReport-list">
         <view class="-list-1"></view>
@@ -53,7 +53,8 @@
                 <image class="-item-imgTwo"
                        src="https://pub.file.k12.vip/tbzw/1.5/new/xhh.png"
                        mode="widthFix"></image>
-                <view class="-item-num">X<text class="-item-numTwo">{{item.correct}}</text>
+                <view class="-item-num">X
+                  <text class="-item-numTwo">{{item.correct}}</text>
                 </view>
               </view>
               <image class="-item-imgThree"
@@ -130,20 +131,50 @@
       </view>
       <view class="p-learningReport-footer">
         <view class="-footer-down">
-          <view class="-footer-downBtn -footer-co"
-                wx:if="{{cardDetail.todayCard || !cardDetail.todayLearned || !dataInfo.cancard}}"
-                @tap="toJumpCard">打卡记录
+          <view class="-footer-downBtn -footer-co" @tap="changeMoreStatus">
+            <image class="-footer-icon"
+                   src="https://pub.file.k12.vip/2020/03/27/1243422422436405250.png"
+                   mode="widthFix"></image>
+            更多学习报告
           </view>
-          <view class="-footer-downBtn -footer-co"
-                wx:if="{{!cardDetail.todayCard && cardDetail.todayLearned && dataInfo.cancard}}"
-                @tap="addMyCard">去打卡
+          <!--<view class="-footer-downBtn -footer-co"-->
+          <!--wx:if="{{cardDetail.todayCard || !cardDetail.todayLearned || !dataInfo.cancard}}"-->
+          <!--@tap="toJumpCard">打卡记录-->
+          <!--</view>-->
+          <view class="-footer-downBtn -footer-ct"
+                @tap="clickRightBtn">
+            <image class="-footer-icon"
+                   src="{{btnTextArray[nowCardNum].url}}"
+                   mode="widthFix"></image>
+            {{btnTextArray[nowCardNum].name}}
           </view>
-          <!--<button class="-footer-downBtn -footer-ct" open-type="share">分享</button>-->
         </view>
       </view>
     </view>
-    <successFlowerTemplate :isShow.sync="isShowFlower" :option.sync="flowerOption"></successFlowerTemplate>
+
     <lookImage :isShow.sync="isShowImage" :imgUrl.sync="itemUrl" :index.sync="imgIndex"></lookImage>
+
+    <loaded :optionList.sync="flowerOption"></loaded>
+
+    <van-popup show="{{isShowMore}}" class="p-learningReport-calendar">
+      <view class="-calendar-content">
+        <view class="-calendar-content-title">
+          <view class="-pre" @tap="bindClickPre"></view>
+          <text class="-title">{{ today }}</text>
+          <view class="-next" @tap="bindClickNext"></view>
+        </view>
+
+        <calendar class="-calendar-content-body" :card.sync="cardList"  type="2"></calendar>
+      </view>
+
+      <van-icon
+        name="close"
+        class="-calendar-close"
+        color="#fff"
+        size="36px"
+        @click="changeMoreStatus"
+      />
+    </van-popup>
   </view>
 </template>
 
@@ -152,8 +183,9 @@
   import api from '../request/api';
   import dayjs from 'dayjs';
   import mHeader from '../components/header';
-  import successFlowerTemplate from '../components/successFlowerTemplate';
   import lookImage from '../components/lookImage';
+  import loaded from '../components/loaded';
+  import calendar from '../components/calendar'
 
   export default class LearningReport extends wepy.page {
     config = {
@@ -164,19 +196,16 @@
       }
     };
     data = {
-      flowerOption: {
-        oneText: '完成上课和随堂练习',
-        flowerNum: 0,
-        twoText: '赶快去完成课后作业吧',
-        path: ''
-      },
       dataInfo: {},
       queryInfo: {},
       cardDetail: {},
       itemUrl: [],
+      cardList: [],
+      flowerOption: [],
       imgIndex: '',
+      today: '',
       isShowImage: false,
-      isShowFlower: false,
+      isShowMore: false,
       levelObj: {
         '1': 'https://pub.file.k12.vip/tbzw/1.5/baogao/h1.png',
         '2': 'https://pub.file.k12.vip/tbzw/1.5/baogao/h2.png',
@@ -187,6 +216,20 @@
         '2': 'https://pub.file.k12.vip/tbzw/1.5/baogao/x_h2.png',
         '3': 'https://pub.file.k12.vip/tbzw/1.5/baogao/x_h3.png'
       },
+      btnTextArray: [
+        {
+          url: 'https://pub.file.k12.vip/2020/03/27/1243425563684888577.png',
+          name: '去打卡'
+        },
+        {
+          url: 'https://pub.file.k12.vip/2020/03/27/1243425563684888577.png',
+          name: '重新打卡'
+        },
+        {
+          url: 'https://pub.file.k12.vip/2020/03/27/1243425413847572481.png',
+          name: '分享到朋友圈'
+        }
+      ],
       swiperOptions: {
         indicatorDots: true,
         indicatorActiveColor: '#FFDBA9',
@@ -197,10 +240,48 @@
     };
     components = {
       mHeader,
-      successFlowerTemplate,
-      lookImage
+      lookImage,
+      loaded,
+      calendar
+    };
+    computed = {
+      height() {
+        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
+      },
+      nowCardNum() {
+        let num = 0;
+        // console.log(this.dataInfo.cancard, this.cardDetail.todayCard)
+        if (this.dataInfo.cancard && !this.cardDetail.todayCard) {
+          num = 0;
+        } else if (this.dataInfo.cancard && this.cardDetail.todayCard) {
+          num = 1;
+        } else {
+          num = 2;
+        }
+        return num;
+      }
     };
     methods = {
+      changeMoreStatus () {
+        this.isShowMore = !this.isShowMore
+      },
+      bindClickPre() {
+        this.$invoke('calendar', 'preMonth')
+      },
+      bindClickNext() {
+        this.$invoke('calendar', 'nextMonth')
+      },
+      clickRightBtn() {
+        if (this.nowCardNum === 2) {
+          wx.navigateTo({
+            url: `/user/cardPoster?id=${this.queryInfo.lessonId}`
+          });
+        } else if (this.nowCardNum === 1) {
+          this.$invoke('loaded', 'downTime')
+        } else {
+          this.addMyCard()
+        }
+      },
       enlargeImage(idx, list) {
         this.imgIndex = idx;
         this.itemUrl = list;
@@ -208,57 +289,91 @@
       },
       toJumpCard() {
         wx.navigateTo({
-          url: `/pages/card`
+          url: `/user/card`
         });
       },
-      addMyCard() {
-        let { _sa } = this.$parent.globalData
-        api.study.addCard().then(({ data }) => {
-          this.cardDetail.continuousdays = data.resultData.continuousdays;
-          this.cardDetail.totaldays = data.resultData.totaldays;
-          this.isShowFlower = true;
-          this.getCardInfo();
-          this.$apply();
-          _sa.track('courseClockRecord', {
-            courseID: this.dataInfo.courseId,
-            courseTitle: this.dataInfo.courseName,
-            isSuccess: true,
-            classID: this.dataInfo.lessonId,
-            className: this.dataInfo.lessonName,
-            classType: this.dataInfo.category
-          })
-        });
-      }
+
     };
     events = {
+      success() {
+        wx.navigateTo({
+          url: `/user/cardPoster?id=${this.queryInfo.lessonId}&type=2`
+        });
+      },
+      back() {
+        wx.navigateTo({
+          url: `/user/submitHomework?id=${this.queryInfo.lessonId}`
+        });
+      },
       changePopupStatus() {
         this.isShowImage = false;
+      },
+      today(date) {
+        this.today = date
+      },
+      changeReport (data) {
+        this.isShowMore= false
+        this.getLearnReport(data)
       }
     };
     watch = {};
-    computed = {
-      height() {
-        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
-      }
+    addMyCard() {
+      let { _sa } = this.$parent.globalData;
+      api.study.addCard({
+        lessonId: this.queryInfo.lessonId
+      }).then(({ data }) => {
+        // this.cardDetail.continuousdays = data.resultData.continuousdays;
+        // this.cardDetail.totaldays = data.resultData.totaldays;
+        this.$invoke('loaded', 'downTime')
+        // this.getCardInfo();
+        this.$apply();
+        _sa.track('courseClockRecord', {
+          courseID: this.dataInfo.courseId,
+          courseTitle: this.dataInfo.courseName,
+          isSuccess: true,
+          classID: this.dataInfo.lessonId,
+          className: this.dataInfo.lessonName,
+          classType: this.dataInfo.category
+        });
+      });
+    }
+
+    getCardList () {
+      api.study.listCard({
+        courseId: this.dataInfo.courseId
+      })
+        .then(res => {
+          this.cardList = res.data.resultData
+          this.$apply()
+        })
     };
 
     getCardInfo() {
       api.study.countCard().then(res => {
         this.cardDetail = res.data.resultData;
-        this.cardDetail.time = dayjs(+res.data.timestamp).format('YYYY-MM-DD');
-        this.isShowFlower && this.getSorceByRecordSource();
+        this.cardDetail.time = dayjs(+res.data.timestamp).format('MM月DD日');
+
+        if (this.dataInfo.cancard && !this.cardDetail.todayCard) {
+          this.getSorceByRecordSource();
+        } else {
+          this.flowerOption = [
+            `${this.cardDetail.time}打卡成功`,
+            `制作精美打卡海报`
+          ];
+        }
         this.$apply();
       });
     }
 
-    getLearnReport() {
+    getLearnReport(data) {
       api.study.getLearnReport({
-        lessonId: this.queryInfo.lessonId
+        lessonId: (data && data.lessonId) || this.queryInfo.lessonId
       }).then(({ data }) => {
         this.dataInfo = data.resultData;
         this.dataInfo.keynotes = this.dataInfo.keynotes ? JSON.parse(this.dataInfo.keynotes) : [];
         this.dataInfo.learncontent = this.dataInfo.learncontent && JSON.parse(this.dataInfo.learncontent);
-
+        this.getCardInfo();
+        this.getCardList();
         this.$apply();
         console.log(this.dataInfo, 1);
       });
@@ -269,23 +384,21 @@
         lessonId: this.queryInfo.lessonId,
         source: 2
       }).then(({ data }) => {
-        this.flowerOption = {
-          oneText: this.cardDetail.time,
-          flowerNum: data.resultData.count,
-          twoText: `累计打卡${this.cardDetail.totaldays}天，连续打卡${this.cardDetail.continuousdays}天`,
-          path: ''
-        },
-          this.$apply();
+        this.flowerOption = [
+          `${this.cardDetail.time}打卡成功`,
+          `获得${data.resultData.count}朵小红花`,
+          `制作精美打卡海报`
+        ];
+        this.$apply();
       });
     }
 
     onLoad(data) {
       this.queryInfo = data;
+      this.getLearnReport();
     }
 
     onShow() {
-      this.getLearnReport();
-      this.getCardInfo();
     }
 
     onShareAppMessage() {
@@ -664,14 +777,21 @@
       }
 
       .-footer-downBtn {
+        @include flex-center;
         text-align: center;
-        width: 686px;
+        width: 332px;
         height: 93px;
         border-radius: 47px;
-        line-height: 93px;
-        font-size: 40px;
+        font-size: 35px;
         font-weight: bold;
         color: rgba(255, 255, 255, 1);
+        line-height: 93px;
+      }
+
+      .-footer-icon {
+        width: 52px;
+        height: 59px;
+        margin-right: 13px;
       }
 
       .-footer-co {
@@ -694,6 +814,52 @@
           height: 100%;
         }
       }
+    }
+
+    &-calendar {
+
+      .-calendar-content {
+        width: 750px;
+
+        background:rgba(255,255,255,1);
+
+        &-title {
+          @include flex-center;
+          padding: 38px 0 51px;
+
+          .-title {
+            margin: 0 216px;
+            font-size:30px;
+            font-weight:bold;
+            color:rgba(51,51,51,1);
+          }
+          .-pre,
+          .-next {
+            @include bg('/card/button-select.png');
+            background-size: 100%;
+            width: 14px;
+            height: 23px;
+          }
+          .-pre {
+            @include bg('/card/button-select1.png');
+            background-size: 100%;
+          }
+        }
+
+        &-body {
+         .calendar-body {
+           margin-left: 36px;
+         }
+        }
+      }
+
+      .-calendar-close {
+        display: inline-block;
+        width: 100%;
+        margin-top: 70px;
+        text-align: center;
+      }
+
     }
   }
 </style>

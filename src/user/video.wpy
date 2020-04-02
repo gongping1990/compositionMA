@@ -178,6 +178,16 @@
         <view class="result-icon_cw" wx:if="{{anwserStatus == 2}}"></view>
       </view>
     </van-popup>
+
+    <view
+      class="jh-img {{questionData.gesture == 1 ? 'js' : 'dz'}} {{showMutualImg && 'show'}}"
+    />
+
+    <view
+      class="jh-icon {{questionData.gesture == 1 ? 'js' : 'dz'}}"
+      wx:if="{{showMutual}}"
+      @tap="clickMutual"
+    />
   </view>
 </template>
 <script>
@@ -205,6 +215,7 @@ export default class Example extends wepy.page {
     showIcon: false,
     showBtn: false,
     showMutual: false,
+    showMutualImg: false,
     show: false,
     showDialog: false,
     showBack: false,
@@ -244,6 +255,16 @@ export default class Example extends wepy.page {
     load
   }
   methods = {
+    clickMutual() {
+      this.playSound()
+      if(this.showMutualImg) return
+      this.showMutualImg = true
+      this.playSound(6)
+      setTimeout(() => {
+        this.showMutualImg = false
+        this.$apply()
+      }, 1500);
+    },
     // 答题完成
     answerEnd() {
       this.time = 0
@@ -270,7 +291,12 @@ export default class Example extends wepy.page {
       let {answerOption} = this.questionData
       this.playSound()
       this.judgeActive = index
-      this.status = answerOption == index ? 1 : 2
+      if(!answerOption) {
+        this.status = 1
+      } else {
+        this.status = answerOption == index ? 1 : 2
+      }
+
       this.time = 0
     },
     // 多选题
@@ -284,12 +310,24 @@ export default class Example extends wepy.page {
       let status = 1
       let selectedArr = this.checkedArr.filter(e => e.selected)
       if(this.checkedEnd) return
-      if(selectedArr.length != multAnswer.length) return this.status = 2
+      if(selectedArr.length < 2) {
+        wx.showToast({
+          title: '请至少选择两个答案！', //提示的内容,
+          icon: 'none', //图标,
+          mask: true, //显示透明蒙层，防止触摸穿透,
+        });
+        return
+      }
+      if(selectedArr.length != multAnswer.length) {
+        this.status = 2
+      } else {
+        selectedArr.forEach(e => {
+          !e.checked && (status = 2)
+        })
+        this.status = status
+      }
 
-      selectedArr.forEach(e => {
-        !e.checked && (status = 2)
-      })
-      this.status = status
+
       this.checkedEnd = true
       this.time = 0
       this.$apply()
@@ -316,7 +354,6 @@ export default class Example extends wepy.page {
         name: 'file',
         header: { 'Content-Type': 'multipart/form-data' },
         success: res => {
-          console.log(res)
           if (res.statusCode !== 200) {
             wx.showModal({
               title: '提示',
@@ -543,9 +580,9 @@ export default class Example extends wepy.page {
       return status
     }
   }
-  playSound() {
+  playSound(type) {
     let { audioContext, playSound } = this.$parent.globalData
-    playSound(audioContext, 1)
+    playSound(audioContext, type || 1)
   }
   // 获取关卡内容
   getThreeLearnInfo() {
@@ -642,7 +679,6 @@ export default class Example extends wepy.page {
   downTime() {
     let { choiceSeleced } = this
     let { type, answer } = this.questionData
-    console.log(this.time)
     if (this.time >= 1) {
       this.time -= 1
       __timer = setTimeout(() => {
@@ -744,6 +780,44 @@ export default class Example extends wepy.page {
 }
 
 .video {
+  .jh-icon {
+    position: fixed;
+    right: 46px;
+    bottom: 200px;
+    z-index: 1000;
+    width: 191px;
+    height: 194px;
+    &.js {
+      @include bg('/1.9/video/js.gif');
+    }
+    &.dz {
+      @include bg('/1.9/video/dz.gif');
+    }
+  }
+  .jh-img {
+    position: fixed;
+    visibility: hidden;
+    left: 50%;
+    top: 40%;
+    z-index: 1000;
+    width: 399px;
+    height: 468px;
+    transform: translate(-50%, -50%);
+    transform-origin: center;
+    &.js {
+      @include bg('/1.9/video/js-img.png');
+      &.show {
+        animation: showJs 1.2s;
+      }
+    }
+    &.dz {
+      @include bg('/1.9/video/dz-img.png');
+      &.show {
+        animation: showDz 1.2s;
+      }
+    }
+  }
+
   .result-icon {
     & > view {
       width: 602px;
@@ -768,7 +842,7 @@ export default class Example extends wepy.page {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 144px 24px 60px;
+    padding: 144px 24px 100px;
   }
   &-title {
     display: flex;
@@ -792,7 +866,7 @@ export default class Example extends wepy.page {
     border: 8px solid rgba(255, 255, 255, 1);
   }
   &-audio {
-    @include bg('/1.9/video/sp_icon.png');
+    @include bg('/1.9/video/sp_icon.gif');
     margin-right: 24px;
     width: 68px;
     height: 74px;
@@ -803,20 +877,22 @@ export default class Example extends wepy.page {
   &-popup {
     position: relative;
     width: 100vw;
-    min-height: 100vh;
+    height: 100vh;
     background: #fff7e7;
+    overflow-y: auto;
   }
   &-time {
     @include flex-center;
-    position: absolute;
+    position: fixed;
     left: 50%;
     bottom: 0;
     width: 170px;
     height: 58px;
     background: rgba(0, 0, 0, 1);
-    opacity: 0.3;
+    opacity: 0.5;
     border-radius: 29px 29px 0px 0px;
     transform: translateX(-50%);
+    z-index: 100;
     &-text {
       font-size: 24px;
       font-weight: 500;
@@ -843,7 +919,8 @@ export default class Example extends wepy.page {
       box-sizing: border-box;
       width: 232px;
       height: 248px;
-      border-radius: 36px;
+      border-radius: 50px;
+      overflow: hidden;
       border: 8px solid #fff;
       &.selected {
         border-color: #FFC001;
@@ -927,6 +1004,36 @@ export default class Example extends wepy.page {
         color: #333;
         font-weight: bold;
       }
+    }
+  }
+
+  @keyframes showDz {
+    0% {
+      visibility: visible;
+      transform: rotate(0) translate(-50%, -50%);
+    }
+    60% {
+      visibility: visible;
+      transform: rotate(-20deg) translate(-50%, -50%);
+    }
+    100% {
+      // visibility: hidden;
+      transform: rotate(0) translate(-50%, -50%);
+    }
+  }
+
+  @keyframes showJs {
+    0% {
+      visibility: visible;
+      transform: scale(1) translate(-50%, -50%);
+    }
+    60% {
+      visibility: visible;
+      transform: scale(1.2) translate(-50%, -50%);
+    }
+    100% {
+      visibility: hidden;
+      transform: rotate(0) translate(-50%, -50%);
     }
   }
 }

@@ -1,6 +1,6 @@
 <template>
   <view class="container">
-    <mHeader title="作业海报"></mHeader>
+    <mHeader title="打卡海报" flag="4"></mHeader>
     <view class="container-scroll p-workPoster" style="margin-top:{{height}}px">
       <view class="p-workPoster-top">
         <view class="-top-content">
@@ -22,7 +22,6 @@
           <view class="-text2">将图片发至朋友圈或家长群</view>
         </view>
         <view class="-down-btnWrap">
-          <button class="btn-f" open-type="share">分享给好友</button>
           <view class="btn-b" wx:if="{{isAuth}}" @tap="saveCanvasImg">保存海报至相册</view>
           <button open-type="openSetting" @tap="authCanvasImg" class="btn-b" wx:if="{{!isAuth}}">去授权</button>
         </view>
@@ -67,18 +66,18 @@
     };
 
     onShow() {
-      this.getHomework();
+      this.getLearnReport();
     }
 
-    getHomework() {
+    getLearnReport() {
       this.isFetching = true;
-      api.study.viewMyHomework({
+      api.study.getLearnReport({
         lessonId: this.queryInfo.id
       }).then(res => {
         this.shareDetail = res.data.resultData;
-        this.shareDetail.workImg = this.shareDetail.workImgSrc && this.shareDetail.workImgSrc.split(',');
-        this.shareDetail.stuImg = `${wepy.$appConfig.baseUrl}/compositionv2/user/porxyWXheadimg/${this.shareDetail.stuId}`;
-        this.copyText = `今天我在乐小狮作文学习了${this.shareDetail.lessonName}，我已坚持学习了${this.shareDetail.learnDay}天，
+        this.shareDetail.stuAvatar = this.shareDetail.stuAvatar.replace('http://thirdwx.qlogo.cn','https://thirdwx.qlogo.cn')
+        this.shareDetail.learncontent = this.shareDetail.learncontent ? JSON.parse(this.shareDetail.learncontent) : [];
+        this.copyText = `今天我在乐小狮作文学习了${this.shareDetail.lessonName}，我已坚持学习了${this.shareDetail.learnDays}天，
         每天听北师大老师讲作文，按时完成作业还能获得老师1对1的点评指导。目前已有${this.shareDetail.pv}位家长和孩子在这里学习，快来加入我们一起学习吧！`;
         this.downloadInit();
         this.$apply();
@@ -92,22 +91,29 @@
         {
           id: 1,
           name: '头像',
-          url: this.shareDetail.stuImg
+          url: this.shareDetail.stuAvatar
         },
         {
           id: 2,
           name: '海报背景',
-          url: this.shareDetail.shareTemplates
+          url: 'https://pub.file.k12.vip/2020/03/30/1244545550059298818.png'
+        },
+        {
+          id: 3,
+          name: '课程封面',
+          url: this.shareDetail.coverphoto
+        },
+        {
+          id: 4,
+          name: '重点图标',
+          url: 'https://pub.file.k12.vip/2020/03/30/1244545943174635521.png'
+        },
+        {
+          id: 5,
+          name: '二维码',
+          url: 'https://pub.file.k12.vip/2020/04/01/1245256107997519874.png'
         }
       ];
-
-      this.shareDetail.workImg.forEach((item, index) => {
-        downFileArray.push({
-          id: 3 + index,
-          name: '作业图片' + index + 1,
-          url: item
-        });
-      });
 
       for (let item of downFileArray) {
         if (item.url) {
@@ -150,22 +156,27 @@
     }
 
     sharePosterCanvas(data) {
-      let [headimgurl, shareUrl, workUrl01, workUrl02, workUrl03] = data;
+
+      let [headimgurl, shareUrl, courseImg, icon, codeUrl] = data;
+
       for (let item of data) {
         if (item.id == '1') {
           headimgurl = item.url;
         } else if (item.id == '2') {
           shareUrl = item.url;
         } else if (item.id == '3') {
-          workUrl01 = item.url;
+          courseImg = item.url;
         } else if (item.id == '4') {
-          workUrl02 = item.url;
+          icon = item.url;
         } else if (item.id == '5') {
-          workUrl03 = item.url;
+          codeUrl = item.url;
         }
       }
+
       const ctx = wx.createCanvasContext('myCanvas');
+
       let that = this;
+
       wx.createSelectorQuery().select('#canvas-container').boundingClientRect(function(rect) {
         var height = rect.height;
         var width = rect.width;
@@ -174,10 +185,10 @@
         ctx.drawImage(shareUrl, 0, 0, width, height);
 
         // 绘制头像
-        var avatarurl_width = 24;    // 绘制的头像宽度
-        var avatarurl_heigth = 24;   // 绘制的头像高度
-        var avatarurl_x = 5;   // 绘制的头像在画布上的位置
-        var avatarurl_y = 5;   // 绘制的头像在画布上的位置
+        var avatarurl_width = width * 0.13;    // 绘制的头像宽度
+        var avatarurl_heigth = width * 0.13;   // 绘制的头像高度
+        var avatarurl_x = width * 0.08;   // 绘制的头像在画布上的位置
+        var avatarurl_y = height * 0.03;   // 绘制的头像在画布上的位置
         ctx.save();
         ctx.beginPath(); // 开始绘制
         ctx.arc(avatarurl_width / 2 + avatarurl_x, avatarurl_heigth / 2 + avatarurl_y, avatarurl_width / 2, 0, Math.PI * 2, false);
@@ -186,57 +197,79 @@
         ctx.restore();
 
         // 昵称
-        const nickname = that.shareDetail.nickname.length > 4 ? that.shareDetail.nickname.substring(0, 4) : that.shareDetail.nickname;
+        const nickname = that.shareDetail.stuName.length > 8 ? that.shareDetail.stuName.substring(0, 8) : that.shareDetail.stuName;
 
         const contentArray = canvasWorkBreak(140, 14, nickname);
         ctx.setTextAlign('left');
-        ctx.setFillStyle('#000');
+        ctx.setFillStyle('#FFFFFF');
         ctx.setFontSize(12);
         for (let m = 0; m < contentArray.length; m++) {
-          ctx.fillText(contentArray[m], 32, 20);
+          ctx.fillText(contentArray[m], width * 0.24, height * 0.06);
         }
 
         // 文章名称
-        let textTip = canvasWorkBreak(160, 14, `${that.shareDetail.learnDay}天`);
-        ctx.setTextAlign('left');
-        ctx.setFillStyle('#885F04');
-        ctx.setFontSize(9);
-        for (let m = 0; m < textTip.length; m++) {
-          ctx.fillText(textTip[m], width * 0.216, height * 0.158);
-        }
+        let textTip = canvasWorkBreak(160, 14, `${that.shareDetail.learnDays}`);
+        ctx.setTextAlign('center');
+        ctx.setFillStyle('#FFF10D');
+        ctx.setShadow(0, 6 * 0.3, 0, '#DEB924');
+        ctx.setFontSize(70 * 0.3);
+        ctx.fillText(textTip, width * 0.41, height * 0.244);
 
         // 绘制作业图片
-        let displacementWidth01 = '';
-        let jobWidth01 = '';
-        let displacementWidth02 = '';
-        let jobWidth02 = '';
-        let displacementWidth03 = '';
+        ctx.drawImage(courseImg, width * 0.17, height * 0.38, width * 0.2, height * 0.15);
 
-        if (workUrl01 && !workUrl02 && !workUrl03) {
-          displacementWidth01 = width * 0.37;
-          jobWidth01 = width * 0.28;
-        } else if (workUrl01 && workUrl02 && !workUrl03) {
-          displacementWidth01 = width * 0.16;
-          displacementWidth02 = width * 0.56;
-          jobWidth01 = width * 0.28;
-          jobWidth02 = width * 0.28;
-        } else if (workUrl01 && workUrl02 && workUrl03) {
-          displacementWidth01 = width * 0.11;
-          displacementWidth02 = width * 0.38;
-          displacementWidth03 = width * 0.65;
-          jobWidth01 = width * 0.24;
-          jobWidth02 = width * 0.24;
+        // 课时名称
+        let textTip2 = canvasWorkBreak(110, 12, `${that.shareDetail.lessonName}`);
+        ctx.setTextAlign('left');
+        ctx.setFillStyle('#FE6D0D');
+        ctx.setShadow(0, 0, 0, '');
+        ctx.setFontSize(10);
+        for (let m = 0; m < textTip2.length; m++) {
+          ctx.fillText(textTip2[m], width * 0.43, height * 0.41 * (1 + m * 0.08));
         }
 
-        ctx.drawImage(workUrl01, displacementWidth01, height * 0.47, jobWidth01, height * 0.23);
-
-        if (workUrl02) {
-          ctx.drawImage(workUrl02, displacementWidth02, height * 0.47, jobWidth02, height * 0.23);
+        // 课时简介
+        let textTip3 = canvasWorkBreak(100, 11, `${that.shareDetail.courseName}`);
+        ctx.setTextAlign('left');
+        ctx.setFillStyle('#333333');
+        ctx.setShadow(0, 0, 0, '');
+        ctx.setFontSize(8);
+        for (let m = 0; m < textTip3.length; m++) {
+          ctx.fillText(textTip3[m], width * 0.43, height * 0.49 * (1 + m * 0.07));
         }
 
-        if (workUrl03) {
-          ctx.drawImage(workUrl03, displacementWidth03, height * 0.47, width * 0.24, height * 0.23);
+        // 重点1
+        if ( that.shareDetail.learncontent.length) {
+          let text1 = that.shareDetail.learncontent[0].value.substring(0, 30);
+          let key1 = canvasWorkBreak(160, 12, text1);
+          ctx.setTextAlign('left');
+          ctx.setFillStyle('#333333');
+          ctx.setShadow(0, 0, 0, '');
+          ctx.setFontSize(9);
+          for (let m = 0; m < key1.length; m++) {
+            ctx.fillText(key1[m], width * 0.25, height * 0.625 * (1 + m * 0.05));
+          }
+          //图标1
+          ctx.drawImage(icon, width * 0.16, height * 0.6, 40 * 0.3, 40 * 0.3);
         }
+
+        //重点2
+        if (that.shareDetail.learncontent.length > 1) {
+          let text2 = that.shareDetail.learncontent[1].value.substring(0, 30);
+          let key2 = canvasWorkBreak(160, 12, text2);
+          ctx.setTextAlign('left');
+          ctx.setFillStyle('#333333');
+          ctx.setShadow(0, 0, 0, '');
+          ctx.setFontSize(9);
+          for (let m = 0; m < key2.length; m++) {
+            ctx.fillText(key2[m], width * 0.25, height * 0.73 * (1 + m * 0.05));
+          }
+          //图标2
+          ctx.drawImage(icon, width * 0.16, height * 0.705, 40 * 0.3, 40 * 0.3);
+        }
+
+        // 二维码
+        ctx.drawImage(codeUrl, width * 0.7, height * 0.86, 150 * 0.3, 150 * 0.3);
 
         function canvasWorkBreak(maxWidth, fontSize, text) {
           const maxLength = maxWidth / fontSize;
@@ -276,6 +309,7 @@
             wx.saveImageToPhotosAlbum({
               filePath: tempFilePath,
               success(res) {
+                console.log('保存成功')
                 that.isOpenShareText = true
                 that.$apply()
               },
@@ -285,9 +319,6 @@
                   icon: 'none',
                   duration: 2000
                 });
-              },
-              complete: function(res) {
-                that.$emit('closeSharePage');
               }
             });
           },
@@ -326,15 +357,21 @@
     methods = {};
 
     events = {
-      closeModalFn () {
+      closeModalFn() {
         this.isOpenShareText = false;
-        this.$apply()
+        this.$apply();
       },
-      // back() {
-      //   wx.navigateTo({
-      //     url: `/user/completionOfWork?type=1&id=${this.queryInfo.id}&isPlayAudio=${this.queryInfo.isFirstUpload}`
-      //   })
-      // }
+      back() {
+        if (this.queryInfo.type === '1') {
+          wx.navigateTo({
+            url: `/user/submitHomework?id=${this.queryInfo.id}`
+          });
+        } else {
+          wx.navigateTo({
+            url: `/user/learningReport?lessonId=${this.queryInfo.id}`
+          });
+        }
+      }
     };
 
     onLoad(query) {
@@ -386,6 +423,7 @@
         right: 55px;
         width: 182px;
         height: 252px;
+        z-index: 99999;
       }
     }
 
@@ -398,9 +436,9 @@
       .-down-text {
         display: inline-block;
         margin: 107px 0 36px 137px;
-        font-size:28px;
-        color:rgba(119,58,36,1);
-        font-weight:bold;
+        font-size: 28px;
+        color: rgba(119, 58, 36, 1);
+        font-weight: bold;
         .-text1 {
           margin-bottom: 21px;
           &::before {
@@ -408,10 +446,10 @@
             display: inline-block;
             text-align: center;
             content: '1';
-            width:30px;
-            height:30px;
-            background:rgba(255,192,0,1);
-            border-radius:50%;
+            width: 30px;
+            height: 30px;
+            background: rgba(255, 192, 0, 1);
+            border-radius: 50%;
             color: #ffffff;
             margin-right: 15px;
           }
@@ -423,10 +461,10 @@
             display: inline-block;
             text-align: center;
             content: '2';
-            width:30px;
-            height:30px;
-            background:rgba(255,192,0,1);
-            border-radius:50%;
+            width: 30px;
+            height: 30px;
+            background: rgba(255, 192, 0, 1);
+            border-radius: 50%;
             color: #ffffff;
             margin-right: 15px;
           }
@@ -439,27 +477,15 @@
         justify-content: space-between;
       }
 
-      .btn-f {
-        text-align: center;
-        width:300px;
-        height:98px;
-        background:rgba(204,204,204,1);
-        border-radius:49px;
-        font-size:32px;
-        font-weight:bold;
-        color:rgba(255,255,255,1);
-        line-height: 98px;
-      }
-
       .btn-b {
         text-align: center;
-        width:300px;
-        height:98px;
-        background:rgba(255,192,0,1);
-        border-radius:49px;
-        font-size:32px;
-        font-weight:bold;
-        color:rgba(255,255,255,1);
+        width: 620px;
+        height: 98px;
+        background: rgba(255, 192, 0, 1);
+        border-radius: 49px;
+        font-size: 32px;
+        font-weight: bold;
+        color: rgba(255, 255, 255, 1);
         line-height: 98px;
       }
     }

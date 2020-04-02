@@ -646,7 +646,6 @@ export default class Example extends wepy.page {
           e.flower = 0
           return e
         })
-        console.log(this.answerArr)
         this.flowerOne = 0
         this.flowerTwo = 0
         this.flowerThree = 0

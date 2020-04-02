@@ -4,8 +4,9 @@
 		"ignore": []
 	},
 	"setting": {
-		"urlCheck": false,
+		"urlCheck": true,
 		"es6": true,
+		"enhance": true,
 		"postcss": false,
 		"minified": false,
 		"newFeature": true,
@@ -19,8 +20,7 @@
 			"ignore": [],
 			"disablePlugins": [],
 			"outputPath": ""
-		},
-		"enhance": true
+		}
 	},
 	"compileType": "miniprogram",
 	"libVersion": "2.10.3",
@@ -61,7 +61,7 @@
 					"id": 0,
 					"name": "user/video",
 					"pathName": "user/video",
-					"query": "id=1214070007701979137&lookback=1",
+					"query": "id=1214446624618323969&lookback=1",
 					"scene": null
 				},
 				{
@@ -164,8 +164,8 @@
 				},
 				{
 					"id": 18,
-					"name": "pages/card",
-					"pathName": "pages/card",
+					"name": "user/card",
+					"pathName": "user/card",
 					"query": "courseId=1215894788046995457&name=%E4%B9%90%E5%B0%8F%E7%8B%AE%E5%86%99%E5%AD%97%E8%AF%BE%EF%BC%88%E6%B5%8B%E8%AF%95%EF%BC%89",
 					"scene": null
 				},
@@ -188,6 +188,34 @@
 					"name": "user/workPoster",
 					"pathName": "user/workPoster",
 					"query": "id=1139442555626065921",
+					"scene": null
+				},
+				{
+					"id": 19,
+					"name": "user/learningReport",
+					"pathName": "user/learningReport",
+					"query": "lessonId=1174867249594982402",
+					"scene": null
+				},
+				{
+					"id": 20,
+					"name": "user/cardPoster",
+					"pathName": "user/cardPoster",
+					"query": "id=1174867249594982402&type=2",
+					"scene": null
+				},
+				{
+					"id": 21,
+					"name": "user/workPoster",
+					"pathName": "user/workPoster",
+					"query": "id=1139442555626065921",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "pages/lessonDetail",
+					"pathName": "pages/lessonDetail",
+					"query": "id=1214016363879219201",
 					"scene": null
 				}
 			]

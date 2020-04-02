@@ -30,7 +30,7 @@ const study = {
     return request.get('/compositionv2/study/listExistWorkByPage', params)
   },
   addCard(params) {
-    return request.post('/compositionv2/study/addCard', params)
+    return request.post('/compositionv2/study/addCardWithLesson', params)
   },
   addLike(params) {
     return request.get('/compositionv2/study/like', params)

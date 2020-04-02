@@ -22,7 +22,7 @@
         </view>
       </view>
       <view class="p-l_uploadImgWork-tip" wx:if="{{!workImgList.length}}">
-        <image class="-tip-img" src="https://pub.file.k12.vip/2020/01/03/1213028570155855873.jpg"></image>
+        <image class="-tip-img" src="{{lessonDetail.workImg}}"></image>
       </view>
 
       <view class="p-l_uploadImgWork-content" wx:if="{{workImgList.length}}">
@@ -144,7 +144,7 @@
       }).then(({ data }) => {
         this.flowerInfo = data.resultData;
         this.flowerOption.flowerNum = this.flowerInfo.count;
-        this.flowerOption.path = `/literacy/l_submitHomework?id=${this.queryInfo.id}`;
+        this.flowerOption.path = `/literacy/l_submitHomework?id=${this.queryInfo.id}&isFromUploadWork=4`;
         this.$apply();
       });
     }

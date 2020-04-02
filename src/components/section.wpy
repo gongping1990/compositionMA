@@ -54,7 +54,8 @@ export default class Example extends wepy.component {
   watch = {}
   computed = {}
   init() {
-    let { id, contentv2, circleList } = this.questionData
+    let { contentv2, circleList } = this.questionData
+    let str = contentv2.replace('[##]','\n')
     let arr = []
     circleList.forEach((e, i) => {
       let prveIndex = i - 1
@@ -62,25 +63,25 @@ export default class Example extends wepy.component {
       if (!i && e.start) {
         arr.push({
           isClick: false,
-          text: contentv2.slice(0, e.start).replace('[##]','\n')
+          text: str.slice(0, e.start)
         })
       } else if (i) {
         arr.push({
           isClick: false,
-          text: contentv2.slice(circleList[prveIndex].end, e.start).replace('[##]','\n')
+          text: str.slice(circleList[prveIndex].end, e.start)
         })
       }
       arr.push({
         isClick: true,
         selected: false,
-        text: contentv2.slice(e.start, e.end).replace('[##]','\n')
+        text: str.slice(e.start, e.end)
       })
 
       i == length &&
-        contentv2.slice(e.end) &&
+        str.slice(e.end) &&
         arr.push({
           isClick: false,
-          text: contentv2.slice(e.end).replace('[##]','\n')
+          text: str.slice(e.end)
         })
     })
     this.titleArr = arr

@@ -39,7 +39,7 @@
             <image src="{{item.icon}}" class="lessonDetail-item-cover" />
             <view class="lessonDetail-item-content">
               <view class="lessonDetail-item-title">{{ item.name }}</view>
-              <view class="lessonDetail-item-flower">
+              <view class="lessonDetail-item-flower"  wx:if="{{item.passed && item.flowerTotal.length}}">
                 <view
                   wx:for="{{item.flowerTotal}}"
                   wx:for-item="flower"
@@ -83,7 +83,7 @@ export default class Example extends wepy.page {
       let { audioContext, playSound } = this.$parent.globalData
       let url =
         item.type == 1
-          ? '/pages/picture?id=' + item.id
+          ? '/user/picture?id=' + item.id
           : '/user/video?id=' + item.id
       if (item.passed) {
         url += '&lookback=1'
@@ -232,6 +232,7 @@ export default class Example extends wepy.page {
       display: flex;
       align-items: center;
       flex-wrap: wrap;
+      height: 51px;
       &-icon {
         @include bg('/1.8/lesson/h.png');
         margin-right: 10px;

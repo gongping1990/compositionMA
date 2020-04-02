@@ -85,7 +85,6 @@ export default class Login extends wepy.page {
   // watch = {
   //   form (v, o) {
   //     if (v.phone.length >= 10) {
-  //       console.log(v.phone.length)
   //       this.focus = true
   //     }
   //   }

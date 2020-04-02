@@ -349,7 +349,7 @@ export default class Example extends wepy.page {
       this.loading = true
       // 上传录音临时文件
       wx.uploadFile({
-        url: 'https://huoke.test.k12.vip/compositionv2/common/uploadPublicFile',
+        url: 'https://huoke.test.k12.vip/compositionv3/common/uploadPublicFile',
         filePath: res.tempFilePath,
         name: 'file',
         header: { 'Content-Type': 'multipart/form-data' },

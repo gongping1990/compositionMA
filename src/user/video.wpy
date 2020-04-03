@@ -243,6 +243,7 @@ export default class Example extends wepy.page {
     checkedEnd: false,
     // 判断题
     judgeActive: null,
+    lessonEnd: false,
   }
   components = {
     mHeader,
@@ -349,7 +350,7 @@ export default class Example extends wepy.page {
       this.loading = true
       // 上传录音临时文件
       wx.uploadFile({
-        url: 'https://huoke.test.k12.vip/compositionv2/common/uploadPublicFile',
+        url: 'https://huoke.test.k12.vip/compositionv3/common/uploadPublicFile',
         filePath: res.tempFilePath,
         name: 'file',
         header: { 'Content-Type': 'multipart/form-data' },
@@ -453,7 +454,7 @@ export default class Example extends wepy.page {
     },
     // 视频播放中
     bindtimeupdate(event) {
-      let { currentTime } = event.detail
+      let { currentTime, duration } = event.detail
       if (this.currentTime !== parseInt(currentTime)) {
         this.currentTime = parseInt(currentTime)
         let data = this.learnData.problemMap[this.currentTime]
@@ -461,6 +462,12 @@ export default class Example extends wepy.page {
         if (!(this.currentTime % 5)) {
           this.updatePoint()
         }
+
+        // if((currentTime / duration) > 0.85 && !this.lessonEnd) {
+        //   this.lessonEnd = true
+        //   this.endPoint()
+        // }
+
         // 到达答题时间点， 设置答题内容
         if (data) {
           this.questionData = data
@@ -639,6 +646,14 @@ export default class Example extends wepy.page {
       ctime: this.currentTime,
       id: this.pointData.id
     })
+  }
+  endPoint() {
+    let { api } = this.$parent.globalData
+    api.study
+      .endPoint({
+        complete: false,
+        id: this.pointData.id
+      })
   }
   // 更新答题
   updateAnswer(parmas) {

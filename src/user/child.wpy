@@ -301,7 +301,7 @@ export default class Child extends wepy.page {
         const tempFilePaths = res.tempFilePaths
         wx.uploadFile({
           url:
-            wepy.$appConfig.baseUrl + '/compositionv2/common/uploadPublicFile', //仅为示例，非真实的接口地址
+            wepy.$appConfig.baseUrl + '/compositionv3/common/uploadPublicFile', //仅为示例，非真实的接口地址
           filePath: tempFilePaths[0],
           name: 'file',
           success: res => {

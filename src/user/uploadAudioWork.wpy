@@ -260,7 +260,7 @@ export default class UploadAudioWork extends wepy.page {
       })
 
       wx.uploadFile({
-        url: 'https://huoke.prod.k12.vip/compositionv2/common/uploadPublicFile',
+        url: 'https://huoke.prod.k12.vip/compositionv3/common/uploadPublicFile',
         filePath: _self.fileAudioUrl,
         name: 'file',
         header: { 'Content-Type': 'multipart/form-data' },

@@ -169,7 +169,7 @@ const _sa = require('./utils/sensorsdata.min.js')
 
 _sa.setPara({
   name: 'sensors',
-  server_url: 'https://collector.k12.vip/sa?project=default',
+  server_url: 'http://collector.k12.vip:8106/sa?project=production',
   // 是否开启自动采集
   autoTrack: {
     appLaunch: true,

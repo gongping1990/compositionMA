@@ -2,7 +2,7 @@ import request from '../index'
 
 const dubbing = {
   getDubbingByType(params) {
-    return request.get('/compositionv2/dubbing/getDubbingByType', params)
+    return request.get('/compositionv3/dubbing/getDubbingByType', params)
   }
 }
 

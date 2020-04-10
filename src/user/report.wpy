@@ -1,0 +1,795 @@
+<!-- 写字课学情报告 -->
+<template>
+  <view class="report container">
+    <mHeader title="学情报告"></mHeader>
+    <view
+      class="container-scroll report-scroll"
+      style="margin-top:{{height}}px"
+    >
+      <view class="report-header">
+        <image class="report-avatar" src="{{userInfo.headimgurl}}" />
+        <view class="report-header-title">{{ reportData.stuName }}</view>
+        <view class="report-header-text">
+          已坚持学习
+          <text>{{ reportData.learnDays }}</text>
+          天
+        </view>
+        <view class="report-header-info">
+          <view class="report-header-item">
+            <text>累计阅读</text>
+            <view>
+              <text>{{ reportData.word }}</text>
+              字
+            </view>
+          </view>
+          <view class="report-header-item">
+            <text>累计开口</text>
+            <view>
+              <text>{{ reportData.talk }}</text>
+              次
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="report-content jrxx">
+        <view class="report-content-title">今日学习</view>
+        <view class="jrxx-info">
+          <image class="jrxx-info-cover" src="{{reportData.coverphoto}}" />
+          <view class="jrxx-info-right">
+            <view class="jrxx-info-btn">学习课时</view>
+            <view class="jrxx-info-title">{{ reportData.courseName }}</view>
+          </view>
+        </view>
+        <view class="jrxx-list">
+          <view
+            class="jrxx-item"
+            wx:for="{{reportData.learncontent}}"
+            wx:key="{{index}}"
+          >
+            <text>{{ index + 1 }}.</text>
+            <view class="jrxx-item-text">
+              {{ item.value }}
+            </view>
+            <view class="jrxx-item-icon"></view>
+          </view>
+        </view>
+      </view>
+      <view class="report-content bkbx">
+        <view class="report-content-title">本课表现</view>
+        <image class="bkbx-icon" mode="widthFix" src="{{icon}}" />
+
+        <view class="bkbx-list">
+          <view class="bkbx-item">
+            <view class="bkbx-item-header">
+              <text>正确率</text>
+              <view class="bkbx-title"> {{ reportData.correct }}% </view>
+            </view>
+            <view class="bkbx-num">超过{{ reportData.correctPer }}%同学</view>
+          </view>
+          <view class="bkbx-item">
+            <view class="bkbx-item-header">
+              <text>反应速度</text>
+              <view class="bkbx-title">
+                {{ reportData.speed }}
+                <text>s/题</text>
+              </view>
+            </view>
+            <view class="bkbx-num">超过{{ reportData.speedPer }}%同学</view>
+          </view>
+          <view class="bkbx-item">
+            <view class="bkbx-item-header">
+              <text>获得小红花</text>
+              <view class="bkbx-title">
+                {{ reportData.score }}
+                <text>朵</text>
+              </view>
+            </view>
+            <view class="bkbx-num">超过{{ reportData.scorePer }}%同学</view>
+          </view>
+        </view>
+      </view>
+      <view class="report-content ktfc">
+        <view class="report-content-title">课堂风采</view>
+        <view
+          class="ktfc-item"
+          wx:for="{{reportData.records}}"
+          wx:key="{{index}}"
+        >
+          <view class="ktfc-item-top">
+            <image class="ktfc-avatar" src="{{item.techerAvatar}}" />
+            <view class="ktfc-item-info">
+              <view>{{ item.audiotext }}</view>
+              <image
+                wx:if="{{item.audioimg}}"
+                mode="widthFix"
+                src="{{item.audioimg}}"
+              />
+            </view>
+          </view>
+          <view class="ktfc-item-bottom">
+            <view class="ktfc-audio" @tap="clickPlayAudio({{item}}, {{index}})">
+              <view class="ktfc-audio-icon {{item.play && 'play'}}"></view>
+              <text>{{ item.audiotime }}</text>
+            </view>
+            <image class="ktfc-avatar" src="{{userInfo.headimgurl}}" />
+          </view>
+        </view>
+      </view>
+      <view class="report-content kbbj">
+        <view class="report-content-title">课本笔记</view>
+        <swiper
+          class="kbbj-swiper"
+          indicator-dots
+          indicator-color="#FFF"
+          indicator-active-color="#FEA60D"
+          circular
+        >
+          <!-- <block wx:for="{{items}}" wx:key="">
+
+            </block> -->
+          <swiper-item>
+            <view class="kbbj-swiper-item">
+              <image mode="widthFix" src=""></image>
+            </view>
+          </swiper-item>
+        </swiper>
+      </view>
+      <view class="report-nav">
+        <view class="report-btn" @tap="changeMoreStatus">
+          <image
+            mode="widthFix"
+            src="https://pub.file.k12.vip/tbzw/1.9/report/xqbg.png"
+          />
+          更多学习报告
+        </view>
+        <view class="report-btn card" @tap="clickCard">
+          <image mode="widthFix" src="{{btnTextArray[nowCardNum].url}}" />
+          {{ btnTextArray[nowCardNum].name }}
+        </view>
+      </view>
+    </view>
+    <van-popup show="{{isShowMore}}" class="report-calendar">
+      <view class="-calendar-content">
+        <view class="-calendar-content-title">
+          <view class="-pre" @tap="bindClickPre"></view>
+          <text class="-title">{{ today }}</text>
+          <view class="-next" @tap="bindClickNext"></view>
+        </view>
+
+        <calendar
+          class="-calendar-content-body"
+          :card.sync="cardList"
+          type="2"
+        ></calendar>
+      </view>
+
+      <van-icon
+        name="close"
+        class="-calendar-close"
+        color="#fff"
+        size="36px"
+        @tap="changeMoreStatus"
+      />
+    </van-popup>
+    <loaded :optionList.sync="flowerOption"></loaded>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import dayjs from 'dayjs'
+import api from '../request/api'
+import { connect } from 'wepy-redux'
+import mHeader from '../components/header'
+import loaded from '../components/loaded'
+import calendar from '../components/calendar'
+
+@connect({
+  userInfo(state) {
+    return state.user.userInfo
+  },
+  logined(state) {
+    return state.user.logined
+  },
+})
+export default class Report extends wepy.page {
+  config = {
+    navigationBarTitleText: '',
+    usingComponents: {
+      'van-icon': '../vant/icon/index',
+      'van-popup': '../vant/popup/index',
+    },
+  }
+  data = {
+    isShowMore: false,
+    today: '',
+    lessonId: 0,
+    cardList: [],
+    reportData: {},
+    cardDetail: {},
+    flowerOption: [],
+    btnTextArray: [
+      {
+        url: 'https://pub.file.k12.vip/tbzw/1.9/report/card.png',
+        name: '去打卡',
+      },
+      {
+        url: 'https://pub.file.k12.vip/tbzw/1.9/report/card.png',
+        name: '重新打卡',
+      },
+      {
+        url: 'https://pub.file.k12.vip/2020/03/27/1243425413847572481.png',
+        name: '分享到朋友圈',
+      },
+    ],
+  }
+  components = {
+    mHeader,
+    calendar,
+    loaded,
+  }
+  methods = {
+    bindClickPre() {
+      this.$invoke('calendar', 'preMonth')
+    },
+    bindClickNext() {
+      this.$invoke('calendar', 'nextMonth')
+    },
+    changeMoreStatus() {
+      this.isShowMore = !this.isShowMore
+    },
+    clickPlayAudio(data, index) {
+      this.audioContext.stop()
+      if (data.play) {
+        this.reportData.records[index].play = false
+      } else {
+        this.audioContext.src = data.audio
+        this.reportData.records[index].play = true
+        this.audioContext.play()
+      }
+    },
+    clickCard() {
+      if (this.nowCardNum === 2) {
+        wx.navigateTo({
+          url: `/user/cardPoster?id=${this.lessonId}`,
+        })
+      } else if (this.nowCardNum === 1) {
+        this.$invoke('loaded', 'downTime')
+      } else {
+        this.addMyCard()
+      }
+    },
+  }
+  events = {
+    changeReport(date) {
+      this.isShowMore = false
+      this.getLearnReportB(date)
+    },
+    today(date) {
+      this.today = date
+    },
+  }
+  watch = {}
+  computed = {
+    height() {
+      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+    },
+    icon() {
+      let { correct } = this.reportData
+      let icon = 'jxjy'
+      if (correct >= 80) {
+        icon = 'yx'
+      } else if (correct >= 60) {
+        icon = 'lh'
+      }
+      return `https://pub.file.k12.vip/tbzw/1.9/report/${icon}.png`
+    },
+    nowCardNum() {
+      let num = 0
+      if (this.reportData.cancard && !this.cardDetail.todayCard) {
+        num = 0
+      } else if (this.reportData.cancard && this.cardDetail.todayCard) {
+        num = 1
+      } else {
+        num = 2
+      }
+      return num
+    },
+  }
+  getLearnReportB(v) {
+    api.study
+      .getLearnReportB({
+        lessonId: (v && v.lessonId) || this.lessonId,
+      })
+      .then(({ data }) => {
+        this.reportData = data.resultData
+        this.reportData.correct = parseInt(this.reportData.correct)
+        this.reportData.learncontent = JSON.parse(this.reportData.learncontent)
+        this.reportData.records = this.reportData.records.map((e) => {
+          let audiotime = this.timeToFormat(e.audiotime)
+          return {
+            ...e,
+            audiotime,
+          }
+        })
+        this.getCardList()
+        this.$apply()
+      })
+  }
+  getCardList() {
+    api.study
+      .listCard({
+        courseId: this.reportData.courseId,
+      })
+      .then((res) => {
+        this.cardList = res.data.resultData
+        this.$apply()
+      })
+  }
+  getCardInfo() {
+    api.study.countCard().then((res) => {
+      this.cardDetail = res.data.resultData
+      this.cardDetail.time = dayjs(+res.data.timestamp).format('MM月DD日')
+
+      if (this.reportData.cancard && !this.cardDetail.todayCard) {
+        this.getSorceByRecordSource()
+      } else {
+        this.flowerOption = [
+          `${this.cardDetail.time}打卡成功`,
+          `制作精美打卡海报`,
+        ]
+      }
+      this.$apply()
+    })
+  }
+  getSorceByRecordSource() {
+    api.center
+      .getSorceByRecordSource({
+        lessonId: this.lessonId,
+        source: 2,
+      })
+      .then(({ data }) => {
+        this.flowerOption = [
+          `${this.cardDetail.time}打卡成功`,
+          `获得${data.resultData.count}朵小红花`,
+          `制作精美打卡海报`,
+        ]
+        this.$apply()
+      })
+  }
+  addMyCard() {
+    api.study
+      .addCard({
+        lessonId: this.lessonId,
+      })
+      .then(({ data }) => {
+        this.$invoke('loaded', 'downTime')
+        this.$apply()
+      })
+  }
+  timeToFormat(times) {
+    var result = '00:00'
+    var minute, second
+    if (times > 0) {
+      minute = Math.floor(times / 60)
+      if (minute < 10) {
+        minute = '0' + minute
+      }
+
+      second = Math.floor((times - 60 * minute) % 60)
+      if (second < 10) {
+        second = '0' + second
+      }
+      result = `${minute}:${second}`
+    }
+    return result
+  }
+  onLoad(option) {
+    this.lessonId = option.id
+    console.log(option)
+    this.audioContext = wx.createInnerAudioContext()
+  }
+  onShow() {
+    this.getLearnReportB()
+  }
+}
+</script>
+<style lang="scss">
+@import '../assets/style/mixin.scss';
+.report {
+  &-header {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+    padding-top: 115px;
+    width: 672px;
+    height: 477px;
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0px 13px 13px 0px rgba(255, 191, 37, 0.2);
+    border-radius: 47px;
+    &-title {
+      margin-bottom: 27px;
+      font-size: 40px;
+      font-weight: bold;
+      color: rgba(255, 191, 37, 1);
+      line-height: 20px;
+    }
+    &-text {
+      @include flex-center;
+      margin-bottom: 49px;
+      box-sizing: border-box;
+      padding-bottom: 18px;
+      align-items: flex-end;
+      width: 345px;
+      height: 80px;
+      background: rgba(247, 246, 249, 1);
+      border-radius: 40px;
+      font-size: 32px;
+      color: #333;
+      text {
+        font-size: 48px;
+        line-height: 50px;
+        font-weight: bold;
+        color: #ffbf25;
+      }
+    }
+    &-info {
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      box-sizing: border-box;
+      padding: 0 66px;
+      width: 100%;
+      &::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 3px;
+        height: 88px;
+        background: rgba(239, 239, 240, 1);
+        border-radius: 2px;
+        transform: translate(-50%, -50%);
+      }
+    }
+    &-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      & > text {
+        width: 154px;
+        font-size: 28px;
+        font-weight: 500;
+        color: rgba(181, 178, 196, 1);
+      }
+      & > view {
+        margin-top: 11px;
+        font-weight: normal;
+        font-size: 28px;
+        color: rgba(51, 51, 51, 1);
+        text {
+          margin-right: 10px;
+          font-size: 48px;
+          font-weight: bold;
+        }
+      }
+    }
+  }
+  &-scroll {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+    padding-top: 313px;
+    padding-bottom: 230px;
+    @include bg('/1.9/report/bg.png');
+    background-size: 608px;
+    background-position-x: center;
+    background-position-y: 41px;
+    background-color: #ffbf25;
+  }
+  &-btn {
+    @include flex-center;
+    width: 333px;
+    height: 93px;
+    background: rgba(64, 218, 127, 1);
+    opacity: 0.99;
+    border-radius: 47px;
+    font-size: 35px;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 1);
+    image {
+      margin-right: 12px;
+      width: 52px;
+    }
+    &.card {
+      margin-left: 18px;
+      background: #ffc81f;
+    }
+  }
+  &-nav {
+    @include flex-center;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 167px;
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0px -7px 19px 0px rgba(255, 191, 37, 0.44);
+    border-radius: 67px 67px 0px 0px;
+  }
+  &-avatar {
+    position: absolute;
+    box-sizing: border-box;
+    left: 50%;
+    top: 0;
+    width: 167px;
+    height: 167px;
+    border: 4px solid #fff;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+  }
+  &-content {
+    position: relative;
+    box-sizing: border-box;
+    margin-top: 70px;
+    padding: 65px 36px;
+    padding-top: 115px;
+    width: 672px;
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0px 13px 13px 0px rgba(255, 191, 37, 0.2);
+    border-radius: 47px;
+    &-title {
+      @include flex-center;
+      position: absolute;
+      left: 50%;
+      top: -30px;
+      width: 268px;
+      height: 93px;
+      @include bg('/1.9/report/title-bg.png');
+      transform: translateX(-50%);
+      font-size: 35px;
+      font-weight: bold;
+      color: rgba(255, 255, 255, 1);
+      text-shadow: 0px 3px 0px rgba(254, 109, 13, 0.2);
+    }
+  }
+  .kbbj {
+    &-swiper {
+      width: 600px;
+      height: 703px;
+      &-item {
+        width: 600px;
+        height: 703px;
+        background: rgba(247, 246, 249, 1);
+        border-radius: 33px;
+        overflow: hidden;
+        image {
+          width: 100%;
+        }
+      }
+    }
+  }
+  .ktfc {
+    &-avatar {
+      width: 93px;
+      height: 93px;
+      border-radius: 50%;
+    }
+    &-audio {
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-right: 32px;
+      margin-top: 41px;
+      padding: 0 17px;
+      width: 297px;
+      height: 73px;
+      background: rgba(255, 128, 58, 1);
+      border-radius: 37px 0px 37px 37px;
+      font-size: 26px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 1);
+      &-icon {
+        width: 35px;
+        height: 27px;
+        @include bg('/1.9/report/audio-icon.png');
+        &.play {
+          background-image: url('https://pub.file.k12.vip/2019/12/04/1202108006889558018.gif');
+        }
+      }
+    }
+    &-item {
+      box-sizing: border-box;
+      padding: 28px;
+      width: 600px;
+      background: rgba(247, 246, 249, 1);
+      border-radius: 33px;
+      &-top,
+      &-bottom {
+        display: flex;
+      }
+      &-top {
+        margin-bottom: 31px;
+      }
+      &-bottom {
+        justify-content: flex-end;
+      }
+      &-info {
+        box-sizing: border-box;
+        padding: 27px;
+        margin-top: 43px;
+        margin-left: 21px;
+        width: 425px;
+        background: rgba(255, 255, 255, 1);
+        border-radius: 0px 33px 33px 33px;
+        view {
+          font-size: 28px;
+          font-weight: 500;
+          color: rgba(51, 51, 51, 1);
+        }
+        image {
+          margin-top: 28px;
+          width: 200px;
+          height: 153px;
+          background: rgba(215, 215, 215, 1);
+          border-radius: 13px;
+        }
+      }
+    }
+  }
+  .bkbx {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    &-icon {
+      margin-bottom: 45px;
+      width: 429px;
+    }
+    &-list {
+      @include flex-center;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    &-item {
+      width: 187px;
+      height: 222px;
+      background: rgba(247, 246, 249, 1);
+      border-radius: 27px;
+      overflow: hidden;
+      &-header {
+        @include flex-column-center;
+        height: 159px;
+        width: 100%;
+        text {
+          font-size: 32px;
+          font-weight: 500;
+          color: rgba(153, 153, 153, 1);
+        }
+      }
+    }
+    &-title {
+      font-size: 48px;
+      font-weight: bold;
+      color: rgba(51, 51, 51, 1);
+      text {
+        font-weight: normal;
+        color: #333;
+      }
+    }
+    &-num {
+      @include flex-center;
+      width: 100%;
+      height: 63px;
+      background: #3eda7d;
+      font-size: 25px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 1);
+    }
+  }
+  .jrxx {
+    &-info {
+      display: flex;
+      align-items: center;
+      margin-bottom: 48px;
+      &-cover {
+        margin-left: 28px;
+        margin-right: 55px;
+        width: 200px;
+        height: 250px;
+        border-radius: 27px;
+      }
+      &-btn {
+        @include flex-center;
+        margin-bottom: 67px;
+        width: 213px;
+        height: 67px;
+        background: rgba(62, 218, 125, 1);
+        border-radius: 33px;
+        font-size: 32px;
+        font-weight: bold;
+        color: rgba(255, 255, 255, 1);
+      }
+      &-title {
+        width: 300px;
+        font-size: 39px;
+        font-weight: bold;
+        color: rgba(51, 51, 51, 1);
+      }
+    }
+    &-list {
+      box-sizing: border-box;
+      padding: 46px 39px;
+      padding-bottom: 1px;
+      width: 600px;
+      background: rgba(247, 246, 249, 1);
+      border-radius: 33px;
+    }
+    &-item {
+      display: flex;
+      font-size: 32px;
+      font-weight: 500;
+      margin-bottom: 46px;
+      color: rgba(51, 51, 51, 1);
+      &-text {
+        margin-right: 33px;
+        margin-left: 10px;
+        width: 417px;
+      }
+      &-icon {
+        align-self: center;
+        width: 40px;
+        height: 40px;
+        @include bg('/1.9/report/right.png');
+      }
+    }
+  }
+  &-calendar {
+    .-calendar-content {
+      width: 750px;
+
+      background: rgba(255, 255, 255, 1);
+
+      &-title {
+        @include flex-center;
+        padding: 38px 0 51px;
+
+        .-title {
+          margin: 0 216px;
+          font-size: 30px;
+          font-weight: bold;
+          color: rgba(51, 51, 51, 1);
+        }
+        .-pre,
+        .-next {
+          @include bg('/card/button-select.png');
+          background-size: 100%;
+          width: 14px;
+          height: 23px;
+        }
+        .-pre {
+          @include bg('/card/button-select1.png');
+          background-size: 100%;
+        }
+      }
+
+      &-body {
+        .calendar-body {
+          margin-left: 36px;
+        }
+      }
+    }
+
+    .-calendar-close {
+      display: inline-block;
+      width: 100%;
+      margin-top: 70px;
+      text-align: center;
+    }
+  }
+}
+</style>

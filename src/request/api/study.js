@@ -157,6 +157,9 @@ const study = {
   },
   finishWritingLesson(params) {
     return request.get('/compositionv3/lesson/finishWritingLesson', params)
+  },
+  getLearnReportB(params) {
+    return request.get('/compositionv3/study/getLearnReportB', params)
   }
 }
 

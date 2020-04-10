@@ -5,7 +5,9 @@
       class="container-scroll result-content"
       style="margin-top:{{height}}px"
     >
-      <view class="result-icon"></view>
+      <resultAnimation
+        :status="type"
+      />
       <view class="result-text" wx:if="{{resultData.score}}">获得小红花</view>
       <view class="result-flower" wx:if="{{resultData.score}}">
         <view class="result-flower-list">
@@ -28,17 +30,20 @@
 <script>
 import wepy from 'wepy'
 import mHeader from '../components/header'
+import resultAnimation from '../components/resultAnimation'
 export default class Result extends wepy.page {
   config = {
     navigationBarTitleText: ''
   }
   data = {
+    type: 4,
     score: 0,
     pointId: 0,
     resultData: {}
   }
   components = {
-    mHeader
+    mHeader,
+    resultAnimation
   }
   methods = {
     tryAgain() {
@@ -97,10 +102,13 @@ export default class Result extends wepy.page {
     let { api } = this.$parent.globalData
     api.study
       .endPoint({
+        complete: true,
         id: this.cid
       })
       .then(({ data }) => {
+
         this.score = data.resultData.score
+        this.$broadcast('startAnimate')
         this.getThreeLearnResult()
         this.$apply()
       })

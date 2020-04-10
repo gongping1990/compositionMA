@@ -68,7 +68,7 @@
           <!-- 连线题 start -->
           <matching
             :questionData.sync="questionData"
-            @end.user="answerEnd"
+            @end.user="handleAnswerEnd"
             @selected.user="matchingSelected"
             wx:if="{{questionData.type == 3}}"
           />
@@ -104,7 +104,7 @@
             wx:if="{{questionData.type == 5 || questionData.type == 6}}"
             :questionData.sync="questionData"
             @selected.user="dragSelected"
-            @end.user="answerEnd"
+            @end.user="handleAnswerEnd"
           />
           <!-- 拖拽题 end -->
 
@@ -171,13 +171,16 @@
       </view>
     </view>
     <load wx:if="{{loading}}"></load>
-    <van-popup show="{{ showIcon }}" overlay="{{true}}">
+    <resultAnimation
+      :status.sync="anwserStatus"
+    />
+    <!-- <van-popup show="{{ showIcon }}" overlay="{{true}}">
       <view class="result-icon" wx:if="{{showIcon}}">
         <view class="result-icon_cs" wx:if="{{anwserStatus == 3}}"></view>
         <view class="result-icon_zq" wx:if="{{anwserStatus == 1}}"></view>
         <view class="result-icon_cw" wx:if="{{anwserStatus == 2}}"></view>
       </view>
-    </van-popup>
+    </van-popup> -->
 
     <view
       class="jh-img {{questionData.gesture == 1 ? 'js' : 'dz'}} {{showMutualImg && 'show'}}"
@@ -196,12 +199,13 @@ import mHeader from '../components/header'
 import recorder from '../components/recorder'
 import drag from '../components/drag'
 import matching from '../components/matching'
+import resultAnimation from '../components/resultAnimation'
 import sentence from '../components/sentence'
 import tianKong from '../components/tianKong'
 import section from '../components/section'
 import load from '../components/load'
 let __timer = null
-export default class Example extends wepy.page {
+export default class Video extends wepy.page {
   config = {
     navigationBarTitleText: '',
     usingComponents: {
@@ -244,6 +248,7 @@ export default class Example extends wepy.page {
     // 判断题
     judgeActive: null,
     lessonEnd: false,
+    answerTime: 0
   }
   components = {
     mHeader,
@@ -253,7 +258,8 @@ export default class Example extends wepy.page {
     tianKong,
     drag,
     matching,
-    load
+    load,
+    resultAnimation
   }
   methods = {
     clickMutual() {
@@ -267,8 +273,8 @@ export default class Example extends wepy.page {
       }, 1500);
     },
     // 答题完成
-    answerEnd() {
-      this.time = 0
+    handleAnswerEnd() {
+      this.answerEnd()
     },
     clickPlaySound() {
       this.playSound()
@@ -276,7 +282,7 @@ export default class Example extends wepy.page {
     // 填空题
     tianKongSelected(status) {
       this.playSound()
-      this.time = 0
+      this.answerEnd()
       this.status = status
     },
     //拖拽题
@@ -298,7 +304,7 @@ export default class Example extends wepy.page {
         this.status = answerOption == index ? 1 : 2
       }
 
-      this.time = 0
+      this.answerEnd()
     },
     // 多选题
     clickChecked(item, index) {
@@ -319,7 +325,8 @@ export default class Example extends wepy.page {
         });
         return
       }
-      if(selectedArr.length != multAnswer.length) {
+
+      if(this.questionData.judgement == 1 && selectedArr.length != multAnswer.length) {
         this.status = 2
       } else {
         selectedArr.forEach(e => {
@@ -328,16 +335,15 @@ export default class Example extends wepy.page {
         this.status = status
       }
 
-
       this.checkedEnd = true
-      this.time = 0
+      this.answerEnd()
       this.$apply()
     },
     // 单选题
     clickChoice(index) {
       this.playSound()
       this.choiceSeleced = index
-      this.time = 0
+      this.answerEnd()
     },
     // 录音开始
     recorderStart() {
@@ -346,6 +352,7 @@ export default class Example extends wepy.page {
     },
     // 录音停止
     recorderStop(res) {
+      this.answerTime = this.questionData.answerTime - this.time
       clearTimeout(__timer)
       this.loading = true
       // 上传录音临时文件
@@ -463,10 +470,10 @@ export default class Example extends wepy.page {
           this.updatePoint()
         }
 
-        // if((currentTime / duration) > 0.85 && !this.lessonEnd) {
-        //   this.lessonEnd = true
-        //   this.endPoint()
-        // }
+        if((currentTime / duration) > 0.85 && !this.lessonEnd) {
+          this.lessonEnd = true
+          this.endPoint()
+        }
 
         // 到达答题时间点， 设置答题内容
         if (data) {
@@ -639,6 +646,10 @@ export default class Example extends wepy.page {
         this.$apply()
       })
   }
+  answerEnd() {
+    this.answerTime = this.questionData.answerTime - this.time
+    this.time = 0
+  }
   // 更新进度
   updatePoint() {
     let { api } = this.$parent.globalData
@@ -660,7 +671,8 @@ export default class Example extends wepy.page {
     let { api } = this.$parent.globalData
     let _time = this.questionData.type == 1 ? 1000 : 4000
     parmas.id = this.pointData.id
-    parmas.tid = this.questionData.id
+    parmas.tid = this.questionData.id,
+    parmas.time = this.answerTime
     api.study
       .updateAnswer(parmas)
       .then(() => {
@@ -714,7 +726,7 @@ export default class Example extends wepy.page {
           this.updateAnswer({
             answer: this.anwserStatus == 1 ? true : false
           })
-          this.showIcon = true
+          this.$broadcast('startAnimate')
           this.InnerAudioContext.stop()
           this.InnerAudioContext.src =
             this.anwserStatus == 1

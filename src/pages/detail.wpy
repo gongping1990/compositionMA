@@ -8,7 +8,7 @@
     <image mode="widthFix" class="detail-img" src="https://pub.file.k12.vip/tbzw/1.5/detail/5.png" />
     <image mode="widthFix" class="detail-img" src="https://pub.file.k12.vip/tbzw/1.5/detail/6.png" />
     <image mode="widthFix" class="detail-img" src="https://pub.file.k12.vip/tbzw/1.5/detail/7.png" />
-    <image mode="widthFix" class="detail-img" src="https://pub.file.k12.vip/tbzw/1.5/detail/8.png" />
+    <!--<image mode="widthFix" class="detail-img" src="https://pub.file.k12.vip/tbzw/1.5/detail/8.png" />-->
     <view class="detail-footer">
       <button
         type="defult"

@@ -4,7 +4,7 @@ var prod = process.env.NODE_ENV === 'production'
 module.exports = {
   wpyExt: '.wpy',
   eslint: true,
-  cliLogs: !prod,
+  cliLogs: false,
   build: {
     web: {
       htmlTemplate: path.join('src', 'index.template.html'),

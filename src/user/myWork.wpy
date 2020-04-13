@@ -48,16 +48,17 @@
           form-type="submit"
           class="p-myWork-all"
           @tap="lookAll()"
-          wx:if="{{!isShow && totalLength > 2}}"
+          wx:if="{{!isShow && totalLength > 2 && !isFetching}}"
         >
           查看全部{{totalLength}}个{{tabActive=== '1' ? '未交' : '已交'}}作业
         </button>
 
-        <view wx:if="{{!dataList.length}}">
+        <view wx:if="{{!dataList.length && !isFetching}}">
           <emptyState :emptyInfo.sync="emptyOption"></emptyState>
         </view>
       </form>
     </view>
+    <load wx:if="{{isFetching}}"></load>
   </view>
 </template>
 
@@ -65,8 +66,10 @@
   import wepy from 'wepy';
   import api from '../request/api';
   import { saveFormId } from '../utils';
+  import load from '../components/load';
   import mHeader from '../components/header';
   import emptyState from '../components/emptyState';
+  import Toast from '../vant/toast/toast';
 
   export default class MyWork extends wepy.page {
     config = {
@@ -74,7 +77,8 @@
     };
     components = {
       mHeader,
-      emptyState
+      emptyState,
+      load
     };
     computed = {
       height() {
@@ -85,6 +89,7 @@
     data = {
       tabActive: '1',
       isShow: false,
+      isFetching: false,
       queryInfo: {},
       dataList: [],
       totalLength: '',
@@ -104,6 +109,8 @@
     };
 
     getList(num) {
+      if (this.isFetching) return
+      this.isFetching = true
       api.study
         .listExistWorkByPage({
           courseId: this.queryInfo.id,
@@ -116,8 +123,10 @@
           } else {
             this.dataList = data.resultData.slice(0, 2);
           }
-
+          this.isFetching = false
           this.$apply();
+        }, function() {
+          this.isFetching = false
         });
     }
 
@@ -130,6 +139,7 @@
         this.isShow = true;
       },
       changeTab(num) {
+        if (this.isFetching) return
         this.dataList = [];
         this.dataListOne = [];
         this.tabActive = num;

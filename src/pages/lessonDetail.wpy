@@ -61,24 +61,74 @@
           </view>
         </view>
       </scroll-view>
+      <view class="lessonDetail-footer">
+        <view class="-footer-down">
+          <view class="-footer-downBtn -footer-ct"
+                @tap="clickRightBtn">
+            <image class="-footer-icon"
+                   src="{{btnTextArray[nowCardNum].url}}"
+                   mode="widthFix"></image>
+            {{btnTextArray[nowCardNum].name}}
+          </view>
+          <view class="-footer-downBtn -footer-co" @tap="toLearnReport">
+            <image class="-footer-icon"
+                   src="https://pub.file.k12.vip/2020/03/27/1243422422436405250.png"
+                   mode="widthFix"></image>
+            学习报告
+          </view>
+        </view>
+      </view>
     </view>
   </view>
 </template>
 <script>
 import wepy from 'wepy'
 import mHeader from '../components/header'
+import dayjs from 'dayjs'
+
 export default class Example extends wepy.page {
   config = {
     navigationBarTitleText: ''
   }
   data = {
     lessonId: 0,
-    lessonData: {}
+    lessonData: {},
+    cardDetail: {},
+    btnTextArray: [
+      {
+        url: 'https://pub.file.k12.vip/2020/03/27/1243425563684888577.png',
+        name: '一键打卡'
+      },
+      {
+        url: 'https://pub.file.k12.vip/2020/03/27/1243425563684888577.png',
+        name: '重新打卡'
+      },
+      {
+        url: 'https://pub.file.k12.vip/2020/04/14/1249910349219749889.png',
+        name: '打卡日历'
+      }
+    ],
   }
   components = {
     mHeader
   }
   methods = {
+    toLearnReport () {
+      wx.navigateTo({
+        url: `/user/report?id=${this.lessonId}`
+      })
+    },
+    clickRightBtn() {
+      if (this.nowCardNum === 2) {
+        wx.navigateTo({
+          url: `/user/card?courseId=${this.lessonData.courseId}&name=${this.lessonData.courseName}`
+        })
+      } else if (this.nowCardNum === 1) {
+        this.$invoke('loaded', 'downTime')
+      } else {
+        this.addMyCard()
+      }
+    },
     bindClickItem(item) {
       let { audioContext, playSound } = this.$parent.globalData
       let url =
@@ -114,7 +164,70 @@ export default class Example extends wepy.page {
   computed = {
     height() {
       return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+    },
+    nowCardNum() {
+      let num = 0;
+      if (this.lessonData.cancard && !this.cardDetail.todayCard) {
+        num = 0;
+      } else if (this.lessonData.cancard && this.cardDetail.todayCard) {
+        num = 1;
+      } else {
+        num = 2;
+      }
+      return num;
     }
+
+  }
+
+  addMyCard() {
+    let { _sa, api } = this.$parent.globalData;
+    api.study.addCard({
+      lessonId: this.lessonId
+    }).then(({ data }) => {
+      this.$invoke('loaded', 'downTime')
+      this.$apply();
+      _sa.track('courseClockRecord', {
+        courseID: this.dataInfo.courseId,
+        courseTitle: this.dataInfo.courseName,
+        isSuccess: true,
+        classID: this.dataInfo.lessonId,
+        className: this.dataInfo.lessonName,
+        classType: this.dataInfo.category
+      });
+    });
+  }
+
+  getCardInfo() {
+    let { api } = this.$parent.globalData
+    api.study.countCard().then(res => {
+      this.cardDetail = res.data.resultData;
+      this.cardDetail.time = dayjs(+res.data.timestamp).format('MM月DD日');
+
+      if (this.lessonData.cancard && !this.cardDetail.todayCard) {
+        this.getSorceByRecordSource();
+      } else {
+        this.flowerOption = [
+          `${this.cardDetail.time}打卡成功`,
+          `制作精美打卡海报`
+        ];
+      }
+      this.$apply();
+    });
+  }
+
+  getSorceByRecordSource() {
+    let { api } = this.$parent.globalData
+    api.center.getSorceByRecordSource({
+      lessonId: this.lessonId,
+      source: 2
+    }).then(({ data }) => {
+      this.flowerOption = [
+        `${this.cardDetail.time}打卡成功`,
+        `获得${data.resultData.count}朵小红花`,
+        `制作精美打卡海报`
+      ];
+      this.$apply();
+    });
   }
 
   getThreeLessonInfo() {
@@ -133,6 +246,7 @@ export default class Example extends wepy.page {
   }
   onShow() {
     this.getThreeLessonInfo()
+    this.getCardInfo()
   }
 }
 </script>
@@ -185,7 +299,7 @@ export default class Example extends wepy.page {
     }
   }
   &-scroll {
-    padding: 50px;
+    padding: 50px 50px 200px;
   }
   &-item {
     display: flex;
@@ -250,6 +364,46 @@ export default class Example extends wepy.page {
       .disabled & {
         @include bg('/1.8/lesson/suo.png');
       }
+    }
+  }
+  &-footer {
+    position: fixed;
+    box-sizing: border-box;
+    bottom: 0;
+    width: 100%;
+    /*height: 167px;*/
+    padding: 30px 32px;
+    background: rgba(255, 255, 255, 1);
+
+    .-footer-down {
+      @include flex-center;
+      justify-content: space-between;
+    }
+
+    .-footer-downBtn {
+      @include flex-center;
+      text-align: center;
+      width: 310px;
+      height: 98px;
+      border-radius: 49px;
+      font-size: 32px;
+      font-weight: bold;
+      color: rgba(255, 255, 255, 1);
+      line-height: 98px;
+    }
+
+    .-footer-icon {
+      width: 52px;
+      height: 59px;
+      margin-right: 18px;
+    }
+
+    .-footer-co {
+      background-color: #45E05A;
+    }
+
+    .-footer-ct {
+      background-color: #FFC81F;
     }
   }
 }

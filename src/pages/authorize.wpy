@@ -8,9 +8,7 @@
         <text>“乐小狮大语文”</text>
       </view>
       <image src="" class="authorize-img" />
-      <text class="authorize-subtitle"
-        >为方便正常使用，微信授权后即可学习课程。</text
-      >
+      <text class="authorize-subtitle">为方便正常使用，微信授权后即可学习课程。</text>
       <button
         type="defult"
         class="authorize-btn"

@@ -25,8 +25,8 @@ const center = {
   getSorceByRecordSource(params) {
     return request.get('/compositionv3/center/getSorceByRecordSource', params)
   },
-  getSystemConfigType(params) {
-    return request.get('/compositionv3/systemconfig/getSystemConfigType', params)
+  getVersionControl(params) {
+    return request.get('/compositionv3/vermanage/getVersionControl', params)
   }
 }
 

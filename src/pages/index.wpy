@@ -572,7 +572,7 @@ export default class Home extends wepy.page {
 
   initPage() {
     this.loading = true
-    this.getSystemConfigType()
+    this.getVersionControl()
     this.getHomePageInfo()
     this.getDayByMasterpiece()
     this.getHomeworkSquare()
@@ -620,19 +620,19 @@ export default class Home extends wepy.page {
       courseId: this.infoData.kfTeacherVO.courseId
     })
   }
-  getSystemConfigType() {
+  getVersionControl() {
     let { api } = this.$parent.globalData
     api.center
-      .getSystemConfigType({
-        type: 1
+      .getVersionControl({
+        version: '4.1.6'
       })
       .then(({ data }) => {
         this.systemConfig = data.resultData
-        if (data.resultData.param == '1') {
+        if (!data.resultData.passed) {
           wx.redirectTo({ url: '/pages/detail' })
           return
         }
-        if (!this.logined && data.resultData.param == '0') {
+        if (!this.logined && data.resultData.param) {
           this.initWelcome()
         }
       })

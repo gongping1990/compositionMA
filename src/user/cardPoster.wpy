@@ -96,7 +96,7 @@
         {
           id: 2,
           name: '海报背景',
-          url: 'https://pub.file.k12.vip/2020/03/30/1244545550059298818.png'
+          url: this.shareDetail.cardTemplates
         },
         {
           id: 3,

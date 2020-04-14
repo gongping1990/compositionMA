@@ -61,29 +61,31 @@
           </view>
         </view>
       </scroll-view>
-      <!--<view class="lessonDetail-footer">-->
-        <!--<view class="-footer-down">-->
-          <!--<view class="-footer-downBtn -footer-ct"-->
-                <!--@tap="clickRightBtn">-->
-            <!--<image class="-footer-icon"-->
-                   <!--src="{{btnTextArray[nowCardNum].url}}"-->
-                   <!--mode="widthFix"></image>-->
-            <!--{{btnTextArray[nowCardNum].name}}-->
-          <!--</view>-->
-          <!--<view class="-footer-downBtn -footer-co" @tap="changeMoreStatus">-->
-            <!--<image class="-footer-icon"-->
-                   <!--src="https://pub.file.k12.vip/2020/03/27/1243422422436405250.png"-->
-                   <!--mode="widthFix"></image>-->
-            <!--学习报告-->
-          <!--</view>-->
-        <!--</view>-->
-      <!--</view>-->
+      <view class="lessonDetail-footer">
+        <view class="-footer-down">
+          <view class="-footer-downBtn -footer-ct"
+                @tap="clickRightBtn">
+            <image class="-footer-icon"
+                   src="{{btnTextArray[nowCardNum].url}}"
+                   mode="widthFix"></image>
+            {{btnTextArray[nowCardNum].name}}
+          </view>
+          <view class="-footer-downBtn -footer-co" @tap="toLearnReport">
+            <image class="-footer-icon"
+                   src="https://pub.file.k12.vip/2020/03/27/1243422422436405250.png"
+                   mode="widthFix"></image>
+            学习报告
+          </view>
+        </view>
+      </view>
     </view>
   </view>
 </template>
 <script>
 import wepy from 'wepy'
 import mHeader from '../components/header'
+import dayjs from 'dayjs'
+
 export default class Example extends wepy.page {
   config = {
     navigationBarTitleText: ''
@@ -111,6 +113,22 @@ export default class Example extends wepy.page {
     mHeader
   }
   methods = {
+    toLearnReport () {
+      wx.navigateTo({
+        url: `/user/report?id=${this.lessonId}`
+      })
+    },
+    clickRightBtn() {
+      if (this.nowCardNum === 2) {
+        wx.navigateTo({
+          url: `/user/card?courseId=${this.lessonData.courseId}&name=${this.lessonData.courseName}`
+        })
+      } else if (this.nowCardNum === 1) {
+        this.$invoke('loaded', 'downTime')
+      } else {
+        this.addMyCard()
+      }
+    },
     bindClickItem(item) {
       let { audioContext, playSound } = this.$parent.globalData
       let url =
@@ -149,9 +167,9 @@ export default class Example extends wepy.page {
     },
     nowCardNum() {
       let num = 0;
-      if (this.dataInfo.cancard && !this.cardDetail.todayCard) {
+      if (this.lessonData.cancard && !this.cardDetail.todayCard) {
         num = 0;
-      } else if (this.dataInfo.cancard && this.cardDetail.todayCard) {
+      } else if (this.lessonData.cancard && this.cardDetail.todayCard) {
         num = 1;
       } else {
         num = 2;
@@ -161,12 +179,31 @@ export default class Example extends wepy.page {
 
   }
 
+  addMyCard() {
+    let { _sa, api } = this.$parent.globalData;
+    api.study.addCard({
+      lessonId: this.lessonId
+    }).then(({ data }) => {
+      this.$invoke('loaded', 'downTime')
+      this.$apply();
+      _sa.track('courseClockRecord', {
+        courseID: this.dataInfo.courseId,
+        courseTitle: this.dataInfo.courseName,
+        isSuccess: true,
+        classID: this.dataInfo.lessonId,
+        className: this.dataInfo.lessonName,
+        classType: this.dataInfo.category
+      });
+    });
+  }
+
   getCardInfo() {
+    let { api } = this.$parent.globalData
     api.study.countCard().then(res => {
       this.cardDetail = res.data.resultData;
       this.cardDetail.time = dayjs(+res.data.timestamp).format('MM月DD日');
 
-      if (this.dataInfo.cancard && !this.cardDetail.todayCard) {
+      if (this.lessonData.cancard && !this.cardDetail.todayCard) {
         this.getSorceByRecordSource();
       } else {
         this.flowerOption = [
@@ -179,8 +216,9 @@ export default class Example extends wepy.page {
   }
 
   getSorceByRecordSource() {
+    let { api } = this.$parent.globalData
     api.center.getSorceByRecordSource({
-      lessonId: this.queryInfo.lessonId,
+      lessonId: this.lessonId,
       source: 2
     }).then(({ data }) => {
       this.flowerOption = [
@@ -208,6 +246,7 @@ export default class Example extends wepy.page {
   }
   onShow() {
     this.getThreeLessonInfo()
+    this.getCardInfo()
   }
 }
 </script>
@@ -260,7 +299,7 @@ export default class Example extends wepy.page {
     }
   }
   &-scroll {
-    padding: 50px;
+    padding: 50px 50px 200px;
   }
   &-item {
     display: flex;

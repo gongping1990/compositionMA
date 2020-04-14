@@ -79,11 +79,13 @@
         </view>
       </view>
     </view>
+    <loaded :optionList.sync="flowerOption"></loaded>
   </view>
 </template>
 <script>
 import wepy from 'wepy'
 import mHeader from '../components/header'
+import loaded from '../components/loaded';
 import dayjs from 'dayjs'
 
 export default class Example extends wepy.page {
@@ -94,6 +96,7 @@ export default class Example extends wepy.page {
     lessonId: 0,
     lessonData: {},
     cardDetail: {},
+    flowerOption: {},
     btnTextArray: [
       {
         url: 'https://pub.file.k12.vip/2020/03/27/1243425563684888577.png',
@@ -110,7 +113,8 @@ export default class Example extends wepy.page {
     ],
   }
   components = {
-    mHeader
+    mHeader,
+    loaded
   }
   methods = {
     toLearnReport () {
@@ -154,6 +158,12 @@ export default class Example extends wepy.page {
     }
   }
   events = {
+    success() {
+      wx.navigateTo({
+        url: `/user/cardPoster?id=${this.lessonId}&type=1&category=3`
+      });
+      this.$broadcast('destroy')
+    },
     back() {
       wx.navigateBack({
         delta: 1 //返回的页面数，如果 delta 大于现有页面数，则返回到首页,
@@ -167,9 +177,10 @@ export default class Example extends wepy.page {
     },
     nowCardNum() {
       let num = 0;
-      if (this.lessonData.cancard && !this.cardDetail.todayCard) {
+      console.log(this.lessonData.canCard, this.cardDetail.todayCard)
+      if (this.lessonData.canCard && !this.cardDetail.todayCard) {
         num = 0;
-      } else if (this.lessonData.cancard && this.cardDetail.todayCard) {
+      } else if (this.lessonData.canCard && this.cardDetail.todayCard) {
         num = 1;
       } else {
         num = 2;
@@ -187,12 +198,12 @@ export default class Example extends wepy.page {
       this.$invoke('loaded', 'downTime')
       this.$apply();
       _sa.track('courseClockRecord', {
-        courseID: this.dataInfo.courseId,
-        courseTitle: this.dataInfo.courseName,
+        courseID: this.lessonData.courseId,
+        courseTitle: this.lessonData.courseName,
         isSuccess: true,
-        classID: this.dataInfo.lessonId,
-        className: this.dataInfo.lessonName,
-        classType: this.dataInfo.category
+        classID: this.lessonData.lessonId,
+        className: this.lessonData.lessonName,
+        classType: 3
       });
     });
   }
@@ -203,7 +214,7 @@ export default class Example extends wepy.page {
       this.cardDetail = res.data.resultData;
       this.cardDetail.time = dayjs(+res.data.timestamp).format('MM月DD日');
 
-      if (this.lessonData.cancard && !this.cardDetail.todayCard) {
+      if (this.lessonData.canCard && !this.cardDetail.todayCard) {
         this.getSorceByRecordSource();
       } else {
         this.flowerOption = [
@@ -372,7 +383,7 @@ export default class Example extends wepy.page {
     bottom: 0;
     width: 100%;
     /*height: 167px;*/
-    padding: 30px 32px;
+    padding: 30px 49px;
     background: rgba(255, 255, 255, 1);
 
     .-footer-down {

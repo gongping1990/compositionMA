@@ -219,9 +219,16 @@
 					"scene": null
 				},
 				{
-					"id": -1,
+					"id": 23,
 					"name": "pages/lessonDetail",
 					"pathName": "pages/lessonDetail",
+					"query": "id=1214016363879219201",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "user/report",
+					"pathName": "user/report",
 					"query": "id=1214016363879219201",
 					"scene": null
 				}

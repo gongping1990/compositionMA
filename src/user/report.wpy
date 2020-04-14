@@ -250,7 +250,7 @@ export default class Report extends wepy.page {
     clickCard() {
       if (this.nowCardNum === 2) {
         wx.navigateTo({
-          url: `/user/cardPoster?id=${this.lessonId}`,
+          url: `/user/cardPoster?id=${this.lessonId}&type=2&category=3`,
         })
       } else if (this.nowCardNum === 1) {
         this.$invoke('loaded', 'downTime')
@@ -260,6 +260,12 @@ export default class Report extends wepy.page {
     },
   }
   events = {
+    success() {
+      wx.navigateTo({
+        url: `/user/cardPoster?id=${this.lessonId}&type=2&category=3`
+      });
+      this.$broadcast('destroy')
+    },
     changeReport(date) {
       this.isShowMore = false
       this.getLearnReportB(date)
@@ -390,6 +396,7 @@ export default class Report extends wepy.page {
   }
   onShow() {
     this.getLearnReportB()
+    this.getCardInfo()
   }
 }
 </script>
@@ -511,7 +518,7 @@ export default class Report extends wepy.page {
   }
   &-nav {
     @include flex-center;
-    position: absolute;
+    position: fixed;
     left: 0;
     right: 0;
     bottom: 0;

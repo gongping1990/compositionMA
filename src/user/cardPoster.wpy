@@ -107,11 +107,6 @@
           id: 4,
           name: '重点图标',
           url: 'https://pub.file.k12.vip/2020/03/30/1244545943174635521.png'
-        },
-        {
-          id: 5,
-          name: '二维码',
-          url: 'https://pub.file.k12.vip/2020/04/01/1245256107997519874.png'
         }
       ];
 
@@ -157,7 +152,7 @@
 
     sharePosterCanvas(data) {
 
-      let [headimgurl, shareUrl, courseImg, icon, codeUrl] = data;
+      let [headimgurl, shareUrl, courseImg, icon] = data;
 
       for (let item of data) {
         if (item.id == '1') {
@@ -168,8 +163,6 @@
           courseImg = item.url;
         } else if (item.id == '4') {
           icon = item.url;
-        } else if (item.id == '5') {
-          codeUrl = item.url;
         }
       }
 
@@ -267,9 +260,6 @@
           //图标2
           ctx.drawImage(icon, width * 0.16, height * 0.705, 40 * 0.3, 40 * 0.3);
         }
-
-        // 二维码
-        ctx.drawImage(codeUrl, width * 0.7, height * 0.86, 150 * 0.3, 150 * 0.3);
 
         function canvasWorkBreak(maxWidth, fontSize, text) {
           const maxLength = maxWidth / fontSize;

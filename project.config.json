@@ -135,10 +135,10 @@
 					"scene": null
 				},
 				{
-					"id": 13,
+					"id": 11,
 					"name": "literacy/l_submitHomework",
 					"pathName": "literacy/l_submitHomework",
-					"query": "id=1214032696993923074",
+					"query": "id=1214016363879219201",
 					"scene": null
 				},
 				{
@@ -209,6 +209,13 @@
 					"name": "user/workPoster",
 					"pathName": "user/workPoster",
 					"query": "id=1139442555626065921",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "pages/lessonDetail",
+					"pathName": "pages/lessonDetail",
+					"query": "id=1214016363879219201",
 					"scene": null
 				},
 				{

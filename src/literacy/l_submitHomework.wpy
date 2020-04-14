@@ -54,9 +54,9 @@
           </button>
         </view>
 
-        <view class="p-l_submitHomework-teacher" @tap="toJump" wx:if="{{workDetail.replyTime}}">
+        <view class="p-l_submitHomework-teacher {{!workDetail.replyTime && 'bg2'}}" @tap="toJump" >
           <image class="-card-img" src="https://pub.file.k12.vip/2020/01/03/1213000584304144385.png"></image>
-          <view>来看看老师怎么说</view>
+          <view>{{workDetail.replyTime ? '来看看老师怎么说' : '重交作业'}}</view>
         </view>
 
       </form>
@@ -67,6 +67,10 @@
     <load wx:if="{{isFetching}}"></load>
 
     <successFlowerTemplate :isShow.sync="isOpenFlower" :option.sync="flowerOption"></successFlowerTemplate>
+
+    <ConfirmModal :isShow.sync="isShowConfirm"
+                  contentText="重新提交作业成功后，将会覆盖上次的内容，确定重交？"
+                  okText="确认"></ConfirmModal>
   </view>
 </template>
 
@@ -80,6 +84,7 @@
   import load from '../components/load';
   import lookImage from '../components/lookImage';
   import successFlowerTemplate from '../components/successFlowerTemplate';
+  import ConfirmModal from '../components/confirmModal';
   import getDateDiff from '../utils/getDateDiff';
 
   @connect({
@@ -99,7 +104,8 @@
       mHeader,
       lookImage,
       successFlowerTemplate,
-      load
+      load,
+      ConfirmModal
     };
     computed = {
       height() {
@@ -117,6 +123,7 @@
       itemUrl: [],
       imgIndex: '',
       isSuccessWork: false,
+      isShowConfirm: false,
       isFetching: false,
       isShowImage: false,
       isOpenFlower: false,
@@ -229,9 +236,13 @@
         this.isShowImage = true;
       },
       toJump() {
-        wx.navigateTo({
-          url: `/user/completionOfWork?type=1&id=${this.workDetail.lessonId}`
-        });
+        if (!this.workDetail.replyTime) {
+          wx.navigateTo({
+            url: `/user/completionOfWork?type=1&id=${this.workDetail.lessonId}`
+          });
+        } else {
+          this.isShowConfirm = true
+        }
       },
       submitWork() {
         let { audioContext, playSound } = this.$parent.globalData;
@@ -273,7 +284,19 @@
         } else {
           console.log('33')
         }
-      }
+      },
+      changeOkStatus(bool) {
+        this.isShowConfirm = false;
+        if (bool === 'true') {
+          wx.navigateTo({
+            url: `/literacy/${
+              this.lessonDetail.homeworkType == 1
+                ? 'l_uploadAudioWork'
+                : 'l_uploadImgWork'
+              }?id=${this.queryInfo.id}`
+          });
+        }
+      },
     };
 
     onLoad(query) {
@@ -481,10 +504,10 @@
       display: flex;
       align-items: center;
       position: fixed;
-      bottom: 250px;
+      bottom: 280px;
       right: 32px;
-      width:360px;
       height:100px;
+      padding-right: 29px;
       background:rgba(255,242,203,1);
       border-radius:50px;
       font-size:26px;
@@ -496,6 +519,12 @@
         margin: 15px 9px 0 15px;
         width: 93px;
         height: 83px;
+      }
+
+      &.bg2 {
+        padding-right: 47px;
+        color: #ffffff;
+        background-color: #7BB3FF;
       }
     }
   }

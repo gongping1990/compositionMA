@@ -124,14 +124,13 @@
           indicator-active-color="#FEA60D"
           circular
         >
-          <!-- <block wx:for="{{items}}" wx:key="">
-
-            </block> -->
-          <swiper-item>
-            <view class="kbbj-swiper-item">
-              <image mode="widthFix" src=""></image>
-            </view>
-          </swiper-item>
+          <block wx:for="{{reportData.keynotes}}" wx:key="{{index}}">
+            <swiper-item>
+              <view class="kbbj-swiper-item">
+                <image mode="widthFix" src="{{item}}"></image>
+              </view>
+            </swiper-item>
+          </block>
         </swiper>
       </view>
       <view class="report-nav">
@@ -250,7 +249,7 @@ export default class Report extends wepy.page {
     clickCard() {
       if (this.nowCardNum === 2) {
         wx.navigateTo({
-          url: `/user/cardPoster?id=${this.lessonId}`,
+          url: `/user/cardPoster?id=${this.lessonId}&type=2&category=3`,
         })
       } else if (this.nowCardNum === 1) {
         this.$invoke('loaded', 'downTime')
@@ -260,6 +259,12 @@ export default class Report extends wepy.page {
     },
   }
   events = {
+    success() {
+      wx.navigateTo({
+        url: `/user/cardPoster?id=${this.lessonId}&type=2&category=3`
+      });
+      this.$broadcast('destroy')
+    },
     changeReport(date) {
       this.isShowMore = false
       this.getLearnReportB(date)
@@ -304,6 +309,7 @@ export default class Report extends wepy.page {
         this.reportData = data.resultData
         this.reportData.correct = parseInt(this.reportData.correct)
         this.reportData.learncontent = JSON.parse(this.reportData.learncontent)
+        this.reportData.keynotes = JSON.parse(this.reportData.keynotes)
         this.reportData.records = this.reportData.records.map((e) => {
           let audiotime = this.timeToFormat(e.audiotime)
           return {
@@ -390,6 +396,7 @@ export default class Report extends wepy.page {
   }
   onShow() {
     this.getLearnReportB()
+    this.getCardInfo()
   }
 }
 </script>
@@ -511,7 +518,7 @@ export default class Report extends wepy.page {
   }
   &-nav {
     @include flex-center;
-    position: absolute;
+    position: fixed;
     left: 0;
     right: 0;
     bottom: 0;

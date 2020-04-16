@@ -573,9 +573,6 @@ export default class Home extends wepy.page {
   initPage() {
     this.loading = true
     this.getVersionControl()
-    this.getHomePageInfo()
-    this.getDayByMasterpiece()
-    this.getHomeworkSquare()
   }
 
   initWelcome() {
@@ -628,11 +625,15 @@ export default class Home extends wepy.page {
       })
       .then(({ data }) => {
         this.systemConfig = data.resultData
+        // data.resultData.passed = true
         if (!data.resultData.passed) {
           wx.redirectTo({ url: '/pages/detail' })
           return
         }
-        if (!this.logined && data.resultData.param) {
+        this.getHomePageInfo()
+        this.getDayByMasterpiece()
+        this.getHomeworkSquare()
+        if (!this.logined && data.resultData.passed) {
           this.initWelcome()
         }
       })

@@ -93,6 +93,7 @@ export default class Result extends wepy.page {
       })
       .then(({ data }) => {
         this.resultData = data.resultData
+        this.$broadcast('startAnimate')
         this.$apply()
       })
   }
@@ -108,7 +109,6 @@ export default class Result extends wepy.page {
       .then(({ data }) => {
 
         this.score = data.resultData.score
-        this.$broadcast('startAnimate')
         this.getThreeLearnResult()
         this.$apply()
       })

@@ -118,6 +118,14 @@ export default class Example extends wepy.page {
   }
   methods = {
     toLearnReport () {
+      let {checkPointList} = this.lessonData
+      if(!checkPointList[checkPointList.length - 1].unlocked) {
+        wx.showToast({
+          title: '课程还没有学完哦！', //提示的内容,
+          icon: 'none', //图标,
+        });
+        return
+      }
       wx.navigateTo({
         url: `/user/report?id=${this.lessonId}`
       })

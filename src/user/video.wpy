@@ -269,6 +269,7 @@ export default class Video extends wepy.page {
       this.playSound(6)
       setTimeout(() => {
         this.showMutualImg = false
+        this.time = 0
         this.$apply()
       }, 1500);
     },
@@ -356,6 +357,7 @@ export default class Video extends wepy.page {
       clearTimeout(__timer)
       this.loading = true
       // 上传录音临时文件
+      console.log(res.tempFilePath)
       wx.uploadFile({
         url: 'https://huoke.test.k12.vip/compositionv3/common/uploadPublicFile',
         filePath: res.tempFilePath,

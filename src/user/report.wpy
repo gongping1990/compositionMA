@@ -7,7 +7,8 @@
       style="margin-top:{{height}}px"
     >
       <view class="report-header">
-        <image class="report-avatar" src="{{userInfo.headimgurl}}" />
+        <image class="report-avatar" wx:if="{{reportData.stuAvatar}}" src="{{reportData.stuAvatar}}" />
+        <image class="report-avatar" @tap="bindUploadAvatar" wx:else src="https://pub.file.k12.vip/tbzw/1.9/report/empty-avatar.png" />
         <view class="report-header-title">{{ reportData.stuName }}</view>
         <view class="report-header-text">
           已坚持学习
@@ -126,8 +127,8 @@
         >
           <block wx:for="{{reportData.keynotes}}" wx:key="{{index}}">
             <swiper-item>
-              <view class="kbbj-swiper-item">
-                <image mode="widthFix" src="{{item}}"></image>
+              <view class="kbbj-swiper-item" @tap="enlargeImage({{index}})">
+                <image mode="widthFix" src="{{item}}" />
               </view>
             </swiper-item>
           </block>
@@ -171,6 +172,7 @@
       />
     </van-popup>
     <loaded :optionList.sync="flowerOption"></loaded>
+    <lookImage :isShow.sync="isShowImage" :imgUrl.sync="itemUrl" :index.sync="imgIndex"></lookImage>
   </view>
 </template>
 <script>
@@ -181,6 +183,7 @@ import { connect } from 'wepy-redux'
 import mHeader from '../components/header'
 import loaded from '../components/loaded'
 import calendar from '../components/calendar'
+import lookImage from '../components/lookImage';
 
 @connect({
   userInfo(state) {
@@ -199,6 +202,7 @@ export default class Report extends wepy.page {
     },
   }
   data = {
+    isShowImage: false,
     isShowMore: false,
     today: '',
     lessonId: 0,
@@ -220,13 +224,29 @@ export default class Report extends wepy.page {
         name: '分享到朋友圈',
       },
     ],
+    imgIndex: 0,
+    itemUrl: []
   }
   components = {
+    lookImage,
     mHeader,
     calendar,
     loaded,
   }
   methods = {
+    enlargeImage(idx) {
+        this.imgIndex = idx;
+        this.itemUrl = this.reportData.keynotes
+        this.isShowImage = true;
+      },
+    bindUploadAvatar() {
+      wx.showActionSheet({
+        itemList: ['从相册选择照片', '拍照'],
+        success: res => {
+          this.onSelect(res.tapIndex)
+        }
+      })
+    },
     bindClickPre() {
       this.$invoke('calendar', 'preMonth')
     },
@@ -272,6 +292,9 @@ export default class Report extends wepy.page {
     today(date) {
       this.today = date
     },
+    changePopupStatus() {
+      this.isShowImage = false;
+    }
   }
   watch = {}
   computed = {
@@ -388,6 +411,36 @@ export default class Report extends wepy.page {
       result = `${minute}:${second}`
     }
     return result
+  }
+  onSelect(type) {
+    let sourceType = !type ? 'album' : 'camera'
+    wx.chooseImage({
+      count: 1,
+      sizeType: ['original'],
+      sourceType: [sourceType],
+      success: res => {
+        // tempFilePath可以作为img标签的src属性显示图片
+        const tempFilePaths = res.tempFilePaths
+        wx.uploadFile({
+          url:
+            wepy.$appConfig.baseUrl + '/compositionv3/common/uploadPublicFile', //仅为示例，非真实的接口地址
+          filePath: tempFilePaths[0],
+          name: 'file',
+          success: res => {
+            const data = JSON.parse(res.data)
+            this.reportData.stuAvatar = data.resultData.url
+            this.$apply()
+            this.updateAvatar(data.resultData.url)
+          }
+        })
+      }
+    })
+  }
+  updateAvatar(url) {
+    api.user.updateAvatar({
+      id: this.reportData.stuId,
+      url
+    })
   }
   onLoad(option) {
     this.lessonId = option.id

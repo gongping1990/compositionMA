@@ -64,6 +64,9 @@ const user = {
   },
   listByDubbing() {
     return request.get('/compositionv3/dubbing/listByDubbing')
+  },
+  updateAvatar(params) {
+    return request.post('/compositionv3/student/updateAvatar', params)
   }
 }
 

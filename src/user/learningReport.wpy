@@ -484,8 +484,8 @@
 
         &-headImg2 {
           margin: 81px auto 16px;
-          width: 167px;
-          height: 167px;
+          max-width: 167px;
+          max-height: 167px;
         }
 
         &-content {

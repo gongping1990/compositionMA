@@ -236,7 +236,7 @@
         this.isShowImage = true;
       },
       toJump() {
-        if (!this.workDetail.replyTime) {
+        if (this.workDetail.replyTime) {
           wx.navigateTo({
             url: `/user/completionOfWork?type=1&id=${this.workDetail.lessonId}`
           });

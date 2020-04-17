@@ -7,7 +7,7 @@
       style="margin-top:{{height}}px"
     >
       <view class="report-header">
-        <image class="report-avatar" wx:if="{{reportData.stuAvatar}}" src="{{reportData.stuAvatar}}" />
+        <image class="report-avatar border" wx:if="{{reportData.stuAvatar}}" src="{{reportData.stuAvatar}}" />
         <image class="report-avatar" @tap="bindUploadAvatar" wx:else src="https://pub.file.k12.vip/tbzw/1.9/report/empty-avatar.png" />
         <view class="report-header-title">{{ reportData.stuName }}</view>
         <view class="report-header-text">
@@ -588,8 +588,10 @@ export default class Report extends wepy.page {
     width: 167px;
     height: 167px;
     border: 4px solid #fff;
-    border-radius: 50%;
     transform: translate(-50%, -50%);
+    &.border {
+      border-radius: 50%;
+    }
   }
   &-content {
     position: relative;

@@ -121,7 +121,7 @@ export default class Example extends wepy.page {
       let {checkPointList} = this.lessonData
       if(!checkPointList[checkPointList.length - 1].unlocked) {
         wx.showToast({
-          title: '课程还没有学完哦！', //提示的内容,
+          title: '学完课程才能查看学习报告哦！', //提示的内容,
           icon: 'none', //图标,
         });
         return
@@ -131,6 +131,7 @@ export default class Example extends wepy.page {
       })
     },
     clickRightBtn() {
+      let {checkPointList} = this.lessonData
       if (this.nowCardNum === 2) {
         wx.navigateTo({
           url: `/user/card?courseId=${this.lessonData.courseId}&name=${this.lessonData.courseName}`
@@ -138,6 +139,13 @@ export default class Example extends wepy.page {
       } else if (this.nowCardNum === 1) {
         this.$invoke('loaded', 'downTime')
       } else {
+        if(!checkPointList[checkPointList.length - 1].unlocked) {
+          wx.showToast({
+            title: '学完课程才能打卡哦！  ', //提示的内容,
+            icon: 'none', //图标,
+          });
+          return
+        }
         this.addMyCard()
       }
     },

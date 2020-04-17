@@ -603,7 +603,7 @@ export default class Example extends wepy.page {
 
   // 更新课程状态
   changeLearnStage(id, type) {
-    if (this.isLookBack) {
+    if (this.isLookBack || !id) {
       return
     }
     let { api } = this.$parent.globalData

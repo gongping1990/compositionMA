@@ -82,7 +82,7 @@ export default class SharePoster extends wepy.page {
       }).then(res => {
         this.shareDetail = res.data.resultData
         this.shareDetail.workImg = this.shareDetail.workImgSrc && this.shareDetail.workImgSrc.split(',')
-        this.shareDetail.stuImg = `${wepy.$appConfig.baseUrl}/compositionv2/user/porxyWXheadimg/${this.shareDetail.stuId}`
+        this.shareDetail.stuImg = `${wepy.$appConfig.baseUrl}/compositionv3/user/porxyWXheadimg/${this.shareDetail.stuId}`
         this.copyText = `我在乐小狮作文已坚持学习了${this.shareDetail.learnDay}天，每天听北师大老师讲作文，每次作业都能获得老师1对1的点评指导。
         目前已有${this.shareDetail.pv}位家长和孩子在这里学习，快来加入我们一起学习吧！`
         this.downloadInit()

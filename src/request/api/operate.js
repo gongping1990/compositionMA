@@ -11,10 +11,10 @@ const operate = {
     return request.post('/compositionv3/operate/recordstopTimePoint', params)
   },
   finishWarmUp(params) {
-    return request.post('/compositionv2/operate/finishWarmUp', params)
+    return request.post('/compositionv3/operate/finishWarmUp', params)
   },
   finishClassroomTest(params) {
-    return request.post('/compositionv2/operate/finishClassroomTest', params)
+    return request.post('/compositionv3/operate/finishClassroomTest', params)
   }
 }
 

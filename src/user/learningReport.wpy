@@ -6,9 +6,8 @@
       <view class="p-learningReport-list">
         <view class="-list-1"></view>
         <view class="-list-2">
-          <image class="-list-2-headImg"
-                 src="{{dataInfo.stuAvatar}}"
-                 mode="widthFix"></image>
+          <image class="-list-2-headImg" wx:if="{{dataInfo.stuAvatar}}" src="{{dataInfo.stuAvatar}}" mode="widthFix" />
+          <image class="-list-2-headImg2" @tap="bindUploadAvatar" wx:else src="https://pub.file.k12.vip/tbzw/1.9/report/empty-avatar.png" />
           <view class="-list-2-content">
             <image class="-content-icon1"
                    src="https://pub.file.k12.vip/tbzw/1.5/new/taiy1.png"
@@ -262,6 +261,14 @@
       }
     };
     methods = {
+      bindUploadAvatar() {
+        wx.showActionSheet({
+          itemList: ['从相册选择照片', '拍照'],
+          success: res => {
+            this.onSelect(res.tapIndex)
+          }
+        })
+      },
       changeMoreStatus () {
         this.isShowMore = !this.isShowMore
       },
@@ -393,6 +400,38 @@
       });
     }
 
+    onSelect(type) {
+      let sourceType = !type ? 'album' : 'camera'
+      wx.chooseImage({
+        count: 1,
+        sizeType: ['original'],
+        sourceType: [sourceType],
+        success: res => {
+          // tempFilePath可以作为img标签的src属性显示图片
+          const tempFilePaths = res.tempFilePaths
+          wx.uploadFile({
+            url:
+              wepy.$appConfig.baseUrl + '/compositionv3/common/uploadPublicFile', //仅为示例，非真实的接口地址
+            filePath: tempFilePaths[0],
+            name: 'file',
+            success: res => {
+              const data = JSON.parse(res.data)
+              this.dataInfo.stuAvatar = data.resultData.url
+              this.$apply()
+              this.updateAvatar(data.resultData.url)
+            }
+          })
+        }
+      })
+    }
+
+    updateAvatar(url) {
+      api.user.updateAvatar({
+        id: this.dataInfo.stuId,
+        url
+      })
+    }
+
     onLoad(data) {
       this.queryInfo = data;
       this.getLearnReport();
@@ -441,6 +480,12 @@
           border: 4px solid rgba(255, 255, 255, 1);
           box-shadow: 0px 0px 13px 0px rgba(243, 215, 181, 1);
           border-radius: 50%;
+        }
+
+        &-headImg2 {
+          margin: 81px auto 16px;
+          width: 167px;
+          height: 167px;
         }
 
         &-content {

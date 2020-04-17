@@ -231,6 +231,13 @@
 					"pathName": "user/report",
 					"query": "id=1214016363879219201",
 					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "user/workPoster",
+					"pathName": "user/workPoster",
+					"query": "id=1174867249594982402",
+					"scene": null
 				}
 			]
 		}

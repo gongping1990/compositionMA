@@ -587,10 +587,11 @@ export default class Report extends wepy.page {
     top: 0;
     width: 167px;
     height: 167px;
-    border: 4px solid #fff;
+
     transform: translate(-50%, -50%);
     &.border {
       border-radius: 50%;
+      border: 4px solid #fff;
     }
   }
   &-content {

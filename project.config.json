@@ -238,6 +238,13 @@
 					"pathName": "user/workPoster",
 					"query": "id=1174867249594982402",
 					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "user/cardPoster",
+					"pathName": "user/cardPoster",
+					"query": "id=1214016363879219201&type=2&category=3",
+					"scene": null
 				}
 			]
 		}

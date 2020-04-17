@@ -59,9 +59,9 @@
 			"list": [
 				{
 					"id": 0,
-					"name": "user/video",
-					"pathName": "user/video",
-					"query": "id=1214070007706173442",
+					"name": "pages/result",
+					"pathName": "pages/result",
+					"query": "id=1214070007706173442&cid=1251051619001974785",
 					"scene": null
 				},
 				{

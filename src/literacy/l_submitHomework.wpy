@@ -50,11 +50,11 @@
         <view class="p-l_submitHomework-footer">
           <button class="-footer-btn"
                   form-type="submit"
-                  @tap="submitWork">{{isSuccessWork ? '完成学习' : '上交作业'}}
+                  @tap="submitWork">{{isSuccessWork ? '完成学习' : '做作业'}}
           </button>
         </view>
 
-        <view class="p-l_submitHomework-teacher {{!workDetail.replyTime && 'bg2'}}" @tap="toJump" >
+        <view class="p-l_submitHomework-teacher {{!workDetail.replyTime && 'bg2'}}" @tap="toJump" wx:if="{{isSuccessWork}}">
           <image class="-card-img" src="https://pub.file.k12.vip/2020/01/03/1213000584304144385.png"></image>
           <view>{{workDetail.replyTime ? '来看看老师怎么说' : '重交作业'}}</view>
         </view>

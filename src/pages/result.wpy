@@ -36,6 +36,7 @@ export default class Result extends wepy.page {
     navigationBarTitleText: ''
   }
   data = {
+    InnerAudioContext: null,
     type: 4,
     score: 0,
     pointId: 0,
@@ -93,6 +94,8 @@ export default class Result extends wepy.page {
       })
       .then(({ data }) => {
         this.resultData = data.resultData
+        this.InnerAudioContext.src = data.resultData.successAnswerUrl
+        this.InnerAudioContext.play()
         this.$broadcast('startAnimate')
         this.$apply()
       })
@@ -114,6 +117,8 @@ export default class Result extends wepy.page {
       })
   }
   onLoad(option) {
+    this.InnerAudioContext = wx.createInnerAudioContext()
+    this.InnerAudioContext.obeyMuteSwitch = false
     this.pointId = option.id
     this.cid = option.cid
   }

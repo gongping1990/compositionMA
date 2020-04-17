@@ -351,7 +351,7 @@
         this.workDetail = res.data.resultData;
         this.workDetail.workTime = getDateDiff.getDateDiff(this.workDetail.workTime);
         this.workDetail.workImg = this.workDetail.workImg && this.workDetail.workImg.split(',');
-        this.workDetail.workImgSrc = this.workDetail.workImgSrc && this.workDetail.workImgSrc.split(',');
+        this.workDetail.workImgSrc = this.workDetail.workImgSrc ? this.workDetail.workImgSrc.split(',') : [];
         this.workDetail.replyImg = this.workDetail.replyImg && this.workDetail.replyImg.split(',');
         this.workDetail.duration = this.timeToFormat(this.workDetail.duration);
         this.workDetail.replyDuration = this.timeToFormat(this.workDetail.replyDuration);

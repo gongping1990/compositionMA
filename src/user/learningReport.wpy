@@ -474,8 +474,8 @@
 
         &-headImg {
           margin: 81px auto 16px;
-          width: 120px;
-          height: 120px;
+          max-width: 120px;
+          max-height: 120px;
           background: rgba(216, 213, 226, 1);
           border: 4px solid rgba(255, 255, 255, 1);
           box-shadow: 0px 0px 13px 0px rgba(243, 215, 181, 1);

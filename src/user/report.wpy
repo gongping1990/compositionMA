@@ -117,7 +117,7 @@
         </view>
       </view>
       <view class="report-content kbbj">
-        <view class="report-content-title">课本笔记</view>
+        <view class="report-content-title">课堂笔记</view>
         <swiper
           class="kbbj-swiper"
           indicator-dots

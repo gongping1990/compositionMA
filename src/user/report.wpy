@@ -65,7 +65,7 @@
               <text>正确率</text>
               <view class="bkbx-title"> {{ reportData.correct }}% </view>
             </view>
-            <view class="bkbx-num">超过{{ reportData.correctPer * 100 }}%同学</view>
+            <view class="bkbx-num">超过{{ reportData.correctPer }}%同学</view>
           </view>
           <view class="bkbx-item">
             <view class="bkbx-item-header">
@@ -75,7 +75,7 @@
                 <text>s/题</text>
               </view>
             </view>
-            <view class="bkbx-num">超过{{ reportData.speedPer * 100 }}%同学</view>
+            <view class="bkbx-num">超过{{ reportData.speedPer  }}%同学</view>
           </view>
           <view class="bkbx-item">
             <view class="bkbx-item-header">
@@ -85,7 +85,7 @@
                 <text>朵</text>
               </view>
             </view>
-            <view class="bkbx-num">超过{{ reportData.scorePer * 100 }}%同学</view>
+            <view class="bkbx-num">超过{{ reportData.scorePer }}%同学</view>
           </view>
         </view>
       </view>

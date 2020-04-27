@@ -786,7 +786,13 @@ export default class Home extends wepy.page {
     audioContext.stop()
   }
 
-  onShareAppMessage() {}
+  onShareAppMessage() {
+    return {
+      title: `聪明妈妈给孩子的第一堂大语文课`,
+      path: `/pages/index`,
+      imageUrl: 'https://pub.file.k12.vip/tbzw/v2/logo2.png'
+    }
+  }
 }
 </script>
 <style lang="scss">

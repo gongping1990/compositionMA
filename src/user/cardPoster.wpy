@@ -73,10 +73,10 @@
     };
 
     onShow() {
-      if (this.queryInfo.category !== '3') {
-        this.getLearnReport();
-      } else {
+      if (this.queryInfo.category === '1') {
         this.getLearnReportB();
+      } else {
+        this.getLearnReport();
       }
     }
 
@@ -105,7 +105,7 @@
         this.shareDetail = res.data.resultData;
         this.shareDetail.stuAvatar = this.shareDetail.stuAvatar ? this.shareDetail.stuAvatar.replace('http://thirdwx.qlogo.cn', 'https://thirdwx.qlogo.cn') : this.userInfo.headimgurl;
         this.shareDetail.learncontent = this.shareDetail.learncontent ? JSON.parse(this.shareDetail.learncontent) : [];
-        this.copyText = `今天我在乐小狮读写课学习了${this.shareDetail.lessonName}，我已坚持学习了${this.shareDetail.learnDays}天，
+        this.copyText = `今天我在乐小狮读写课学习了${this.shareDetail.lessonName}，我已坚持学习了${this.shareDetail.learnDays}天，每次10-15分钟，每周都有成长。
         目前已有${this.shareDetail.pv}位家长和孩子在这里学习，快来加入我们一起学习吧！`;
         this.downloadInit();
         this.$apply();
@@ -372,7 +372,11 @@
       }
     }
 
-    methods = {};
+    methods = {
+      saveCanvasImg () {
+        this.saveCanvasImg()
+      }
+    };
 
     events = {
       closeModalFn() {
@@ -381,7 +385,7 @@
       },
       back() {
         if (this.queryInfo.type === '1') {
-          if (this.queryInfo.category !== '3') {
+          if (this.queryInfo.category !== '2') {
             wx.navigateTo({
               url: `/user/submitHomework?id=${this.queryInfo.id}`
             });
@@ -389,7 +393,7 @@
             wx.navigateBack();
           }
         } else {
-          if (this.queryInfo.category !== '3') {//3为读写课， 1为作文课
+          if (this.queryInfo.category !== '2') {//2为读写课， 1为作文课
             wx.navigateTo({
               url: `/user/learningReport?lessonId=${this.queryInfo.id}`
             });
@@ -406,7 +410,7 @@
 
     onShareAppMessage() {
       return {
-        title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
+        title: `聪明妈妈给孩子的第一堂大语文课`,
         path: `/pages/index`,
         imageUrl: 'https://pub.file.k12.vip/tbzw/v2/logo2.png'
       };

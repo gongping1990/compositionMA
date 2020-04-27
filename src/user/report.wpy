@@ -269,7 +269,7 @@ export default class Report extends wepy.page {
     clickCard() {
       if (this.nowCardNum === 2) {
         wx.navigateTo({
-          url: `/user/cardPoster?id=${this.lessonId}&type=2&category=3`,
+          url: `/user/cardPoster?id=${this.lessonId}&type=2&category=2`,
         })
       } else if (this.nowCardNum === 1) {
         this.$invoke('loaded', 'downTime')
@@ -281,7 +281,7 @@ export default class Report extends wepy.page {
   events = {
     success() {
       wx.navigateTo({
-        url: `/user/cardPoster?id=${this.lessonId}&type=2&category=3`
+        url: `/user/cardPoster?id=${this.lessonId}&type=2&category=2`
       });
       this.$broadcast('destroy')
     },

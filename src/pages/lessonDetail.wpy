@@ -176,7 +176,7 @@ export default class Example extends wepy.page {
   events = {
     success() {
       wx.navigateTo({
-        url: `/user/cardPoster?id=${this.lessonId}&type=1&category=3`
+        url: `/user/cardPoster?id=${this.lessonId}&type=1&category=2`
       });
       this.$broadcast('destroy')
     },

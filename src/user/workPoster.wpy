@@ -78,8 +78,9 @@
         this.shareDetail = res.data.resultData;
         this.shareDetail.workImg = this.shareDetail.workImgSrc && this.shareDetail.workImgSrc.split(',');
         this.shareDetail.stuImg = `${wepy.$appConfig.baseUrl}/compositionv3/user/porxyWXheadimg/${this.shareDetail.stuId}`;
-        this.copyText = `今天我在乐小狮作文学习了${this.shareDetail.lessonName}，我已坚持学习了${this.shareDetail.learnDay}天，
-        每天听北师大老师讲作文，按时完成作业还能获得老师1对1的点评指导。目前已有${this.shareDetail.pv}位家长和孩子在这里学习，快来加入我们一起学习吧！`;
+        this.copyText = this.queryInfo.category === '1' ?`今天我在乐小狮作文学习了${this.shareDetail.lessonName}，我已坚持学习了${this.shareDetail.learnDay}天，
+        每天听北师大老师讲作文，按时完成作业还能获得老师1对1的点评指导。目前已有${this.shareDetail.pv}位家长和孩子在这里学习，快来加入我们一起学习吧！` : `今天我在乐小狮读写课学习了${this.shareDetail.lessonName}，
+        我已坚持学习了${this.shareDetail.learnDay}天，每次10-15分钟，每周都有成长。目前已有${this.shareDetail.pv}位家长和孩子在这里学习，快来加入我们一起学习吧！`;
         this.downloadInit();
         this.$apply();
       }, () => {
@@ -343,9 +344,9 @@
 
     onShareAppMessage() {
       return {
-        title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
-        path: `/pages/index`,
-        imageUrl: 'https://pub.file.k12.vip/tbzw/v2/logo2.png'
+        title: `我已坚持学习${this.shareDetail.learnDay}天，刚完成今天的作业，请给我点个赞吧`,
+        path: `/user/shareHomework?id=${this.shareDetail.id}`,
+        imageUrl: this.shareDetail.workImgs[0]
       };
     }
   }

@@ -87,7 +87,8 @@ export default class Example extends wepy.component {
     })
     wepy.login().then(res => {
       let params = {
-        code: res.code
+        code: res.code,
+        appid: 'wxb9a1ecf4118c456d'
       }
       api.user.wxUserLogin(params).then(({ data }) => {
         wx.hideLoading()

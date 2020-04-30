@@ -50,7 +50,8 @@ export default class Example extends wepy.page {
             iv,
             encryptedData,
             rawData,
-            signature
+            signature,
+            appid: 'wxb9a1ecf4118c456d'
           })
           .then(({ data }) => {
             wx.redirectTo({ url: '/pages/index' })

@@ -73,7 +73,7 @@
     };
 
     onShow() {
-      if (this.queryInfo.category === '1') {
+      if (this.queryInfo.category === '2') {
         this.getLearnReportB();
       } else {
         this.getLearnReport();

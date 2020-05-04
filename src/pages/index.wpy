@@ -32,36 +32,36 @@
             </swiper-item>
           </block>
         </swiper>
-        <view class="title-item" wx:if="{{courseList.length}}">
-          <text class="title-text">大语文精品课</text>
-        </view>
-        <repeat for="{{courseList}}" key="index" index="index" item="item">
-          <view class="course-item">
-            <image
-              src="{{item.verticalCover}}"
-              class="course-cover"
-              lazy-load="true"
-            />
-            <view class="course-right">
-              <view class="course-info">
-                <text class="course-title">{{ item.name }}</text>
-                <text class="course-text">{{ item.courseDescribe }}</text>
-              </view>
-              <view class="course-btn-wrap">
-                <button
-                  open-type="contact"
-                  class="course-btn"
-                  show-message-card="true"
-                  send-message-title="{{item.cardtitle}}"
-                  send-message-path="{{'/pages/index?homeConfig=' + item.sessionFrom}}"
-                  send-message-img="{{item.cardimgurl}}"
-                >
-                  去报名
-                </button>
-              </view>
-            </view>
-          </view>
-        </repeat>
+        <!--<view class="title-item" wx:if="{{courseList.length}}">-->
+          <!--<text class="title-text">大语文精品课</text>-->
+        <!--</view>-->
+        <!--<repeat for="{{courseList}}" key="index" index="index" item="item">-->
+          <!--<view class="course-item">-->
+            <!--<image-->
+              <!--src="{{item.verticalCover}}"-->
+              <!--class="course-cover"-->
+              <!--lazy-load="true"-->
+            <!--/>-->
+            <!--<view class="course-right">-->
+              <!--<view class="course-info">-->
+                <!--<text class="course-title">{{ item.name }}</text>-->
+                <!--<text class="course-text">{{ item.courseDescribe }}</text>-->
+              <!--</view>-->
+              <!--<view class="course-btn-wrap">-->
+                <!--<button-->
+                  <!--open-type="contact"-->
+                  <!--class="course-btn"-->
+                  <!--show-message-card="true"-->
+                  <!--send-message-title="{{item.cardtitle}}"-->
+                  <!--send-message-path="{{'/pages/index?homeConfig=' + item.sessionFrom}}"-->
+                  <!--send-message-img="{{item.cardimgurl}}"-->
+                <!--&gt;-->
+                  <!--去报名-->
+                <!--</button>-->
+              <!--</view>-->
+            <!--</view>-->
+          <!--</view>-->
+        <!--</repeat>-->
 
         <view class="-tabs-wrap">
           <view

@@ -75,10 +75,15 @@ const study = {
     return request.post('/compositionv3/study/knowReply', params)
   },
   getAttendClassCatalog() {
-    return request.get('/compositionv3/study/getAttendClassCatalog')
+    return request.get('/compositionv3/study/getAttendClassCatalog', {
+      category: '2'
+    })
   },
   listCompositionWeekLesson(params) {
-    return request.get('/compositionv3/study/listCompositionWeekLesson', params)
+    return request.get('/compositionv3/study/listCompositionWeekLesson', {
+      ...params,
+      category: '2'
+    })
   },
   getLessonCatalogByCourse(params) {
     return request.get('/compositionv3/study/getLessonCatalogByCourse', params)
@@ -90,7 +95,9 @@ const study = {
     return request.get('/compositionv3/study/getPraiseById', params)
   },
   getLatelyDubbingByHome() {
-    return request.get('/compositionv3/homepage/getLatelyDubbingByHome')
+    return request.get('/compositionv3/homepage/getLatelyDubbingByHome', {
+      category: '2'
+    })
   },
   listDateByCourse(params) {
     return request.get('/compositionv3/center/listDateByCourse', params)

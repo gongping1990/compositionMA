@@ -15,7 +15,7 @@
       </view>
       <view class="empty" wx:if="{{!isBuy && remindData.hasChild}}">
         <text class="empty-title">你还没有报名课程哦~</text>
-        <text class="empty-text">我们为你推荐了其他小朋友都在学的动画课程</text>
+        <text class="empty-text">我们为你推荐了其他小朋友都在学的AI动画课程</text>
         <button
           class="empty-btn"
           wx:for="{{recommendList}}"

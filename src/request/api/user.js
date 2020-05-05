@@ -54,7 +54,9 @@ const user = {
     return request.get('/umg/student/getMyChild')
   },
   getKFTeacher() {
-    return request.get('/compositionv3/teacher/getKFTeacher')
+    return request.get('/compositionv3/teacher/getKFTeacher', {
+      category: '2'
+    })
   },
   bindKF(params) {
     return request.post('/homework/kfteacher/bindKF', params)

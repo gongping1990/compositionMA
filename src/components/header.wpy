@@ -61,7 +61,7 @@ export default class Example extends wepy.component {
     },
     title: {
       type: String,
-      default: '乐小狮大语文'
+      default: '乐小狮读写课'
     },
     commonHeadHeight: {
       type: Object,

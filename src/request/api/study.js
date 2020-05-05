@@ -36,13 +36,19 @@ const study = {
     return request.get('/compositionv3/study/like', params)
   },
   listLikeByPage(params) {
-    return request.get('/compositionv3/study/listLikeByPage', params)
+    return request.get('/compositionv3/study/listLikeByPage', {
+      ...params,
+      category: '2'
+    })
   },
   listUserLessons(params) {
     return request.get('/compositionv3/study/listUserLessons', params)
   },
   listPraiseByPage(params) {
-    return request.get('/compositionv3/study/listPraiseByPage', params)
+    return request.get('/compositionv3/study/listPraiseByPage', {
+      ...params,
+      category: '2'
+    })
   },
   listWorkPraiseByPage(params) {
     return request.get('/compositionv3/study/listWorkPraiseByPage', params)
@@ -66,7 +72,10 @@ const study = {
     return request.post('/compositionv3/study/evaluation', params)
   },
   countCard(params) {
-    return request.get('/compositionv3/study/countCard', params)
+    return request.get('/compositionv3/study/countCard', {
+      ...params,
+      category: '2'
+    })
   },
   listCard(params) {
     return request.get('/compositionv3/study/listCard', params)
@@ -89,7 +98,10 @@ const study = {
     return request.get('/compositionv3/study/getLessonCatalogByCourse', params)
   },
   listReplyByPage(params) {
-    return request.get('/compositionv3/study/listReplyByPage', params)
+    return request.get('/compositionv3/study/listReplyByPage', {
+      ...params,
+      category: '2'
+    })
   },
   getPraiseById(params) {
     return request.get('/compositionv3/study/getPraiseById', params)
@@ -121,7 +133,9 @@ const study = {
     return request.get('/compositionv3/study/getRestrictCourseLesson', params)
   },
   getLearnRemind() {
-    return request.get('/compositionv3/study/getLearnRemind')
+    return request.get('/compositionv3/study/getLearnRemind', {
+      category: '2'
+    })
   },
   getThreeLessonInfo(params) {
     return request.get('/compositionv3/lesson/getThreeLessonInfo', params)

@@ -15,7 +15,7 @@ const course = {
   homeworkSquare(params) {
     return request.get('/compositionv3/homepage/homeworkSquare', {
       ...params,
-      category: '2'
+      category: '0'
     })
   },
   dayByMasterpiece(params) {

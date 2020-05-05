@@ -25,7 +25,10 @@ const center = {
     return request.post('/compositionv3/center/saveRecipient', params)
   },
   getServiceRemindVO(params) {
-    return request.get('/compositionv3/center/getServiceRemindVO', params)
+    return request.get('/compositionv3/center/getServiceRemindVO', {
+      ...params,
+      category: '2'
+    })
   },
   getBottomTipsVO(params) {
     return request.get('/compositionv3/center/getBottomTipsVO', {

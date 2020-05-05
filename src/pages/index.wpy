@@ -416,7 +416,7 @@ dayjs.extend(relativeTime)
 })
 export default class Home extends wepy.page {
   config = {
-    navigationBarTitleText: '今日学习',
+    navigationBarTitleText: '乐小狮读写课',
     onReachBottomDistance: 100,
     usingComponents: {
       'van-tabbar': '../vant/tabbar/index',

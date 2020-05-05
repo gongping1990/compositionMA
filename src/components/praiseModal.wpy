@@ -10,7 +10,7 @@
             <text class="-red">优秀作品</text>
             特发此状，以资鼓励
           </view>
-          <view class="-content-top-text">小语轻作文</view>
+          <view class="-content-top-text">乐小狮读写课</view>
           <view class="-content-top-text">{{dataInfo.citeTime}}</view>
         </view>
         <view class="-content-down">

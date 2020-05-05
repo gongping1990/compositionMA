@@ -73,14 +73,13 @@
     onShow() {
       this.getHomework()
     }
-
     getHomework() {
       this.isFetching = true
       api.study.getPraiseById({
         workId: this.queryInfo.id
       }).then(res => {
         this.shareDetail = res.data.resultData
-        this.copyText = `【真开心，我的作业受到了老师的表扬】我在乐小狮作文已坚持学习了${this.shareDetail.studys}天，每天听北师大老师讲作文，每次作业都能获得老师1对1的点评指导。目前已有${this.shareDetail.uv}位家长和孩子在这里学习，快来加入我们一起学习吧！`
+        this.copyText = `【真开心，我的作业受到了老师的表扬】我在乐小狮读写课已坚持学习了${this.shareDetail.studys}天，每次10-15分钟，每周都有成长。目前已有${this.shareDetail.uv}位家长和孩子在这里学习，快来加入我们一起学习吧！`
         this.downloadInit()
         this.$apply()
       }, () => {
@@ -93,7 +92,7 @@
         {
           id: 1,
           name: '海报背景',
-          url: 'https://pub.file.k12.vip/2019/11/05/1191659245630087169.png'
+          url: this.shareDetail.praiseShare
         }
       ]
 

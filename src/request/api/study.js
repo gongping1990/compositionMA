@@ -141,10 +141,16 @@ const study = {
     return request.get('/compositionv3/lesson/getThreeLessonInfo', params)
   },
   getThreeLearnInfo(params) {
-    return request.get('/compositionv3/lesson/getThreeLearnInfo', params)
+    return request.get('/compositionv3/lesson/getThreeLearnInfo', {
+      ...params,
+      category: '2'
+    })
   },
   getThreeLearnResult(params) {
-    return request.get('/compositionv3/lesson/getThreeLearnResult', params)
+    return request.get('/compositionv3/lesson/getThreeLearnResult',  {
+      ...params,
+      category: '2'
+    })
   },
   startPoint(params) {
     return request.post('/compositionv3/stucheckpoint/startPoint', params)

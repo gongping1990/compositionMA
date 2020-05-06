@@ -65,7 +65,9 @@ const user = {
     return request.post('/homework/kfteacher/followKF', params)
   },
   listByDubbing() {
-    return request.get('/compositionv3/dubbing/listByDubbing')
+    return request.get('/compositionv3/dubbing/listByDubbing',{
+      category: '2'
+    })
   },
   updateAvatar(params) {
     return request.post('/compositionv3/student/updateAvatar', params)

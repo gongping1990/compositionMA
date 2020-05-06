@@ -545,7 +545,7 @@
         }
         api.study.evaluationToTeacher({
           id: this.workDetail.id,
-          evaluation: this.isActive,
+          evaluation: +this.isActive+1,
           stumsg: this.stumsg
         }).then(() => {
           this.isEvaluate = true;

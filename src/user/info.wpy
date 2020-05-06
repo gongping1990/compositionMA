@@ -166,9 +166,6 @@ export default class Info extends wepy.page {
         icon: 'none' //图标
       })
       this.getBottomTipsVO()
-      wx.navigateBack({
-        delta: 1 //返回的页面数，如果 delta 大于现有页面数，则返回到首页,
-      })
       this.$apply()
     })
   }
@@ -180,6 +177,9 @@ export default class Info extends wepy.page {
         getStore().dispatch({
           type: 'UPDATE_TAB_REMIND',
           payload: data.resultData
+        })
+        wx.navigateBack({
+          delta: 1 //返回的页面数，如果 delta 大于现有页面数，则返回到首页,
         })
       })
       .catch(e => {})

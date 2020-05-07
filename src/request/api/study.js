@@ -187,6 +187,9 @@ const study = {
   },
   getLearnReportB(params) {
     return request.get('/compositionv3/study/getLearnReportB', params)
+  },
+  closeRemind(params) {
+    return request.post('/compositionv3/study/closeRemind', params)
   }
 }
 

@@ -375,8 +375,8 @@
 
         this.initAudio(false);
         this.isFetching = false;
+        this.closeRemind()
         this.$apply();
-        console.log(this.workDetail);
       }, () => {
         this.isFetching = false;
         this.$apply();
@@ -419,6 +419,12 @@
         this.playGuideAudio(data.oathvfUrl);
         this.$apply();
       });
+    };
+
+    closeRemind() {
+      api.study.closeRemind({
+        lessonId: this.queryInfo.id
+      })
     };
 
     playGuideAudio(src) {
@@ -523,10 +529,6 @@
             .then(() => {
               this.isZan = true;
               setTimeout(() => {
-                this.startLikeAnimation();
-              }, 500);
-
-              setTimeout(() => {
                 this.getOtherHomework();
                 this.$apply();
               }, 900);
@@ -584,24 +586,6 @@
         }
       }
     };
-
-    startLikeAnimation() {
-      const base = 270 / 414;
-      const bgBase = 13865 / 414;
-      const width = 276;
-      let height = width * base;
-      let time = (1000 * 0.75) / 51;
-      let bgHeight = parseInt(width * bgBase);
-      setTimeout(() => {
-        if (this.backgroundY < bgHeight) {
-          this.backgroundY += height;
-          this.startLikeAnimation();
-        } else {
-          this.backgroundY = 0;
-        }
-        this.$apply();
-      }, time);
-    }
 
     onLoad(query) {
       this.queryInfo = query;

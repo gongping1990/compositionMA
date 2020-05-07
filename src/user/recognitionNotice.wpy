@@ -21,7 +21,7 @@
                   <view class="-icon"
                       wx:if="{{!item.know}}" ></view>
                 </view>
-                <text class="-msg">{{item.teacherName}}给你发来了课后讲解</text>
+                <text class="-msg">{{item.teacherName}}表扬了你的作业</text>
               </view>
               <view class="-item-footer">
                 <image class="-img" src="{{item.coverphoto}}" />

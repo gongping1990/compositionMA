@@ -365,15 +365,7 @@ export default class Lesson extends wepy.page {
     },
     clickContinueLearn() {
       let lesson = this.learnRemindData
-      if (lesson.category == 1) {
-        if (!lesson.stage) {
-          wx.navigateTo({ url: '/user/classroom?id=' + lesson.lessonId })
-        } else if (lesson.stage === 1) {
-          wx.navigateTo({ url: '/user/study?id=' + lesson.lessonId })
-        }
-      } else {
-        wx.navigateTo({ url: '/pages/lessonDetail?id=' + lesson.lessonId })
-      }
+      wx.navigateTo({ url: '/pages/lessonDetail?id=' + lesson.lessonId })
     },
     onScroll() {
       this.showMsg = false
@@ -407,51 +399,13 @@ export default class Lesson extends wepy.page {
         courseList: this.nowWeek ? '本周' : '上周',
         classID: lesson.id,
         className: lesson.name,
-        classType: lesson.category == 1 ? '作文' : '读写'
+        classType: '读写'
       })
       // lesson.category  1 作文课， 2 读写课 3写字课
-      if (lesson.category == 1) {
-        if (!lesson.stage) {
-          if (lesson.state !== 4) {
-            wx.navigateTo({ url: '/user/classroom?id=' + lesson.id })
-          } else {
-            wx.showToast({
-              title: '课程尚未开始，先看看其他课程吧！', // 提示的内容,
-              icon: 'none', // 图标,
-              duration: 2000, // 延迟时间,
-              mask: true
-            })
-          }
-        } else if (lesson.stage === 1) {
-          wx.navigateTo({ url: '/user/study?id=' + lesson.id })
-        } else if (lesson.stage === 2) {
-          wx.navigateTo({ url: '/user/test?id=' + lesson.id })
-        } else {
-          wx.navigateTo({ url: '/user/submitHomework?id=' + lesson.id })
-        }
-      } else if (lesson.category == 2) {
-        // 读写课
-        if (!lesson.stage && lesson.state == 4) {
-          return
-        }
-        wx.navigateTo({ url: '/pages/lessonDetail?id=' + lesson.id })
-      } else {
-        // 写字课
-        if (!lesson.locked) {
-          this.showDialogOne = true
-          return
-        }
-        if (!lesson.stage && lesson.state == 4) {
-          return
-        }
-        // if (lesson.state === 3) {
-        //   wx.navigateTo({
-        //     url: `/literacy/w_uploadImgWork?id=${lesson.id}`
-        //   })
-        //   return
-        // }
-        wx.redirectTo({ url: `/user/writeStudy?id=${lesson.id}` })
+      if (!lesson.stage && lesson.state == 4) {
+        return
       }
+      wx.navigateTo({ url: '/pages/lessonDetail?id=' + lesson.id })
     }
   }
 

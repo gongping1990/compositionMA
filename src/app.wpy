@@ -208,10 +208,7 @@ export default class extends wepy.app {
       'pages/login',
       'pages/resetPwd',
       'pages/user',
-      'pages/praiseOfWorks',
-      'pages/subscribe',
       'pages/authorize',
-      'pages/enroll',
       'pages/result'
     ],
     subPackages: [
@@ -221,15 +218,9 @@ export default class extends wepy.app {
           'info',
           'report',
           'picture',
-          'joinRoom',
-          'classroom',
-          'ready',
-          'test',
           'study',
-          'writeStudy',
           'teacher',
           'video',
-          'writeCatalog',
           'child',
           'gift',
           'giftActive',
@@ -241,15 +232,9 @@ export default class extends wepy.app {
           'myWorkList',
           'pointNotice',
           'recognitionNotice',
-          'myWorkAll',
-          'submitHomework',
           'completionOfWork',
-          'uploadAudioWork',
-          'uploadImgWork',
           'workEvaluation',
           'praisePoster',
-          'learningReport',
-          'errorBook',
           'myCardCourse',
           'workPoster',
           'cardPoster',
@@ -263,8 +248,7 @@ export default class extends wepy.app {
         pages: [
           'l_submitHomework',
           'l_uploadAudioWork',
-          'l_uploadImgWork',
-          'w_uploadImgWork'
+          'l_uploadImgWork'
         ]
       }
     ],

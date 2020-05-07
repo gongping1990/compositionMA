@@ -335,14 +335,14 @@
         </view>
       </van-popup>
       <van-popup custom-style="top: 42%" show="{{ showWork }}" @close="onClose">
-        <view class="welcome-pop work">
-          <view class="welcome-pop-text">
+        <view class="welcome-pop-work work">
+          <view class="welcome-pop-work-text">
             你好呀，小朋友。老师给你发来了课后作业讲解，快去看看吧！
           </view>
-          <button class="welcome-pop-btn" @tap="clickToCompletionOfWork">
+          <button class="welcome-pop-work-btn" @tap="clickToCompletionOfWork">
             去看看
           </button>
-          <view class="welcome-pop-close" @tap="onClose"></view>
+          <view class="welcome-pop-work-close" @tap="onClose"></view>
         </view>
       </van-popup>
       <login :showPopup.sync="showPopup" :show.sync="showSelect"></login>
@@ -423,7 +423,7 @@ export default class Home extends wepy.page {
     showAddTeacher: false,
     showYD: false,
     showBannderYd: false,
-    showWelcome: true,
+    showWelcome: false,
     showWork: false,
     showTopImg: false,
     isError: false,
@@ -858,6 +858,78 @@ export default class Home extends wepy.page {
       background-size: 100%;
     }
   }
+
+  .welcome-pop-work {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-sizing: border-box;
+    padding: 50px 36px;
+    padding-top: 274px;
+    width: 602px;
+    height: 526px;
+    background: url('https://pub.file.k12.vip/tbzw/1.5/home/pop-img.png')
+    no-repeat;
+    background-size: 100%;
+    &-wrap {
+      top: 42%;
+    }
+    &.work {
+      height: 558px;
+      background-image: url('https://pub.file.k12.vip/tbzw/1.5/home/pop-img.png');
+    }
+    &-close {
+      position: absolute;
+      left: 50%;
+      bottom: -132px;
+      width: 80px;
+      height: 80px;
+      background: url('https://pub.file.k12.vip/tbzw/1.5/home/close.png')
+      no-repeat;
+      background-size: 100%;
+      transform: translateX(-50%);
+    }
+    &-text {
+      font-size: 40px;
+      line-height: 56px;
+      color: #333333;
+    }
+    &-span {
+      font-size: 48px;
+      font-weight: 500;
+      color: #ff7c35;
+    }
+    &-btn {
+      @include flex-center;
+      margin-top: 12px;
+      align-self: flex-end;
+      width: 176px;
+      height: 66px;
+      background: rgba(255, 192, 0, 1);
+      box-shadow: 0px 4px 8px 0px rgba(255, 192, 0, 0.2);
+      border-radius: 31px;
+      font-size: 32px;
+      color: #fff;
+      &-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      &.new {
+        font-size: 26px;
+        width: 250px;
+      }
+      &.cancel {
+        font-size: 26px;
+        background: #fff;
+        color: #999999;
+        box-sizing: border-box;
+        border: 1px solid rgba(153, 153, 153, 1);
+      }
+    }
+  }
+
   .container-scroll {
     position: relative;
     box-sizing: border-box;

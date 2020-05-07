@@ -326,17 +326,10 @@
         @close="onCloseWelcome"
       >
         <view class="welcome-pop">
-          <view class="welcome-pop-text">
-            初次见面，送您一份新人福利
-            <text class="welcome-pop-span">名师1对1指导作文</text>
-          </view>
-          <view class="welcome-pop-btn-wrap">
-            <button class="welcome-pop-btn new cancel" @tap="clickToLesson">
-              我已报名，去上课
-            </button>
-            <button class="welcome-pop-btn new" @tap="onCloseWelcome({{1}})">
-              立即领取
-            </button>
+
+          <view class="welcome-pop-wrap">
+            <view class="welcome-pop-btn" @tap="clickToLesson"></view>
+            <view class="welcome-pop-btn2" @tap="onCloseWelcome({{1}})"></view>
           </view>
           <view class="welcome-pop-close" @tap="onCloseWelcome({{0}})"></view>
         </view>
@@ -373,13 +366,13 @@
       >
         <image
           class="-yd-img banner"
-          src="https://pub.file.k12.vip/tbzw/1.5/home/yd3.png"
+          src="https://pub.file.k12.vip/tbzw/write/yd-kf.png"
         />
       </button>
 
       <image
         class="-yd-img"
-        src="https://pub.file.k12.vip/tbzw/1.5/home/yd-banner1.png"
+        src="https://pub.file.k12.vip/tbzw/write/yd-banner.png"
         wx:else
       />
     </view>
@@ -430,7 +423,7 @@ export default class Home extends wepy.page {
     showAddTeacher: false,
     showYD: false,
     showBannderYd: false,
-    showWelcome: false,
+    showWelcome: true,
     showWork: false,
     showTopImg: false,
     isError: false,
@@ -811,9 +804,9 @@ export default class Home extends wepy.page {
     z-index: 3000;
     &-img {
       margin: 30px auto;
-      margin-top: 158px;
-      width: 698px;
-      height: 514px;
+      margin-top: 152px;
+      width: 686px;
+      height: 551px;
       &.banner {
         position: fixed;
         left: 0;
@@ -825,24 +818,22 @@ export default class Home extends wepy.page {
   }
   .welcome-pop {
     position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    box-sizing: border-box;
-    padding: 50px 36px;
-    padding-top: 274px;
-    width: 602px;
-    height: 526px;
-    background: url('https://pub.file.k12.vip/tbzw/1.5/home/pop-img.png')
+    width: 600px;
+    height: 474px;
+    background: url('https://pub.file.k12.vip/tbzw/write/fuli.png')
       no-repeat;
     background-size: 100%;
+
     &-wrap {
-      top: 42%;
+      position: absolute;
+      bottom: 35px;
+      padding: 0 31px;
+      @include flex-center;
+      justify-content: space-between;
+      box-sizing: border-box;
+      width: 100%;
     }
-    &.work {
-      height: 558px;
-      background-image: url('https://pub.file.k12.vip/tbzw/1.5/home/pop-img.png');
-    }
+
     &-close {
       position: absolute;
       left: 50%;
@@ -854,43 +845,17 @@ export default class Home extends wepy.page {
       background-size: 100%;
       transform: translateX(-50%);
     }
-    &-text {
-      font-size: 40px;
-      line-height: 56px;
-      color: #333333;
-    }
-    &-span {
-      font-size: 48px;
-      font-weight: 500;
-      color: #ff7c35;
-    }
     &-btn {
-      @include flex-center;
-      margin-top: 12px;
-      align-self: flex-end;
-      width: 176px;
-      height: 66px;
-      background: rgba(255, 192, 0, 1);
-      box-shadow: 0px 4px 8px 0px rgba(255, 192, 0, 0.2);
-      border-radius: 31px;
-      font-size: 32px;
-      color: #fff;
-      &-wrap {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-      }
-      &.new {
-        font-size: 26px;
-        width: 250px;
-      }
-      &.cancel {
-        font-size: 26px;
-        background: #fff;
-        color: #999999;
-        box-sizing: border-box;
-        border: 1px solid rgba(153, 153, 153, 1);
-      }
+      width: 253px;
+      height: 80px;
+      background: url('https://pub.file.k12.vip/2020/05/07/1258304185129517057.png') no-repeat;
+      background-size: 100%;
+    }
+    &-btn2 {
+      width: 253px;
+      height: 80px;
+      background: url('https://pub.file.k12.vip/2020/05/07/1258304286572953602.png') no-repeat;
+      background-size: 100%;
     }
   }
   .container-scroll {

@@ -1,14 +1,21 @@
 <!--  -->
 <template>
   <view class="container detail">
-    <image mode="widthFix" class="detail-img" src="https://pub.file.k12.vip/tbzw/1.5/detail/1.png" />
-    <image mode="widthFix" class="detail-img" src="https://pub.file.k12.vip/tbzw/1.5/detail/2.png" />
-    <image mode="widthFix" class="detail-img" src="https://pub.file.k12.vip/tbzw/1.5/detail/3.png" />
-    <image mode="widthFix" class="detail-img" src="https://pub.file.k12.vip/tbzw/1.5/detail/4.png" />
-    <image mode="widthFix" class="detail-img" src="https://pub.file.k12.vip/tbzw/1.5/detail/5.png" />
-    <image mode="widthFix" class="detail-img" src="https://pub.file.k12.vip/tbzw/1.5/detail/6.png" />
-    <image mode="widthFix" class="detail-img" src="https://pub.file.k12.vip/tbzw/1.5/detail/7.png" />
-    <!--<image mode="widthFix" class="detail-img" src="https://pub.file.k12.vip/tbzw/1.5/detail/8.png" />-->
+    <image mode="widthFix" class="detail-img" src="https://pub.file.k12.vip/tbzw/write/1.jpg" />
+    <image mode="widthFix" class="detail-img" src="https://pub.file.k12.vip/tbzw/write/2.jpg" />
+    <image mode="widthFix" class="detail-img" src="https://pub.file.k12.vip/tbzw/write/3.jpg" />
+    <image mode="widthFix" class="detail-img" src="https://pub.file.k12.vip/tbzw/write/4.jpg" />
+    <image mode="widthFix" class="detail-img" src="https://pub.file.k12.vip/tbzw/write/5.jpg" />
+    <image mode="widthFix" class="detail-img" src="https://pub.file.k12.vip/tbzw/write/6.jpg" />
+    <image mode="widthFix" class="detail-img" src="https://pub.file.k12.vip/tbzw/write/7.jpg" />
+    <image mode="widthFix" class="detail-img" src="https://pub.file.k12.vip/tbzw/write/8.jpg" />
+    <image mode="widthFix" class="detail-img" src="https://pub.file.k12.vip/tbzw/write/9.jpg" />
+    <image mode="widthFix" class="detail-img" src="https://pub.file.k12.vip/tbzw/write/10.jpg" />
+    <image mode="widthFix" class="detail-img" src="https://pub.file.k12.vip/tbzw/write/11.jpg" />
+    <image mode="widthFix" class="detail-img" src="https://pub.file.k12.vip/tbzw/write/12.jpg" />
+    <image mode="widthFix" class="detail-img" src="https://pub.file.k12.vip/tbzw/write/13.jpg" />
+    <image mode="widthFix" class="detail-img" src="https://pub.file.k12.vip/tbzw/write/14.jpg" />
+    <image mode="widthFix" class="detail-img" src="https://pub.file.k12.vip/tbzw/write/15.jpg" />
     <view class="detail-footer">
       <button
         type="defult"
@@ -20,7 +27,7 @@
     </view>
     <view class="detail-mask" wx:if="{{showMask}}">
       <image @tap="changeShowMask" class="detail-close" src="https://pub.file.k12.vip/tbzw/1.5/detail/icon_close.png"/>
-      <image class="detail-mask-img" src="https://pub.file.k12.vip/tbzw/1.5/detail/pop_bg.png"/>
+      <image class="detail-mask-img" src="https://pub.file.k12.vip/tbzw/write/pop_bg.png"/>
     </view>
   </view>
 </template>

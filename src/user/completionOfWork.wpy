@@ -369,13 +369,13 @@
         if (this.workDetail.replyTime) {
           this.workDetail.replyTime = getDateDiff.getDateDiff(this.workDetail.replyTime);
           this.isReply = true;
+          this.closeRemind()
         } else {
           this.isReply = false;
         }
 
         this.initAudio(false);
         this.isFetching = false;
-        this.closeRemind()
         this.$apply();
       }, () => {
         this.isFetching = false;

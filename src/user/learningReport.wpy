@@ -356,7 +356,9 @@
     };
 
     getCardInfo() {
-      api.study.countCard().then(res => {
+      api.study.countCard({
+        courseId: this.dataInfo.courseId
+      }).then(res => {
         this.cardDetail = res.data.resultData;
         this.cardDetail.time = dayjs(+res.data.timestamp).format('MM月DD日');
 

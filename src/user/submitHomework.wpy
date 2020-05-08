@@ -441,7 +441,9 @@ export default class SubmitHomework extends wepy.page {
   }
 
   getCardInfo() {
-    api.study.countCard().then(res => {
+    api.study.countCard({
+      courseId: this.lessonDetail.courseId
+    }).then(res => {
       this.cardDetail = res.data.resultData
       this.cardDetail.time = dayjs(+res.data.timestamp).format('MM月DD日');
 

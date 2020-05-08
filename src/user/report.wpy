@@ -340,6 +340,7 @@ export default class Report extends wepy.page {
             audiotime,
           }
         })
+        this.getCardInfo()
         this.getCardList()
         this.$apply()
       })
@@ -355,7 +356,9 @@ export default class Report extends wepy.page {
       })
   }
   getCardInfo() {
-    api.study.countCard().then((res) => {
+    api.study.countCard({
+      courseId: this.reportData.courseId
+    }).then((res) => {
       this.cardDetail = res.data.resultData
       this.cardDetail.time = dayjs(+res.data.timestamp).format('MM月DD日')
 
@@ -449,7 +452,7 @@ export default class Report extends wepy.page {
   }
   onShow() {
     this.getLearnReportB()
-    this.getCardInfo()
+
   }
 }
 </script>

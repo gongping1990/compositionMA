@@ -226,7 +226,9 @@ export default class Example extends wepy.page {
 
   getCardInfo() {
     let { api } = this.$parent.globalData
-    api.study.countCard().then(res => {
+    api.study.countCard({
+      courseId: this.lessonData.courseId
+    }).then(res => {
       this.cardDetail = res.data.resultData;
       this.cardDetail.time = dayjs(+res.data.timestamp).format('MM月DD日');
 
@@ -265,6 +267,7 @@ export default class Example extends wepy.page {
       })
       .then(({ data }) => {
         this.lessonData = data.resultData
+        this.getCardInfo()
         this.$apply()
       })
   }
@@ -273,7 +276,6 @@ export default class Example extends wepy.page {
   }
   onShow() {
     this.getThreeLessonInfo()
-    this.getCardInfo()
   }
 }
 </script>

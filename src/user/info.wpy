@@ -142,7 +142,7 @@ export default class Info extends wepy.page {
         }
       }
       if (!data.resultData || !data.resultData.id) {
-        playSound(audioContext, 1, this.audioList[9].oathvfUrl)
+        playSound(audioContext, 1, this.audioList[7].oathvfUrl)
       }
 
       this.isLoad = true

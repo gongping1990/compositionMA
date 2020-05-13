@@ -269,7 +269,7 @@ export default class User extends wepy.page {
   }
   onShareAppMessage() {
     return {
-      title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
+      title: `聪明妈妈给孩子的第一堂大语文课`,
       path: `/pages/index`,
       imageUrl: 'https://pub.file.k12.vip/tbzw/v2/logo2.png'
     }

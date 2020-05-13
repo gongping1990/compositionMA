@@ -269,7 +269,7 @@ export default class Report extends wepy.page {
     clickCard() {
       if (this.nowCardNum === 2) {
         wx.navigateTo({
-          url: `/user/cardPoster?id=${this.lessonId}&type=2&category=3`,
+          url: `/user/cardPoster?id=${this.lessonId}&type=2&category=2`,
         })
       } else if (this.nowCardNum === 1) {
         this.$invoke('loaded', 'downTime')
@@ -281,7 +281,7 @@ export default class Report extends wepy.page {
   events = {
     success() {
       wx.navigateTo({
-        url: `/user/cardPoster?id=${this.lessonId}&type=2&category=3`
+        url: `/user/cardPoster?id=${this.lessonId}&type=2&category=2`
       });
       this.$broadcast('destroy')
     },
@@ -340,6 +340,7 @@ export default class Report extends wepy.page {
             audiotime,
           }
         })
+        this.getCardInfo()
         this.getCardList()
         this.$apply()
       })
@@ -355,7 +356,9 @@ export default class Report extends wepy.page {
       })
   }
   getCardInfo() {
-    api.study.countCard().then((res) => {
+    api.study.countCard({
+      courseId: this.reportData.courseId
+    }).then((res) => {
       this.cardDetail = res.data.resultData
       this.cardDetail.time = dayjs(+res.data.timestamp).format('MM月DD日')
 
@@ -449,7 +452,7 @@ export default class Report extends wepy.page {
   }
   onShow() {
     this.getLearnReportB()
-    this.getCardInfo()
+
   }
 }
 </script>

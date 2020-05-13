@@ -1,8 +1,5 @@
 <template>
-  <scroll-view
-    scroll-y
-    scroll-with-animation
-    scroll-top="{{scrollTop}}"
+  <view
     class="p-completionOfWork-scroll"
   >
     <view class="p-completionOfWork">
@@ -232,7 +229,7 @@
 
       <load wx:if="{{isFetching}}"></load>
     </view>
-  </scroll-view>
+  </view>
 
 </template>
 
@@ -438,12 +435,19 @@
         wx.navigateBack();
       },
       scrollToFn() {
-        this.scrollTop = 1000;
+        let that = this
+        wx.createSelectorQuery().select('#scorllCompletion').boundingClientRect(function(rect) {
+          if (rect) {
+            wx.pageScrollTo({
+              scrollTop: rect.height
+            })
+          }
+        }).exec()
       },
       openShareModal() {
         this.isOpenPopup = false;
         wx.navigateTo({
-          url: `/user/workPoster?id=${this.workDetail.lessonId}`
+          url: `/user/workPoster?id=${this.workDetail.lessonId}&category=${this.workDetail.category}`
         });
       },
       openPoster() {

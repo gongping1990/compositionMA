@@ -67,7 +67,13 @@ const user = {
   },
   updateAvatar(params) {
     return request.post('/compositionv3/student/updateAvatar', params)
-  }
+  },
+  updateUserPhoneByMa(params) {
+    return request.post('/compositionv3/user/updateUserPhoneByMa', params)
+  },
+  getBindKF(params) {
+    return request.get('/homework/kfteacher/getBindKF', params)
+  },
 }
 
 export default user

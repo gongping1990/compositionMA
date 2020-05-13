@@ -3,7 +3,7 @@ import {
   UPDATE_USERINFO,
   UPDATE_TAB_REMIND,
   CHANGE_LOGIN_STATUS,
-  UPDATE_AUDIO
+  UPDATE_AUDIO,
 } from '../types/user'
 
 let userInfo = wx.getStorageSync('userInfo')
@@ -13,32 +13,32 @@ export default handleActions(
       wx.setStorageSync('userInfo', action.payload)
       return {
         ...state,
-        userInfo: action.payload
+        userInfo: action.payload,
       }
     },
     [UPDATE_TAB_REMIND](state, action) {
       return {
         ...state,
-        remindData: action.payload
+        remindData: action.payload,
       }
     },
     [CHANGE_LOGIN_STATUS](state, action) {
       return {
         ...state,
-        logined: action.payload
+        logined: action.payload,
       }
     },
     [UPDATE_AUDIO](state, action) {
       return {
         ...state,
-        audioList: action.payload
+        audioList: action.payload,
       }
-    }
+    },
   },
   {
     userInfo: userInfo || {},
     remindData: {},
-    logined: false,
-    audioList: []
+    logined: null,
+    audioList: [],
   }
 )

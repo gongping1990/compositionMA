@@ -1,0 +1,767 @@
+<template>
+  <view class="container try">
+    <mHeader flag="0" title="体验课详情"></mHeader>
+    <view class="container-scroll try-scroll" style="margin-top:{{height}}px">
+      <view class="_msg">
+        <swiper class="_msg-swipe" autoplay vertical>
+          <block wx:for="{{msgArr}}" wx:key="{{index}}">
+            <swiper-item>
+              <view class="_msg-item">
+                <image src="{{item.headimgurl}}" alt="" />
+                <text>{{ item.content }}</text>
+              </view>
+            </swiper-item>
+          </block>
+        </swiper>
+      </view>
+      <image
+        class="try-img"
+        src="https://pub.file.k12.vip/tbzw/try/detail_1.png"
+        mode="widthFix"
+      />
+      <view class="try-group" style="top:{{height}}px">
+        <view class="try-group-header">
+          <view class="try-group-header-price"></view>
+          <view class="try-group-header-num">
+            剩余{{ groupData.surplus }}个名额
+          </view>
+        </view>
+        <view class="try-group-body">
+          <view class="try-group-text">以下家长正在拼团，可直接参与拼团。</view>
+          <view class="try-group-content">
+            <view class="try-group-left">
+              <image class="try-group-avatar" src="{{groupData.headimgurl}}" />
+              <view class="try-group-info">
+                <view class="try-group-info-title">{{
+                  groupData.nickName
+                }}</view>
+                <view class="try-group-info-text">
+                  只差<text>1人</text>成团，快来和我拼团吧~
+                </view>
+              </view>
+            </view>
+            <button
+              class="try-group-btn"
+              open-type="getUserInfo"
+              @getuserinfo="getUserInfo({{3}})"
+              wx:if="{{!logined}}"
+            >
+              去参团
+            </button>
+            <view class="try-group-btn" wx:else @tap="clickBtn({{3}})">
+              去参团
+            </view>
+          </view>
+        </view>
+      </view>
+      <image
+        class="try-img"
+        src="https://pub.file.k12.vip/tbzw/try/detail_2.png"
+        mode="widthFix"
+      />
+      <image
+        class="try-img"
+        src="https://pub.file.k12.vip/tbzw/try/detail_3.png"
+        mode="widthFix"
+      />
+      <image
+        class="try-img"
+        src="https://pub.file.k12.vip/tbzw/try/detail_4.png"
+        mode="widthFix"
+      />
+      <image
+        class="try-img"
+        src="https://pub.file.k12.vip/tbzw/try/detail_5.png"
+        mode="widthFix"
+      />
+      <image
+        class="try-img"
+        src="https://pub.file.k12.vip/tbzw/try/detail_6.png"
+        mode="widthFix"
+      />
+      <image
+        class="try-img"
+        src="https://pub.file.k12.vip/tbzw/try/detail_7.png"
+        mode="widthFix"
+      />
+      <image
+        class="try-img"
+        src="https://pub.file.k12.vip/tbzw/try/detail_8.png"
+        mode="widthFix"
+      />
+    </view>
+    <view class="try-nav">
+      <view class="try-nav-content">
+        <button
+          class="try-nav-btn"
+          open-type="getUserInfo"
+          @getuserinfo="getUserInfo({{1}})"
+          wx:if="{{!logined}}"
+        >
+          <view class="try-nav-btn-price">
+            ¥{{ couseData[0].maAlonePrice }}
+          </view>
+          <view class="try-nav-btn-text">单人购买</view>
+        </button>
+        <view class="try-nav-btn" wx:else @tap="clickBtn({{1}})">
+          <view class="try-nav-btn-price">
+            ¥{{ couseData[0].maAlonePrice }}
+          </view>
+          <view class="try-nav-btn-text">单人购买</view>
+        </view>
+        <button
+          class="try-nav-btn"
+          open-type="getUserInfo"
+          @getuserinfo="getUserInfo({{3}})"
+          wx:if="{{!logined}}"
+        >
+          <view class="try-nav-btn-price">¥9.9</view>
+          <view class="try-nav-btn-text">一键参团</view>
+        </button>
+        <view class="try-nav-btn" wx:else @tap="clickBtn({{3}})">
+          <view class="try-nav-btn-price">¥9.9</view>
+          <view class="try-nav-btn-text">一键参团</view>
+        </view>
+      </view>
+    </view>
+    <van-popup class="-level-popup" show="{{showLevel}}">
+      <view class="-level-wrap">
+        <view class="-level">
+          <text class="-level-title">请选择课程阶段</text>
+          <view
+            class="-level-item {{item.courseId == levelActive && 'active'}} {{item.buyStatus == 2 && 'disabled'}}"
+            disabled="{{item.buyStatus == 2}}"
+            wx:for="{{couseData}}"
+            wx:key="{{item.courseId}}"
+            @tap="clickLevelBtn({{item}})"
+          >
+            {{
+              index == 1
+                ? '中段（适合三、四年级）'
+                : index == 2
+                ? '高段（适合五、六年级）'
+                : '初段（适合一、二年级）'
+            }}
+            <view class="-level-tag" wx:if="{{item.buyStatus > 1}}">
+              已购买
+            </view>
+          </view>
+          <view class="-level-time" wx:if="{{activeConfig.opentime}}">
+            开课时间{{ activeConfig.opentime }}
+          </view>
+          <view class="-level-btn" @tap="clickLevelSubmit">
+            确定
+          </view>
+        </view>
+        <view class="-level-close" @tap="onClose"></view>
+      </view>
+    </van-popup>
+    <van-popup show="{{showPayPopup}}">
+      <view class="back-popup">
+        <view class="back-popup-content">
+          <view class="back-popup-icon"></view>
+          <text class="back-popup-title">待支付</text>
+          <text class="back-popup-text">您有1笔订单待支付</text>
+          <text class="back-popup-text">赶紧去支付吧！</text>
+
+          <view class="back-popup-btn-wrap">
+            <view class="back-popup-btn cancel" @tap="onClose">
+              再看看
+            </view>
+            <view class="back-popup-btn confirm" @tap="clickConfirm">
+              去支付
+            </view>
+          </view>
+        </view>
+        <view class="back-popup-close" @tap="onClose"></view>
+      </view>
+    </van-popup>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import api from '../request/api'
+import dayjs from 'dayjs'
+import { connect } from 'wepy-redux'
+import { tryIdsStr } from '../utils'
+import mHeader from '../components/header'
+import login from '../components/login'
+@connect({
+  userInfo(state) {
+    return state.user.userInfo
+  },
+  logined(state) {
+    return state.user.logined
+  },
+})
+export default class Try extends wepy.page {
+  config = {
+    navigationBarTitleText: '体验课详情',
+    usingComponents: {
+      'van-popup': '../vant/popup/index',
+    },
+  }
+  components = {
+    mHeader,
+    login,
+  }
+  computed = {
+    height() {
+      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+    },
+    isBuy() {
+      let { couseData } = this
+      let isBuy = false
+      couseData.forEach((e) => {
+        if (e.buyStatus == 2) isBuy = true
+      })
+      return isBuy
+    },
+  }
+
+  watch = {
+    logined(v) {
+      this.init()
+    },
+  }
+
+  data = {
+    showLevel: false,
+    showPayPopup: false,
+    showCancel: false,
+    showPopup: false,
+    showSelect: false,
+    teacherData: {},
+    activeTeacherData: {},
+    notPayOrder: [],
+    noticeInfo: '',
+    msgArr: [],
+    couseData: [],
+    groupData: {},
+    lessonName: '',
+    levelActive: 0,
+    activeConfig: {},
+    orderMode: 1,
+  }
+
+  methods = {
+    getUserInfo(type) {
+      wepy.login().then((res) => {
+        let params = {
+          code: res.code,
+        }
+        api.user.wxUserLogin(params).then(({ data }) => {
+          let { resultData } = data
+          if (resultData.needAuth) {
+            wx.navigateTo({ url: '/pages/authorize' })
+          }
+          this.orderMode = type
+          this.showLevel = true
+          wepy.$store.dispatch({
+            type: 'UPDATE_USERINFO',
+            payload: resultData,
+          })
+          wepy.$store.dispatch({ type: 'CHANGE_LOGIN_STATUS', payload: true })
+
+          this.$apply()
+        })
+      })
+    },
+    clickLevelSubmit() {
+      let url = `/pages/tryPay?id=${this.levelActive}&orderMode=${this.orderMode}`
+      if (!this.levelActive) {
+        wx.showToast({
+          title: '请选择一个课程阶段！', //提示的内容,
+          icon: 'none', //图标,
+        })
+        return
+      }
+      if (!this.activeConfig.opentime) {
+        wx.showToast({
+          title: '该阶段暂未开课！', //提示的内容,
+          icon: 'none', //图标,
+        })
+        return
+      }
+      if (this.orderMode == 3) {
+        url = `${url}&groupOrderId=${this.groupData.orderId}`
+      }
+      this.showLevel = false
+      wx.navigateTo({ url })
+    },
+    onClose() {
+      this.showPayPopup = false
+      this.showLevel = false
+    },
+    clickLevelBtn(item) {
+      this.levelActive = item.courseId
+      this.getFourActiveConfig()
+    },
+    clickBtn(type) {
+      this.orderMode = type
+      this.showLevel = true
+    },
+    clickConfirm() {
+      let course = this.notPayOrder[0]
+      let url = `/pages/tryPay?id=${course.courseId}&orderId=${course.orderId}&orderMode=${course.orderMode}`
+      this.showPayPopup = false
+      wx.navigateTo({
+        url,
+      })
+    },
+  }
+
+  getCourse() {
+    //正式1173617051253350402,1173617224285790210,1173617415734796289， 测试1171996022454611970，1173422970690228225，1173505182493532161
+    api.course
+      .getCourse({
+        idsStr: wepy.$appConfig.tryIdsStr,
+      })
+      .then(({ data }) => {
+        let orderId = 0
+        this.couseData = data.resultData
+        this.couseData.forEach((e) => {
+          if (e.buyStatus > 1) {
+            this.lessonName = e.courseName
+            orderId = e.orderId
+          }
+        })
+
+        orderId && wx.redirectTo({ url: `/pages/trySuccess?id=${orderId}` })
+
+        this.getKFTeacher()
+        this.$apply()
+      })
+  }
+
+  getUserGroupMsg() {
+    api.order.getUserGroupMsg().then(({ data }) => {
+      this.msgArr = data.resultData
+      this.$apply()
+    })
+  }
+
+  getOneExperienceVirtualGroup() {
+    api.order.getOneExperienceVirtualGroup().then(({ data }) => {
+      this.groupData = data.resultData
+      this.$apply()
+    })
+  }
+
+  getFourActiveConfig() {
+    api.order
+      .fourActiveConfig({
+        courseId: this.levelActive,
+      })
+      .then(({ data }) => {
+        this.activeConfig = data.resultData[0] ? data.resultData[0] : {}
+        if (this.activeConfig.opentime) {
+          this.activeConfig.opentime = dayjs(this.activeConfig.opentime).format(
+            'MM月DD日'
+          )
+        }
+        this.$apply()
+      })
+  }
+
+  experienceNotPayOrderList() {
+    api.order
+      .notPayOrderList({
+        idsStr: wepy.$appConfig.tryIdsStr,
+      })
+      .then(({ data }) => {
+        this.notPayOrder = data.resultData
+        if (this.notPayOrder.length) {
+          this.showLevel = false
+          this.showPayPopup = true
+        }
+        this.$apply()
+      })
+  }
+
+  getKFTeacher() {
+    let buyIdsStr = ''
+    let { couseData } = this
+    let arr = couseData.filter((e) => {
+      return e.buyStatus == 2
+    })
+    arr = arr.map((e) => e.courseId)
+    buyIdsStr = arr.join(',')
+    if (!buyIdsStr) return
+    api.course
+      .getKFTeacherByCourse({
+        cids: buyIdsStr,
+      })
+      .then(({ data }) => {
+        this.teacherData = data.resultData
+        if (this.teacherData.teachers.length) {
+          this.activeTeacherData = this.teacherData.teachers[0]
+        }
+        this.$apply()
+      })
+  }
+
+  init() {
+    this.getUserGroupMsg()
+    this.getCourse()
+    this.experienceNotPayOrderList()
+    this.getOneExperienceVirtualGroup()
+  }
+
+  onShow() {
+    this.init()
+  }
+  onShareAppMessage() {
+    return {
+      title: `聪明妈妈给孩子的第一堂大语文课`,
+      path: `/pages/index`,
+      imageUrl: 'https://pub.file.k12.vip/tbzw/v2/logo2.png',
+    }
+  }
+}
+</script>
+<style lang="scss">
+@import '../assets/style/mixin.scss';
+.try {
+  &-scroll {
+    padding-bottom: 200px;
+    background: #e96d3f;
+  }
+  &-img {
+    width: 100%;
+    vertical-align: top;
+    vertical-align: text-top;
+    vertical-align: bottom;
+    vertical-align: text-bottom;
+  }
+  &-group {
+    position: sticky;
+    left: 0;
+    box-sizing: border-box;
+    width: 100vw;
+    padding: 2px 32px;
+    background-color: #fff;
+    &-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+      &-price {
+        width: 412px;
+        height: 70px;
+        background: url('https://pub.file.k12.vip/tbzw/try/price-bg.png')
+          no-repeat;
+        background-size: 100%;
+      }
+      &-num {
+        font-size: 28px;
+        font-weight: 500;
+        color: rgba(153, 153, 153, 1);
+      }
+    }
+    &-text {
+      font-size: 24px;
+      font-weight: 500;
+      color: rgba(51, 51, 51, 1);
+    }
+    &-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 31px 0;
+    }
+    &-left {
+      display: flex;
+    }
+    &-avatar {
+      margin-right: 19px;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+    }
+    &-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 200px;
+      height: 76px;
+      background: url('https://pub.file.k12.vip/tbzw/try/btn-bg.png') no-repeat;
+      background-size: 100%;
+      font-size: 32px;
+      font-weight: 400;
+      color: rgba(255, 255, 255, 1);
+      text-shadow: 0px 3px 5px rgba(252, 181, 0, 0.6);
+    }
+    &-info {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      &-title {
+        font-size: 30px;
+        font-weight: bold;
+        color: rgba(51, 51, 51, 1);
+      }
+      &-text {
+        font-size: 24px;
+        font-weight: 500;
+        color: rgba(153, 153, 153, 1);
+        text {
+          color: #ff9600;
+        }
+      }
+    }
+  }
+  &-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 21px 34px;
+    background-color: #fff;
+    box-shadow: 0px -5px 32px 0px rgba(238, 122, 83, 0.3);
+    z-index: 100;
+    &-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    &-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 330px;
+      height: 88px;
+      background: rgba(252, 193, 8, 1);
+      border-radius: 20px;
+      &:last-child {
+        background: #ff6a2f;
+      }
+      &-price {
+        line-height: 30px;
+        font-size: 36px;
+        font-weight: 800;
+        color: rgba(255, 255, 255, 1);
+        text-shadow: 0px 3px 0px rgba(238, 122, 83, 0.27);
+      }
+      &-text {
+        font-size: 24px;
+        line-height: 34px;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 1);
+        text-shadow: 0px 3px 0px rgba(238, 122, 83, 0.61);
+      }
+    }
+  }
+  .kf-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    text {
+      @include text-overflow(400px);
+      font-size: 28px;
+      color: #eb7142;
+    }
+    &-btn {
+      width: 265px;
+      height: 48px;
+      background: url('https://pub.file.k12.vip/tbzw/try/msg.png') no-repeat;
+      background-size: 100%;
+    }
+  }
+  ._msg {
+    position: fixed;
+    left: 16px;
+    bottom: 160px;
+    z-index: 10;
+
+    &-swipe {
+      width: 454px;
+      height: 64px;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 32px;
+    }
+    &-item {
+      display: flex;
+      align-items: center;
+      box-sizing: border-box;
+      padding-left: 8px;
+      width: 454px;
+      height: 64px;
+      image {
+        margin-right: 20px;
+        width: 50px;
+        height: 50px;
+        background: rgba(247, 198, 40, 1);
+        border: 1px solid rgba(255, 255, 255, 1);
+        border-radius: 50%;
+      }
+      text {
+        @include text-overflow;
+        width: 344px;
+        font-size: 24px;
+        font-weight: 500;
+        color: rgba(255, 254, 254, 1);
+      }
+    }
+  }
+  .-level {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 590px;
+    background: rgba(255, 255, 255, 1);
+    border-radius: 32px;
+    &-title {
+      margin-top: 48px;
+      margin-bottom: 16px;
+      font-size: 36px;
+      line-height: 50px;
+    }
+    &-time {
+      margin-top: 40px;
+      font-size: 32px;
+      color: #ffd129;
+    }
+    &-tag {
+      @include flex-center;
+      position: absolute;
+      left: 0;
+      top: 0;
+      padding: 0 16px;
+      height: 30px;
+      font-size: 18px;
+      color: #fff;
+      font-weight: 500;
+      background: #f07340;
+      border-radius: 12px 0px 12px 0px;
+    }
+    &-item {
+      @include flex-center;
+      position: relative;
+      margin-top: 32px;
+      width: 470px;
+      height: 100px;
+      font-size: 32px;
+      border-radius: 16px;
+      border: 4px solid rgba(61, 53, 45, 0.1);
+      color: rgba($color: #58422b, $alpha: 0.5);
+      &.disabled {
+        background-color: #f2f2f2;
+        color: rgba($color: #58422b, $alpha: 0.3);
+        i {
+          background: rgba(182, 182, 182, 1);
+        }
+      }
+      &.active {
+        border-color: #ffd129;
+        color: #ffd129;
+      }
+    }
+    &-btn {
+      @include flex-center;
+      margin: 48px 0;
+      width: 470px;
+      height: 100px;
+      font-size: 32px;
+      color: #58422b;
+      font-weight: 600;
+      background: linear-gradient(
+        90deg,
+        rgba(249, 230, 11, 1) 0%,
+        rgba(253, 219, 85, 1) 100%
+      );
+      box-shadow: 0px 8px 16px 4px rgba(230, 194, 81, 0.4);
+      border-radius: 50px;
+    }
+    &-close {
+      margin: 32px auto;
+      width: 72px;
+      height: 72px;
+      background: url('https://pub.file.k12.vip/tbzw/try/icon-close@3x.png')
+        no-repeat;
+      background-size: 100%;
+    }
+  }
+  .back-popup {
+    overflow-y: initial !important;
+    &-close {
+      display: block;
+      margin: 0 auto;
+      margin-top: 32px;
+      width: 72px;
+      height: 72px;
+      background: url('https://pub.file.k12.vip/tbzw/try/icon-close@3x.png')
+        no-repeat;
+      background-size: 100%;
+    }
+    &-content {
+      @include flex-column-center;
+      box-sizing: border-box;
+      padding-top: 128px;
+      position: relative;
+      width: 590px;
+      height: 470px;
+      background: rgba(255, 255, 255, 1);
+      border-radius: 32px;
+    }
+    &-title {
+      font-size: 32px;
+      color: #000000;
+      font-weight: 500;
+      line-height: 50px;
+      margin-bottom: 32px;
+    }
+    &-text {
+      font-size: 32px;
+      font-weight: normal;
+      line-height: 44px;
+      text-align: center;
+      color: #000000;
+      opacity: 0.8;
+    }
+    &-icon {
+      position: absolute;
+      width: 184px;
+      height: 184px;
+      left: 204px;
+      top: -96px;
+      background: url('https://pub.file.k12.vip/tbzw/tryPay/icon-prompt@3x.png')
+        no-repeat;
+      background-size: 100%;
+    }
+    &-btn-wrap {
+      @include flex-center;
+      margin-top: 48px;
+      padding-bottom: 40px;
+    }
+    &-btn {
+      @include flex-center;
+      box-sizing: border-box;
+      margin: 0 22px;
+      width: 224px;
+      height: 76px;
+      font-size: 32px;
+      font-weight: 500;
+      border-radius: 40px;
+
+      &.cancel {
+        background: #dbdbdb;
+        color: #999999;
+        border: 1px solid #dbdbdb;
+      }
+      &.confirm {
+        color: #46413c;
+        background: linear-gradient(
+          90deg,
+          rgba(249, 230, 11, 1) 0%,
+          rgba(253, 219, 85, 1) 100%
+        );
+        box-shadow: 0px 8px 16px 4px rgba(230, 194, 81, 0.4);
+      }
+    }
+  }
+}
+</style>

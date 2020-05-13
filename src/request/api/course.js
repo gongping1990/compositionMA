@@ -18,7 +18,13 @@ const course = {
   },
   getShareTemplates(params) {
     return request.get('/compositionv3/course/getShareTemplates', params)
-  }
+  },
+  getCourse(params) {
+    return request.get('/compositionv3/course/getCourse', params)
+  },
+  getKFTeacherByCourse(params) {
+    return request.get('/compositionv3/teacher/getKFTeacherByCourse', params)
+  },
 }
 
 export default course

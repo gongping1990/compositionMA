@@ -1,0 +1,626 @@
+<template>
+  <view class="container _pay">
+    <mHeader flag="1" title="体验课订单确认"></mHeader>
+    <view
+      class="container-scroll _pay-scroll"
+      style="margin-top:{{height}}px;height: calc(100vh - {{height}}px);"
+    >
+      <view class="_msg">
+        <swiper class="_msg-swipe" autoplay vertical>
+          <block wx:for="{{msgArr}}" wx:key="{{index}}">
+            <swiper-item>
+              <view class="_msg-item">
+                <image src="{{item.headimgurl}}" alt="" />
+                <text>{{ item.content }}</text>
+              </view>
+            </swiper-item>
+          </block>
+        </swiper>
+      </view>
+      <view class="_pay-header">
+        <view class="_pay-header-item">
+          <view class="_pay-header-item_title">
+            剩余{{ activeConfig.surplus }}名
+          </view>
+          <text class="_pay-header-item_text">班级剩余名额</text>
+        </view>
+        <view class="_pay-header-item">
+          <text class="_pay-header-item_title">{{ couponTimeObj }}</text>
+          <text class="_pay-header-item_text">剩余支付时间</text>
+        </view>
+      </view>
+      <view class="_pay-content">
+        <view class="_pay-title">
+          {{ couseData.courseName }}
+        </view>
+        <view class="_pay-tag"> {{ activeConfig.opentime }}开课 </view>
+        <view class="_pay-info">
+          <image class="_pay-avatar" src="{{activeConfig.coverphoto}}" alt="" />
+          <view class="_pay-info-right">
+            <text>北师大名师授课</text>
+            <text>5节AI互动小班课</text>
+            <text>5次作文1对1精细评论</text>
+          </view>
+        </view>
+        <view class="_pay-title">现在购买加赠 <text>仅限今日</text></view>
+        <image
+          class="_pay-banner"
+          mode="widthFix"
+          src="https://pub.file.k12.vip/tbzw/tryPay/banner.png"
+          alt=""
+        />
+      </view>
+      <view class="_pay-nav">
+        <view class="_pay-nav-left">
+          <view class="_pay-nav-price">
+            ￥{{ orderMode == 3 ? '9.9' : couseData.maAlonePrice }}
+            <text wx:if="{{orderMode == 3}}">
+              ￥{{ couseData.maAlonePrice }}
+            </text>
+          </view>
+          <view class="_pay-nav-text">{{
+            orderMode == 3 ? '限时特惠' : '单独购买'
+          }}</view>
+        </view>
+        <view class="_pay-info">
+          <button
+            class="_pay-btn"
+            wx:if="{{!hasPhone}}"
+            open-type="getPhoneNumber"
+            @getphonenumber="getPhoneNumber"
+          >
+            立即支付
+          </button>
+          <view class="_pay-btn" wx:else @tap="clickLevelSubmit">立即支付</view>
+        </view>
+      </view>
+    </view>
+    <van-popup class="back-popup" show="{{showBackPopup}}">
+      <view class="back-popup">
+        <view class="back-popup-content">
+          <view class="back-popup-icon"></view>
+          <text class="back-popup-title">确定要放弃付款吗？</text>
+          <text class="back-popup-text">您放弃支付将失去一次</text>
+          <text class="back-popup-text">为孩子提升语文成绩的机会</text>
+
+          <view class="back-popup-btn-wrap">
+            <view class="back-popup-btn cancel" @tap="closePopup">
+              放弃支付
+            </view>
+            <view class="back-popup-btn confirm" @tap="clickLevelSubmit">
+              继续支付
+            </view>
+          </view>
+        </view>
+        <view class="back-popup-close" @tap="closePopup"></view>
+      </view>
+    </van-popup>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import dayjs from 'dayjs'
+import { connect } from 'wepy-redux'
+import api from '../request/api'
+import mHeader from '../components/header'
+
+@connect({
+  userInfo(state) {
+    return state.user.userInfo
+  },
+  logined(state) {
+    return state.user.logined
+  },
+})
+export default class TryPay extends wepy.page {
+  config = {
+    navigationBarTitleText: '',
+    usingComponents: {
+      'van-popup': '../vant/popup/index',
+    },
+  }
+  data = {
+    showBackPopup: false,
+    id: 0,
+    payOrderId: 0,
+    groupOrderId: 0,
+    minutes: 1800,
+    couponTimeObj: '00:00',
+    phone: '',
+    activeConfig: {},
+    couseData: [],
+    msgArr: [],
+    orderMode: 1,
+  }
+  components = {
+    mHeader,
+  }
+  methods = {
+    closePopup() {
+      this.showBackPopup = false
+    },
+    clickLevelSubmit() {
+      if (this.payOrderId) {
+        this.continuePay()
+      } else {
+        this.submitPay()
+      }
+      this.showBackPopup = false
+    },
+    getPhoneNumber(v) {
+      console.log(v)
+      this.updateUserPhoneByMa(v.detail)
+    },
+  }
+  events = {}
+  watch = {}
+  computed = {
+    height() {
+      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
+    },
+    hasPhone() {
+      if (this.userInfo && this.userInfo.phone) return true
+      return false
+    },
+  }
+
+  getCourse() {
+    //正式1173617051253350402,1173617224285790210,1173617415734796289， 测试1171996022454611970，1173422970690228225，1173505182493532161
+    api.course
+      .getCourse({
+        idsStr: wepy.$appConfig.tryIdsStr,
+      })
+      .then(({ data }) => {
+        this.couseData = data.resultData.filter((e) => {
+          return e.courseId == this.id
+        })
+        this.couseData = this.couseData[0]
+        this.getFourActiveConfig()
+        this.$apply()
+      })
+  }
+
+  getFourActiveConfig() {
+    api.order
+      .fourActiveConfig({
+        courseId: this.couseData.courseId,
+      })
+      .then(({ data }) => {
+        this.activeConfig = data.resultData[0] ? data.resultData[0] : {}
+        if (this.activeConfig.opentime) {
+          this.activeConfig.opentime = dayjs(this.activeConfig.opentime).format(
+            'MM月DD日'
+          )
+        }
+        this.$apply()
+      })
+  }
+
+  getUserGroupMsg() {
+    api.order.getUserGroupMsg().then(({ data }) => {
+      this.msgArr = data.resultData
+      this.$apply()
+    })
+  }
+
+  updateUserPhoneByMa(params) {
+    api.user
+      .updateUserPhoneByMa({
+        encryptedData: params.encryptedData,
+        iv: params.iv,
+      })
+      .then(({ data }) => {
+        wepy.$store.dispatch({
+          type: 'UPDATE_USERINFO',
+          payload: { ...this.userInfo, phone: data.resultData.phone },
+        })
+        this.submitPay()
+      })
+  }
+
+  submitPay() {
+    let { activeConfig, groupOrderId, orderMode } = this
+    let courseId = this.id
+    let params = {
+      wxMa: true,
+      courseId,
+      orderMode,
+    }
+    if (activeConfig.id) {
+      params.activeId = activeConfig.id
+    }
+
+    if (groupOrderId) {
+      params.groupOrderId = groupOrderId
+    }
+
+    wx.showLoading({
+      title: '加载中...', //提示的内容,
+      mask: true, //显示透明蒙层，防止触摸穿透,
+    })
+    // eslint-disable-next-line no-unused-vars
+    api.order.newOrder(params).then(({ data }) => {
+      let {
+        timeStamp,
+        nonceStr,
+        signType,
+        paySign,
+        packageValue,
+      } = data.resultData
+      wx.hideLoading()
+      wx.requestPayment({
+        timeStamp, //时间戳从1970年1月1日00:00:00至今的秒数,即当前的时间,
+        nonceStr, //随机字符串，长度为32个字符以下,
+        package: packageValue, //统一下单接口返回的 prepay_id 参数值，提交格式如：prepay_id=*,
+        signType, //签名算法，暂支持 MD5,
+        paySign, //签名,具体签名方案参见小程序支付接口文档,
+        success: (res) => {
+          this.payOrderId = data.resultData.orderId
+          wx.navigateTo({
+            url: `/pages/trySuccess?id=${data.resultData.orderId}`,
+          })
+        },
+        fail: () => {
+          this.showBackPopup = true
+        },
+        complete: () => {},
+      })
+    })
+  }
+
+  continuePay() {
+    wx.showLoading({
+      title: '加载中...', //提示的内容,
+      mask: true, //显示透明蒙层，防止触摸穿透,
+    })
+    api.order
+      .pay({
+        wxMa: true,
+        orderId: this.payOrderId,
+      })
+      .then(({ data }) => {
+        let {
+          timeStamp,
+          nonceStr,
+          signType,
+          paySign,
+          packageValue,
+        } = data.resultData
+        wx.hideLoading()
+        wx.requestPayment({
+          timeStamp, //时间戳从1970年1月1日00:00:00至今的秒数,即当前的时间,
+          nonceStr, //随机字符串，长度为32个字符以下,
+          package: packageValue, //统一下单接口返回的 prepay_id 参数值，提交格式如：prepay_id=*,
+          signType, //签名算法，暂支持 MD5,
+          paySign, //签名,具体签名方案参见小程序支付接口文档,
+          success: (res) => {
+            this.payOrderId = data.resultData.orderId
+            wx.navigateTo({
+              url: `/pages/trySuccess?id=${data.resultData.orderId}&type=${this.orderMode}`,
+            })
+          },
+          fail: () => {
+            this.showBackPopup = true
+          },
+          complete: () => {},
+        })
+      })
+  }
+
+  TimeDown() {
+    //相差的总秒数
+    var modulo = this.minutes
+    //分钟
+    var minutes = Math.floor(modulo / 60)
+    minutes = minutes < 10 ? '0' + minutes : minutes
+    //秒
+    var seconds = modulo % 60
+    seconds = seconds < 10 ? '0' + seconds : seconds
+    //输出到页面
+    this.couponTimeObj = `${minutes}:${seconds}`
+    //延迟一秒执行自己
+    setTimeout(() => {
+      if (modulo > 0) {
+        this.minutes -= 1
+        this.TimeDown()
+      } else {
+        this.couponTimeObj = '00:00'
+      }
+      this.$apply()
+    }, 1000)
+  }
+
+  onLoad(option) {
+    this.id = option.id
+    this.orderMode = option.orderMode
+    this.payOrderId = option.orderId
+    this.groupOrderId = option.groupOrderId
+  }
+  onShow() {
+    this.getCourse()
+    this.TimeDown()
+    this.getUserGroupMsg()
+  }
+}
+</script>
+
+<style lang="scss">
+@import '../assets/style/mixin.scss';
+._pay {
+  &-scroll {
+    background: #f2f2f7;
+  }
+  &-banner {
+    margin-left: 6px;
+    width: 692px;
+    border-radius: 20px;
+  }
+  &-tag {
+    @include flex-center;
+    margin-bottom: 24px;
+    width: 202px;
+    height: 38px;
+    background: rgba(151, 223, 58, 1);
+    border-radius: 0px 20px 0px 20px;
+    font-size: 24px;
+    color: #fff;
+  }
+  &-header {
+    @include flex-center;
+    position: relative;
+    width: 100%;
+    height: 202px;
+    background: rgba(255, 255, 255, 1);
+    &::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 2px;
+      height: 102px;
+      background: rgba(230, 229, 235, 1);
+      border-radius: 0px;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+    }
+    &-item {
+      @include flex-column-center;
+      flex: 1;
+      &_title {
+        font-size: 36px;
+        color: #333333;
+        font-weight: 500;
+        margin-bottom: 28px;
+      }
+      &_text {
+        font-size: 26px;
+        color: #999;
+        font-weight: 500;
+      }
+    }
+  }
+  &-content {
+    box-sizing: border-box;
+    padding-left: 24px;
+  }
+  &-title {
+    display: flex;
+    align-items: center;
+    margin: 42px 0;
+    font-size: 32px;
+    font-weight: bold;
+    color: #000;
+    &::before {
+      content: '';
+      margin-right: 20px;
+      width: 12px;
+      height: 34px;
+      background: rgba(246, 201, 48, 1);
+      border-radius: 6px;
+    }
+    text {
+      margin-left: 16px;
+      @include flex-center;
+      width: 110px;
+      height: 38px;
+      background: rgba(255, 131, 49, 1);
+      border-radius: 10px;
+      font-size: 24px;
+      color: #fff;
+    }
+  }
+  &-info {
+    display: flex;
+    &-right {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      text {
+        display: flex;
+        align-items: center;
+        font-size: 26px;
+        color: #000;
+        font-weight: 500;
+        &::before {
+          content: '';
+          margin-right: 20px;
+          width: 26px;
+          height: 26px;
+          background: url('https://pub.file.k12.vip/tbzw/tryPay/right-icon.png')
+            no-repeat;
+          background-size: 100%;
+        }
+      }
+    }
+  }
+  &-nav {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px;
+    height: 120px;
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0px 0px 41px 0px rgba(208, 208, 232, 0.46);
+    z-index: 10;
+    &-price {
+      font-size: 34px;
+      color: #ff6d50;
+      font-weight: bold;
+      text {
+        margin-left: 12px;
+        color: #999;
+        font-size: 24px;
+        text-decoration: line-through;
+      }
+    }
+    &-text {
+      font-size: 24px;
+      color: #fc5c1e;
+      font-weight: bold;
+    }
+  }
+  &-btn {
+    @include flex-center;
+    width: 300px;
+    height: 88px;
+    background: rgba(252, 193, 9, 1);
+    border-radius: 44px;
+    color: #fff;
+    font-size: 32px;
+    font-weight: 500;
+  }
+  &-avatar {
+    margin-right: 34px;
+    width: 320px;
+    height: 180px;
+    border-radius: 10px;
+  }
+
+  .animate {
+    animation: scale 0.7s infinite;
+  }
+  @keyframes scale {
+    0% {
+      transform: scale(0.9);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  .back-popup {
+    overflow-y: initial !important;
+    &-close {
+      display: block;
+      margin: 0 auto;
+      margin-top: 32px;
+      width: 72px;
+      height: 72px;
+      background: url('https://pub.file.k12.vip/tbzw/try/icon-close@3x.png')
+        no-repeat;
+      background-size: 100%;
+    }
+    &-content {
+      @include flex-column-center;
+      box-sizing: border-box;
+      padding-top: 128px;
+      position: relative;
+      width: 590px;
+      height: 470px;
+      background: rgba(255, 255, 255, 1);
+      border-radius: 32px;
+    }
+    &-title {
+      font-size: 32px;
+      color: #000000;
+      font-weight: 500;
+      line-height: 50px;
+      margin-bottom: 32px;
+    }
+    &-text {
+      font-size: 32px;
+      font-weight: normal;
+      line-height: 44px;
+      text-align: center;
+      color: #000000;
+      opacity: 0.8;
+    }
+    &-icon {
+      position: absolute;
+      width: 184px;
+      height: 184px;
+      left: 204px;
+      top: -96px;
+      background: url('https://pub.file.k12.vip/tbzw/tryPay/icon-prompt@3x.png')
+        no-repeat;
+      background-size: 100%;
+    }
+    &-btn-wrap {
+      @include flex-center;
+      margin-top: 48px;
+      padding-bottom: 40px;
+    }
+    &-btn {
+      @include flex-center;
+      box-sizing: border-box;
+      margin: 0 22px;
+      width: 224px;
+      height: 76px;
+      font-size: 32px;
+      font-weight: 500;
+      border-radius: 40px;
+
+      &.cancel {
+        background: #dbdbdb;
+        color: #999999;
+        border: 1px solid #dbdbdb;
+      }
+      &.confirm {
+        color: #46413c;
+        background: linear-gradient(
+          90deg,
+          rgba(249, 230, 11, 1) 0%,
+          rgba(253, 219, 85, 1) 100%
+        );
+        box-shadow: 0px 8px 16px 4px rgba(230, 194, 81, 0.4);
+      }
+    }
+  }
+  ._msg {
+    padding: 0 41px;
+    background: #ffeaa7;
+    &-swipe {
+      width: 454px;
+      height: 64px;
+      border-radius: 32px;
+    }
+    &-item {
+      display: flex;
+      align-items: center;
+      box-sizing: border-box;
+      padding-left: 8px;
+      width: 454px;
+      height: 64px;
+      image {
+        margin-right: 20px;
+        width: 50px;
+        height: 50px;
+        background: rgba(247, 198, 40, 1);
+        border: 1px solid rgba(255, 255, 255, 1);
+        border-radius: 50%;
+      }
+      text {
+        @include text-overflow;
+        width: 344px;
+        font-size: 24px;
+        font-weight: 500;
+        color: rgba(255, 254, 254, 1);
+      }
+    }
+  }
+}
+</style>

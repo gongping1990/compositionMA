@@ -164,7 +164,7 @@ import { setStore } from 'wepy-redux'
 import configStore from './store'
 // eslint-disable-next-line no-unused-vars
 import api from './request/api'
-const userInfo = wx.getStorageSync('userInfo');
+const userInfo = wx.getStorageSync('userInfo')
 const _sa = require('./utils/sensorsdata.min.js')
 
 _sa.setPara({
@@ -176,14 +176,14 @@ _sa.setPara({
     appShow: true,
     appHide: true,
     pageShow: true,
-    pageShare: true
+    pageShare: true,
   },
   // 自定义渠道追踪参数，如source_channel: ["custom_param"]
   source_channel: [],
   // 是否允许控制台打印查看埋点数据(建议开启查看)
   show_log: true,
   // 是否允许修改onShareAppMessage里return的path，用来增加(用户id，分享层级，当前的path)，在app onShow中自动获取这些参数来查看具体分享来源，层级等
-  allow_amend_share_path: true
+  allow_amend_share_path: true,
 })
 if (userInfo && (userInfo.id || userInfo.userId)) {
   _sa.setOpenid(userInfo.openid)
@@ -191,7 +191,7 @@ if (userInfo && (userInfo.id || userInfo.userId)) {
   _sa.init()
 }
 _sa.registerApp({
-  platform: 'miniprogram'
+  platform: 'miniprogram',
 })
 
 const store = configStore()
@@ -212,7 +212,10 @@ export default class extends wepy.app {
       'pages/subscribe',
       'pages/authorize',
       'pages/enroll',
-      'pages/result'
+      'pages/result',
+      'pages/try',
+      'pages/tryPay',
+      'pages/trySuccess',
     ],
     subPackages: [
       {
@@ -255,8 +258,8 @@ export default class extends wepy.app {
           'cardPoster',
           'card',
           'shareHomework',
-          'sharePoster'
-        ]
+          'sharePoster',
+        ],
       },
       {
         root: 'literacy',
@@ -264,17 +267,17 @@ export default class extends wepy.app {
           'l_submitHomework',
           'l_uploadAudioWork',
           'l_uploadImgWork',
-          'w_uploadImgWork'
-        ]
-      }
+          'w_uploadImgWork',
+        ],
+      },
     ],
     window: {
       backgroundTextStyle: 'light',
       navigationBarBackgroundColor: '#fff',
       navigationBarTitleText: '乐小狮大语文',
       navigationBarTextStyle: 'black',
-      navigationStyle: 'custom'
-    }
+      navigationStyle: 'custom',
+    },
   }
 
   globalData = {
@@ -292,7 +295,7 @@ export default class extends wepy.app {
       var animation = wx.createAnimation({
         // 持续时间800ms
         duration: 500,
-        timingFunction: 'ease'
+        timingFunction: 'ease',
       })
       // var animation = this.animation
       animation.opacity(opacity).step()
@@ -312,7 +315,7 @@ export default class extends wepy.app {
       api.user.checkLogined().then(({ data }) => {
         store.dispatch({
           type: 'CHANGE_LOGIN_STATUS',
-          payload: data.resultData
+          payload: data.resultData,
         })
       })
     },
@@ -320,10 +323,10 @@ export default class extends wepy.app {
       api.user.listByDubbing().then(({ data }) => {
         store.dispatch({
           type: 'UPDATE_AUDIO',
-          payload: data.resultData
+          payload: data.resultData,
         })
       })
-    }
+    },
   }
 
   constructor() {
@@ -340,7 +343,7 @@ export default class extends wepy.app {
     this.globalData.audioContext = audioContext
     this.globalData._sa = _sa
     wx.setKeepScreenOn({
-      keepScreenOn: true
+      keepScreenOn: true,
     })
     wx.getSystemInfo({
       success(res) {
@@ -349,7 +352,7 @@ export default class extends wepy.app {
         if (res.model.indexOf('iPhone X') > -1) {
           that.globalData.isIpx = true
         }
-      }
+      },
     })
   }
   onShow() {

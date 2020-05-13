@@ -248,7 +248,7 @@
     events = {
       success() {
         wx.navigateTo({
-          url: `/user/workPoster?id=${this.queryInfo.id}&isFirstUpload=${this.isFirstUpload}`
+          url: `/user/workPoster?id=${this.queryInfo.id}&isFirstUpload=${this.isFirstUpload}&category=1`
         });
       },
       successImg(data) {

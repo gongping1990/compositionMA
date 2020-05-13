@@ -59,23 +59,23 @@
 			"list": [
 				{
 					"id": 0,
-					"name": "pages/result",
-					"pathName": "pages/result",
+					"name": "pages/try",
+					"pathName": "pages/try",
 					"query": "id=1214070007706173442&cid=1251051619001974785",
 					"scene": null
 				},
 				{
 					"id": 1,
-					"name": "user/report",
-					"pathName": "user/report",
-					"query": "id=1214032696993923074",
+					"name": "pages/tryPay",
+					"pathName": "pages/tryPay",
+					"query": "id=1171996022454611970",
 					"scene": null
 				},
 				{
 					"id": 2,
-					"name": "pages/result",
-					"pathName": "pages/result",
-					"query": "id=1214070007701979137&cid=1245191931660472322",
+					"name": "pages/trySuccess",
+					"pathName": "pages/trySuccess",
+					"query": "id=1262292991117897730&type=1",
 					"scene": null
 				},
 				{

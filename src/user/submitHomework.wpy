@@ -441,7 +441,9 @@ export default class SubmitHomework extends wepy.page {
   }
 
   getCardInfo() {
-    api.study.countCard().then(res => {
+    api.study.countCard({
+      courseId: this.lessonDetail.courseId
+    }).then(res => {
       this.cardDetail = res.data.resultData
       this.cardDetail.time = dayjs(+res.data.timestamp).format('MM月DD日');
 
@@ -815,7 +817,7 @@ export default class SubmitHomework extends wepy.page {
 
   onShareAppMessage() {
     return {
-      title: `每天8分钟，北师大老师教孩子积累素材、使用素材、运用技巧。`,
+      title: `聪明妈妈给孩子的第一堂大语文课`,
       path: `/pages/index`,
       imageUrl: 'https://pub.file.k12.vip/tbzw/v2/logo2.png'
     }

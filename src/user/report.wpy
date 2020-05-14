@@ -37,7 +37,7 @@
         <view class="jrxx-info">
           <image class="jrxx-info-cover" src="{{reportData.coverphoto}}" />
           <view class="jrxx-info-right">
-            <view class="jrxx-info-btn">学习课时</view>
+            <view class="jrxx-info-btn">{{reportData.lessonName}}</view>
             <view class="jrxx-info-title">{{ reportData.courseName }}</view>
           </view>
         </view>

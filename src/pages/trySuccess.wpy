@@ -28,7 +28,10 @@
           mode="widthFix"
         />
         <view class="paySuccess-msg">
-          <view class="paySuccess-tag">额外奖励</view>
+          <view class="paySuccess-tag">
+            <view>额外</view>
+            <view>奖励</view>
+          </view>
           <view class="paySuccess-msg-text">
             <view>报名后立即添加老师，可免费领取部编语文</view>
             <view>1-6年级满分作文精选</view>
@@ -203,15 +206,16 @@ export default class TryPay extends wepy.page {
   }
   &-tag {
     margin-right: 14px;
-    text-align: center;
+    justify-content: center;
     display: flex;
     align-items: center;
+    flex-direction: column;
     width: 70px;
     height: 70px;
     background: rgba(255, 115, 38, 1);
     border-radius: 10px;
     font-size: 24px;
-    line-height: 30px;
+    line-height: 28px;
     font-family: Adobe Heiti Std;
     font-weight: normal;
     color: rgba(255, 255, 255, 1);

@@ -621,7 +621,7 @@ export default class Home extends wepy.page {
     let { api } = this.$parent.globalData
     api.center
       .getVersionControl({
-        version: '4.2.0',
+        version: '4.2.1',
       })
       .then(({ data }) => {
         this.systemConfig = data.resultData

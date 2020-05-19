@@ -621,7 +621,7 @@ export default class Home extends wepy.page {
     let { api } = this.$parent.globalData
     api.center
       .getVersionControl({
-        version: '4.2.2',
+        version: '4.2.3',
       })
       .then(({ data }) => {
         this.systemConfig = data.resultData
@@ -773,7 +773,6 @@ export default class Home extends wepy.page {
   }
 
   onShow() {
-    wx.navigateTo({ url: '/pages/try' })
     this.initPage()
   }
 

@@ -16,77 +16,96 @@
       </view>
       <image
         class="try-img"
-        src="https://pub.file.k12.vip/tbzw/try/detail_1.png"
+        src="https://pub.file.k12.vip/tbzw/try/1.png"
         mode="widthFix"
       />
-      <view class="try-group" style="top:{{height}}px">
-        <view class="try-group-header">
-          <view class="try-group-header-price"></view>
-          <view class="try-group-header-num">
-            剩余{{ groupData.surplus }}个名额
+      <view class="try-img-wrap">
+        <image
+          class="try-img"
+          src="https://pub.file.k12.vip/tbzw/try/2.png"
+          mode="widthFix"
+        />
+        <view class="try-group">
+          <view class="try-group-header">
+            <view class="try-group-header-num">
+              剩余{{ groupData.surplus }}个名额
+            </view>
           </view>
-        </view>
-        <view class="try-group-body">
-          <view class="try-group-text">以下家长正在拼团，可直接参与拼团。</view>
-          <view class="try-group-content">
-            <view class="try-group-left">
-              <image class="try-group-avatar" src="{{groupData.headimgurl}}" />
-              <view class="try-group-info">
-                <view class="try-group-info-title">{{
-                  groupData.nickName
-                }}</view>
-                <view class="try-group-info-text">
-                  只差<text>1人</text>成团，快来和我拼团吧~
+          <view class="try-group-body">
+            <view class="try-group-text">
+              以下家长正在拼团，可直接参与拼团。
+            </view>
+            <view class="try-group-content">
+              <view class="try-group-left">
+                <image
+                  class="try-group-avatar"
+                  src="{{groupData.headimgurl}}"
+                />
+                <view class="try-group-info">
+                  <view class="try-group-info-title">{{
+                    groupData.nickName
+                  }}</view>
+                  <view class="try-group-info-text">
+                    只差<text>1人</text>成团，快来和我拼团吧~
+                  </view>
                 </view>
               </view>
-            </view>
-            <button
-              class="try-group-btn"
-              open-type="getUserInfo"
-              @getuserinfo="getUserInfo({{3}})"
-              wx:if="{{!logined}}"
-            >
-              去参团
-            </button>
-            <view class="try-group-btn" wx:else @tap="clickBtn({{3}})">
-              去参团
+              <button
+                class="try-group-btn"
+                open-type="getUserInfo"
+                @getuserinfo="getUserInfo({{3}})"
+                wx:if="{{!logined}}"
+              ></button>
+              <view class="try-group-btn" wx:else @tap="clickBtn({{3}})">
+              </view>
             </view>
           </view>
         </view>
       </view>
+
       <image
         class="try-img"
-        src="https://pub.file.k12.vip/tbzw/try/detail_2.png"
+        src="https://pub.file.k12.vip/tbzw/try/3.png"
         mode="widthFix"
       />
       <image
         class="try-img"
-        src="https://pub.file.k12.vip/tbzw/try/detail_3.png"
+        src="https://pub.file.k12.vip/tbzw/try/4.png"
         mode="widthFix"
       />
       <image
         class="try-img"
-        src="https://pub.file.k12.vip/tbzw/try/detail_4.png"
+        src="https://pub.file.k12.vip/tbzw/try/5.png"
         mode="widthFix"
       />
       <image
         class="try-img"
-        src="https://pub.file.k12.vip/tbzw/try/detail_5.png"
+        src="https://pub.file.k12.vip/tbzw/try/6.png"
         mode="widthFix"
       />
       <image
         class="try-img"
-        src="https://pub.file.k12.vip/tbzw/try/detail_6.png"
+        src="https://pub.file.k12.vip/tbzw/try/7.png"
         mode="widthFix"
       />
       <image
         class="try-img"
-        src="https://pub.file.k12.vip/tbzw/try/detail_7.png"
+        src="https://pub.file.k12.vip/tbzw/try/8.png"
         mode="widthFix"
       />
       <image
         class="try-img"
-        src="https://pub.file.k12.vip/tbzw/try/detail_8.png"
+        src="https://pub.file.k12.vip/tbzw/try/9.png"
+        mode="widthFix"
+      />
+      <image
+        class="try-img"
+        src="https://pub.file.k12.vip/tbzw/try/10.png"
+        mode="widthFix"
+      />
+      <image
+        class="try-img"
+        src="https://pub.file.k12.vip/tbzw/try/11.png"
         mode="widthFix"
       />
     </view>
@@ -426,7 +445,7 @@ export default class Try extends wepy.page {
 .try {
   &-scroll {
     padding-bottom: 200px;
-    background: #e96d3f;
+    background: #94d33d;
   }
   &-img {
     width: 100%;
@@ -434,76 +453,74 @@ export default class Try extends wepy.page {
     vertical-align: text-top;
     vertical-align: bottom;
     vertical-align: text-bottom;
+    &-wrap {
+      position: relative;
+    }
   }
   &-group {
-    position: sticky;
-    left: 0;
+    position: absolute;
+    top: 24px;
+    left: 50px;
     box-sizing: border-box;
-    width: 100vw;
-    padding: 2px 32px;
-    background-color: #fff;
+    width: 650px;
+    padding: 33px 39px;
     &-header {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      padding: 14px 0;
-      &-price {
-        width: 412px;
-        height: 70px;
-        background: url('https://pub.file.k12.vip/tbzw/try/price-bg.png')
-          no-repeat;
-        background-size: 100%;
-      }
+      justify-content: flex-end;
+      margin-bottom: 20px;
+      width: 100%;
+      height: 69px;
+      background: url('https://pub.file.k12.vip/tbzw/try/tag.png') no-repeat;
+      background-size: 100%;
       &-num {
-        font-size: 28px;
-        font-weight: 500;
-        color: rgba(153, 153, 153, 1);
+        font-size: 22px;
+        font-family: FZLanTingYuan-R-GBK;
+        font-weight: 400;
+        color: rgba(51, 51, 51, 1);
       }
     }
     &-text {
-      font-size: 24px;
-      font-weight: 500;
-      color: rgba(51, 51, 51, 1);
+      font-size: 22px;
+      font-family: FZLanTingYuanS-R-GB;
+      font-weight: 400;
+      color: rgba(182, 182, 182, 1);
     }
     &-content {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 31px 0;
+      margin-top: 20px;
     }
     &-left {
       display: flex;
     }
     &-avatar {
-      margin-right: 19px;
-      width: 80px;
-      height: 80px;
+      margin-right: 12px;
+      width: 70px;
+      height: 70px;
       border-radius: 50%;
     }
     &-btn {
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 200px;
-      height: 76px;
-      background: url('https://pub.file.k12.vip/tbzw/try/btn-bg.png') no-repeat;
+      width: 172px;
+      height: 75px;
+      background: url('https://pub.file.k12.vip/tbzw/try/btn.png') no-repeat;
       background-size: 100%;
-      font-size: 32px;
-      font-weight: 400;
-      color: rgba(255, 255, 255, 1);
-      text-shadow: 0px 3px 5px rgba(252, 181, 0, 0.6);
     }
     &-info {
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       &-title {
-        font-size: 30px;
+        font-size: 28px;
         font-weight: bold;
         color: rgba(51, 51, 51, 1);
       }
       &-text {
-        font-size: 24px;
+        font-size: 22px;
         font-weight: 500;
         color: rgba(153, 153, 153, 1);
         text {

@@ -536,10 +536,12 @@ export default class Example extends wepy.page {
       this.answerArr[3].answer = 3
     }
     this.setAnswerStatusEnd = true
-    this.saveWrongSubject(
-      this.selectIndex === this.correctAnswer,
-      this.questionData.questionId
-    )
+    if(this.questionData.questionId) {
+      this.saveWrongSubject(
+        this.selectIndex === this.correctAnswer,
+        this.questionData.questionId
+      )
+    }
 
     setTimeout(() => {
       this.showResult = true
@@ -656,7 +658,7 @@ export default class Example extends wepy.page {
         if (data.resultData.newstart) {
           this.changeLearnStage(data.resultData.id, 1)
           this.videoContext.play()
-        } else if (data.resultData.stage > 0) {
+        } else if (data.resultData.stage > 0 && this.roomData.progressTime) {
           this.showContinueDiaolig = true
         } else {
           this.videoContext.play()

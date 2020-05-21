@@ -50,9 +50,9 @@
       </view>
       <view class="login-message">
         <view class="login-message-icon"></view>
-        <text class="login-message-text">
+        <view class="login-message-text">
           购买课程后，账号密码将通过短信发送给您；如果未收到短信，可使用“短信验证码登录”。
-        </text>
+        </view>
       </view>
     </view>
   </view>

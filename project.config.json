@@ -244,9 +244,9 @@
 					"scene": null
 				},
 				{
-					"id": -1,
-					"name": "user/cardPoster",
-					"pathName": "user/cardPoster",
+					"id": 26,
+					"name": "pages/lesson",
+					"pathName": "pages/lesson",
 					"query": "id=1214016363879219201&type=2&category=3",
 					"scene": null
 				}

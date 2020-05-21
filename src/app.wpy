@@ -229,7 +229,7 @@ export default class extends wepy.app {
           'ready',
           'test',
           'study',
-          'writeStudy',
+          // 'writeStudy',
           'teacher',
           'video',
           'writeCatalog',

@@ -1,0 +1,269 @@
+<template>
+  <view class="container course">
+    <mHeader title="确认开课时间"></mHeader>
+    <view class="container-scroll" style="margin-top:{{height}}px">
+      <view class="course-top">以下{{itemList.length}}门课程已为您推荐开课时间，请确认</view>
+      <view class="course-list">
+        <view class="course-item" wx:for="{{itemList}}" wx:key="{{index}}" @tap="toCourseDetail({{item}})">
+          <image class="course-cover" src="{{item.coverphoto}}"/>
+          <view class="course-info">
+            <text class="course-title">{{ item.courseName }}</text>
+            <text class="course-text">
+              {{item.opentime}}
+            </text>
+          </view>
+        </view>
+      </view>
+      <view class="course-footer">
+        <view class="-footer-btn">
+          <view class="-btn-left" @tap="changePopup">更改开课时间</view>
+          <view class="-btn-right" @tap="submitOpenTime()">确认</view>
+        </view>
+      </view>
+    </view>
+
+    <van-popup show="{{isOpenPopup}}">
+      <view class="course-popup">
+        <view class="-popup-title">
+          <view>请选择{{timeList.courseName}}的开课时间</view>
+          <view>后续课程将依次自动开课</view>
+          <view class="-popup-itemWrap">
+            <view class="-popup-item {{item.opentime === dataItem.opentime && '-popup-active'}}"
+                  wx:for="{{timeList.projects}}" wx:key="{{index}}" @tap="changeActive({{item}})">
+              {{item.opentime}}
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <van-icon
+        name="close"
+        class="course-close"
+        color="#fff"
+        size="36px"
+        @click="changePopup"
+      />
+    </van-popup>
+
+  </view>
+</template>
+<script>
+  import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+  import api from '../request/api';
+  import mHeader from '../components/header';
+
+  @connect({
+    remindData(state) {
+      return state.user.remindData;
+    },
+    logined(state) {
+      return state.user.logined;
+    }
+  })
+  export default class Example extends wepy.page {
+    config = {
+      navigationBarTitleText: '',
+      usingComponents: {
+        'van-icon': '../vant/icon/index',
+        'van-popup': '../vant/popup/index'
+      }
+    };
+    data = {
+      isOpenPopup: false,
+      dataItem: '',
+      submitNum: 0,
+      timeList: [],
+      itemList: [],
+      dataList: [],
+      queryInfo: {}
+    };
+    components = {
+      mHeader
+    };
+
+    onShow() {
+      this.getList();
+    }
+
+    onLoad(query) {
+      this.queryInfo = query;
+    }
+
+    getList() {
+      api.openTime.listOpenTimeConfig().then(({ data }) => {
+        this.dataList = data.resultData;
+        this.timeList = this.dataList.length && this.dataList[0];
+        this.isOpenPopup = true;
+        this.$apply();
+      });
+    }
+
+    methods = {
+      submitOpenTime() {
+        api.openTime.configOpenTime({
+          batches: this.timeList.batches,
+          groupId: this.timeList.groupId,
+          configList: this.itemList
+        }).then(({ data }) => {
+          this.submitNum++;
+          setTimeout(()=>{
+            if (this.dataList.length <= this.submitNum) {
+              return wx.navigateTo({ url: `/pages/lesson?isOpenTime=true` });
+            }
+            this.itemList = this.dataList[this.submitNum].projects;
+          },1000)
+        });
+      },
+      changeActive(data) {
+        this.dataItem = data;
+        this.itemList = this.dataItem.configList;
+        this.isOpenPopup = false;
+      },
+      changePopup() {
+        this.isOpenPopup = !this.isOpenPopup;
+      },
+      toCourseDetail(data) {
+        if (this.logined && !this.remindData.hasChild) {
+          wx.navigateTo({ url: '/user/info' });
+          return;
+        }
+      }
+    };
+    events = {};
+    watch = {};
+    computed = {
+      height() {
+        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
+      }
+    };
+
+    onShareAppMessage() {
+      return {
+        title: `聪明妈妈给孩子的第一堂大语文课`,
+        path: `/pages/index`,
+        imageUrl: 'https://pub.file.k12.vip/tbzw/v2/logo2.png'
+      };
+    }
+  }
+</script>
+<style lang="scss">
+  @import '../assets/style/mixin.scss';
+
+  .course {
+    &-top {
+      text-align: center;
+      width: 100%;
+      padding-top: 68px;
+      font-size: 32px;
+      font-weight: 500;
+      color: rgba(51, 51, 51, 1);
+      margin-bottom: 20px;
+    }
+    &-list {
+      margin-bottom: 200px;
+    }
+    &-item {
+      @include flex-center;
+      padding: 22px 32px;
+    }
+    &-cover {
+      margin-right: 33px;
+      width: 264px;
+      height: 176px;
+      border-radius: 15px;
+    }
+    &-info {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+    &-title {
+      font-size: 32px;
+      font-weight: bold;
+      color: rgba(51, 51, 51, 1);
+    }
+    &-text {
+      font-size: 28px;
+      color: #333333;
+    }
+    &-footer {
+      position: fixed;
+      bottom: 0px;
+      background-color: #ffffff;
+      padding: 55px 0;
+      width: 100%;
+
+      .-footer-btn {
+        @include flex-center;
+        justify-content: space-between;
+        padding: 0 32px;
+        color: #ffffff;
+      }
+
+      .-btn-left {
+        text-align: center;
+        width: 330px;
+        height: 88px;
+        background: rgba(252, 193, 8, 1);
+        border-radius: 20px;
+        font-size: 34px;
+        line-height: 88px;
+      }
+
+      .-btn-right {
+        text-align: center;
+        width: 330px;
+        height: 88px;
+        background: #40DA7F;
+        border-radius: 20px;
+        font-size: 34px;
+        line-height: 88px;
+      }
+    }
+    &-popup {
+      margin: 0 auto;
+      width: 580px;
+      min-height: 406px;
+      padding: 67px 43px 56px;
+      background: rgba(255, 255, 255, 1);
+      border-radius: 40px;
+
+      .-popup-title {
+        text-align: center;
+        font-size: 34px;
+        font-weight: bold;
+        color: rgba(51, 51, 51, 1);
+      }
+
+      .-popup-itemWrap {
+
+      }
+
+      .-popup-item {
+        text-align: center;
+        margin: 30px auto 0;
+        width: 397px;
+        height: 80px;
+        background: #FFFFFF;
+        border: 2px solid rgba(183, 183, 183, 1);
+        border-radius: 40px;
+        font-size: 32px;
+        line-height: 80px;
+        font-weight: 500;
+        color: rgba(153, 153, 153, 1);
+      }
+
+      .-popup-active {
+        background: rgba(252, 197, 49, 1);
+        border: 2px solid #FCC531;
+        color: #ffffff;
+      }
+    }
+    &-close {
+      position: relative;
+      top: 59px;
+      left: 43%;
+    }
+  }
+</style>

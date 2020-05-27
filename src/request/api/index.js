@@ -8,6 +8,7 @@ import order from './order'
 import appointment from './appointment'
 import center from './center'
 import dubbing from './dubbing'
+import openTime from './openTime'
 
 export default {
   user,
@@ -18,5 +19,6 @@ export default {
   order,
   appointment,
   center,
-  dubbing
+  dubbing,
+  openTime
 }

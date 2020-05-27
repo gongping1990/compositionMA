@@ -382,7 +382,7 @@
         src="https://pub.file.k12.vip/tbzw/1.5/home/yd5.png"
         wx:else
       />
-      <view class="-yd_btn {{showYD && 'show'}}"></view>
+      <view wx:if="{{showYD}}" class="-yd_btn show"></view>
     </view>
   </view>
 </template>

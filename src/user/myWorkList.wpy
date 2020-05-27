@@ -20,9 +20,12 @@
                  src="{{item.coverphoto}}" />
           <view class="course-info">
             <text class="course-title">{{item.name}}</text>
-            <text class="course-text {{!item.submited ? 'wj' : ''}}">
+            <view wx:if="{{item.opened}}" class="course-text {{!item.submited ? 'wj' : ''}}">
               已学{{item.studys}}节 | {{!item.submited ? item.nosubmits+'次作业未交' : '作业已交齐'}}
-            </text>
+            </view>
+            <view class="course-text" wx:if="{{!item.opened}}">
+              {{item.openTime}}
+            </view>
           </view>
         </view>
       </view>
@@ -165,6 +168,7 @@ export default class Example extends wepy.page {
     flex: 1;
   }
   &-title {
+    @include text-overflow(350px);
     font-size: 36px;
     line-height: 50px;
     font-weight: bold;
@@ -172,6 +176,7 @@ export default class Example extends wepy.page {
     color: #4a4a4a;
   }
   &-text {
+    margin-top: 30px;
     font-size: 26px;
     color: #999;
 

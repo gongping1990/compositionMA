@@ -1,6 +1,6 @@
 <template>
   <view class="container course">
-    <mHeader title="我的课程"></mHeader>
+    <mHeader title="我的课程" flag="4"></mHeader>
     <view class="container-scroll" style="margin-top:{{height}}px">
       <view
         class="course-list"
@@ -9,11 +9,11 @@
         @tap="toCourseDetail({{item}})"
       >
         <view class="course-item van-hairline--bottom">
-          <image class="course-cover" src="{{item.coverphoto}}" />
+          <image class="course-cover" src="{{item.coverphoto}}"/>
           <view class="course-info">
             <text class="course-title">{{ item.name }}</text>
             <view class="course-text" wx:if="{{!queryInfo.isErrorBook}}">
-              <view wx:if="{{!item.opened}}">{{item.openTime}}</view>
+              <view class="course-openTime" wx:if="{{!item.opened}}">{{item.openTime}}</view>
               <view wx:if="{{item.opened}}">共{{ item.lessons }}节 | 已学{{ item.studys }}节</view>
             </view>
             <text class="course-text" wx:if="{{queryInfo.isErrorBook}}">
@@ -26,121 +26,134 @@
   </view>
 </template>
 <script>
-import wepy from 'wepy'
-import { connect } from 'wepy-redux'
-import api from '../request/api'
-import mHeader from '../components/header'
+  import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+  import api from '../request/api';
+  import mHeader from '../components/header';
 
-@connect({
-  remindData(state) {
-    return state.user.remindData
-  },
-  logined(state) {
-    return state.user.logined
-  }
-})
-export default class Example extends wepy.page {
-  config = {
-    navigationBarTitleText: '',
-    usingComponents: {
-      'van-area': '../vant/area/index',
-      'van-popup': '../vant/popup/index'
+  @connect({
+    remindData(state) {
+      return state.user.remindData;
+    },
+    logined(state) {
+      return state.user.logined;
     }
-  }
-  data = {
-    dataList: [],
-    queryInfo: {}
-  }
-  components = {
-    mHeader
-  }
-
-  onShow() {
-    this.getList()
-  }
-
-  onLoad(query) {
-    this.queryInfo = query
-  }
-
-  getList() {
-    api.center.getMyCourse().then(({ data }) => {
-      this.dataList = data.resultData
-      this.$apply()
-    })
-  }
-
-  methods = {
-    toCourseDetail(data) {
-      if (this.logined && !this.remindData.hasChild) {
-        wx.navigateTo({ url: '/user/info' })
-        return
+  })
+  export default class Example extends wepy.page {
+    config = {
+      navigationBarTitleText: '',
+      usingComponents: {
+        'van-area': '../vant/area/index',
+        'van-popup': '../vant/popup/index'
       }
-      if (data.ruleType === 4) {
+    };
+    data = {
+      dataList: [],
+      queryInfo: {}
+    };
+    components = {
+      mHeader
+    };
+
+    onShow() {
+      if (this.logined && this.remindData.groupCourse && (this.queryInfo.isOpenTime === 'false' || !this.queryInfo.isOpenTime)) {
+        return wx.navigateTo({ url: '/user/openTime?type=2' });
+      }
+      this.getList();
+    }
+
+    onLoad(query) {
+      this.queryInfo = query;
+    }
+
+    getList() {
+      api.center.getMyCourse().then(({ data }) => {
+        this.dataList = data.resultData;
+        this.$apply();
+      });
+    }
+
+    methods = {
+      toCourseDetail(data) {
+        if (this.logined && !this.remindData.hasChild) {
+          wx.navigateTo({ url: '/user/info' });
+          return;
+        }
+        if (data.ruleType === 4) {
+          wx.navigateTo({
+            url: `/user/writeCatalog?id=${data.courseId}`
+          });
+          return;
+        }
         wx.navigateTo({
-          url: `/user/writeCatalog?id=${data.courseId}`
-        })
-        return
+          url: `/user/${
+            !this.queryInfo.isErrorBook ? 'lesson' : 'errorBook'
+            }?id=${data.courseId}`
+        });
       }
-      wx.navigateTo({
-        url: `/user/${
-          !this.queryInfo.isErrorBook ? 'lesson' : 'errorBook'
-        }?id=${data.courseId}`
-      })
-    }
-  }
-  events = {}
-  watch = {}
-  computed = {
-    height() {
-      return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
-    }
-  }
+    };
+    events = {
+      back() {
+        wx.navigateTo({
+          url: `/pages/user`
+        });
+      }
+    };
+    watch = {};
+    computed = {
+      height() {
+        return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight;
+      }
+    };
 
-  onShareAppMessage() {
-    return {
-      title: `聪明妈妈给孩子的第一堂大语文课`,
-      path: `/pages/index`,
-      imageUrl: 'https://pub.file.k12.vip/tbzw/v2/logo2.png'
+    onShareAppMessage() {
+      return {
+        title: `聪明妈妈给孩子的第一堂大语文课`,
+        path: `/pages/index`,
+        imageUrl: 'https://pub.file.k12.vip/tbzw/v2/logo2.png'
+      };
     }
   }
-}
 </script>
 <style lang="scss">
-@import '../assets/style/mixin.scss';
+  @import '../assets/style/mixin.scss';
 
-.course {
-  &-list {
-    padding: 16px 32px;
+  .course {
+    &-list {
+      padding: 16px 32px;
+    }
+    &-item {
+      @include flex-center;
+      padding: 32px 0;
+    }
+    &-cover {
+      margin-right: 24px;
+      width: 254px;
+      height: 168px;
+      box-shadow: 8px 0px 18px 0px rgba(234, 241, 247, 0.7);
+      border-radius: 16px;
+    }
+    &-info {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+    &-title {
+      @include text-overflow(350px);
+      font-size: 36px;
+      line-height: 50px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #4a4a4a;
+    }
+    &-text {
+      margin-top: 30px;
+      font-size: 26px;
+      color: #999;
+    }
+
+    &-openTime {
+      color: #ff7c76;
+    }
   }
-  &-item {
-    @include flex-center;
-    padding: 32px 0;
-  }
-  &-cover {
-    margin-right: 24px;
-    width: 254px;
-    height: 168px;
-    box-shadow: 8px 0px 18px 0px rgba(234, 241, 247, 0.7);
-    border-radius: 16px;
-  }
-  &-info {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-  }
-  &-title {
-    @include text-overflow(350px);
-    font-size: 36px;
-    line-height: 50px;
-    font-weight: bold;
-    margin-bottom: 10px;
-    color: #4a4a4a;
-  }
-  &-text {
-    margin-top: 30px;
-    font-size: 26px;
-    color: #999;
-  }
-}
 </style>

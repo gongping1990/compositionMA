@@ -319,6 +319,7 @@ export default class Lesson extends wepy.page {
     isBuy: true,
     scrollView: '',
     catalogData: {},
+    queryInfo: {},
     tryData: {},
     learnRemindData: {},
     titleScrollTopArr: [],
@@ -349,9 +350,6 @@ export default class Lesson extends wepy.page {
       }
     },
     remindData(n) {
-      if (this.logined && n.groupCourse) {
-        return wx.navigateTo({ url: '/user/openTime' })
-      }
       if (this.logined && !n.hasChild) {
         wx.navigateTo({ url: '/user/info' })
       }
@@ -602,9 +600,13 @@ export default class Lesson extends wepy.page {
   }
 
   onLoad(query) {
+    this.queryInfo = query || {}
+  }
+
+  onShow () {
     if (this.logined) {
-      if (this.remindData.groupCourse && !query.isOpenTime) {
-        return wx.navigateTo({ url: '/user/openTime' })
+      if (this.remindData.groupCourse && !this.queryInfo.isOpenTime) {
+        return wx.navigateTo({ url: `/user/openTime?type=1` })
       }
       if (!this.remindData.hasChild) {
         wx.navigateTo({ url: '/user/info' })

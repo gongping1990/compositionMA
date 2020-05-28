@@ -23,7 +23,7 @@
             <view wx:if="{{item.opened}}" class="course-text {{!item.submited ? 'wj' : ''}}">
               已学{{item.studys}}节 | {{!item.submited ? item.nosubmits+'次作业未交' : '作业已交齐'}}
             </view>
-            <view class="course-text" wx:if="{{!item.opened}}">
+            <view class="course-text course-openTime" wx:if="{{!item.opened}}">
               {{item.openTime}}
             </view>
           </view>
@@ -183,6 +183,10 @@ export default class Example extends wepy.page {
     &.wj {
       color: #ff7c76;
     }
+  }
+
+  &-openTime {
+    color: #ff7c76;
   }
 }
 </style>

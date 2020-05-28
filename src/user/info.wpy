@@ -90,7 +90,8 @@ export default class Info extends wepy.page {
       nickname: '',
       puid: 0,
       id: 0
-    }
+    },
+    queryInfo: {}
   }
   components = {
     mHeader
@@ -174,21 +175,22 @@ export default class Info extends wepy.page {
     api.center
       .getBottomTipsVO()
       .then(({ data }) => {
-        wx.navigateBack({
-          delta: 1 //返回的页面数，如果 delta 大于现有页面数，则返回到首页,
-        })
+        if (this.queryInfo.type === '1') {
+          return wx.navigateTo({ url: `/pages/lesson?isOpenInfo=true` });
+        } else {
+          return wx.navigateTo({ url: `/user/myCourse?isOpenInfo=true` });
+        }
         getStore().dispatch({
           type: 'UPDATE_TAB_REMIND',
           payload: data.resultData
-        })
-        wx.navigateBack({
-          delta: 1 //返回的页面数，如果 delta 大于现有页面数，则返回到首页,
         })
       })
       .catch(e => {})
   }
 
-  onLoad() {}
+  onLoad(query) {
+    this.queryInfo = query
+  }
   onShow() {
     this.getMyChild()
   }

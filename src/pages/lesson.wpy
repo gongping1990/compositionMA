@@ -351,7 +351,7 @@ export default class Lesson extends wepy.page {
     },
     remindData(n) {
       if (this.logined && !n.hasChild) {
-        wx.navigateTo({ url: '/user/info' })
+        wx.navigateTo({ url: '/user/info?type=1' })
       }
     }
   }
@@ -608,8 +608,8 @@ export default class Lesson extends wepy.page {
       if (this.remindData.groupCourse && !this.queryInfo.isOpenTime) {
         return wx.navigateTo({ url: `/user/openTime?type=1` })
       }
-      if (!this.remindData.hasChild) {
-        wx.navigateTo({ url: '/user/info' })
+      if (!this.remindData.hasChild && !this.queryInfo.isOpenInfo) {
+        wx.navigateTo({ url: '/user/info?type=1' })
         return
       }
       this.getAttendClassCatalog()

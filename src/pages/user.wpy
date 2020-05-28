@@ -207,6 +207,12 @@ export default class User extends wepy.page {
         isBuy: true,
         url: 'https://pub.file.k12.vip/tbzw/1.3/user/wdlb.png',
       },
+      {
+        id: 20,
+        name: '购买',
+        isBuy: true,
+        url: 'https://pub.file.k12.vip/tbzw/1.3/user/wdlb.png',
+      },
     ],
   }
 
@@ -252,6 +258,8 @@ export default class User extends wepy.page {
         case 7:
           wx.navigateTo({ url: `/user/myCardCourse` })
           break
+        default:
+          wx.navigateTo({ url: `/pages/try` })
         // case 6:
         //   if (this.noticeInfo.finishcourse === 0) {
         //     wx.showToast({

@@ -42,16 +42,16 @@ module.exports = {
     noPromiseAPI: ['createSelectorQuery'],
     baseUrl:
       process.env.NODE_ENV === 'production'
-        ? 'https://huoke.test.k12.vip'
+        ? 'https://huoke.prod.k12.vip'
         : 'https://huoke.test.k12.vip',
-    tryIdsStr:
-      process.env.NODE_ENV === 'production'
-        ? '1173617051253350402,1173617224285790210,1173617415734796289'
-        : '1171996022454611970,1173422970690228225,1173505182493532161',
     // tryIdsStr:
     //   process.env.NODE_ENV === 'production'
-    //     ? '1171996022454611970,1173422970690228225,1173505182493532161'
+    //     ? '1173617051253350402,1173617224285790210,1173617415734796289'
     //     : '1171996022454611970,1173422970690228225,1173505182493532161',
+    tryIdsStr:
+      process.env.NODE_ENV === 'production'
+        ? '1171996022454611970,1173422970690228225,1173505182493532161'
+        : '1171996022454611970,1173422970690228225,1173505182493532161',
   },
 }
 

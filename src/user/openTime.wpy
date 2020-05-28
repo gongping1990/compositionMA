@@ -1,6 +1,6 @@
 <template>
   <view class="container course">
-    <mHeader title="确认开课时间"></mHeader>
+    <mHeader title="确认开课时间" flag="4"></mHeader>
     <view class="container-scroll" style="margin-top:{{height}}px">
       <view class="course-top">以下{{itemList.length}}门课程已为您推荐开课时间，请确认</view>
       <view class="course-list">
@@ -94,7 +94,8 @@
       api.openTime.listOpenTimeConfig().then(({ data }) => {
         this.dataList = data.resultData;
         this.timeList = this.dataList.length && this.dataList[0];
-        this.isOpenPopup = true;
+        this.dataItem = this.timeList.projects[0];
+        this.itemList = this.dataItem.configList;
         this.$apply();
       });
     }
@@ -106,13 +107,21 @@
           groupId: this.timeList.groupId,
           configList: this.itemList
         }).then(({ data }) => {
+          wx.showToast({
+            icon: 'none',
+            title: `${this.timeList.courseName}开课时间设置成功`
+          });
           this.submitNum++;
-          setTimeout(()=>{
-            if (this.dataList.length <= this.submitNum) {
+          if (this.dataList.length <= this.submitNum) {
+            if (this.queryInfo.type === '1') {
               return wx.navigateTo({ url: `/pages/lesson?isOpenTime=true` });
             }
-            this.itemList = this.dataList[this.submitNum].projects;
-          },1000)
+            return wx.navigateTo({ url: `/user/myCourse?isOpenTime=true` });
+          }
+          this.timeList = this.dataList.length && this.dataList[this.submitNum];
+          this.dataItem = this.timeList.projects[0];
+          this.itemList = this.dataItem.configList;
+          this.$apply()
         });
       },
       changeActive(data) {
@@ -130,7 +139,15 @@
         }
       }
     };
-    events = {};
+    events = {
+      back() {
+        if (this.queryInfo.type === '1') {
+
+        } else {
+          wx.navigateTo({ url: `/user/myCourse?isOpenTime=false` });
+        }
+      }
+    };
     watch = {};
     computed = {
       height() {

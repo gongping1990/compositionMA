@@ -64,8 +64,8 @@
 			"list": [
 				{
 					"id": 0,
-					"name": "user/openTime",
-					"pathName": "user/openTime",
+					"name": "pages/try",
+					"pathName": "pages/try",
 					"query": "",
 					"scene": null
 				},

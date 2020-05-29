@@ -4,7 +4,7 @@
     <view class="container-scroll" style="margin-top:{{height}}px">
       <view class="course-top">以下{{itemList.length}}门课程已为您推荐开课时间，请确认</view>
       <view class="course-list">
-        <view class="course-item" wx:for="{{itemList}}" wx:key="{{index}}" @tap="toCourseDetail({{item}})">
+        <view class="course-item" wx:for="{{itemList}}" wx:key="{{index}}">
           <image class="course-cover" src="{{item.coverphoto}}"/>
           <view class="course-info">
             <text class="course-title">{{ item.courseName }}</text>
@@ -131,12 +131,6 @@
       },
       changePopup() {
         this.isOpenPopup = !this.isOpenPopup;
-      },
-      toCourseDetail(data) {
-        if (this.logined && !this.remindData.hasChild) {
-          wx.navigateTo({ url: '/user/info' });
-          return;
-        }
       }
     };
     events = {

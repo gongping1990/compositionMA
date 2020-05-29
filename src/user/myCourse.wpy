@@ -30,6 +30,7 @@
   import { connect } from 'wepy-redux';
   import api from '../request/api';
   import mHeader from '../components/header';
+  import testMixin from '../mixins/test'
 
   @connect({
     remindData(state) {
@@ -47,10 +48,14 @@
         'van-popup': '../vant/popup/index'
       }
     };
+
+    mixins = [testMixin]
+
     data = {
       dataList: [],
       queryInfo: {}
     };
+
     components = {
       mHeader
     };
@@ -59,6 +64,7 @@
       if (this.logined && this.remindData.groupCourse && (this.queryInfo.isOpenTime === 'false' || !this.queryInfo.isOpenTime)) {
         return wx.navigateTo({ url: '/user/openTime?type=2' });
       }
+      this.getBottomTipsVO()
       this.getList();
     }
 
@@ -75,6 +81,7 @@
 
     methods = {
       toCourseDetail(data) {
+        console.log(this.remindData,1)
         if (this.logined && !this.remindData.hasChild) {
           wx.navigateTo({ url: '/user/info' });
           return;

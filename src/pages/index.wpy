@@ -626,7 +626,7 @@ export default class Home extends wepy.page {
       })
       .then(({ data }) => {
         this.systemConfig = data.resultData
-        data.resultData.passed = true
+        // data.resultData.passed = true
         if (!data.resultData.passed) {
           wx.redirectTo({ url: '/pages/detail' })
           return

@@ -168,7 +168,7 @@ export default class Example extends wepy.page {
     flex: 1;
   }
   &-title {
-    @include text-overflow(350px);
+
     font-size: 36px;
     line-height: 50px;
     font-weight: bold;

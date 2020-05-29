@@ -12,13 +12,9 @@
           <image class="course-cover" src="{{item.coverphoto}}"/>
           <view class="course-info">
             <text class="course-title">{{ item.name }}</text>
-            <view class="course-text" wx:if="{{!queryInfo.isErrorBook}}">
-              <view class="course-openTime" wx:if="{{!item.opened}}">{{item.openTime}}</view>
+            <view class="course-text">
               <view wx:if="{{item.opened}}">共{{ item.lessons }}节 | 已学{{ item.studys }}节</view>
             </view>
-            <text class="course-text" wx:if="{{queryInfo.isErrorBook}}">
-              共{{ item.wrongSubject }}道
-            </text>
           </view>
         </view>
       </view>
@@ -61,10 +57,6 @@
     };
 
     onShow() {
-      if (this.logined && this.remindData.groupCourse && (this.queryInfo.isOpenTime === 'false' || !this.queryInfo.isOpenTime)) {
-        return wx.navigateTo({ url: '/user/openTime?type=2' });
-      }
-      this.getBottomTipsVO()
       this.getList();
     }
 
@@ -93,9 +85,7 @@
           return;
         }
         wx.navigateTo({
-          url: `/user/${
-            !this.queryInfo.isErrorBook ? 'lesson' : 'errorBook'
-            }?id=${data.courseId}`
+          url: `/user/lesson?id=${data.courseId}`
         });
       }
     };
@@ -157,10 +147,6 @@
       margin-top: 30px;
       font-size: 26px;
       color: #999;
-    }
-
-    &-openTime {
-      color: #ff7c76;
     }
   }
 </style>

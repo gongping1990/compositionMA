@@ -15,16 +15,10 @@ const user = {
     return request.post('/compositionv3/user/changePassword', params)
   },
   wxUserLogin(params) {
-    return request.post('/compositionv3/user/loginWithMaAppId', {
-      ...params,
-      category: '3'
-    })
+    return request.post('/compositionv3/user/loginWithMaAppId', params)
   },
   updateUserWxMa(params) {
-    return request.post('/compositionv3/user/updateUserMaAppId', {
-      ...params,
-      category: '3'
-    })
+    return request.post('/compositionv3/user/updateUserMaAppId', params)
   },
   updateGrade(params) {
     return request.post('/compositionv3/user/updateGrade', params)

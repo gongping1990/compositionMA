@@ -12,9 +12,7 @@
           请登录后再进行操作
         </view>
         <view class="-dialog-btn-wrap">
-          <view class="-dialog-btn" wx:if="{{showCancel}}" @tap="clickCancel">
-            取消登录
-          </view>
+          <view class="-dialog-btn" @tap="clickCancel">取消登录</view>
           <view class="-dialog-btn confirm" @tap="clickConfirm">确认登录</view>
         </view>
       </view>
@@ -22,22 +20,14 @@
     <van-popup show="{{show}}" z-index="{{300}}" position="bottom">
       <view class="-select">
         <text class="-select-title">请选择登录方式</text>
-        <view
-          wx:if="{{showCancel}}"
-          class="-select-item van-hairline--top"
-          @tap="clickItem(1)"
-        >
+        <view class="-select-item van-hairline--top" @tap="clickItem(1)">
           学习账号
         </view>
         <view class="-select-item van-hairline--top" @tap="clickItem(2)">
           <view class="-select-item-icon"></view>
           微信登录
         </view>
-        <view
-          wx:if="{{showCancel}}"
-          class="-select-item cancel van-hairline--top"
-          @tap="clickItem(3)"
-        >
+        <view class="-select-item cancel van-hairline--top" @tap="clickItem(3)">
           取消
         </view>
       </view>
@@ -52,18 +42,13 @@ export default class Example extends wepy.component {
     showPopup: {
       type: Boolean,
       default: false,
-      twoWay: true,
+      twoWay: true
     },
     show: {
       type: Boolean,
       default: false,
-      twoWay: true,
-    },
-    showCancel: {
-      type: Boolean,
-      default: true,
-      twoWay: true,
-    },
+      twoWay: true
+    }
   }
   data = {}
   components = {}
@@ -88,7 +73,7 @@ export default class Example extends wepy.component {
     clickConfirm() {
       this.showPopup = false
       this.show = true
-    },
+    }
   }
   events = {}
   watch = {}
@@ -103,6 +88,7 @@ export default class Example extends wepy.component {
     wepy.login().then((res) => {
       let params = {
         code: res.code,
+        appid: 'wxcc53e4a046181584'
       }
       api.user.wxUserLogin(params).then(({ data }) => {
         wx.hideLoading()

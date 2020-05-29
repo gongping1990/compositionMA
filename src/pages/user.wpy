@@ -195,25 +195,12 @@ export default class User extends wepy.page {
         url: 'https://pub.file.k12.vip/tbzw/1.4/my_child.png',
       },
       {
-        id: 7,
-        num: 0,
-        isBuy: true,
-        name: '打卡日历',
-        url: 'https://pub.file.k12.vip/2020/03/25/1242630322870034434.png',
-      },
-      {
         id: 3,
         name: '我的礼包',
         isBuy: true,
-        url: 'https://pub.file.k12.vip/tbzw/1.3/user/wdlb.png',
-      },
-      {
-        id: 20,
-        name: '购买',
-        isBuy: true,
-        url: 'https://pub.file.k12.vip/tbzw/1.3/user/wdlb.png',
-      },
-    ],
+        url: 'https://pub.file.k12.vip/tbzw/1.3/user/wdlb.png'
+      }
+    ]
   }
 
   getUCRemindVO() {
@@ -252,14 +239,9 @@ export default class User extends wepy.page {
         case 4:
           wx.navigateTo({ url: '/user/child' })
           break
-        case 5:
-          wx.navigateTo({ url: `/user/myCourse?isErrorBook=true` })
-          break
-        case 7:
-          wx.navigateTo({ url: `/user/myCardCourse` })
-          break
-        default:
-          wx.navigateTo({ url: `/pages/try` })
+        // case 5:
+        //   wx.navigateTo({ url: `/user/myCourse?isErrorBook=true` })
+        //   break
         // case 6:
         //   if (this.noticeInfo.finishcourse === 0) {
         //     wx.showToast({

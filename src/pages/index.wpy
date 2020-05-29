@@ -32,36 +32,36 @@
             </swiper-item>
           </block>
         </swiper>
-        <view class="title-item" wx:if="{{courseList.length}}">
-          <text class="title-text">大语文精品课</text>
-        </view>
-        <repeat for="{{courseList}}" key="index" index="index" item="item">
-          <view class="course-item">
-            <image
-              src="{{item.verticalCover}}"
-              class="course-cover"
-              lazy-load="true"
-            />
-            <view class="course-right">
-              <view class="course-info">
-                <text class="course-title">{{ item.name }}</text>
-                <text class="course-text">{{ item.courseDescribe }}</text>
-              </view>
-              <view class="course-btn-wrap">
-                <button
-                  open-type="contact"
-                  class="course-btn"
-                  show-message-card="true"
-                  send-message-title="{{item.cardtitle}}"
-                  send-message-path="{{'/pages/index?homeConfig=' + item.sessionFrom}}"
-                  send-message-img="{{item.cardimgurl}}"
-                >
-                  去报名
-                </button>
-              </view>
-            </view>
-          </view>
-        </repeat>
+        <!--<view class="title-item" wx:if="{{courseList.length}}">-->
+          <!--<text class="title-text">大语文精品课</text>-->
+        <!--</view>-->
+        <!--<repeat for="{{courseList}}" key="index" index="index" item="item">-->
+          <!--<view class="course-item">-->
+            <!--<image-->
+              <!--src="{{item.verticalCover}}"-->
+              <!--class="course-cover"-->
+              <!--lazy-load="true"-->
+            <!--/>-->
+            <!--<view class="course-right">-->
+              <!--<view class="course-info">-->
+                <!--<text class="course-title">{{ item.name }}</text>-->
+                <!--<text class="course-text">{{ item.courseDescribe }}</text>-->
+              <!--</view>-->
+              <!--<view class="course-btn-wrap">-->
+                <!--<button-->
+                  <!--open-type="contact"-->
+                  <!--class="course-btn"-->
+                  <!--show-message-card="true"-->
+                  <!--send-message-title="{{item.cardtitle}}"-->
+                  <!--send-message-path="{{'/pages/index?homeConfig=' + item.sessionFrom}}"-->
+                  <!--send-message-img="{{item.cardimgurl}}"-->
+                <!--&gt;-->
+                  <!--去报名-->
+                <!--</button>-->
+              <!--</view>-->
+            <!--</view>-->
+          <!--</view>-->
+        <!--</repeat>-->
 
         <view class="-tabs-wrap">
           <view
@@ -325,29 +325,24 @@
         closeable
         @close="onCloseWelcome"
       >
-        <view class="welcome-pop new">
-          <view class="welcome-pop-btn-wrap">
-            <button
-              class="welcome-pop-btn new cancel"
-              @tap="clickToLesson"
-            ></button>
-            <button
-              class="welcome-pop-btn new"
-              @tap="onCloseWelcome({{1}})"
-            ></button>
+        <view class="welcome-pop">
+
+          <view class="welcome-pop-wrap">
+            <view class="welcome-pop-btn" @tap="clickToLesson"></view>
+            <view class="welcome-pop-btn2" @tap="onCloseWelcome({{1}})"></view>
           </view>
           <view class="welcome-pop-close" @tap="onCloseWelcome({{0}})"></view>
         </view>
       </van-popup>
       <van-popup custom-style="top: 42%" show="{{ showWork }}" @close="onClose">
-        <view class="welcome-pop work">
-          <view class="welcome-pop-text">
+        <view class="welcome-pop-work work">
+          <view class="welcome-pop-work-text">
             你好呀，小朋友。老师给你发来了课后作业讲解，快去看看吧！
           </view>
-          <button class="welcome-pop-btn" @tap="clickToCompletionOfWork">
+          <button class="welcome-pop-work-btn" @tap="clickToCompletionOfWork">
             去看看
           </button>
-          <view class="welcome-pop-close" @tap="onClose"></view>
+          <view class="welcome-pop-work-close" @tap="onClose"></view>
         </view>
       </van-popup>
       <login :showPopup.sync="showPopup" :show.sync="showSelect"></login>
@@ -371,18 +366,15 @@
       >
         <image
           class="-yd-img banner"
-          mode="widthFix"
-          src="https://pub.file.k12.vip/tbzw/1.5/home/yd-banner2.png"
+          src="https://pub.file.k12.vip/tbzw/write/yd-kf.png"
         />
       </button>
 
       <image
         class="-yd-img"
-        mode="widthFix"
-        src="https://pub.file.k12.vip/tbzw/1.5/home/yd5.png"
+        src="https://pub.file.k12.vip/tbzw/write/yd-banner.png"
         wx:else
       />
-      <view wx:if="{{showYD}}" class="-yd_btn show"></view>
     </view>
   </view>
 </template>
@@ -413,17 +405,17 @@ dayjs.extend(relativeTime)
   },
   audioList(state) {
     return state.user.audioList
-  },
+  }
 })
 export default class Home extends wepy.page {
   config = {
-    navigationBarTitleText: '今日学习',
+    navigationBarTitleText: '乐小狮写字课',
     onReachBottomDistance: 100,
     usingComponents: {
       'van-tabbar': '../vant/tabbar/index',
       'van-tabbar-item': '../vant/tabbar-item/index',
-      'van-popup': '../vant/popup/index',
-    },
+      'van-popup': '../vant/popup/index'
+    }
   }
   data = {
     ydType: 0,
@@ -458,7 +450,7 @@ export default class Home extends wepy.page {
     hotTotal: 10,
     tabActive: 0,
     tabList: ['作业广场', '最新表扬'],
-    scrollTop: 0,
+    scrollTop: 0
   }
   mixins = [testMixin]
   components = {
@@ -467,7 +459,7 @@ export default class Home extends wepy.page {
     error,
     load,
     praiseModal,
-    tooltip,
+    tooltip
   }
   methods = {
     bindClickBanner(item) {
@@ -475,7 +467,7 @@ export default class Home extends wepy.page {
       _sa.track('bannerClick', {
         bannerName: item.name,
         bannerId: item.id,
-        url: item.href,
+        url: item.href
       })
     },
     bindscrolltolower() {
@@ -492,7 +484,7 @@ export default class Home extends wepy.page {
     clickToCompletionOfWork() {
       this.showWork = false
       wx.navigateTo({
-        url: `/user/completionOfWork?type=1&id=${this.latelyData.lessonId}`,
+        url: `/user/completionOfWork?type=1&id=${this.latelyData.lessonId}`
       })
     },
     clickToLesson() {
@@ -540,7 +532,7 @@ export default class Home extends wepy.page {
       wx.navigateTo({
         url: `/user/completionOfWork?type=${item.isme ? 1 : 2}&id=${
           item.isme ? item.lessonId : item.homeworkId
-        }`,
+        }`
       })
     },
     clickTab(index) {
@@ -548,17 +540,17 @@ export default class Home extends wepy.page {
       this.tabActive = index
       this.scrollTop =
         scrollTop == bannerHeight + 16 ? bannerHeight + 15 : bannerHeight + 16
-    },
+    }
   }
   events = {
     tryAgain() {
       this.initPage()
-    },
+    }
   }
   computed = {
     height() {
       return 46 + wepy.$instance.globalData.systemInfo.statusBarHeight
-    },
+    }
   }
 
   // watch = {
@@ -592,7 +584,7 @@ export default class Home extends wepy.page {
     let { tabActive } = this
     api.study
       .addLike({
-        workId: workId,
+        workId: workId
       })
       .then(() => {
         if (!tabActive) {
@@ -609,13 +601,13 @@ export default class Home extends wepy.page {
   bindKF() {
     let { api } = this.$parent.globalData
     api.user.bindKF({
-      courseId: this.infoData.kfTeacherVO.courseId,
+      courseId: this.infoData.kfTeacherVO.courseId
     })
   }
   followKF() {
     let { api } = this.$parent.globalData
     api.user.followKF({
-      courseId: this.infoData.kfTeacherVO.courseId,
+      courseId: this.infoData.kfTeacherVO.courseId
     })
   }
   getVersionControl() {
@@ -626,7 +618,7 @@ export default class Home extends wepy.page {
       })
       .then(({ data }) => {
         this.systemConfig = data.resultData
-        data.resultData.passed = true
+        // data.resultData.passed = true
         if (!data.resultData.passed) {
           wx.redirectTo({ url: '/pages/detail' })
           return
@@ -666,17 +658,17 @@ export default class Home extends wepy.page {
         this.showAddTeacher = data.resultData.remindAddTeacher
         this.isShowPraise = data.resultData.awardsPop
         this.praiseItem = data.resultData.awardsInfo
-        this.courseList = data.resultData.courseList.map((e) => {
+        this.courseList = data.resultData.courseList.map(e => {
           e.sessionFrom = JSON.stringify({
             type: 1,
-            homeConfig: e.id,
+            homeConfig: e.id
           })
           return e
         })
-        this.bannerList = data.resultData.bannerList.map((e) => {
+        this.bannerList = data.resultData.bannerList.map(e => {
           e.sessionFrom = JSON.stringify({
             type: 2,
-            homeConfig: e.id,
+            homeConfig: e.id
           })
           return e
         })
@@ -717,14 +709,14 @@ export default class Home extends wepy.page {
     api.course
       .homeworkSquare({
         current: this.workCurrent,
-        size: 10,
+        size: 10
       })
       .then(({ data }) => {
         this.isError = false
         this.workCurrent += 1
         this.workTotal = data.resultData.total
         this.workList = [...this.workList, ...data.resultData.records]
-        this.workList = this.workList.map((e) => {
+        this.workList = this.workList.map(e => {
           e.formatSubitTime = dayjs().to(dayjs(Number(e.subitTime)))
           return e
         })
@@ -739,14 +731,14 @@ export default class Home extends wepy.page {
     api.course
       .dayByMasterpiece({
         current: this.hotCurrent,
-        size: 10,
+        size: 10
       })
       .then(({ data }) => {
         this.isError = false
         this.hotCurrent += 1
         this.hotTotal = data.resultData.total
         this.hotList = [...this.hotList, ...data.resultData.records]
-        this.hotList = this.hotList.map((e) => {
+        this.hotList = this.hotList.map(e => {
           e.formatSubitTime = dayjs().to(dayjs(Number(e.praiseTime)))
           e.formatDuration = this.timeToFormat(e.duration)
           return e
@@ -791,7 +783,7 @@ export default class Home extends wepy.page {
     return {
       title: `聪明妈妈给孩子的第一堂大语文课`,
       path: `/pages/index`,
-      imageUrl: 'https://pub.file.k12.vip/tbzw/v2/logo2.png',
+      imageUrl: 'https://pub.file.k12.vip/tbzw/v2/logo2.png'
     }
   }
 }
@@ -810,54 +802,36 @@ export default class Home extends wepy.page {
     top: 0;
     background: rgba(0, 0, 0, 0.6);
     z-index: 3000;
-    &_btn {
-      position: absolute;
-      width: 201px;
-      height: 74px;
-      background: url('https://pub.file.k12.vip/tbzw/1.5/home/yd-btn.png')
-        no-repeat;
-      background-size: 100%;
-      bottom: 59px;
-      left: 50%;
-      transform: translateX(-50%);
-      &.show {
-        bottom: auto;
-        top: 679px;
-      }
-    }
     &-img {
       margin: 30px auto;
-      margin-top: 208px;
-      width: 687px;
-      height: 428px;
+      margin-top: 152px;
+      width: 686px;
+      height: 551px;
       &.banner {
-        margin: 0 auto;
         position: fixed;
         left: 0;
-        bottom: 0;
+        top: 0;
         width: 100%;
+        height: 100%;
       }
     }
   }
   .welcome-pop {
     position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    box-sizing: border-box;
-    padding: 50px 36px;
-    padding-top: 274px;
     width: 600px;
     height: 474px;
-    background: url('https://pub.file.k12.vip/tbzw/1.5/home/pop-img1.png')
+    background: url('https://pub.file.k12.vip/tbzw/write/fuli.png')
       no-repeat;
     background-size: 100%;
+
     &-wrap {
-      top: 42%;
-    }
-    &.new {
-      justify-content: flex-end;
-      padding-bottom: 40px;
+      position: absolute;
+      bottom: 35px;
+      padding: 0 31px;
+      @include flex-center;
+      justify-content: space-between;
+      box-sizing: border-box;
+      width: 100%;
     }
 
     &-close {
@@ -868,6 +842,51 @@ export default class Home extends wepy.page {
       height: 80px;
       background: url('https://pub.file.k12.vip/tbzw/1.5/home/close.png')
         no-repeat;
+      background-size: 100%;
+      transform: translateX(-50%);
+    }
+    &-btn {
+      width: 253px;
+      height: 80px;
+      background: url('https://pub.file.k12.vip/2020/05/07/1258304185129517057.png') no-repeat;
+      background-size: 100%;
+    }
+    &-btn2 {
+      width: 253px;
+      height: 80px;
+      background: url('https://pub.file.k12.vip/2020/05/07/1258304286572953602.png') no-repeat;
+      background-size: 100%;
+    }
+  }
+
+  .welcome-pop-work {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-sizing: border-box;
+    padding: 50px 36px;
+    padding-top: 274px;
+    width: 602px;
+    height: 526px;
+    background: url('https://pub.file.k12.vip/tbzw/1.5/home/pop-img.png')
+    no-repeat;
+    background-size: 100%;
+    &-wrap {
+      top: 42%;
+    }
+    &.work {
+      height: 558px;
+      background-image: url('https://pub.file.k12.vip/tbzw/1.5/home/pop-img.png');
+    }
+    &-close {
+      position: absolute;
+      left: 50%;
+      bottom: -132px;
+      width: 80px;
+      height: 80px;
+      background: url('https://pub.file.k12.vip/tbzw/1.5/home/close.png')
+      no-repeat;
       background-size: 100%;
       transform: translateX(-50%);
     }
@@ -887,7 +906,8 @@ export default class Home extends wepy.page {
       align-self: flex-end;
       width: 176px;
       height: 66px;
-      background: transparent;
+      background: rgba(255, 192, 0, 1);
+      box-shadow: 0px 4px 8px 0px rgba(255, 192, 0, 0.2);
       border-radius: 31px;
       font-size: 32px;
       color: #fff;
@@ -902,23 +922,14 @@ export default class Home extends wepy.page {
       }
       &.cancel {
         font-size: 26px;
-      }
-    }
-    &.work {
-      height: 558px;
-      background-image: url('https://pub.file.k12.vip/tbzw/1.5/home/pop-img.png');
-      .welcome-pop-btn {
-        background: rgba(255, 192, 0, 1);
-        box-shadow: 0px 4px 8px 0px rgba(255, 192, 0, 0.2);
-        &.cancel {
-          background: #fff;
-          color: #999999;
-          box-sizing: border-box;
-          border: 1px solid rgba(153, 153, 153, 1);
-        }
+        background: #fff;
+        color: #999999;
+        box-sizing: border-box;
+        border: 1px solid rgba(153, 153, 153, 1);
       }
     }
   }
+
   .container-scroll {
     position: relative;
     box-sizing: border-box;

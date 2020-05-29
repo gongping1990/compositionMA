@@ -36,13 +36,19 @@ const study = {
     return request.get('/compositionv3/study/like', params)
   },
   listLikeByPage(params) {
-    return request.get('/compositionv3/study/listLikeByPage', params)
+    return request.get('/compositionv3/study/listLikeByPage', {
+      ...params,
+      category: '3'
+    })
   },
   listUserLessons(params) {
     return request.get('/compositionv3/study/listUserLessons', params)
   },
   listPraiseByPage(params) {
-    return request.get('/compositionv3/study/listPraiseByPage', params)
+    return request.get('/compositionv3/study/listPraiseByPage', {
+      ...params,
+      category: '3'
+    })
   },
   listWorkPraiseByPage(params) {
     return request.get('/compositionv3/study/listWorkPraiseByPage', params)
@@ -66,7 +72,10 @@ const study = {
     return request.post('/compositionv3/study/evaluation', params)
   },
   countCard(params) {
-    return request.get('/compositionv3/study/countCard', params)
+    return request.get('/compositionv3/study/countCard', {
+      ...params,
+      category: '3'
+    })
   },
   listCard(params) {
     return request.get('/compositionv3/study/listCard', params)
@@ -75,22 +84,32 @@ const study = {
     return request.post('/compositionv3/study/knowReply', params)
   },
   getAttendClassCatalog() {
-    return request.get('/compositionv3/study/getAttendClassCatalog')
+    return request.get('/compositionv3/study/getAttendClassCatalog', {
+      category: '3'
+    })
   },
   listCompositionWeekLesson(params) {
-    return request.get('/compositionv3/study/listCompositionWeekLesson', params)
+    return request.get('/compositionv3/study/listCompositionWeekLesson', {
+      ...params,
+      category: '3'
+    })
   },
   getLessonCatalogByCourse(params) {
     return request.get('/compositionv3/study/getLessonCatalogByCourse', params)
   },
   listReplyByPage(params) {
-    return request.get('/compositionv3/study/listReplyByPage', params)
+    return request.get('/compositionv3/study/listReplyByPage', {
+      ...params,
+      category: '3'
+    })
   },
   getPraiseById(params) {
     return request.get('/compositionv3/study/getPraiseById', params)
   },
   getLatelyDubbingByHome() {
-    return request.get('/compositionv3/homepage/getLatelyDubbingByHome')
+    return request.get('/compositionv3/homepage/getLatelyDubbingByHome', {
+      category: '3'
+    })
   },
   listDateByCourse(params) {
     return request.get('/compositionv3/center/listDateByCourse', params)
@@ -114,16 +133,24 @@ const study = {
     return request.get('/compositionv3/study/getRestrictCourseLesson', params)
   },
   getLearnRemind() {
-    return request.get('/compositionv3/study/getLearnRemind')
+    return request.get('/compositionv3/study/getLearnRemind', {
+      category: '3'
+    })
   },
   getThreeLessonInfo(params) {
     return request.get('/compositionv3/lesson/getThreeLessonInfo', params)
   },
   getThreeLearnInfo(params) {
-    return request.get('/compositionv3/lesson/getThreeLearnInfo', params)
+    return request.get('/compositionv3/lesson/getThreeLearnInfo', {
+      ...params,
+      category: '3'
+    })
   },
   getThreeLearnResult(params) {
-    return request.get('/compositionv3/lesson/getThreeLearnResult', params)
+    return request.get('/compositionv3/lesson/getThreeLearnResult',  {
+      ...params,
+      category: '3'
+    })
   },
   startPoint(params) {
     return request.post('/compositionv3/stucheckpoint/startPoint', params)

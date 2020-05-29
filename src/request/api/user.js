@@ -15,10 +15,16 @@ const user = {
     return request.post('/compositionv3/user/changePassword', params)
   },
   wxUserLogin(params) {
-    return request.post('/compositionv3/user/loginWithWxMa', params)
+    return request.post('/compositionv3/user/loginWithMaAppId', {
+      ...params,
+      category: '3'
+    })
   },
   updateUserWxMa(params) {
-    return request.post('/compositionv3/user/updateUserWxMa', params)
+    return request.post('/compositionv3/user/updateUserMaAppId', {
+      ...params,
+      category: '3'
+    })
   },
   updateGrade(params) {
     return request.post('/compositionv3/user/updateGrade', params)
@@ -54,7 +60,9 @@ const user = {
     return request.get('/umg/student/getMyChild')
   },
   getKFTeacher() {
-    return request.get('/compositionv3/teacher/getKFTeacher')
+    return request.get('/compositionv3/teacher/getKFTeacher', {
+      category: '3'
+    })
   },
   bindKF(params) {
     return request.post('/homework/kfteacher/bindKF', params)
@@ -63,7 +71,9 @@ const user = {
     return request.post('/homework/kfteacher/followKF', params)
   },
   listByDubbing() {
-    return request.get('/compositionv3/dubbing/listByDubbing')
+    return request.get('/compositionv3/dubbing/listByDubbing',{
+      category: '3'
+    })
   },
   updateAvatar(params) {
     return request.post('/compositionv3/student/updateAvatar', params)
